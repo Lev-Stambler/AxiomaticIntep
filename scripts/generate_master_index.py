@@ -63,8 +63,7 @@ def generate_experiment_cards(mapping_data: Dict[str, Any], base_path: Path) -> 
         
         # Check if index.html exists for this experiment
         results_dir = directories.get("results", "")
-        print("QQQ", results_dir)
-        index_path = f"{results_dir.replace('outputs', '')}/index.html" if results_dir else ""
+        index_path = f"{results_dir.replace('outputs/', '')}/index.html" if results_dir else ""
         has_index = check_file_exists(base_path, results_dir + '/index.html') if index_path else False
         
         # Extract key configuration details
@@ -414,14 +413,6 @@ def generate_html_template(cards: List[str], mapping_data: Dict[str, Any]) -> st
             <div class="stats-item">
                 <div class="stats-number">{total_experiments}</div>
                 <div class="stats-label">Total Experiments</div>
-            </div>
-            <div class="stats-item">
-                <div class="stats-number">{complete_count}</div>
-                <div class="stats-label">Complete</div>
-            </div>
-            <div class="stats-item">
-                <div class="stats-number">{partial_count}</div>
-                <div class="stats-label">Partial</div>
             </div>
         </div>
         
