@@ -15,7 +15,7 @@ Main components:
 """
 
 __version__ = "0.1.0"
-__author__ = "Lev Stambler"
+__author__ = ""
 
 from .analysis.explainer import FeatureExplainer
 

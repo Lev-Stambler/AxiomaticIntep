@@ -1,10 +1,6 @@
 #!/bin/bash
 
 #### For Slurm to run conda
-eval "$(/fs/nexus-scratch/levstamb/miniforge3/bin/conda shell.bash hook)"
-eval "$(conda shell.bash hook)"
-conda activate interventionfeatures
-
 # Script to run all TOML configuration files through runner.sh with separate log files
 # Usage: ./run_all_configs.sh [--dry-run]
 
