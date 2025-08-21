@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mechanistic Interpretability Results - EleutherAI/pythia-70m-deduped</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            background-color: #f8fafc;
+            color: #1a202c;
+        }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        }
+        .header h1 {
+            margin: 0 0 0.5rem 0;
+            font-size: 2.5rem;
+            font-weight: 600;
+        }
+        .header p {
+            margin: 0;
+            opacity: 0.9;
+            font-size: 1.1rem;
+        }
+        .metadata {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        .metadata h2 {
+            margin: 0 0 1rem 0;
+            color: #2d3748;
+            font-size: 1.3rem;
+        }
+        .metadata-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+        .metadata-item {
+            padding: 0.75rem;
+            background: #f7fafc;
+            border-radius: 6px;
+            border-left: 4px solid #667eea;
+        }
+        .metadata-label {
+            font-weight: 600;
+            color: #4a5568;
+            font-size: 0.9rem;
+            margin-bottom: 0.25rem;
+        }
+        .metadata-value {
+            color: #2d3748;
+            font-family: 'SF Mono', Monaco, monospace;
+            font-size: 0.95rem;
+        }
+        .section {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        .section h2 {
+            margin: 0 0 1rem 0;
+            color: #2d3748;
+            font-size: 1.3rem;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 0.5rem;
+        }
+        .file-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1rem;
+        }
+        .file-card {
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 1rem;
+            transition: all 0.2s ease;
+            background: #fafafa;
+        }
+        .file-card:hover {
+            border-color: #667eea;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .file-card a {
+            text-decoration: none;
+            color: #2d3748;
+            display: block;
+        }
+        .file-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #4a5568;
+        }
+        .file-description {
+            font-size: 0.9rem;
+            color: #718096;
+            line-height: 1.4;
+        }
+        .explanation-preview {
+            font-size: 0.85rem;
+            color: #a0aec0;
+            font-style: italic;
+            margin-top: 0.5rem;
+            line-height: 1.3;
+        }
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            background: #667eea;
+            color: white;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            margin-top: 0.5rem;
+        }
+        .empty-section {
+            text-align: center;
+            color: #a0aec0;
+            font-style: italic;
+            padding: 2rem;
+        }
+        .footer {
+            text-align: center;
+            color: #718096;
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .positive {
+            background-color: #28a745; color: white; padding: 4px 8px; border-radius: 4px; font-size: 0.9em; margin-left: 10px;
+        }
+        .negative {
+            background-color: #dc3545; color: white; padding: 4px 8px; border-radius: 4px; font-size: 0.9em; margin-left: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="metadata">
+        <h2>📋 Run Information</h2>
+        <div class="metadata-grid">
+            <div class="metadata-item">
+                <div class="metadata-label">Model</div>
+                <div class="metadata-value">EleutherAI/pythia-70m-deduped</div>
+            </div>
+            <div class="metadata-item">
+                <div class="metadata-label">Dataset</div>
+                <div class="metadata-value">EleutherAI/the_pile_deduplicated</div>
+            </div>
+            <div class="metadata-item">
+                <div class="metadata-label">Dictionary Size</div>
+                <div class="metadata-value">20</div>
+            </div>
+            <div class="metadata-item">
+                <div class="metadata-label">Layer</div>
+                <div class="metadata-value">0</div>
+            </div>
+            <div class="metadata-item">
+                <div class="metadata-label">Target Token Offset</div>
+                <div class="metadata-value">1</div>
+            </div>
+            <div class="metadata-item">
+                <div class="metadata-label">Generated</div>
+                <div class="metadata-value">2025-08-20 17:39:43</div>
+            </div>
+        </div>
+    </div>
+    <div class="section">
+        <h2>🎯 Feature Direction Visualizations</h2>
+
+        <div class="file-grid">
+                <div class="file-card">
+                    <a href="html/0_positive_visualization.html#threshold=-0.061781320720911026">
+                        <div class="file-title">Direction 0 <span class='positive'> Positive
+                                                                                          </span> </div>
+                        <div class="file-description">
+                            Interactive visualization showing feature activation patterns
+                             • Faithfulness: 83%
+                            <div class="explanation-preview">This feature detects the little “[ … ]( … )”-style and “[ˆn]”-style bracketed markup used for inline links, citations, footnotes and section...</div>
+                        </div>
+                        <span class="badge">Direction</span>
+                    </a>
+                </div>
+                <div class="file-card">
+                    <a href="html/0_negative_visualization.html#threshold=-0.7669117152690887">
+                        <div class="file-title">Direction 0 <span class='negative'> Negative
+                                                                                          </span> </div>
+                        <div class="file-description">
+                            Interactive visualization showing feature activation patterns
+                             • Faithfulness: 50%
+                            <div class="explanation-preview">This neuron seems to mark the single most content-bearing word in a standalone title or headline—i.e. the head noun/verb that names the core topic or...</div>
+                        </div>
+                        <span class="badge">Direction</span>
+                    </a>
+                </div>
+                <div class="file-card">
+                    <a href="html/1_positive_visualization.html#threshold=0.07595263421535492">
+                        <div class="file-title">Direction 1 <span class='positive'> Positive
+                                                                                          </span> </div>
+                        <div class="file-description">
+                            Interactive visualization showing feature activation patterns
+                             • Faithfulness: 92%
+                            <div class="explanation-preview">This feature detects runs of closing‐parenthesis tokens—i.e. clusters of “)” (often two or more in a row) marking the end of nested expressions or...</div>
+                        </div>
+                        <span class="badge">Direction</span>
+                    </a>
+                </div>
+                <div class="file-card">
+                    <a href="html/1_negative_visualization.html#threshold=0.43035757541656494">
+                        <div class="file-title">Direction 1 <span class='negative'> Negative
+                                                                                          </span> </div>
+                        <div class="file-description">
+                            Interactive visualization showing feature activation patterns
+                             • Faithfulness: 84%
+                            <div class="explanation-preview">This feature flags those little parenthetical glosses or tags that immediately follow a term—e.g. acronym expansions, translations or alternate...</div>
+                        </div>
+                        <span class="badge">Direction</span>
+                    </a>
+                </div>
+                <div class="file-card">
+                    <a href="html/2_positive_visualization.html#threshold=-0.01829250156879425">
+                        <div class="file-title">Direction 2 <span class='positive'> Positive
+                                                                                          </span> </div>
+                        <div class="file-description">
+                            Interactive visualization showing feature activation patterns
+                             • Faithfulness: 78%
+                            <div class="explanation-preview">This neuron fires on “boilerplate” or metadata labels in text—proper names and section‐header tokens (journal or website titles like Cureus or...</div>
+                        </div>
+                        <span class="badge">Direction</span>
+                    </a>
+                </div>
+                <div class="file-card">
+                    <a href="html/2_negative_visualization.html#threshold=0.23592635989189148">
+                        <div class="file-title">Direction 2 <span class='negative'> Negative
+                                                                                          </span> </div>
+                        <div class="file-description">
+                            Interactive visualization showing feature activation patterns
+                             • Faithfulness: 62%
+                            <div class="explanation-preview">This neuron flags tokens that are part of section‐ or document‐level headings/titles—the capitalized names, labels or phrases that introduce new...</div>
+                        </div>
+                        <span class="badge">Direction</span>
+                    </a>
+                </div>
+                <div class="file-card">
+                    <a href="html/3_positive_visualization.html#threshold=0.01687408797442913">
+                        <div class="file-title">Direction 3 <span class='positive'> Positive
+                                                                                          </span> </div>
+                        <div class="file-description">
+                            Interactive visualization showing feature activation patterns
+                             • Faithfulness: 69%
+                            <div class="explanation-preview">This feature lights up on small “stance-taking” words—epistemic/discourse markers like intend, probably, guess, know, due, wish, Before, etc.—that...</div>
+                        </div>
+                        <span class="badge">Direction</span>
+                    </a>
+                </div>
+                <div class="file-card">
+                    <a href="html/3_negative_visualization.html#threshold=0.19944238662719727">
+                        <div class="file-title">Direction 3 <span class='negative'> Negative
+                                                                                          </span> </div>
+                        <div class="file-description">
+                            Interactive visualization showing feature activation patterns
+                             • Faithfulness: 55%
+                            <div class="explanation-preview">This feature fires on tokens that serve as the “header” or first word of a new section/heading (be it a news headline, article title, code‐block...</div>
+                        </div>
+                        <span class="badge">Direction</span>
+                    </a>
+                </div>
+                <div class="file-card">
+                    <a href="html/4_positive_visualization.html#threshold=-0.12130381911993027">
+                        <div class="file-title">Direction 4 <span class='positive'> Positive
+                                                                                          </span> </div>
+                        <div class="file-description">
+                            Interactive visualization showing feature activation patterns
+                             • Faithfulness: 68%
+                            <div class="explanation-preview">This neuron is essentially a character‐ngram detector that lights up on common word-ending sequences (i.e. the last few letters of a token). Across...</div>
+                        </div>
+                        <span class="badge">Direction</span>
+                    </a>
+                </div>
+                <div class="file-card">
+                    <a href="html/4_negative_visualization.html#threshold=0.42738936841487885">
+                        <div class="file-title">Direction 4 <span class='negative'> Negative
+                                                                                          </span> </div>
+                        <div class="file-description">
+                            Interactive visualization showing feature activation patterns
+                             • Faithfulness: 79%
+                            <div class="explanation-preview">This feature flags numeric tokens conveying quantitative facts—counts, measures, ages, dates, rates—across diverse technical or factual contexts.</div>
+                        </div>
+                        <span class="badge">Direction</span>
+                    </a>
+                </div>
+                <div class="file-card">
+                    <a href="html/5_positive_visualization.html#threshold=0.024907595477998257">
+                        <div class="file-title">Direction 5 <span class='positive'> Positive
+                                                                                          </span> </div>
+                        <div class="file-description">
+                            Interactive visualization showing feature activation patterns
+                             • Faithfulness: 85%
+                            <div class="explanation-preview">The common thread is that this neuron lights up on the little “linking” words that kick off your main predicate or relation in a news-style sentence....</div>
+                        </div>
+                        <span class="badge">Direction</span>
+                    </a>
+                </div>
+                <div class="file-card">
+                    <a href="html/5_negative_visualization.html#threshold=0.09885767474770546">
+                        <div class="file-title">Direction 5 <span class='negative'> Negative
+                                                                                          </span> </div>
+                        <div class="file-description">
+                            Interactive visualization showing feature activation patterns
+                             • Faithfulness: 61%
+                            <div class="explanation-preview">This feature flags capital‐letter segments (single letters or short uppercase substrings) that form parts of acronyms, codes or proper‐noun tokens in...</div>
+                        </div>
+                        <span class="badge">Direction</span>
+                    </a>
+                </div>
+                <div class="file-card">
+                    <a href="html/6_positive_visualization.html#threshold=0.021954997442662716">
+                        <div class="file-title">Direction 6 <span class='positive'> Positive
+                                                                                          </span> </div>
+                        <div class="file-description">
+                            Interactive visualization showing feature activation patterns
+                             • Faithfulness: 81%
+                            <div class="explanation-preview">This neuron fires on the “root” segments of capitalized proper names (people, places, brands, etc.), picking out common name-formation substrings...</div>
+                        </div>
+                        <span class="badge">Direction</span>
+                    </a>
+                </div>
+                <div class="file-card">
+                    <a href="html/6_negative_visualization.html#threshold=0.18830618262290955">
+                        <div class="file-title">Direction 6 <span class='negative'> Negative
+                                                                                          </span> </div>
+                        <div class="file-description">
+                            Interactive visualization showing feature activation patterns
+                             • Faithfulness: 92%
+                            <div class="explanation-preview">This feature picks out evaluative or comparative language in scientific/technical prose—terms like comparing/compared, effect(s), responsiveness,...</div>
+                        </div>
+                        <span class="badge">Direction</span>
+                    </a>
+                </div>
+                <div class="file-card">
+                    <a href="html/7_positive_visualization.html#threshold=0.07788891345262527">
+                        <div class="file-title">Direction 7 <span class='positive'> Positive
+                                                                                          </span> </div>
+                        <div class="file-description">
+                            Interactive visualization showing feature activation patterns
+                             • Faithfulness: 82%
+                            <div class="explanation-preview">This feature detects personal given names (proper‐noun first names) used as bylines or entity mentions in news‐style and informational text.</div>
+                        </div>
+                        <span class="badge">Direction</span>
+                    </a>
+                </div>
+                <div class="file-card">
+                    <a href="html/7_negative_visualization.html#threshold=0.19325707852840424">
+                        <div class="file-title">Direction 7 <span class='negative'> Negative
+                                                                                          </span> </div>
+                        <div class="file-description">
+                            Interactive visualization showing feature activation patterns
+                             • Faithfulness: 69%
+                            <div class="explanation-preview">This feature fires on the numeral “1” when used as a position marker in ordered sequences or enumeration contexts—e.g. “Page 1 of 1,” “Image 1 of 1,”...</div>
+                        </div>
+                        <span class="badge">Direction</span>
+                    </a>
+                </div>
+                <div class="file-card">
+                    <a href="html/8_positive_visualization.html#threshold=0.008066262118518353">
+                        <div class="file-title">Direction 8 <span class='positive'> Positive
+                                                                                          </span> </div>
+                        <div class="file-description">
+                            Interactive visualization showing feature activation patterns
+                             • Faithfulness: 60%
+                            <div class="explanation-preview">This feature lights up on the initial capitalized span of identifiers or headings—e.g. the first chunk of a PascalCase name (Tracing → “Tr,”...</div>
+                        </div>
+                        <span class="badge">Direction</span>
+                    </a>
+                </div>
+                <div class="file-card">
+                    <a href="html/8_negative_visualization.html#threshold=0.03873644396662712">
+                        <div class="file-title">Direction 8 <span class='negative'> Negative
+                                                                                          </span> </div>
+                        <div class="file-description">
+                            Interactive visualization showing feature activation patterns
+                             • Faithfulness: 59%
+                            <div class="explanation-preview">This neuron is a proper-noun detector: it lights up on name-like tokens (especially surnames or other capitalized entity subwords) across contexts.</div>
+                        </div>
+                        <span class="badge">Direction</span>
+                    </a>
+                </div>
+                <div class="file-card">
+                    <a href="html/9_positive_visualization.html#threshold=-0.051755234599113464">
+                        <div class="file-title">Direction 9 <span class='positive'> Positive
+                                                                                          </span> </div>
+                        <div class="file-description">
+                            Interactive visualization showing feature activation patterns
+                             • Faithfulness: 63%
+                            <div class="explanation-preview">This neuron lights up on the very first word of a new “block” or heading—be it a question opener (“What,” “How,” “Which,” “Today,” “Would”), the...</div>
+                        </div>
+                        <span class="badge">Direction</span>
+                    </a>
+                </div>
+                <div class="file-card">
+                    <a href="html/9_negative_visualization.html#threshold=0.1466320902109146">
+                        <div class="file-title">Direction 9 <span class='negative'> Negative
+                                                                                          </span> </div>
+                        <div class="file-description">
+                            Interactive visualization showing feature activation patterns
+                             • Faithfulness: 83%
+                            <div class="explanation-preview">This neuron fires on isolated single‐letter tokens in all‐caps—e.g. “J,” “R,” “G,” “C,” “V,” “K”—when they occur as initials, abbreviations or lone...</div>
+                        </div>
+                        <span class="badge">Direction</span>
+                    </a>
+                </div>
+        </div>
+    </div>
+    <div class="footer">
+    </div>
+</body>
+</html>

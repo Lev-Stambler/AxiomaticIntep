@@ -1,0 +1,403 @@
+
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">
+<title>Token Activation Similarity Report</title><style>
+body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; padding: 20px; background-color: #f8f9fa; color: #212529; }
+.container { background-color: #ffffff; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.07); }
+h1 { color: #0056b3; text-align: center; margin-bottom: 25px; font-weight: 300;}
+h2 { color: #0056b3; border-bottom: 1px solid #dee2e6; padding-bottom: 10px; margin-top:0; font-size: 1.5em; font-weight: 400; }
+.token { padding: 3px 5px; margin: 2px 1px; border-radius: 4px; display: inline-block; border: 1px solid #ced4da; cursor: default; transition: transform 0.1s ease-out, box-shadow 0.1s ease-out; font-size: 0.9em; line-height: 1.5; }
+.token:hover { transform: translateY(-1px); box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+.token.highlight-window { border: 2px solid #c82333; font-weight: 600; background-color: #f8d7da !important; color: #721c24; }
+.sequence-display { margin-top: 12px; padding: 12px; border: 1px solid #e9ecef; background-color: #f8f9fa; border-radius: 6px; white-space: pre-wrap; word-wrap: break-word; line-height: 1.7; }
+.full-text-display { margin-top: 15px; padding: 10px; border: 1px solid #dfe6e9; background-color: #f9f9f9; border-radius: 6px; white-space: pre-wrap; word-wrap: break-word; line-height: 1.6; font-size: 0.95em; color: #333; }
+.tooltip { position: absolute; background-color: rgba(33,37,41,0.9); color: white; padding: 8px 12px; border-radius: 5px; visibility: hidden; z-index: 1000; pointer-events: none; font-size: 0.85em; max-width: 400px; }
+.details p { margin: 5px 0; font-size: 0.9em; color: #495057; } .details strong { color: #0056b3; }
+.footer-note { font-size: 0.8em; color: #6c757d; text-align: center; margin-top: 30px; }
+.global-max-info { background-color: #e3f2fd; padding: 10px; border-radius: 5px; margin-bottom: 20px; text-align: center; font-size: 0.9em; color: #1565c0; }
+.threshold-control { margin-top: 15px; padding: 10px; background-color: rgba(255,255,255,0.3); border-radius: 6px; }
+.threshold-slider { width: 200px; margin: 0 10px; }
+.threshold-value { font-weight: bold; color: #0056b3; }
+</style></head><body>
+<div class="explanation-section" style="background-color: #f0f8ff; padding: 15px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #0056b3;"><h3 style="color: #0056b3; margin-top: 0;">Feature Explanation</h3><div style="line-height: 1.6; color: #333;">This feature appears to detect and signal boilerplate legal “header” text—specifically standard copyright and filing declarations and related legal citation phrases—that should remain unaltered.</div></div><div class="global-max-info">
+    <strong>Query Type:</strong> 1-token sequences<br>
+    <strong>Query Vector Norms:</strong> ['1.0062']<br>
+    <strong>Global Max Sequence Similarities:</strong> [3.0131049156188965]<br>
+    <div style="margin-top: 10px;">
+        <label style="font-weight: normal; cursor: pointer;">
+            <input type="checkbox" id="normalizeToggle" checked style="margin-right: 8px;">
+            Show Normalized Activations (divide by max per result)
+        </label>
+        <span id="normalizationStatus" style="margin-left: 15px; font-style: italic; color: #666;"></span>
+    </div>
+    <div class="threshold-control">
+        <label style="font-weight: normal;">
+            Activation Cutoff Threshold: <span class="threshold-value" id="thresholdValue">0.000</span>
+        </label><br>
+        <input type="range" id="thresholdSlider" class="threshold-slider"
+               min="0" max="1" step="0.001"
+               value="0.0">
+        <div style="margin-top: 5px; font-size: 0.8em; color: #666;">
+            No faithfulness data available - adjust manually
+        </div>
+    </div>
+</div>
+<div id="tooltip" class="tooltip"></div>
+
+<div class="container" id="container_result_0">
+    <h2>Result 1 (Sample Ref: 6360)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 3.0131</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">"FIL"</span></p>
+        <p><strong>Window Start Position:</strong> 22</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_0"></div>
+    <div class="full-text-display" id="full_text_display_result_0"></div>
+</div>
+<div class="container" id="container_result_1">
+    <h2>Result 2 (Sample Ref: 7880)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 3.0006</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">"FIL"</span></p>
+        <p><strong>Window Start Position:</strong> 22</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_1"></div>
+    <div class="full-text-display" id="full_text_display_result_1"></div>
+</div>
+<div class="container" id="container_result_2">
+    <h2>Result 3 (Sample Ref: 10209)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 2.9387</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">" HEAD"</span></p>
+        <p><strong>Window Start Position:</strong> 37</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_2"></div>
+    <div class="full-text-display" id="full_text_display_result_2"></div>
+</div>
+<div class="container" id="container_result_3">
+    <h2>Result 4 (Sample Ref: 9006)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 2.9361</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">" HEAD"</span></p>
+        <p><strong>Window Start Position:</strong> 37</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_3"></div>
+    <div class="full-text-display" id="full_text_display_result_3"></div>
+</div>
+<div class="container" id="container_result_4">
+    <h2>Result 5 (Sample Ref: 9638)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 2.9318</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">" HEAD"</span></p>
+        <p><strong>Window Start Position:</strong> 37</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_4"></div>
+    <div class="full-text-display" id="full_text_display_result_4"></div>
+</div>
+<div class="container" id="container_result_5">
+    <h2>Result 6 (Sample Ref: 4745)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 2.9288</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">" HEAD"</span></p>
+        <p><strong>Window Start Position:</strong> 37</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_5"></div>
+    <div class="full-text-display" id="full_text_display_result_5"></div>
+</div>
+<div class="container" id="container_result_6">
+    <h2>Result 7 (Sample Ref: 8832)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 2.9216</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">" HEAD"</span></p>
+        <p><strong>Window Start Position:</strong> 37</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_6"></div>
+    <div class="full-text-display" id="full_text_display_result_6"></div>
+</div>
+<div class="container" id="container_result_7">
+    <h2>Result 8 (Sample Ref: 16935)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 2.9103</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">" HEAD"</span></p>
+        <p><strong>Window Start Position:</strong> 37</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_7"></div>
+    <div class="full-text-display" id="full_text_display_result_7"></div>
+</div>
+<div class="container" id="container_result_8">
+    <h2>Result 9 (Sample Ref: 2703)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 2.9065</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">" HEAD"</span></p>
+        <p><strong>Window Start Position:</strong> 37</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_8"></div>
+    <div class="full-text-display" id="full_text_display_result_8"></div>
+</div>
+<div class="container" id="container_result_9">
+    <h2>Result 10 (Sample Ref: 4814)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 2.8947</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">" HEAD"</span></p>
+        <p><strong>Window Start Position:</strong> 37</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_9"></div>
+    <div class="full-text-display" id="full_text_display_result_9"></div>
+</div>
+<div class="container" id="container_result_10">
+    <h2>Result 11 (Sample Ref: 1671)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 2.8158</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">" Cafe"</span></p>
+        <p><strong>Window Start Position:</strong> 19</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_10"></div>
+    <div class="full-text-display" id="full_text_display_result_10"></div>
+</div>
+<div class="container" id="container_result_11">
+    <h2>Result 12 (Sample Ref: 1217)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 2.8004</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">"fav"</span></p>
+        <p><strong>Window Start Position:</strong> 27</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_11"></div>
+    <div class="full-text-display" id="full_text_display_result_11"></div>
+</div>
+<div class="container" id="container_result_12">
+    <h2>Result 13 (Sample Ref: 9877)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 2.7736</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">"fav"</span></p>
+        <p><strong>Window Start Position:</strong> 27</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_12"></div>
+    <div class="full-text-display" id="full_text_display_result_12"></div>
+</div>
+<div class="container" id="container_result_13">
+    <h2>Result 14 (Sample Ref: 4449)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 2.6272</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">"fav"</span></p>
+        <p><strong>Window Start Position:</strong> 30</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_13"></div>
+    <div class="full-text-display" id="full_text_display_result_13"></div>
+</div>
+<div class="container" id="container_result_14">
+    <h2>Result 15 (Sample Ref: 6092)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 2.6112</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">"fav"</span></p>
+        <p><strong>Window Start Position:</strong> 30</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_14"></div>
+    <div class="full-text-display" id="full_text_display_result_14"></div>
+</div>
+<div class="container" id="container_result_15">
+    <h2>Result 16 (Sample Ref: 2251)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 2.5994</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">" FOUR"</span></p>
+        <p><strong>Window Start Position:</strong> 16</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_15"></div>
+    <div class="full-text-display" id="full_text_display_result_15"></div>
+</div>
+<div class="container" id="container_result_16">
+    <h2>Result 17 (Sample Ref: 19129)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 2.5994</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">" FOUR"</span></p>
+        <p><strong>Window Start Position:</strong> 16</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_16"></div>
+    <div class="full-text-display" id="full_text_display_result_16"></div>
+</div>
+<div class="container" id="container_result_17">
+    <h2>Result 18 (Sample Ref: 4791)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 2.5761</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">" Cafe"</span></p>
+        <p><strong>Window Start Position:</strong> 18</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_17"></div>
+    <div class="full-text-display" id="full_text_display_result_17"></div>
+</div>
+<div class="container" id="container_result_18">
+    <h2>Result 19 (Sample Ref: 11669)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 2.5688</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">" HEAD"</span></p>
+        <p><strong>Window Start Position:</strong> 15</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_18"></div>
+    <div class="full-text-display" id="full_text_display_result_18"></div>
+</div>
+<div class="container" id="container_result_19">
+    <h2>Result 20 (Sample Ref: 2156)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 2.5493</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">" FOUR"</span></p>
+        <p><strong>Window Start Position:</strong> 16</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_19"></div>
+    <div class="full-text-display" id="full_text_display_result_19"></div>
+</div>
+<script>
+    const allResultsData = [{"id": "result_0", "sample_idx": 6360, "score": 3.0131049156188965, "highlight_inds": [22], "matched_tokens_str": "FIL", "original_pos": 22, "full_sequence_tokens": ["                        ", "                        ", "         ", "[", "DO", " NOT", " PUBL", "ISH", "]", "\n\n\n", "             ", "IN", " THE", " UNITED", " STATES", " COURT", " OF", " APPEALS", "\n", "                        ", "                        ", "                 ", "FIL", "ED", "\n", "                    ", "FOR", " THE", " E", "LEV", "ENT", "H", " CIRCUIT", " U", ".", "S", ".", " COURT", " OF", " APPEALS", "\n", "                      ", "________________", "________"], "sequence_similarities": [[-2.167133331298828], [-2.167133331298828], [-1.439478874206543], [-1.7341053485870361], [-1.1927597522735596], [-1.9832398891448975], [-0.29314127564430237], [1.1414399147033691], [-0.6732609868049622], [0.6443696022033691], [0.2045716643333435], [0.8974378108978271], [-0.35228395462036133], [1.1489217281341553], [0.8761627674102783], [0.9186062812805176], [0.9037275314331055], [1.1809306144714355], [-1.7502193450927734], [0.9918439984321594], [1.1699302196502686], [0.8761636018753052], [3.0131049156188965], [0.2082366645336151], [-0.7438491582870483], [0.4677310883998871], [0.826751708984375], [-0.5306974649429321], [-0.0307161808013916], [2.0115208625793457], [0.798103392124176], [0.7531079053878784], [0.6379694938659668], [-0.022222161293029785], [0.4111737608909607], [-0.6022257804870605], [-0.7212594151496887], [-0.41204482316970825], [0.48527729511260986], [0.6082626581192017], [-0.7338316440582275], [0.4900326132774353], [0.3714025318622589], [0.8341150879859924]], "normalized_similarities": [[-0.7192359566688538], [-0.7192359566688538], [-0.4777393937110901], [-0.5755210518836975], [-0.3958573639392853], [-0.6582047343254089], [-0.09728877246379852], [0.3788251578807831], [-0.22344425320625305], [0.21385568380355835], [0.06789397448301315], [0.29784485697746277], [-0.11691725254058838], [0.3813082277774811], [0.2907840311527252], [0.3048703372478485], [0.2999323010444641], [0.3919314742088318], [-0.5808690190315247], [0.32917672395706177], [0.38828060030937195], [0.2907842993736267], [1.0], [0.06911032646894455], [-0.24687130749225616], [0.1552322655916214], [0.2743853032588959], [-0.1761297732591629], [-0.010194195434451103], [0.6675907373428345], [0.26487740874290466], [0.24994413554668427], [0.21173158288002014], [-0.007375170011073351], [0.13646180927753448], [-0.199868842959404], [-0.23937414586544037], [-0.13675090670585632], [0.1610555648803711], [0.20187237858772278], [-0.24354666471481323], [0.1626337766647339], [0.12326239794492722], [0.2768290936946869]], "result_max_similarities": 3.0131049156188965, "full_text_display": "                                                         [DO NOT PUBLISH]\n\n\n             IN THE UNITED STATES COURT OF APPEALS\n                                                                 FILED\n                    FOR THE ELEVENTH CIRCUIT U.S. COURT OF APPEALS\n                      ________________________", "K": 1}, {"id": "result_1", "sample_idx": 7880, "score": 3.0006067752838135, "highlight_inds": [22], "matched_tokens_str": "FIL", "original_pos": 22, "full_sequence_tokens": ["                        ", "                        ", "       ", "[", "DO", " NOT", " PUBL", "ISH", "]", "\n\n\n", "              ", "IN", " THE", " UNITED", " STATES", " COURT", " OF", " APPEALS", "\n", "                        ", "                        ", "             ", "FIL", "ED", "\n", "                     ", "FOR", " THE", " E", "LEV", "ENT", "H", " CIRCUIT", " U", ".", "S", ".", " COURT", " OF", " APPEALS", "\n", "                       ", "________________", "________"], "sequence_similarities": [[-2.167133331298828], [-2.167133331298828], [-1.9626917839050293], [-1.6781831979751587], [-1.1675970554351807], [-1.5436879396438599], [-0.03468337655067444], [1.2342989444732666], [-0.5721011757850647], [0.7387298345565796], [0.28291040658950806], [0.9145662188529968], [-0.20931315422058105], [1.1984018087387085], [0.8639687299728394], [1.0055327415466309], [0.9861880540847778], [1.2549952268600464], [-1.8686765432357788], [1.0968677997589111], [1.2867646217346191], [0.8913745880126953], [3.0006067752838135], [0.20392945408821106], [-0.769554853439331], [0.6891616582870483], [0.8779528737068176], [-0.5243813991546631], [0.0011202096939086914], [2.0247299671173096], [0.800857424736023], [0.7760018706321716], [0.6324068903923035], [0.014389902353286743], [0.4415509104728699], [-0.6065728664398193], [-0.7057012319564819], [-0.3893853425979614], [0.5160295963287354], [0.6383548378944397], [-0.809355616569519], [0.5639351010322571], [0.39579278230667114], [0.7833579182624817]], "normalized_similarities": [[-0.7192359566688538], [-0.7192359566688538], [-0.6513851284980774], [-0.5569614171981812], [-0.38750627636909485], [-0.5123246312141418], [-0.011510842479765415], [0.4096435308456421], [-0.18987098336219788], [0.24517229199409485], [0.09389331191778183], [0.3035295009613037], [-0.06946759670972824], [0.39772987365722656], [0.28673702478408813], [0.33371978998184204], [0.3272995948791504], [0.41651228070259094], [-0.6201830506324768], [0.3640323877334595], [0.42705604434013367], [0.2958325743675232], [0.9958520531654358], [0.06768083572387695], [-0.2554025948047638], [0.22872142493724823], [0.2913781404495239], [-0.17403356730937958], [0.0003717791987583041], [0.6719745993614197], [0.2657914161682129], [0.2575422525405884], [0.20988544821739197], [0.004775771871209145], [0.146543487906456], [-0.20131155848503113], [-0.23421064019203186], [-0.1292305886745453], [0.1712617427110672], [0.21185947954654694], [-0.2686118185520172], [0.18716078996658325], [0.1313571184873581], [0.259983628988266]], "result_max_similarities": 3.0131049156188965, "full_text_display": "                                                       [DO NOT PUBLISH]\n\n\n              IN THE UNITED STATES COURT OF APPEALS\n                                                             FILED\n                     FOR THE ELEVENTH CIRCUIT U.S. COURT OF APPEALS\n                       ________________________", "K": 1}, {"id": "result_2", "sample_idx": 10209, "score": 2.9386839866638184, "highlight_inds": [37], "matched_tokens_str": " HEAD", "original_pos": 37, "full_sequence_tokens": ["/*", "\n", " *", " Copyright", " (", "c", ")", " 2005", ",", " 2006", ",", " Oracle", " and", "/", "or", " its", " affiliates", ".", " All", " rights", " reserved", ".", "\n", " *", " DO", " NOT", " AL", "TER", " OR", " REM", "OVE", " COPYRIGHT", " NOT", "ICES", " OR", " THIS", " FILE", " HEAD", "ER", ".", "\n", " *", "\n", " *"], "sequence_similarities": [[-1.2912378311157227], [-4.437568664550781], [-2.242030143737793], [-0.07445982098579407], [-1.1742730140686035], [-0.3757127523422241], [-0.7788776159286499], [0.33627310395240784], [-1.6275064945220947], [0.270194411277771], [-1.3667479753494263], [-0.22244980931282043], [-1.2710397243499756], [-0.19418641924858093], [-0.2937691807746887], [-0.9920513033866882], [0.8209702968597412], [-0.9727115631103516], [0.27163276076316833], [1.430330753326416], [0.9696892499923706], [-1.0644736289978027], [-1.0591051578521729], [-0.824410617351532], [0.4417259693145752], [0.4350510239601135], [-0.1435401439666748], [0.8448135852813721], [0.6125364303588867], [0.2667250633239746], [-1.5201430320739746], [0.7806005477905273], [-0.1537032425403595], [1.9744807481765747], [0.4976835250854492], [0.48037412762641907], [1.497848629951477], [2.9386839866638184], [-0.8087258338928223], [-0.8340001106262207], [-0.44649919867515564], [-0.2847267985343933], [-0.7402870059013367], [-0.38056379556655884]], "normalized_similarities": [[-0.4285406172275543], [-1.4727561473846436], [-0.7440929412841797], [-0.024711990728974342], [-0.38972190022468567], [-0.1246928870677948], [-0.2584966719150543], [0.1116035133600235], [-0.5401426553726196], [0.08967308700084686], [-0.4536011815071106], [-0.07382743805646896], [-0.42183718085289], [-0.06444728374481201], [-0.09749716520309448], [-0.32924553751945496], [0.2724665403366089], [-0.32282698154449463], [0.09015044569969177], [0.47470328211784363], [0.32182392477989197], [-0.35328128933906555], [-0.3514995872974396], [-0.27360832691192627], [0.1466015875339508], [0.14438629150390625], [-0.04763861373066902], [0.2803797423839569], [0.20329077541828156], [0.08852166682481766], [-0.5045104622840881], [0.25906848907470703], [-0.0510115809738636], [0.6552976965904236], [0.1651729792356491], [0.15942828357219696], [0.49711135029792786], [0.9753009080886841], [-0.2684028148651123], [-0.27679091691970825], [-0.14818574488162994], [-0.09449614584445953], [-0.24568909406661987], [-0.12630286812782288]], "result_max_similarities": 3.0131049156188965, "full_text_display": "/*\n * Copyright (c) 2005, 2006, Oracle and/or its affiliates. All rights reserved.\n * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n *\n *", "K": 1}, {"id": "result_3", "sample_idx": 9006, "score": 2.9361233711242676, "highlight_inds": [37], "matched_tokens_str": " HEAD", "original_pos": 37, "full_sequence_tokens": ["/*", "\n", " *", " Copyright", " (", "c", ")", " 2015", ",", " 2017", ",", " Oracle", " and", "/", "or", " its", " affiliates", ".", " All", " rights", " reserved", ".", "\n", " *", " DO", " NOT", " AL", "TER", " OR", " REM", "OVE", " COPYRIGHT", " NOT", "ICES", " OR", " THIS", " FILE", " HEAD", "ER", ".", "\n", " *", "\n", " *"], "sequence_similarities": [[-1.2912378311157227], [-4.437568664550781], [-2.242030143737793], [-0.07445982098579407], [-1.1742730140686035], [-0.3757127523422241], [-0.7788776159286499], [0.25641462206840515], [-1.7685165405273438], [0.1598842740058899], [-1.3013019561767578], [-0.01069408655166626], [-1.150368332862854], [-0.09536245465278625], [-0.18533039093017578], [-1.0734872817993164], [0.9347305297851562], [-0.9411417245864868], [0.37735339999198914], [1.5790927410125732], [1.0390154123306274], [-1.0419363975524902], [-1.0768977403640747], [-0.7232064008712769], [0.4968176782131195], [0.4371063709259033], [-0.09408849477767944], [0.8434398174285889], [0.6305217742919922], [0.26442331075668335], [-1.5096555948257446], [0.8084700703620911], [-0.1413193792104721], [1.9846584796905518], [0.5178155303001404], [0.49051958322525024], [1.4937149286270142], [2.9361233711242676], [-0.8123966455459595], [-0.832884669303894], [-0.4508982002735138], [-0.2708680033683777], [-0.7580169439315796], [-0.3774430751800537]], "normalized_similarities": [[-0.4285406172275543], [-1.4727561473846436], [-0.7440929412841797], [-0.024711990728974342], [-0.38972190022468567], [-0.1246928870677948], [-0.2584966719150543], [0.08509980142116547], [-0.5869415998458862], [0.05306296423077583], [-0.43188074231147766], [-0.0035491916351020336], [-0.38178834319114685], [-0.031649231910705566], [-0.06150811165571213], [-0.35627278685569763], [0.31022170186042786], [-0.31234946846961975], [0.1252373903989792], [0.524074912071228], [0.3448321521282196], [-0.34580156207084656], [-0.3574046492576599], [-0.24002031981945038], [0.16488562524318695], [0.14506842195987701], [-0.031226424500346184], [0.27992382645606995], [0.20925980806350708], [0.08775775134563446], [-0.501029908657074], [0.26831793785095215], [-0.046901579946279526], [0.6586755514144897], [0.17185446619987488], [0.16279539465904236], [0.4957394301891327], [0.9744510650634766], [-0.2696211040019989], [-0.2764207422733307], [-0.14964570105075836], [-0.08989664167165756], [-0.2515733540058136], [-0.1252671480178833]], "result_max_similarities": 3.0131049156188965, "full_text_display": "/*\n * Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.\n * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n *\n *", "K": 1}, {"id": "result_4", "sample_idx": 9638, "score": 2.9318151473999023, "highlight_inds": [37], "matched_tokens_str": " HEAD", "original_pos": 37, "full_sequence_tokens": ["/*", "\n", " *", " Copyright", " (", "c", ")", " 2007", ",", " 2012", ",", " Oracle", " and", "/", "or", " its", " affiliates", ".", " All", " rights", " reserved", ".", "\n", " *", " DO", " NOT", " AL", "TER", " OR", " REM", "OVE", " COPYRIGHT", " NOT", "ICES", " OR", " THIS", " FILE", " HEAD", "ER", ".", "\n", " *", "\n", " *"], "sequence_similarities": [[-1.2912378311157227], [-4.437568664550781], [-2.242030143737793], [-0.07445982098579407], [-1.1742730140686035], [-0.3757127523422241], [-0.7788776159286499], [0.5317313075065613], [-1.6649760007858276], [0.25100699067115784], [-1.3984415531158447], [-0.2849099636077881], [-1.2126638889312744], [-0.1276228427886963], [-0.23790094256401062], [-1.0344970226287842], [0.8662427663803101], [-0.9324866533279419], [0.2989877760410309], [1.5035083293914795], [0.9816520810127258], [-1.045695185661316], [-1.0724226236343384], [-0.7967619299888611], [0.4641001224517822], [0.4266151189804077], [-0.11037272214889526], [0.8426793217658997], [0.6191908121109009], [0.25936654210090637], [-1.5233609676361084], [0.7852267622947693], [-0.14604611694812775], [1.9784629344940186], [0.5043753385543823], [0.5041944980621338], [1.4843648672103882], [2.9318151473999023], [-0.8099385499954224], [-0.8203385472297668], [-0.44385653734207153], [-0.2786683440208435], [-0.7414177656173706], [-0.3776763081550598]], "normalized_similarities": [[-0.4285406172275543], [-1.4727561473846436], [-0.7440929412841797], [-0.024711990728974342], [-0.38972190022468567], [-0.1246928870677948], [-0.2584966719150543], [0.17647288739681244], [-0.5525781512260437], [0.08330509811639786], [-0.4641197621822357], [-0.09455693513154984], [-0.40246322751045227], [-0.04235592484474182], [-0.07895541191101074], [-0.34333255887031555], [0.28749173879623413], [-0.3094770014286041], [0.0992291271686554], [0.49898970127105713], [0.32579419016838074], [-0.3470490574836731], [-0.3559194505214691], [-0.2644321918487549], [0.15402720868587494], [0.1415865421295166], [-0.036630891263484955], [0.27967143058776855], [0.20549924671649933], [0.08607949316501617], [-0.5055784583091736], [0.2606038451194763], [-0.048470307141542435], [0.6566193103790283], [0.16739387810230255], [0.16733387112617493], [0.4926362931728363], [0.9730212688446045], [-0.26880529522895813], [-0.27225688099861145], [-0.14730869233608246], [-0.0924854427576065], [-0.24606436491012573], [-0.12534455955028534]], "result_max_similarities": 3.0131049156188965, "full_text_display": "/*\n * Copyright (c) 2007, 2012, Oracle and/or its affiliates. All rights reserved.\n * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n *\n *", "K": 1}, {"id": "result_5", "sample_idx": 4745, "score": 2.928849220275879, "highlight_inds": [37], "matched_tokens_str": " HEAD", "original_pos": 37, "full_sequence_tokens": ["/*", "\n", " *", " Copyright", " (", "c", ")", " 2010", ",", " 2014", ",", " Oracle", " and", "/", "or", " its", " affiliates", ".", " All", " rights", " reserved", ".", "\n", " *", " DO", " NOT", " AL", "TER", " OR", " REM", "OVE", " COPYRIGHT", " NOT", "ICES", " OR", " THIS", " FILE", " HEAD", "ER", ".", "\n", " *", "\n", " *"], "sequence_similarities": [[-1.2912378311157227], [-4.437568664550781], [-2.242030143737793], [-0.07445982098579407], [-1.1742730140686035], [-0.3757127523422241], [-0.7788776159286499], [0.23704689741134644], [-1.7620126008987427], [0.5031747817993164], [-1.4391109943389893], [-0.17728596925735474], [-1.285308837890625], [-0.12194067239761353], [-0.2838573455810547], [-1.0707449913024902], [0.8610714673995972], [-0.9652541875839233], [0.2984484136104584], [1.5089253187179565], [1.0324519872665405], [-1.0793943405151367], [-1.129045009613037], [-0.8391578197479248], [0.43967437744140625], [0.4268471598625183], [-0.12257963418960571], [0.848436176776886], [0.6131802201271057], [0.2568179965019226], [-1.525244951248169], [0.7799946665763855], [-0.1629379540681839], [1.9849673509597778], [0.5019581913948059], [0.49296319484710693], [1.497042179107666], [2.928849220275879], [-0.8099722862243652], [-0.8365811705589294], [-0.4614412784576416], [-0.28482484817504883], [-0.7557434439659119], [-0.38364672660827637]], "normalized_similarities": [[-0.4285406172275543], [-1.4727561473846436], [-0.7440929412841797], [-0.024711990728974342], [-0.38972190022468567], [-0.1246928870677948], [-0.2584966719150543], [0.07867196947336197], [-0.5847830176353455], [0.16699543595314026], [-0.4776172935962677], [-0.05883830040693283], [-0.42657288908958435], [-0.04047010466456413], [-0.09420758485794067], [-0.3553626537322998], [0.28577548265457153], [-0.3203519880771637], [0.0990501269698143], [0.5007874965667725], [0.3426538407802582], [-0.358233243227005], [-0.3747114837169647], [-0.2785027027130127], [0.14592069387435913], [0.1416635513305664], [-0.04068216681480408], [0.2815820276737213], [0.20350444316864014], [0.085233673453331], [-0.5062037110328674], [0.25886741280555725], [-0.0540764294564724], [0.6587780117988586], [0.16659167408943176], [0.16360637545585632], [0.49684369564056396], [0.9720368981361389], [-0.2688165009021759], [-0.27764755487442017], [-0.15314477682113647], [-0.0945286825299263], [-0.25081881880760193], [-0.12732604146003723]], "result_max_similarities": 3.0131049156188965, "full_text_display": "/*\n * Copyright (c) 2010, 2014, Oracle and/or its affiliates. All rights reserved.\n * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n *\n *", "K": 1}, {"id": "result_6", "sample_idx": 8832, "score": 2.9215612411499023, "highlight_inds": [37], "matched_tokens_str": " HEAD", "original_pos": 37, "full_sequence_tokens": ["/*", "\n", " *", " Copyright", " (", "c", ")", " 2000", ",", " 2004", ",", " Oracle", " and", "/", "or", " its", " affiliates", ".", " All", " rights", " reserved", ".", "\n", " *", " DO", " NOT", " AL", "TER", " OR", " REM", "OVE", " COPYRIGHT", " NOT", "ICES", " OR", " THIS", " FILE", " HEAD", "ER", ".", "\n", " *", "\n", " *"], "sequence_similarities": [[-1.2912378311157227], [-4.437568664550781], [-2.242030143737793], [-0.07445982098579407], [-1.1742730140686035], [-0.3757127523422241], [-0.7788776159286499], [0.2978648543357849], [-1.8620786666870117], [0.174055814743042], [-1.6255110502243042], [-0.28088676929473877], [-1.292008876800537], [-0.1679949164390564], [-0.3409569561481476], [-1.1174696683883667], [0.7676396369934082], [-1.0036171674728394], [0.2408202886581421], [1.3858307600021362], [0.9901466965675354], [-1.0890848636627197], [-1.0798852443695068], [-0.7950081825256348], [0.38897204399108887], [0.4216937720775604], [-0.17251449823379517], [0.8286811113357544], [0.6057498455047607], [0.23673364520072937], [-1.537165641784668], [0.7504292726516724], [-0.1658094823360443], [1.96979558467865], [0.4999426305294037], [0.4627532362937927], [1.4954255819320679], [2.9215612411499023], [-0.8285313248634338], [-0.8580043315887451], [-0.4660736918449402], [-0.28290948271751404], [-0.7509068250656128], [-0.38155102729797363]], "normalized_similarities": [[-0.4285406172275543], [-1.4727561473846436], [-0.7440929412841797], [-0.024711990728974342], [-0.38972190022468567], [-0.1246928870677948], [-0.2584966719150543], [0.09885644912719727], [-0.6179932951927185], [0.05776626244187355], [-0.5394803881645203], [-0.09322170168161392], [-0.4287964999675751], [-0.05575475096702576], [-0.11315800994634628], [-0.37086981534957886], [0.25476697087287903], [-0.3330840468406677], [0.07992429286241531], [0.45993444323539734], [0.32861340045928955], [-0.36144936084747314], [-0.35839617252349854], [-0.2638501524925232], [0.12909342348575592], [0.13995322585105896], [-0.05725472792983055], [0.2750256359577179], [0.2010384202003479], [0.0785680040717125], [-0.5101600289344788], [0.2490551471710205], [-0.05502944067120552], [0.653742790222168], [0.16592274606227875], [0.1535801887512207], [0.4963071644306183], [0.9696181416511536], [-0.2749759256839752], [-0.284757524728775], [-0.1546822041273117], [-0.09389300644397736], [-0.24921363592147827], [-0.1266305148601532]], "result_max_similarities": 3.0131049156188965, "full_text_display": "/*\n * Copyright (c) 2000, 2004, Oracle and/or its affiliates. All rights reserved.\n * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n *\n *", "K": 1}, {"id": "result_7", "sample_idx": 16935, "score": 2.9103147983551025, "highlight_inds": [37], "matched_tokens_str": " HEAD", "original_pos": 37, "full_sequence_tokens": ["/*", "\n", " *", " Copyright", " (", "c", ")", " 1997", ",", " 2019", ",", " Oracle", " and", "/", "or", " its", " affiliates", ".", " All", " rights", " reserved", ".", "\n", " *", " DO", " NOT", " AL", "TER", " OR", " REM", "OVE", " COPYRIGHT", " NOT", "ICES", " OR", " THIS", " FILE", " HEAD", "ER", ".", "\n", " *", "\n", " *"], "sequence_similarities": [[-1.2912378311157227], [-4.437568664550781], [-2.242030143737793], [-0.07445982098579407], [-1.1742730140686035], [-0.3757127523422241], [-0.7788776159286499], [0.624527096748352], [-1.5627243518829346], [0.545569121837616], [-1.601563811302185], [-0.12437522411346436], [-1.1546748876571655], [-0.05229759216308594], [-0.20177647471427917], [-0.9676805734634399], [0.8626912832260132], [-0.9242143630981445], [0.35641035437583923], [1.5510461330413818], [1.0982943773269653], [-1.017845869064331], [-1.0452967882156372], [-0.7197522521018982], [0.5100274682044983], [0.47384509444236755], [-0.09422910213470459], [0.8631842732429504], [0.6394554972648621], [0.2724725008010864], [-1.5025027990341187], [0.8243999481201172], [-0.1387680321931839], [2.0009589195251465], [0.5214502811431885], [0.49461430311203003], [1.5092883110046387], [2.9103147983551025], [-0.8231101036071777], [-0.8530378937721252], [-0.4634188115596771], [-0.2683763802051544], [-0.7582837343215942], [-0.3761672079563141]], "normalized_similarities": [[-0.4285406172275543], [-1.4727561473846436], [-0.7440929412841797], [-0.024711990728974342], [-0.38972190022468567], [-0.1246928870677948], [-0.2584966719150543], [0.2072702795267105], [-0.5186425447463989], [0.1810654252767563], [-0.5315327048301697], [-0.04127809405326843], [-0.38321760296821594], [-0.017356710508465767], [-0.06696629524230957], [-0.3211572766304016], [0.2863130569458008], [-0.30673155188560486], [0.11828673630952835], [0.5147666931152344], [0.3645058572292328], [-0.3378063142299652], [-0.3469168245792389], [-0.2388739436864853], [0.16926974058151245], [0.15726140141487122], [-0.03127308934926987], [0.28647667169570923], [0.21222476661205292], [0.0904291421175003], [-0.4986559748649597], [0.27360478043556213], [-0.04605482891201973], [0.6640853881835938], [0.17306077480316162], [0.16415435075759888], [0.5009079575538635], [0.9658856391906738], [-0.27317672967910767], [-0.28310924768447876], [-0.1538010835647583], [-0.08906970918178558], [-0.25166189670562744], [-0.12484371662139893]], "result_max_similarities": 3.0131049156188965, "full_text_display": "/*\n * Copyright (c) 1997, 2019, Oracle and/or its affiliates. All rights reserved.\n * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n *\n *", "K": 1}, {"id": "result_8", "sample_idx": 2703, "score": 2.906513214111328, "highlight_inds": [37], "matched_tokens_str": " HEAD", "original_pos": 37, "full_sequence_tokens": ["/*", "\n", " *", " Copyright", " (", "c", ")", " 1997", ",", " 2013", ",", " Oracle", " and", "/", "or", " its", " affiliates", ".", " All", " rights", " reserved", ".", "\n", " *", " DO", " NOT", " AL", "TER", " OR", " REM", "OVE", " COPYRIGHT", " NOT", "ICES", " OR", " THIS", " FILE", " HEAD", "ER", ".", "\n", " *", "\n", " *"], "sequence_similarities": [[-1.2912378311157227], [-4.437568664550781], [-2.242030143737793], [-0.07445982098579407], [-1.1742730140686035], [-0.3757127523422241], [-0.7788776159286499], [0.624527096748352], [-1.5627243518829346], [0.5635615587234497], [-1.4967224597930908], [-0.2194635272026062], [-1.239194631576538], [-0.08550277352333069], [-0.2614867389202118], [-1.0007060766220093], [0.8223277926445007], [-0.9302499294281006], [0.31128671765327454], [1.5082972049713135], [1.0687044858932495], [-1.050114631652832], [-1.0545454025268555], [-0.7328691482543945], [0.4576071500778198], [0.45079511404037476], [-0.11976063251495361], [0.8536646366119385], [0.6298099756240845], [0.2672271132469177], [-1.5177468061447144], [0.8044052124023438], [-0.14522427320480347], [1.9900317192077637], [0.5143924951553345], [0.4990358352661133], [1.5055015087127686], [2.906513214111328], [-0.8386231660842896], [-0.8512454628944397], [-0.46460235118865967], [-0.27902424335479736], [-0.7607080340385437], [-0.3845513164997101]], "normalized_similarities": [[-0.4285406172275543], [-1.4727561473846436], [-0.7440929412841797], [-0.024711990728974342], [-0.38972190022468567], [-0.1246928870677948], [-0.2584966719150543], [0.2072702795267105], [-0.5186425447463989], [0.18703681230545044], [-0.49673759937286377], [-0.07283633947372437], [-0.41126832365989685], [-0.02837696485221386], [-0.08678314834833145], [-0.33211788535118103], [0.27291709184646606], [-0.308734655380249], [0.10331094264984131], [0.5005790591239929], [0.3546854555606842], [-0.3485157787799835], [-0.3499862849712372], [-0.24322722852230072], [0.15187229216098785], [0.1496114879846573], [-0.03974658623337746], [0.2833172678947449], [0.209023579955101], [0.08868828415870667], [-0.5037152171134949], [0.26696887612342834], [-0.04819754883646965], [0.6604588031768799], [0.17071841657161713], [0.1656217873096466], [0.4996511936187744], [0.9646239876747131], [-0.27832525968551636], [-0.28251439332962036], [-0.15419387817382812], [-0.09260355681180954], [-0.25246649980545044], [-0.12762625515460968]], "result_max_similarities": 3.0131049156188965, "full_text_display": "/*\n * Copyright (c) 1997, 2013, Oracle and/or its affiliates. All rights reserved.\n * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n *\n *", "K": 1}, {"id": "result_9", "sample_idx": 4814, "score": 2.89467453956604, "highlight_inds": [37], "matched_tokens_str": " HEAD", "original_pos": 37, "full_sequence_tokens": ["/*", "\n", " *", " Copyright", " (", "c", ")", " 2018", ",", " Oracle", " and", "/", "or", " its", " affiliates", ".", " All", " rights", " reserved", ".", "\n", " *", " \n", " *", " DO", " NOT", " AL", "TER", " OR", " REM", "OVE", " COPYRIGHT", " NOT", "ICES", " OR", " THIS", " FILE", " HEAD", "ER", ".", "\n", " *", "\n", " *"], "sequence_similarities": [[-1.2912378311157227], [-4.437568664550781], [-2.242030143737793], [-0.07445982098579407], [-1.1742730140686035], [-0.3757127523422241], [-0.7788776159286499], [0.44087791442871094], [-1.7960585355758667], [-0.5311700105667114], [-1.0425195693969727], [-0.08154496550559998], [-0.3584330081939697], [-1.1440801620483398], [0.6695265769958496], [-0.839055061340332], [0.2680085599422455], [1.3759287595748901], [1.0283173322677612], [-1.016176462173462], [-1.0744622945785522], [-0.7328106760978699], [-1.0145134925842285], [-0.7518628835678101], [0.3802310824394226], [0.3426954448223114], [-0.197720468044281], [0.8571537137031555], [0.6144815683364868], [0.2917795777320862], [-1.549489140510559], [0.7466027736663818], [-0.18899555504322052], [1.9462802410125732], [0.47366297245025635], [0.49491608142852783], [1.471981167793274], [2.89467453956604], [-0.8764006495475769], [-0.7388307452201843], [-0.3290279507637024], [-0.22382307052612305], [-0.6599770188331604], [-0.3032304644584656]], "normalized_similarities": [[-0.4285406172275543], [-1.4727561473846436], [-0.7440929412841797], [-0.024711990728974342], [-0.38972190022468567], [-0.1246928870677948], [-0.2584966719150543], [0.1463201344013214], [-0.596082329750061], [-0.17628659307956696], [-0.34599509835243225], [-0.027063433080911636], [-0.11895802617073059], [-0.3797014057636261], [0.22220486402511597], [-0.2784685790538788], [0.08894763886928558], [0.4566481411457062], [0.34128162264823914], [-0.33725225925445557], [-0.3565963804721832], [-0.24320781230926514], [-0.33670035004615784], [-0.24953094124794006], [0.12619245052337646], [0.11373498290777206], [-0.06562017649412155], [0.2844752371311188], [0.20393633842468262], [0.09683685004711151], [-0.5142499804496765], [0.24778519570827484], [-0.0627245157957077], [0.6459383964538574], [0.15720096230506897], [0.16425451636314392], [0.4885263442993164], [0.9606949090957642], [-0.2908629775047302], [-0.24520577490329742], [-0.10919897258281708], [-0.07428319752216339], [-0.21903552114963531], [-0.10063720494508743]], "result_max_similarities": 3.0131049156188965, "full_text_display": "/*\n * Copyright (c) 2018, Oracle and/or its affiliates. All rights reserved.\n * \n * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n *\n *", "K": 1}, {"id": "result_10", "sample_idx": 1671, "score": 2.8157594203948975, "highlight_inds": [19], "matched_tokens_str": " Cafe", "original_pos": 19, "full_sequence_tokens": ["Send", " me", " email", " updates", " about", " messages", " I", "&#x27;ve", " received", "\n", "on", " the", " site", " and", " the", " latest", " news", " from", " The", " Cafe", "Mom", " Team", ".", "By", " signing", " up", ",", " you", " cert", "ify", " that", "\n", "you", " are", " female", " and", " accept", " the", " Terms", " of", " Service", " and", " have", " read"], "sequence_similarities": [[-3.87541127204895], [-0.9112095832824707], [-0.9185830950737], [-2.392136812210083], [-1.3110003471374512], [-2.2933595180511475], [-1.3787989616394043], [-1.1555423736572266], [-1.4819397926330566], [-3.2595860958099365], [-0.2692905068397522], [-1.6430352926254272], [-1.6731643676757812], [-1.0547778606414795], [-1.8235520124435425], [-1.4937207698822021], [-1.7155766487121582], [-1.4556320905685425], [-1.710717797279358], [2.8157594203948975], [-2.066696882247925], [-0.8067242503166199], [-1.207198143005371], [-1.322869062423706], [-0.39064115285873413], [-0.975563645362854], [-1.7335305213928223], [-1.2672781944274902], [-0.32666727900505066], [-0.6586799025535583], [-0.7628243565559387], [-1.0747488737106323], [-2.066044330596924], [-1.9700995683670044], [-1.5229805707931519], [-1.4555500745773315], [-0.8983715176582336], [-1.6575942039489746], [-0.24833160638809204], [0.5738061666488647], [0.36163192987442017], [-1.4522113800048828], [-1.5701550245285034], [0.09433794021606445]], "normalized_similarities": [[-1.2861852645874023], [-0.30241549015045166], [-0.3048626184463501], [-0.7939109206199646], [-0.4350994825363159], [-0.761128306388855], [-0.4576007127761841], [-0.38350552320480347], [-0.4918314516544342], [-1.0818030834197998], [-0.08937309682369232], [-0.5452964305877686], [-0.5552957653999329], [-0.3500634431838989], [-0.6052069664001465], [-0.4957413673400879], [-0.5693717002868652], [-0.48310035467147827], [-0.567759096622467], [0.9345042705535889], [-0.6859027147293091], [-0.2677385210990906], [-0.40064921975135803], [-0.43903848528862], [-0.1296473741531372], [-0.3237735331058502], [-0.5753303170204163], [-0.42058879137039185], [-0.10841549932956696], [-0.21860502660274506], [-0.25316888093948364], [-0.35669147968292236], [-0.6856861710548401], [-0.6538436412811279], [-0.5054522156715393], [-0.4830731451511383], [-0.29815474152565], [-0.5501282811164856], [-0.08241717517375946], [0.19043684005737305], [0.12001969665288925], [-0.4819650948047638], [-0.5211086273193359], [0.03130921348929405]], "result_max_similarities": 3.0131049156188965, "full_text_display": "Send me email updates about messages I&#x27;ve received\non the site and the latest news from The CafeMom Team.By signing up, you certify that\nyou are female and accept the Terms of Service and have read", "K": 1}, {"id": "result_11", "sample_idx": 1217, "score": 2.800386428833008, "highlight_inds": [27], "matched_tokens_str": "fav", "original_pos": 27, "full_sequence_tokens": ["70", " F", ".", "3", "d", " 12", "63", "\n", "NOT", "ICE", ":", " Fourth", " Circuit", " Local", " Rule", " 36", "(", "c", ")", " states", " that", " citation", " of", " unpublished", " dispositions", " is", " dis", "fav", "ored", " except", " for", " establishing", " res", " judicata", ",", " estoppel", ",", " or", " the", " law", " of", " the", " case", " and"], "sequence_similarities": [[-3.836881160736084], [-3.997421979904175], [-6.5230631828308105], [-1.476118803024292], [-1.3534727096557617], [-1.5042462348937988], [-1.4144206047058105], [-1.8052082061767578], [-2.6178059577941895], [-0.33270251750946045], [-1.326078176498413], [0.38564491271972656], [1.61393141746521], [-1.0278959274291992], [2.0015246868133545], [-0.14850834012031555], [0.6922898292541504], [-0.49500155448913574], [-0.021077901124954224], [-0.9374265670776367], [-0.990415096282959], [1.1203662157058716], [-0.3183554708957672], [1.3329027891159058], [1.1509132385253906], [-1.3587768077850342], [-0.06471610069274902], [2.800386428833008], [-0.5643685460090637], [1.2036080360412598], [-0.013983964920043945], [-1.0072041749954224], [-0.49168330430984497], [0.29787033796310425], [-1.6150803565979004], [2.263658046722412], [-0.840985119342804], [0.22376155853271484], [-0.39294448494911194], [0.001032896339893341], [-0.1942446231842041], [-1.2191892862319946], [-0.7496956586837769], [-0.23990845680236816]], "normalized_similarities": [[-1.2733978033065796], [-1.3266786336898804], [-2.1648974418640137], [-0.48989957571029663], [-0.44919535517692566], [-0.4992346167564392], [-0.46942296624183655], [-0.5991189479827881], [-0.868806779384613], [-0.11041849851608276], [-0.44010356068611145], [0.12798920273780823], [0.5356373190879822], [-0.3411417603492737], [0.6642731428146362], [-0.049287475645542145], [0.22975961863994598], [-0.1642828732728958], [-0.006995408795773983], [-0.31111645698547363], [-0.32870247960090637], [0.37183111906051636], [-0.1056569516658783], [0.4423685371875763], [0.3819691836833954], [-0.45095568895339966], [-0.021478209644556046], [0.929402232170105], [-0.18730464577674866], [0.399457722902298], [-0.004641048144549131], [-0.3342745006084442], [-0.1631816029548645], [0.09885826706886292], [-0.5360186100006104], [0.7512708902359009], [-0.2791091501712799], [0.07426278293132782], [-0.13041181862354279], [0.00034280132967978716], [-0.06446659564971924], [-0.4046288728713989], [-0.24881166219711304], [-0.07962167263031006]], "result_max_similarities": 3.0131049156188965, "full_text_display": "70 F.3d 1263\nNOTICE: Fourth Circuit Local Rule 36(c) states that citation of unpublished dispositions is disfavored except for establishing res judicata, estoppel, or the law of the case and", "K": 1}, {"id": "result_12", "sample_idx": 9877, "score": 2.7735626697540283, "highlight_inds": [27], "matched_tokens_str": "fav", "original_pos": 27, "full_sequence_tokens": ["92", " F", ".", "3", "d", " 117", "8", "\n", "NOT", "ICE", ":", " Fourth", " Circuit", " Local", " Rule", " 36", "(", "c", ")", " states", " that", " citation", " of", " unpublished", " dispositions", " is", " dis", "fav", "ored", " except", " for", " establishing", " res", " judicata", ",", " estoppel", ",", " or", " the", " law", " of", " the", " case", " and"], "sequence_similarities": [[-4.789058685302734], [-3.994899272918701], [-6.390566349029541], [-1.4096498489379883], [-1.339012861251831], [-1.140804409980774], [-1.4084248542785645], [-1.6746455430984497], [-2.626617431640625], [-0.3729466199874878], [-1.317792534828186], [0.4078710675239563], [1.5564541816711426], [-1.0198737382888794], [1.982224702835083], [-0.24049973487854004], [0.7251238822937012], [-0.48984548449516296], [0.0007142424583435059], [-0.9101396203041077], [-0.9891279339790344], [1.1462231874465942], [-0.3135282099246979], [1.323155164718628], [1.1519527435302734], [-1.350356936454773], [-0.06769120693206787], [2.7735626697540283], [-0.5717920064926147], [1.17349112033844], [-0.017538070678710938], [-1.0325515270233154], [-0.5202841758728027], [0.28880995512008667], [-1.6188119649887085], [2.249161720275879], [-0.8427236080169678], [0.21558484435081482], [-0.3979475796222687], [-0.010991983115673065], [-0.20071697235107422], [-1.222050666809082], [-0.7590887546539307], [-0.2529051899909973]], "normalized_similarities": [[-1.5894098281860352], [-1.3258414268493652], [-2.1209239959716797], [-0.46783962845802307], [-0.44439634680747986], [-0.37861424684524536], [-0.46743306517601013], [-0.5557873249053955], [-0.871731162071228], [-0.12377485632896423], [-0.4373536705970764], [0.13536570966243744], [0.5165615677833557], [-0.33847934007644653], [0.6578677892684937], [-0.07981790602207184], [0.24065670371055603], [-0.16257166862487793], [0.00023704532941337675], [-0.30206039547920227], [-0.32827529311180115], [0.38041263818740845], [-0.10405486077070236], [0.4391334652900696], [0.38231417536735535], [-0.4481612741947174], [-0.022465599700808525], [0.920499861240387], [-0.18976837396621704], [0.389462411403656], [-0.005820597521960735], [-0.34268689155578613], [-0.172673761844635], [0.09585127979516983], [-0.5372570753097534], [0.7464597821235657], [-0.2796861231327057], [0.07154906541109085], [-0.13207225501537323], [-0.0036480585113167763], [-0.06661466509103775], [-0.40557852387428284], [-0.25192907452583313], [-0.08393507450819016]], "result_max_similarities": 3.0131049156188965, "full_text_display": "92 F.3d 1178\nNOTICE: Fourth Circuit Local Rule 36(c) states that citation of unpublished dispositions is disfavored except for establishing res judicata, estoppel, or the law of the case and", "K": 1}, {"id": "result_13", "sample_idx": 4449, "score": 2.6271958351135254, "highlight_inds": [30], "matched_tokens_str": "fav", "original_pos": 30, "full_sequence_tokens": ["953", " F", ".", "2", "d", " 138", "3", "\n", "NOT", "ICE", ":", " Fourth", " Circuit", " I", ".", "O", ".", "P", ".", " 36", ".", "6", " states", " that", " citation", " of", " unpublished", " dispositions", " is", " dis", "fav", "ored", " except", " for", " establishing", " res", " judicata", ",", " estoppel", ",", " or", " the", " law", " of"], "sequence_similarities": [[-3.669926404953003], [-2.8239283561706543], [-6.457355976104736], [-0.9792318940162659], [-1.0313224792480469], [-1.0866628885269165], [-1.5419280529022217], [-1.511781930923462], [-2.5628159046173096], [-0.29727810621261597], [-1.298742413520813], [0.3832763433456421], [1.566087007522583], [-0.05284854769706726], [-0.43658530712127686], [-0.47451797127723694], [-0.348592072725296], [-0.8115511536598206], [-0.3042301535606384], [1.0475826263427734], [0.0617501437664032], [0.38196778297424316], [-0.355717271566391], [-0.5607777833938599], [1.086399793624878], [-0.6351008415222168], [1.201643466949463], [1.0033516883850098], [-1.2192230224609375], [-0.13785409927368164], [2.6271958351135254], [-0.6282886862754822], [1.346353530883789], [0.1666979193687439], [-1.1001819372177124], [-0.6634498834609985], [0.287178635597229], [-1.080363392829895], [2.340334892272949], [-0.37312525510787964], [0.4031541049480438], [-0.182358980178833], [0.20027120411396027], [-0.1986086368560791]], "normalized_similarities": [[-1.2179882526397705], [-0.9372153878211975], [-2.14309024810791], [-0.3249909579753876], [-0.34227898716926575], [-0.3606455624103546], [-0.5117405652999878], [-0.5017355680465698], [-0.850556492805481], [-0.09866172075271606], [-0.4310312569141388], [0.12720312178134918], [0.5197585225105286], [-0.01753956452012062], [-0.1448954939842224], [-0.15748471021652222], [-0.11569198220968246], [-0.26934048533439636], [-0.10096898674964905], [0.3476754426956177], [0.02049385756254196], [0.1267688274383545], [-0.11805671453475952], [-0.1861129254102707], [0.36055824160575867], [-0.21077953279018402], [0.3988057076931], [0.3329959213733673], [-0.4046400785446167], [-0.045751508325338364], [0.8719230890274048], [-0.20851868391036987], [0.4468325972557068], [0.05532430112361908], [-0.36513230204582214], [-0.22018811106681824], [0.09530986845493317], [-0.3585548400878906], [0.7767186760902405], [-0.12383414059877396], [0.1338002234697342], [-0.06052194908261299], [0.06646671891212463], [-0.06591494381427765]], "result_max_similarities": 3.0131049156188965, "full_text_display": "953 F.2d 1383\nNOTICE: Fourth Circuit I.O.P. 36.6 states that citation of unpublished dispositions is disfavored except for establishing res judicata, estoppel, or the law of", "K": 1}, {"id": "result_14", "sample_idx": 6092, "score": 2.6111788749694824, "highlight_inds": [30], "matched_tokens_str": "fav", "original_pos": 30, "full_sequence_tokens": ["2", " F", ".", "3", "d", " 114", "9", "\n", "NOT", "ICE", ":", " Fourth", " Circuit", " I", ".", "O", ".", "P", ".", " 36", ".", "6", " states", " that", " citation", " of", " unpublished", " dispositions", " is", " dis", "fav", "ored", " except", " for", " establishing", " res", " judicata", ",", " estoppel", ",", " or", " the", " law", " of"], "sequence_similarities": [[-4.827559471130371], [-2.5531601905822754], [-6.075045108795166], [-1.6354776620864868], [-1.3772488832473755], [-1.117915153503418], [-1.5386426448822021], [-1.6901588439941406], [-2.6100175380706787], [-0.39903974533081055], [-1.3725910186767578], [0.34886401891708374], [1.5194876194000244], [-0.06885749101638794], [-0.471588134765625], [-0.5531050562858582], [-0.371001273393631], [-0.8028743863105774], [-0.2863239645957947], [1.1076228618621826], [0.0745103657245636], [0.35305625200271606], [-0.3897993564605713], [-0.5985246896743774], [1.1222100257873535], [-0.6570963859558105], [1.2090351581573486], [0.996189534664154], [-1.2303783893585205], [-0.1328485608100891], [2.6111788749694824], [-0.6377086639404297], [1.3291378021240234], [0.15644878149032593], [-1.114649772644043], [-0.6561009883880615], [0.2692955732345581], [-1.0843605995178223], [2.3390438556671143], [-0.3782314956188202], [0.3932701349258423], [-0.1912912130355835], [0.19712267816066742], [-0.20868408679962158]], "normalized_similarities": [[-1.6021876335144043], [-0.8473519086837769], [-2.016207695007324], [-0.5427881479263306], [-0.4570862650871277], [-0.3710176646709442], [-0.5106502175331116], [-0.560935914516449], [-0.8662219047546387], [-0.13243472576141357], [-0.45554038882255554], [0.115782231092453], [0.5042929649353027], [-0.022852670401334763], [-0.15651234984397888], [-0.18356648087501526], [-0.1231292262673378], [-0.2664608061313629], [-0.09502621740102768], [0.36760181188583374], [0.024728765711188316], [0.11717356741428375], [-0.12936800718307495], [-0.19864051043987274], [0.3724430501461029], [-0.21807949244976044], [0.4012588858604431], [0.3306189477443695], [-0.4083423614501953], [-0.04409025236964226], [0.8666073679924011], [-0.21164502203464508], [0.441118985414505], [0.05192277953028679], [-0.36993393301963806], [-0.21774913370609283], [0.08937477320432663], [-0.3598814606666565], [0.776290237903595], [-0.12552881240844727], [0.13051989674568176], [-0.06348641216754913], [0.06542177498340607], [-0.06925881654024124]], "result_max_similarities": 3.0131049156188965, "full_text_display": "2 F.3d 1149\nNOTICE: Fourth Circuit I.O.P. 36.6 states that citation of unpublished dispositions is disfavored except for establishing res judicata, estoppel, or the law of", "K": 1}, {"id": "result_15", "sample_idx": 2251, "score": 2.5993833541870117, "highlight_inds": [16], "matched_tokens_str": " FOUR", "original_pos": 16, "full_sequence_tokens": ["                        ", "       ", "UN", "PUBL", "ISHED", "\n\n", "                    ", "UNITED", " STATES", " COURT", " OF", " APPEALS", "\n", "                        ", "FOR", " THE", " FOUR", "TH", " CIRCUIT", "\n\n\n", "                        ", "       ", "No", ".", " 08", "-", "85", "53", "\n\n", "\n", "UNITED", " STATES", " OF", " AMERICA", ",", "\n\n", "                  ", "Plaintiff", " -", " Appellee", ",", "\n\n", "             ", "v"], "sequence_similarities": [[-2.167133331298828], [-1.870256781578064], [-0.5468485951423645], [1.0370583534240723], [0.6758148670196533], [-3.8378982543945312], [0.4037831425666809], [1.4786683320999146], [1.0404706001281738], [0.6418194770812988], [0.7525913119316101], [1.565929651260376], [-0.6623631119728088], [1.2929518222808838], [0.11319532990455627], [-0.6024684309959412], [2.5993833541870117], [0.8696252703666687], [0.5969623327255249], [0.5400996208190918], [1.3051257133483887], [0.5350890755653381], [0.6363677978515625], [0.07514891028404236], [0.568773090839386], [-0.16116130352020264], [-0.4846780300140381], [-0.5679364204406738], [-0.38031670451164246], [-0.5797222852706909], [0.3044527769088745], [0.6026089191436768], [-0.39299851655960083], [-0.2505907714366913], [-1.1066155433654785], [-0.21005940437316895], [0.09711676836013794], [-0.6179836988449097], [-1.028433918952942], [-0.26442950963974], [-0.819390594959259], [-0.0977136492729187], [-0.061542391777038574], [-0.40029144287109375]], "normalized_similarities": [[-0.7192359566688538], [-0.6207075119018555], [-0.18149006366729736], [0.3441826105117798], [0.2242918461561203], [-1.2737354040145874], [0.13400898873806], [0.4907457232475281], [0.3453150987625122], [0.21300934255123138], [0.24977268278598785], [0.5197063088417053], [-0.21982742846012115], [0.42910945415496826], [0.03756767138838768], [-0.19994936883449554], [0.8626925945281982], [0.28861433267593384], [0.19812197983264923], [0.17925018072128296], [0.4331497848033905], [0.17758727073669434], [0.21120001375675201], [0.02494068816304207], [0.18876643478870392], [-0.05348678678274155], [-0.1608566790819168], [-0.18848876655101776], [-0.12622086703777313], [-0.19240029156208038], [0.10104287415742874], [0.1999959945678711], [-0.13042974472045898], [-0.08316695690155029], [-0.36726751923561096], [-0.06971526145935059], [0.03223145753145218], [-0.20509862899780273], [-0.34132030606269836], [-0.08775980770587921], [-0.27194225788116455], [-0.03242955356836319], [-0.02042490802705288], [-0.13285015523433685]], "result_max_similarities": 3.0131049156188965, "full_text_display": "                               UNPUBLISHED\n\n                    UNITED STATES COURT OF APPEALS\n                        FOR THE FOURTH CIRCUIT\n\n\n                               No. 08-8553\n\n\nUNITED STATES OF AMERICA,\n\n                  Plaintiff - Appellee,\n\n             v", "K": 1}, {"id": "result_16", "sample_idx": 19129, "score": 2.5993833541870117, "highlight_inds": [16], "matched_tokens_str": " FOUR", "original_pos": 16, "full_sequence_tokens": ["                        ", "       ", "UN", "PUBL", "ISHED", "\n\n", "                    ", "UNITED", " STATES", " COURT", " OF", " APPEALS", "\n", "                        ", "FOR", " THE", " FOUR", "TH", " CIRCUIT", "\n\n\n", "                        ", "       ", "No", ".", " 14", "-", "65", "28", "\n\n", "\n", "UNITED", " STATES", " OF", " AMERICA", ",", "\n\n", "                ", "Plaintiff", " -", " Appellee", ",", "\n\n", "          ", "v"], "sequence_similarities": [[-2.167133331298828], [-1.870256781578064], [-0.5468485951423645], [1.0370583534240723], [0.6758148670196533], [-3.8378982543945312], [0.4037831425666809], [1.4786683320999146], [1.0404706001281738], [0.6418194770812988], [0.7525913119316101], [1.565929651260376], [-0.6623631119728088], [1.2929518222808838], [0.11319532990455627], [-0.6024684309959412], [2.5993833541870117], [0.8696252703666687], [0.5969623327255249], [0.5400996208190918], [1.3051257133483887], [0.5350890755653381], [0.6363677978515625], [0.07514891028404236], [0.44860631227493286], [-0.13503128290176392], [-0.4233238101005554], [-0.8909963369369507], [-0.32804661989212036], [-0.5751084685325623], [0.31087467074394226], [0.6080460548400879], [-0.3935217261314392], [-0.2604544758796692], [-1.1138858795166016], [-0.20998358726501465], [-0.3184738755226135], [-0.4977366030216217], [-1.0952059030532837], [-0.16415968537330627], [-0.8248816132545471], [-0.09113022685050964], [-0.21906393766403198], [-0.5513410568237305]], "normalized_similarities": [[-0.7192359566688538], [-0.6207075119018555], [-0.18149006366729736], [0.3441826105117798], [0.2242918461561203], [-1.2737354040145874], [0.13400898873806], [0.4907457232475281], [0.3453150987625122], [0.21300934255123138], [0.24977268278598785], [0.5197063088417053], [-0.21982742846012115], [0.42910945415496826], [0.03756767138838768], [-0.19994936883449554], [0.8626925945281982], [0.28861433267593384], [0.19812197983264923], [0.17925018072128296], [0.4331497848033905], [0.17758727073669434], [0.21120001375675201], [0.02494068816304207], [0.14888505637645721], [-0.044814664870500565], [-0.1404942125082016], [-0.2957070469856262], [-0.10887327790260315], [-0.1908690482378006], [0.10317419469356537], [0.20180049538612366], [-0.1306033879518509], [-0.0864405632019043], [-0.36968040466308594], [-0.06969010084867477], [-0.10569624602794647], [-0.16519059240818024], [-0.3634808361530304], [-0.05448190122842789], [-0.27376464009284973], [-0.030244624242186546], [-0.07270371913909912], [-0.18298102915287018]], "result_max_similarities": 3.0131049156188965, "full_text_display": "                               UNPUBLISHED\n\n                    UNITED STATES COURT OF APPEALS\n                        FOR THE FOURTH CIRCUIT\n\n\n                               No. 14-6528\n\n\nUNITED STATES OF AMERICA,\n\n                Plaintiff - Appellee,\n\n          v", "K": 1}, {"id": "result_17", "sample_idx": 4791, "score": 2.5760934352874756, "highlight_inds": [18], "matched_tokens_str": " Cafe", "original_pos": 18, "full_sequence_tokens": ["Send", " me", " email", " updates", " about", " messages", " I", "&#x27;ve", " received", " on", " the", " site", " and", " the", " latest", " news", " from", " The", " Cafe", "Mom", " Team", ".", "\n", "By", " signing", " up", ",", " you", " cert", "ify", " that", " you", " are", " female", " and", " accept", " the", " Terms", " of", " Service", " and", " have", " read", " the"], "sequence_similarities": [[-3.87541127204895], [-0.9112095832824707], [-0.9185830950737], [-2.392136812210083], [-1.3110003471374512], [-2.2933595180511475], [-1.3787989616394043], [-1.1555423736572266], [-1.4819397926330566], [-1.2629412412643433], [-1.9012587070465088], [-1.5380287170410156], [-1.276268482208252], [-2.1104981899261475], [-1.4337849617004395], [-1.7995492219924927], [-1.5194162130355835], [-2.0971713066101074], [2.5760934352874756], [-2.2097601890563965], [-0.6577975153923035], [-4.706094741821289], [-0.5553311109542847], [-0.22942233085632324], [-0.6765968203544617], [-0.9681270718574524], [-1.8442847728729248], [-1.2544682025909424], [-0.5164502263069153], [-0.8511034846305847], [-0.8749548196792603], [-1.7318036556243896], [-2.019263744354248], [-1.4771528244018555], [-1.3702716827392578], [-0.7889337539672852], [-1.6684750318527222], [-0.10999280214309692], [0.644984245300293], [0.39188578724861145], [-1.3907275199890137], [-1.5136011838912964], [0.131663978099823], [-1.6899776458740234]], "normalized_similarities": [[-1.2861852645874023], [-0.30241549015045166], [-0.3048626184463501], [-0.7939109206199646], [-0.4350994825363159], [-0.761128306388855], [-0.4576007127761841], [-0.38350552320480347], [-0.4918314516544342], [-0.4191494286060333], [-0.6309965252876282], [-0.5104464292526245], [-0.4235725402832031], [-0.7004396915435791], [-0.4758496582508087], [-0.5972408056259155], [-0.5042692422866821], [-0.6960166692733765], [0.8549630641937256], [-0.733383059501648], [-0.21831218898296356], [-1.5618754625320435], [-0.18430526554584503], [-0.07614149898290634], [-0.22455136477947235], [-0.32130545377731323], [-0.6120877861976624], [-0.41633737087249756], [-0.17140133678913116], [-0.282467246055603], [-0.29038313031196594], [-0.5747571587562561], [-0.6701604723930359], [-0.49024274945259094], [-0.45477065443992615], [-0.26183414459228516], [-0.5537394285202026], [-0.03650480508804321], [0.21405966579914093], [0.13006044924259186], [-0.46155959367752075], [-0.5023393630981445], [0.043697111308574677], [-0.5608758330345154]], "result_max_similarities": 3.0131049156188965, "full_text_display": "Send me email updates about messages I&#x27;ve received on the site and the latest news from The CafeMom Team.\nBy signing up, you certify that you are female and accept the Terms of Service and have read the", "K": 1}, {"id": "result_18", "sample_idx": 11669, "score": 2.5688462257385254, "highlight_inds": [15], "matched_tokens_str": " HEAD", "original_pos": 15, "full_sequence_tokens": ["#", "\n", "#", " DO", " NOT", " AL", "TER", " OR", " REM", "OVE", " COPYRIGHT", " NOT", "ICES", " OR", " THIS", " HEAD", "ER", ".", "\n", "#", "\n", "#", " Copyright", " (", "c", ")", " 2010", "-", "2013", " Oracle", " and", "/", "or", " its", " affiliates", ".", " All", " rights", " reserved", ".", "\n", "#", "\n", "#"], "sequence_similarities": [[-2.5759902000427246], [-5.675360679626465], [-2.07342529296875], [-0.571789026260376], [-0.40487706661224365], [-0.63514244556427], [0.9342561960220337], [0.32646775245666504], [-0.2443879246711731], [-1.857184648513794], [0.05801062285900116], [-0.45991066098213196], [1.6639933586120605], [-0.12465596199035645], [0.26388847827911377], [2.5688462257385254], [-0.952918291091919], [-1.1348423957824707], [-0.609342634677887], [-0.7303766012191772], [-1.1391569375991821], [-0.8988082408905029], [0.09317710995674133], [-0.6887065172195435], [-0.06307710707187653], [-0.08443599939346313], [0.5355691909790039], [0.2779075801372528], [0.3919079303741455], [0.013560473918914795], [-0.5461198091506958], [0.8064815402030945], [0.0986359715461731], [-0.5642943382263184], [0.7140579223632812], [-0.6052515506744385], [0.42127567529678345], [1.4825732707977295], [1.424547553062439], [-0.8785642385482788], [-0.4139050543308258], [-0.20890824496746063], [-0.8137800097465515], [-0.4935535788536072]], "normalized_similarities": [[-0.8549287915229797], [-1.883558988571167], [-0.6881358027458191], [-0.18976737558841705], [-0.1343720406293869], [-0.21079334616661072], [0.31006428599357605], [0.1083492785692215], [-0.08110833913087845], [-0.6163690686225891], [0.019252771511673927], [-0.1526367962360382], [0.5522520542144775], [-0.041371263563632965], [0.08758024871349335], [0.8525578379631042], [-0.31625792384147644], [-0.3766355514526367], [-0.2022308111190796], [-0.24239999055862427], [-0.3780674636363983], [-0.2982996702194214], [0.030923951417207718], [-0.2285703718662262], [-0.02093425579369068], [-0.028022920712828636], [0.17774660885334015], [0.09223295748233795], [0.13006779551506042], [0.004500498529523611], [-0.18124818801879883], [0.26765796542167664], [0.03273565694689751], [-0.18728001415729523], [0.23698408901691437], [-0.20087304711341858], [0.13981446623802185], [0.4920417070388794], [0.4727839231491089], [-0.29158103466033936], [-0.13736829161643982], [-0.06933321058750153], [-0.27008020877838135], [-0.16380232572555542]], "result_max_similarities": 3.0131049156188965, "full_text_display": "#\n# DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.\n#\n# Copyright (c) 2010-2013 Oracle and/or its affiliates. All rights reserved.\n#\n#", "K": 1}, {"id": "result_19", "sample_idx": 2156, "score": 2.5493288040161133, "highlight_inds": [16], "matched_tokens_str": " FOUR", "original_pos": 16, "full_sequence_tokens": ["                        ", "      ", "UN", "PUBL", "ISHED", "\n\n", "                    ", "UNITED", " STATES", " COURT", " OF", " APPEALS", "\n", "                        ", "FOR", " THE", " FOUR", "TH", " CIRCUIT", "\n\n\n", "                        ", "      ", "No", ".", " 14", "-", "4", "288", "\n\n", "\n", "UNITED", " STATES", " OF", " AMERICA", ",", "\n\n", "                  ", "Plaintiff", " -", " Appellee", ",", "\n\n", "           ", "v"], "sequence_similarities": [[-2.167133331298828], [-2.2866010665893555], [-0.7602242231369019], [1.4674739837646484], [0.7679983377456665], [-3.709503173828125], [0.884377121925354], [1.5255281925201416], [1.0501365661621094], [0.6642469763755798], [0.788263201713562], [1.5533037185668945], [-0.643183708190918], [1.3515667915344238], [0.11658066511154175], [-0.6188217401504517], [2.5493288040161133], [0.8511692881584167], [0.5687281489372253], [0.5273666977882385], [1.287305235862732], [0.6140373945236206], [0.5789451599121094], [0.04933977127075195], [0.39112576842308044], [-0.1489357352256775], [-0.2741720676422119], [-1.1078420877456665], [-0.2507948875427246], [-0.6027235984802246], [0.323053240776062], [0.6074444055557251], [-0.3955165147781372], [-0.27039602398872375], [-1.1204614639282227], [-0.2036670446395874], [0.09190833568572998], [-0.6130141615867615], [-1.0539582967758179], [-0.2867557406425476], [-0.8151057958602905], [-0.08759593963623047], [-0.2059657871723175], [-0.5689603090286255]], "normalized_similarities": [[-0.7192359566688538], [-0.7588853240013123], [-0.25230592489242554], [0.4870305061340332], [0.25488603115081787], [-1.2311230897903442], [0.29351022839546204], [0.5062977075576782], [0.3485230803489685], [0.22045265138149261], [0.26161161065101624], [0.5155159831047058], [-0.21346209943294525], [0.4485628008842468], [0.0386912077665329], [-0.2053767591714859], [0.8460803031921387], [0.2824890911579132], [0.18875151872634888], [0.1750243455171585], [0.4272354543209076], [0.20378892123699188], [0.19214238226413727], [0.016375059261918068], [0.1298082172870636], [-0.04942932352423668], [-0.09099320322275162], [-0.3676745891571045], [-0.08323469758033752], [-0.20003405213356018], [0.10721606016159058], [0.2016008198261261], [-0.13126543164253235], [-0.08973999321460724], [-0.3718627393245697], [-0.06759374588727951], [0.030502866953611374], [-0.2034493237733841], [-0.34979143738746643], [-0.09516951441764832], [-0.2705202102661133], [-0.02907165326178074], [-0.06835666298866272], [-0.18882857263088226]], "result_max_similarities": 3.0131049156188965, "full_text_display": "                              UNPUBLISHED\n\n                    UNITED STATES COURT OF APPEALS\n                        FOR THE FOURTH CIRCUIT\n\n\n                              No. 14-4288\n\n\nUNITED STATES OF AMERICA,\n\n                  Plaintiff - Appellee,\n\n           v", "K": 1}];
+    const globalMaxSequenceSimilarity = [3.0131049156188965];
+    const tooltip = document.getElementById('tooltip');
+    let isNormalized = true;
+    let currentThreshold = 0.0;
+
+    function htmlDecode(input) {
+        const doc = new DOMParser().parseFromString(input, "text/html");
+        return doc.documentElement.textContent;
+    }
+
+    function getColorForSimilarity(sim, maxSim, isNormalizedMode = false, threshold = 0.0) {
+        if (sim === -Infinity || maxSim <= 0) {
+            return { backgroundColor: '#f8f9fa', color: '#6c757d' };
+        }
+
+        // Apply threshold cutoff - if below threshold, return transparent/no color
+        if (sim <= threshold) {
+            return { backgroundColor: 'transparent', color: '#6c757d' };
+        }
+
+        let t;
+        if (isNormalizedMode) {
+            // In normalized mode, use a more sensitive scale since values are 0-1
+            // Apply a power function to make smaller differences more visible
+            const normalizedT = Math.max(0, Math.min(1, sim / maxSim));
+            t = Math.pow(normalizedT, 0.7); // Makes mid-range values more visible
+        } else {
+            // In raw mode, use linear scaling
+            t = Math.max(0, Math.min(1, sim / maxSim));
+        }
+
+        let r, g, b;
+        if (isNormalizedMode) {
+            // Use white to red gradient for normalized mode (same as raw mode)
+            r = 255;
+            g = b = Math.round(255 * (1 - t));
+        } else {
+            // Original red gradient for raw mode
+            r = 255;
+            g = b = Math.round(255 * (1 - t));
+        }
+
+        const textColor = (r + g + b) / 3 > 127 ? '#000000' : '#FFFFFF';
+        return { backgroundColor: `rgb(${r},${g},${b})`, color: textColor };
+    }
+
+    function renderResult(resultData) {
+        const displayDiv = document.getElementById(`sequence_display_${resultData.id}`);
+        const fullTextDiv = document.getElementById(`full_text_display_${resultData.id}`);
+        if (!displayDiv) return;
+
+        // Choose which similarities to use based on toggle state
+        const currentSimilarities = isNormalized ? resultData.normalized_similarities : resultData.sequence_similarities;
+        const currentMaxSimilarities = isNormalized ? Array(resultData.K).fill(1) : globalMaxSequenceSimilarity; // Normalized max is always 1
+
+        displayDiv.innerHTML = '';
+        resultData.full_sequence_tokens.forEach((tokenHtml, i) => {
+            const span = document.createElement('span');
+            span.className = 'token';
+            span.innerHTML = tokenHtml;
+
+            const seqSim = currentSimilarities[i];
+            const rawSeqSim = resultData.sequence_similarities[i];
+            let maxIdx = 0
+            let K = resultData.K;
+            let maxSim = Number.NEGATIVE_INFINITY;
+            for (let j = 0; j < K; j++) {
+                if (currentSimilarities[i] && currentSimilarities[i][j] > maxSim) {
+                    maxIdx = j;
+                    maxSim = currentSimilarities[i][j];
+                }
+            }
+
+            try{
+                const colors = getColorForSimilarity(seqSim[maxIdx], currentMaxSimilarities[maxIdx], isNormalized, currentThreshold);
+                span.style.backgroundColor = colors.backgroundColor;
+                span.style.color = colors.color;
+            } catch { console.log("Get color for sim doesn't work") }
+
+            if (resultData.highlight_inds.includes(i)) {
+                span.classList.add('highlight-window');
+            }
+
+            span.onmousemove = e => {
+                tooltip.style.visibility = 'visible';
+                let rawTokenSimsText = resultData.sequence_similarities[i].map((s, j) => `Q${j+1}: ${s.toFixed(4)}`).join(', ');
+                let normalizedTokenSimsText = resultData.normalized_similarities[i].map((s, j) => `Q${j+1}: ${s.toFixed(4)}`).join(', ');
+
+                let tooltipContent = `<b>${htmlDecode(tokenHtml)}</b> (Index: ${i})<br>`;
+                if (isNormalized) {
+                    tooltipContent += `Normalized Sim: ${seqSim[maxIdx].toFixed(4)}<br>`;
+                    tooltipContent += `Raw Sim: ${rawSeqSim[maxIdx].toFixed(4)}<br>`;
+                    tooltipContent += `Normalized Token Sims: ${normalizedTokenSimsText}<br>`;
+                } else {
+                    tooltipContent += `Raw Sim: ${seqSim[maxIdx].toFixed(4)}<br>`;
+                    tooltipContent += `Raw Token Sims: ${rawTokenSimsText}<br>`;
+                }
+                tooltipContent += `Vector index match: ${maxIdx + 1}`;
+
+                tooltip.innerHTML = tooltipContent;
+                tooltip.style.left = `${e.pageX + 15}px`;
+                tooltip.style.top = `${e.pageY + 15}px`;
+            };
+            span.onmouseout = () => { tooltip.style.visibility = 'hidden'; };
+            displayDiv.appendChild(span);
+        });
+
+        if (fullTextDiv && resultData.full_text_display) {
+            fullTextDiv.innerHTML = `<p><strong>Full Text:</strong></p><p>${resultData.full_text_display}</p>`;
+        }
+    }
+
+    function toggleNormalization() {
+        isNormalized = !isNormalized;
+        const statusSpan = document.getElementById('normalizationStatus');
+        if (isNormalized) {
+            statusSpan.innerHTML = 'Showing normalized values (max = 1.0 per result) | <span style="background: linear-gradient(90deg, white, pink, red); padding: 2px 8px; border-radius: 3px; color: black; font-size: 0.8em;">White→Red colors</span>';
+            statusSpan.style.color = '#28a745';
+        } else {
+            statusSpan.innerHTML = 'Showing raw values (global scale) | <span style="background: linear-gradient(90deg, white, pink, red); padding: 2px 8px; border-radius: 3px; color: black; font-size: 0.8em;">White→Red colors</span>';
+            statusSpan.style.color = '#666';
+        }
+
+        // Re-render all results with new normalization setting
+        allResultsData.forEach(renderResult);
+    }
+
+    function updateThreshold() {
+        const slider = document.getElementById('thresholdSlider');
+        const valueDisplay = document.getElementById('thresholdValue');
+        currentThreshold = parseFloat(slider.value);
+        valueDisplay.textContent = currentThreshold.toFixed(3);
+
+        // Re-render all results with new threshold setting
+        allResultsData.forEach(renderResult);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        // Initialize normalization status (start with normalized mode)
+        const statusSpan = document.getElementById('normalizationStatus');
+        statusSpan.innerHTML = 'Showing normalized values (max = 1.0 per result) | <span style="background: linear-gradient(90deg, white, pink, red); padding: 2px 8px; border-radius: 3px; color: black; font-size: 0.8em;">White→Red colors</span>';
+        statusSpan.style.color = '#28a745';
+
+        // Set up toggle event listener
+        const toggleCheckbox = document.getElementById('normalizeToggle');
+        toggleCheckbox.addEventListener('change', toggleNormalization);
+
+        // Set up threshold slider event listener
+        const thresholdSlider = document.getElementById('thresholdSlider');
+        thresholdSlider.addEventListener('input', updateThreshold);
+
+        // Render initial results
+        allResultsData.forEach(renderResult);
+    });
+</script>
+</body></html>

@@ -1,0 +1,1661 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aggregated Faithfulness Testing Results</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f8f9fa;
+            color: #212529;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+        }
+        h1 {
+            color: #0056b3;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5rem;
+        }
+        .overall-summary {
+            background-color: #e3f2fd;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            border-left: 4px solid #2196f3;
+        }
+        .overall-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .stat-card {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 6px;
+            text-align: center;
+            border-left: 4px solid #0056b3;
+        }
+        .stat-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #0056b3;
+        }
+        .stat-label {
+            font-size: 0.9em;
+            color: #6c757d;
+            margin-top: 5px;
+        }
+        .direction-section {
+            margin-bottom: 30px;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .direction-header {
+            background-color: #0056b3;
+            color: white;
+            padding: 20px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background-color 0.3s;
+        }
+        .direction-header:hover {
+            background-color: #004494;
+        }
+        .direction-header h2 {
+            margin: 0;
+            font-size: 1.5rem;
+        }
+        .direction-stats {
+            display: flex;
+            gap: 20px;
+        }
+        .stat {
+            padding: 5px 10px;
+            background-color: rgba(255,255,255,0.2);
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+        .toggle-icon {
+            font-size: 1.2rem;
+            transition: transform 0.3s;
+        }
+        .toggle-icon.rotated {
+            transform: rotate(180deg);
+        }
+        .direction-content {
+            padding: 20px;
+            background-color: #f8f9fa;
+        }
+        .direction-content.hidden {
+            display: none;
+        }
+        .summary-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .explanation-box {
+            background-color: #e3f2fd;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid #2196f3;
+        }
+        .examples-section {
+            margin-top: 30px;
+        }
+        .example-section {
+            margin: 20px 0;
+        }
+        .example {
+            margin: 10px 0;
+            padding: 15px;
+            border-radius: 6px;
+            border-left: 4px solid #28a745;
+        }
+        .example.incorrect {
+            border-left-color: #dc3545;
+            background-color: #f8d7da;
+        }
+        .example.correct {
+            background-color: #d4edda;
+        }
+        .example-text {
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+        .example-details {
+            font-size: 0.9em;
+            color: #6c757d;
+        }
+        .examples-note {
+            margin-top: 15px;
+            font-style: italic;
+            color: #6c757d;
+            text-align: center;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+        }
+        .header-left {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 8px;
+        }
+        .faithfulness-badge {
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .faithfulness-badge.high {
+            background-color: #28a745;
+            color: white;
+        }
+        .faithfulness-badge.medium {
+            background-color: #ffc107;
+            color: #212529;
+        }
+        .faithfulness-badge.low {
+            background-color: #dc3545;
+            color: white;
+        }
+        .direction-section.high-faithfulness .direction-header {
+            border-left: 6px solid #28a745;
+        }
+        .direction-section.medium-faithfulness .direction-header {
+            border-left: 6px solid #ffc107;
+        }
+        .direction-section.low-faithfulness .direction-header {
+            border-left: 6px solid #dc3545;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Aggregated Faithfulness Testing Results</h1>
+
+        <div class="overall-summary">
+            <h2 style="margin-top: 0; color: #1565c0;">Overall Aggregated Statistics</h2>
+            <div class="overall-stats">
+                <div class="stat-card">
+                    <div class="stat-value">3</div>
+                    <div class="stat-label">Directions Tested</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">5</div>
+                    <div class="stat-label">Source Runs</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">15</div>
+                    <div class="stat-label">Total Trials</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">300</div>
+                    <div class="stat-label">Total Examples</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">78.3%</div>
+                    <div class="stat-label">Aggregated Accuracy</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">0.0%</div>
+                    <div class="stat-label">Trial Mean Accuracy</div>
+                </div>
+            </div>
+            <div style="text-align: center; margin-top: 15px; color: #6c757d;">
+                This page shows aggregated results from 5 runs,
+                combining individual test examples into unified pools per direction.<br>
+                <strong>Directions are sorted by css score (highest first)</strong>
+            </div>
+        </div>
+
+
+        <div class="direction-section medium-faithfulness">
+            <div class="direction-header" onclick="toggleDirection(0)">
+                <div class="header-left">
+                    <h2>#1 - Direction 0</h2>
+                    <span class="faithfulness-badge medium">Medium Faithfulness (74%)</span>
+                </div>
+                <div class="direction-stats">
+                    <span class="stat">Accuracy: 74.0%</span>
+                    <span class="stat">Examples: 100</span>
+                    <span class="stat">Runs: 5</span>
+                </div>
+                <span class="toggle-icon" id="toggle-0">▼</span>
+            </div>
+            <div class="direction-content" id="direction-0">
+                <div class="direction-summary">
+                    <div class="summary-stats">
+                        <div class="stat-card">
+                            <div class="stat-value">74.0%</div>
+                            <div class="stat-label">Aggregated Accuracy</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">74/100</div>
+                            <div class="stat-label">Correct Predictions</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">40/50</div>
+                            <div class="stat-label">Positive Accuracy</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">34/50</div>
+                            <div class="stat-label">Negative Accuracy</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">5</div>
+                            <div class="stat-label">Source Runs</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">5</div>
+                            <div class="stat-label">Total Trials</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">0.7052</div>
+                            <div class="stat-label">CSS Score</div>
+                        </div>
+                    </div>
+
+                    <div class="explanation-box">
+                        <h3 style="margin-top: 0; color: #1565c0;">Feature Explanation</h3>
+                        <p>This feature appears to fire on passages that are highly templated or “boilerplate” in nature—for example, copyright/license and metadata blocks (dates, author/signature lines, code‐comment headers, etc.) that recur in formal, legal, or system-generated text.</p>
+                    </div>
+                </div>
+
+                <div class="examples-section">
+                    <h3 style="color: #0056b3;">Aggregated Positive Examples (50 total)</h3>
+                    <div class="example-section">
+
+                <div class="example correct">
+                    <div class="example-text">"Copyright © 2023 Acme Corporation. All rights reserved."</div>
+                    <div class="example-details">
+                        Prediction: Positive |
+                        Activation: -0.955 |
+                        Run 0, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"License: MIT License. Permission is hereby granted, free of charge, to any person obtaining a copy..."</div>
+                    <div class="example-details">
+                        Prediction: Positive |
+                        Activation: -0.061 |
+                        Run 0, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"/* Created on 2023-10-05 by Jane Doe */"</div>
+                    <div class="example-details">
+                        Prediction: Positive |
+                        Activation: -0.637 |
+                        Run 0, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"Date: 2023-03-01 | Author: John Smith"</div>
+                    <div class="example-details">
+                        Prediction: Positive |
+                        Activation: -0.942 |
+                        Run 0, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"This document is licensed under the Apache License, Version 2.0."</div>
+                    <div class="example-details">
+                        Prediction: Positive |
+                        Activation: -0.989 |
+                        Run 0, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"Version: 1.0.0 - Last updated: 2022/12/31 - Maintainer: team@domain.com"</div>
+                    <div class="example-details">
+                        Prediction: Positive |
+                        Activation: -0.454 |
+                        Run 0, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"© 2021 Some Publishing House. All rights reserved."</div>
+                    <div class="example-details">
+                        Prediction: Positive |
+                        Activation: -1.316 |
+                        Run 0, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example incorrect">
+                    <div class="example-text">"=== SYSTEM GENERATED REPORT ==="</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: -1.458 |
+                        Run 0, Trial 0 |
+                        ✗ Incorrect
+                    </div>
+                </div>
+
+                <div class="example incorrect">
+                    <div class="example-text">"File Header: Generated by XYZ v2.0 on 2023-09-15"</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: -1.467 |
+                        Run 0, Trial 0 |
+                        ✗ Incorrect
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"Release Date: 2023-10-01 | Author: Dev Team"</div>
+                    <div class="example-details">
+                        Prediction: Positive |
+                        Activation: -0.821 |
+                        Run 0, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"Copyright (c) 2023, Example Corp. All rights reserved."</div>
+                    <div class="example-details">
+                        Prediction: Positive |
+                        Activation: -1.021 |
+                        Run 1, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"Licensed under the Apache License, Version 2.0 (the 'License'); you may not use this file except in compliance with the License."</div>
+                    <div class="example-details">
+                        Prediction: Positive |
+                        Activation: 0.018 |
+                        Run 1, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"/* File: module.py, Author: Jane Doe, Date: 2023-10-14, Description: Auto-generated code. */"</div>
+                    <div class="example-details">
+                        Prediction: Positive |
+                        Activation: -0.693 |
+                        Run 1, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"Version: 1.0.0  |  Date: 2021-05-12  |  Author: John Smith"</div>
+                    <div class="example-details">
+                        Prediction: Positive |
+                        Activation: -0.987 |
+                        Run 1, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"-----BEGIN LICENSE-----
+This is a system generated document.
+-----END LICENSE-----"</div>
+                    <div class="example-details">
+                        Prediction: Positive |
+                        Activation: -0.582 |
+                        Run 1, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"Legal Notice: This document is provided 'as-is' without any warranties."</div>
+                    <div class="example-details">
+                        Prediction: Positive |
+                        Activation: -0.654 |
+                        Run 1, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"/* Auto-generated file - DO NOT EDIT. Generated on 2023-10-14 by System XYZ. */"</div>
+                    <div class="example-details">
+                        Prediction: Positive |
+                        Activation: -0.929 |
+                        Run 1, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example incorrect">
+                    <div class="example-text">"© 2023 Your Company, Inc. All rights reserved."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: -1.254 |
+                        Run 1, Trial 0 |
+                        ✗ Incorrect
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"Document ID: 12345 | Date Created: 2022-01-01 | Author: Auto-Generated"</div>
+                    <div class="example-details">
+                        Prediction: Positive |
+                        Activation: -0.877 |
+                        Run 1, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"# NOTICE: This file was automatically generated by the build system. Do not modify manually."</div>
+                    <div class="example-details">
+                        Prediction: Positive |
+                        Activation: -0.938 |
+                        Run 1, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+            <div class='examples-note'>... and 30 more positive examples</div>
+                    </div>
+
+                    <h3 style="color: #0056b3;">Aggregated Negative Examples (50 total)</h3>
+                    <div class="example-section">
+
+                <div class="example correct">
+                    <div class="example-text">"Today I went to the park and fed the ducks."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: -1.424 |
+                        Run 0, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"This new algorithm allows for efficient processing of data in real time."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: -1.620 |
+                        Run 0, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"Her smile lit up the room as she entered."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: -1.659 |
+                        Run 0, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"The cat jumped over the wall and disappeared into the night."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: -1.589 |
+                        Run 0, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example incorrect">
+                    <div class="example-text">"Exploring the intricacies of quantum field theory requires a deep understanding of particle physics."</div>
+                    <div class="example-details">
+                        Prediction: Positive |
+                        Activation: -1.182 |
+                        Run 0, Trial 0 |
+                        ✗ Incorrect
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"An interesting twist in the novel revealed that the detective was the culprit."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: -1.715 |
+                        Run 0, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"During the conference, the speaker elaborated on his innovative approaches to machine learning."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: -1.334 |
+                        Run 0, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"Economic theories warn of a potential slowing of market growth in unpredictable cycles."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: -1.722 |
+                        Run 0, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example incorrect">
+                    <div class="example-text">"The recipe calls for two cups of flour, one cup of sugar, and a dash of vanilla extract."</div>
+                    <div class="example-details">
+                        Prediction: Positive |
+                        Activation: -0.481 |
+                        Run 0, Trial 0 |
+                        ✗ Incorrect
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"My journal entry today was filled with reflections on my childhood and dreams."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: -1.455 |
+                        Run 0, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example incorrect">
+                    <div class="example-text">"Once upon a time in a small village, there lived a storyteller who captivated everyone with her tales."</div>
+                    <div class="example-details">
+                        Prediction: Positive |
+                        Activation: -0.217 |
+                        Run 1, Trial 0 |
+                        ✗ Incorrect
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"I love experimenting with new recipes and cooking techniques."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: -1.648 |
+                        Run 1, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example incorrect">
+                    <div class="example-text">"The early morning light cast a beautiful glow over the quiet town as the birds started chirping."</div>
+                    <div class="example-details">
+                        Prediction: Positive |
+                        Activation: -0.878 |
+                        Run 1, Trial 0 |
+                        ✗ Incorrect
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"In our recent discussion, fertile ideas that challenged conventional wisdom were exchanged."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: -1.386 |
+                        Run 1, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example incorrect">
+                    <div class="example-text">"The committee will reconvene tomorrow to assess the progress of the new project initiatives."</div>
+                    <div class="example-details">
+                        Prediction: Positive |
+                        Activation: -0.859 |
+                        Run 1, Trial 0 |
+                        ✗ Incorrect
+                    </div>
+                </div>
+
+                <div class="example incorrect">
+                    <div class="example-text">"The vibrant market buzzed with energy as vendors called out their unique wares."</div>
+                    <div class="example-details">
+                        Prediction: Positive |
+                        Activation: 0.227 |
+                        Run 1, Trial 0 |
+                        ✗ Incorrect
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"During the hike, the group marveled at the breathtaking views of the valley below."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: -1.131 |
+                        Run 1, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"I am planning a vacation to explore the cultural heritage of this historic city."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: -1.826 |
+                        Run 1, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"The novel explores complex human emotions and the intricacies of personal growth."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: -1.229 |
+                        Run 1, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example incorrect">
+                    <div class="example-text">"After much deliberation, the board decided to invest in innovative startups that show potential."</div>
+                    <div class="example-details">
+                        Prediction: Positive |
+                        Activation: -0.821 |
+                        Run 1, Trial 0 |
+                        ✗ Incorrect
+                    </div>
+                </div>
+            <div class='examples-note'>... and 30 more negative examples</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="direction-section high-faithfulness">
+            <div class="direction-header" onclick="toggleDirection(1)">
+                <div class="header-left">
+                    <h2>#2 - Direction 1</h2>
+                    <span class="faithfulness-badge high">High Faithfulness (85%)</span>
+                </div>
+                <div class="direction-stats">
+                    <span class="stat">Accuracy: 85.0%</span>
+                    <span class="stat">Examples: 100</span>
+                    <span class="stat">Runs: 5</span>
+                </div>
+                <span class="toggle-icon" id="toggle-1">▼</span>
+            </div>
+            <div class="direction-content" id="direction-1">
+                <div class="direction-summary">
+                    <div class="summary-stats">
+                        <div class="stat-card">
+                            <div class="stat-value">85.0%</div>
+                            <div class="stat-label">Aggregated Accuracy</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">85/100</div>
+                            <div class="stat-label">Correct Predictions</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">48/50</div>
+                            <div class="stat-label">Positive Accuracy</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">37/50</div>
+                            <div class="stat-label">Negative Accuracy</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">5</div>
+                            <div class="stat-label">Source Runs</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">5</div>
+                            <div class="stat-label">Total Trials</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">0.4945</div>
+                            <div class="stat-label">CSS Score</div>
+                        </div>
+                    </div>
+
+                    <div class="explanation-box">
+                        <h3 style="margin-top: 0; color: #1565c0;">Feature Explanation</h3>
+                        <p>It’s a “legal citation” feature—it flags the structured language and formatting seen in legal case metadata (court names, docket numbers, party roles, etc.) used in legal opinions and case citations. </p>
+                    </div>
+                </div>
+
+                <div class="examples-section">
+                    <h3 style="color: #0056b3;">Aggregated Positive Examples (50 total)</h3>
+                    <div class="example-section">
+
+                <div class="example correct">
+                    <div class="example-text">"Smith v. Jones, 123 F.3d 456 (9th Cir. 1997)"</div>
+                    <div class="example-details">
+                        Prediction: Positive |
+                        Activation: 0.046 |
+                        Run 0, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"In re Estate of Johnson, 456 N.W.2d 789 (Minn. Ct. App. 2001)"</div>
+                    <div class="example-details">
+                        Prediction: Positive |
+                        Activation: 0.130 |
+                        Run 0, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"Brown v. Board of Education, 347 U.S. 483 (1954)"</div>
+                    <div class="example-details">
+                        Prediction: Positive |
+                        Activation: 0.015 |
+                        Run 0, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example incorrect">
+                    <div class="example-text">"United States v. Lopez, 514 U.S. 549 (1995)"</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: -0.073 |
+                        Run 0, Trial 0 |
+                        ✗ Incorrect
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"Doe v. Roe, No. CR-18-1234, 2018 WL 234567"</div>
+                    <div class="example-details">
+                        Prediction: Positive |
+                        Activation: -0.021 |
+                        Run 0, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example incorrect">
+                    <div class="example-text">"State v. Williams, Case No. 2020-CR-0567 (Cal. Ct. App. 2021)"</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: -0.064 |
+                        Run 0, Trial 0 |
+                        ✗ Incorrect
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"Ex parte Smith, 369 U.S. 461 (1962)"</div>
+                    <div class="example-details">
+                        Prediction: Positive |
+                        Activation: 0.050 |
+                        Run 0, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"United States, ex rel. Johnson, No. A-789, 2002 WL 890123 (D.N.J. 2002)"</div>
+                    <div class="example-details">
+                        Prediction: Positive |
+                        Activation: 0.084 |
+                        Run 0, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"McDonald v. City, 987 F.2d 1123 (5th Cir. 1981)"</div>
+                    <div class="example-details">
+                        Prediction: Positive |
+                        Activation: 0.044 |
+                        Run 0, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"Roberts v. Bradley, 55 So. 2d 345 (Fla. 1953)"</div>
+                    <div class="example-details">
+                        Prediction: Positive |
+                        Activation: -0.027 |
+                        Run 0, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"Brown v. Board of Education, 347 U.S. 483 (1954)"</div>
+                    <div class="example-details">
+                        Prediction: Positive |
+                        Activation: 0.015 |
+                        Run 1, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"Smith v. Jones, 456 F.2d 789 (1972)"</div>
+                    <div class="example-details">
+                        Prediction: Positive |
+                        Activation: 0.062 |
+                        Run 1, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"Ex parte Miller, 12 F.3d 345 (1990)"</div>
+                    <div class="example-details">
+                        Prediction: Positive |
+                        Activation: 0.018 |
+                        Run 1, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"In re Marriage of Doe, Docket No. 2021-012345"</div>
+                    <div class="example-details">
+                        Prediction: Positive |
+                        Activation: -0.024 |
+                        Run 1, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"State v. Anderson, No. 18-1234, 2003 WL 123456"</div>
+                    <div class="example-details">
+                        Prediction: Positive |
+                        Activation: -0.039 |
+                        Run 1, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"United States v. Miller, 387 U.S. 127 (1967)"</div>
+                    <div class="example-details">
+                        Prediction: Positive |
+                        Activation: 0.025 |
+                        Run 1, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"Roe v. Wade, 410 U.S. 113 (1973)"</div>
+                    <div class="example-details">
+                        Prediction: Positive |
+                        Activation: -0.030 |
+                        Run 1, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"O'Connor v. Garcia, 544 U.S. 420 (2005)"</div>
+                    <div class="example-details">
+                        Prediction: Positive |
+                        Activation: -0.005 |
+                        Run 1, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"Pollock v. Farmers' Bank, 123 F. Supp. 456 (1925)"</div>
+                    <div class="example-details">
+                        Prediction: Positive |
+                        Activation: 0.034 |
+                        Run 1, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"Garcia v. San Antonio Metropolitan Transit Authority, 469 U.S. 528 (1985)"</div>
+                    <div class="example-details">
+                        Prediction: Positive |
+                        Activation: 0.002 |
+                        Run 1, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+            <div class='examples-note'>... and 30 more positive examples</div>
+                    </div>
+
+                    <h3 style="color: #0056b3;">Aggregated Negative Examples (50 total)</h3>
+                    <div class="example-section">
+
+                <div class="example incorrect">
+                    <div class="example-text">"The meeting notes were shared via email last Friday."</div>
+                    <div class="example-details">
+                        Prediction: Positive |
+                        Activation: 0.021 |
+                        Run 0, Trial 0 |
+                        ✗ Incorrect
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"I really enjoyed the new movie that premiered this weekend."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: -0.145 |
+                        Run 0, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"This article provides tips for healthy eating and exercise."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: -0.042 |
+                        Run 0, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"Remember to update the project timeline by Monday."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: -0.111 |
+                        Run 0, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"Her favorite recipe calls for butter, sugar, and flour."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: -0.090 |
+                        Run 0, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example incorrect">
+                    <div class="example-text">"The community festival was full of fun and exciting events."</div>
+                    <div class="example-details">
+                        Prediction: Positive |
+                        Activation: -0.018 |
+                        Run 0, Trial 0 |
+                        ✗ Incorrect
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"I booked a table at the restaurant for dinner tonight."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: -0.066 |
+                        Run 0, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"The phone conversation lasted nearly an hour discussing various topics."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: -0.102 |
+                        Run 0, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"This blog post details a travel itinerary across Europe."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: -0.038 |
+                        Run 0, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"The concert tickets sold out within minutes of release."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: -0.129 |
+                        Run 0, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"I enjoyed a sunny day at the beach."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: -0.073 |
+                        Run 1, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"The book on the table is very interesting."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: -0.138 |
+                        Run 1, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"We went to the park and had a picnic."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: -0.065 |
+                        Run 1, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"The movie was captivating and full of surprises."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: -0.042 |
+                        Run 1, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"She wrote a heartfelt letter to her friend."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: -0.095 |
+                        Run 1, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"My new laptop is efficient and lightweight."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: -0.088 |
+                        Run 1, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"Delicious pasta is my favorite meal."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: -0.142 |
+                        Run 1, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"He scored the winning goal in the soccer match."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: -0.089 |
+                        Run 1, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"A brief summary of the meeting was posted online."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: -0.090 |
+                        Run 1, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"The novel explores themes of love and loss."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: -0.056 |
+                        Run 1, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+            <div class='examples-note'>... and 30 more negative examples</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="direction-section medium-faithfulness">
+            <div class="direction-header" onclick="toggleDirection(2)">
+                <div class="header-left">
+                    <h2>#3 - Direction 2</h2>
+                    <span class="faithfulness-badge medium">Medium Faithfulness (76%)</span>
+                </div>
+                <div class="direction-stats">
+                    <span class="stat">Accuracy: 76.0%</span>
+                    <span class="stat">Examples: 100</span>
+                    <span class="stat">Runs: 5</span>
+                </div>
+                <span class="toggle-icon" id="toggle-2">▼</span>
+            </div>
+            <div class="direction-content" id="direction-2">
+                <div class="direction-summary">
+                    <div class="summary-stats">
+                        <div class="stat-card">
+                            <div class="stat-value">76.0%</div>
+                            <div class="stat-label">Aggregated Accuracy</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">76/100</div>
+                            <div class="stat-label">Correct Predictions</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">42/50</div>
+                            <div class="stat-label">Positive Accuracy</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">34/50</div>
+                            <div class="stat-label">Negative Accuracy</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">5</div>
+                            <div class="stat-label">Source Runs</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">5</div>
+                            <div class="stat-label">Total Trials</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">0.4818</div>
+                            <div class="stat-label">CSS Score</div>
+                        </div>
+                    </div>
+
+                    <div class="explanation-box">
+                        <h3 style="margin-top: 0; color: #1565c0;">Feature Explanation</h3>
+                        <p>It appears that this feature fires when the model is processing technical, compound‐oriented terms—that is, when a token is a subword or suffix forming part of a multi‐token scientific, engineering, or product name (or measurement) with a predictable “continuation” in that domain.</p>
+                    </div>
+                </div>
+
+                <div class="examples-section">
+                    <h3 style="color: #0056b3;">Aggregated Positive Examples (50 total)</h3>
+                    <div class="example-section">
+
+                <div class="example incorrect">
+                    <div class="example-text">"GHz"</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: -32.852 |
+                        Run 0, Trial 0 |
+                        ✗ Incorrect
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"mAh"</div>
+                    <div class="example-details">
+                        Prediction: Positive |
+                        Activation: -7.439 |
+                        Run 0, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"cm"</div>
+                    <div class="example-details">
+                        Prediction: Positive |
+                        Activation: -30.413 |
+                        Run 0, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example incorrect">
+                    <div class="example-text">"mm"</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: -32.119 |
+                        Run 0, Trial 0 |
+                        ✗ Incorrect
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"kV"</div>
+                    <div class="example-details">
+                        Prediction: Positive |
+                        Activation: -4.471 |
+                        Run 0, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"-X"</div>
+                    <div class="example-details">
+                        Prediction: Positive |
+                        Activation: -10.494 |
+                        Run 0, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"Pro"</div>
+                    <div class="example-details">
+                        Prediction: Positive |
+                        Activation: -10.213 |
+                        Run 0, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"Max"</div>
+                    <div class="example-details">
+                        Prediction: Positive |
+                        Activation: -24.856 |
+                        Run 0, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"HD"</div>
+                    <div class="example-details">
+                        Prediction: Positive |
+                        Activation: -29.051 |
+                        Run 0, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"v2"</div>
+                    <div class="example-details">
+                        Prediction: Positive |
+                        Activation: -3.866 |
+                        Run 0, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"NVIDIA GeForce RTX 3080"</div>
+                    <div class="example-details">
+                        Prediction: Positive |
+                        Activation: -5.034 |
+                        Run 1, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"10μF capacitor"</div>
+                    <div class="example-details">
+                        Prediction: Positive |
+                        Activation: -4.716 |
+                        Run 1, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example incorrect">
+                    <div class="example-text">"Intel Core i7"</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: -7.080 |
+                        Run 1, Trial 0 |
+                        ✗ Incorrect
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"3.5-inch drive"</div>
+                    <div class="example-details">
+                        Prediction: Positive |
+                        Activation: -5.546 |
+                        Run 1, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example incorrect">
+                    <div class="example-text">"Boeing 737 Max"</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: -7.759 |
+                        Run 1, Trial 0 |
+                        ✗ Incorrect
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"2.4GHz WiFi"</div>
+                    <div class="example-details">
+                        Prediction: Positive |
+                        Activation: -5.558 |
+                        Run 1, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"Apple iPhone 13"</div>
+                    <div class="example-details">
+                        Prediction: Positive |
+                        Activation: -4.509 |
+                        Run 1, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"Canon EOS 5D Mark IV"</div>
+                    <div class="example-details">
+                        Prediction: Positive |
+                        Activation: -5.501 |
+                        Run 1, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"HP LaserJet Pro P1102"</div>
+                    <div class="example-details">
+                        Prediction: Positive |
+                        Activation: -4.770 |
+                        Run 1, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example incorrect">
+                    <div class="example-text">"LG OLED CX"</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: -7.052 |
+                        Run 1, Trial 0 |
+                        ✗ Incorrect
+                    </div>
+                </div>
+            <div class='examples-note'>... and 30 more positive examples</div>
+                    </div>
+
+                    <h3 style="color: #0056b3;">Aggregated Negative Examples (50 total)</h3>
+                    <div class="example-section">
+
+                <div class="example correct">
+                    <div class="example-text">"apple"</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: -32.852 |
+                        Run 0, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example incorrect">
+                    <div class="example-text">"happy"</div>
+                    <div class="example-details">
+                        Prediction: Positive |
+                        Activation: -29.772 |
+                        Run 0, Trial 0 |
+                        ✗ Incorrect
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"banana"</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: -31.813 |
+                        Run 0, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"dog"</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: -32.852 |
+                        Run 0, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"run"</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: -31.310 |
+                        Run 0, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"house"</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: -31.914 |
+                        Run 0, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example incorrect">
+                    <div class="example-text">"quickly"</div>
+                    <div class="example-details">
+                        Prediction: Positive |
+                        Activation: -11.731 |
+                        Run 0, Trial 0 |
+                        ✗ Incorrect
+                    </div>
+                </div>
+
+                <div class="example incorrect">
+                    <div class="example-text">"beautiful"</div>
+                    <div class="example-details">
+                        Prediction: Positive |
+                        Activation: -7.575 |
+                        Run 0, Trial 0 |
+                        ✗ Incorrect
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"today"</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: -30.825 |
+                        Run 0, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"river"</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: -32.852 |
+                        Run 0, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"Hello, world!"</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: -8.824 |
+                        Run 1, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"Once upon a time"</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: -5.591 |
+                        Run 1, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"The quick brown fox"</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: -6.444 |
+                        Run 1, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"Simple and clear"</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: -5.646 |
+                        Run 1, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"I love pizza"</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: -9.481 |
+                        Run 1, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"Beautiful sunrise"</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: -8.438 |
+                        Run 1, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"Happy birthday"</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: -31.666 |
+                        Run 1, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"Take a break"</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: -8.748 |
+                        Run 1, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"Just another day"</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: -7.205 |
+                        Run 1, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"Good morning everyone"</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: -10.989 |
+                        Run 1, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+            <div class='examples-note'>... and 30 more negative examples</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #dee2e6; text-align: center; color: #6c757d; font-size: 0.9em;">
+            Generated by FourierFeatures Aggregated Faithfulness Testing
+        </div>
+    </div>
+
+    <script>
+        function toggleDirection(directionIdx) {
+            const content = document.getElementById('direction-' + directionIdx);
+            const toggle = document.getElementById('toggle-' + directionIdx);
+
+            if (content.classList.contains('hidden')) {
+                content.classList.remove('hidden');
+                toggle.classList.remove('rotated');
+                toggle.textContent = '▼';
+            } else {
+                content.classList.add('hidden');
+                toggle.classList.add('rotated');
+                toggle.textContent = '▲';
+            }
+        }
+
+        // Initialize all sections as expanded
+        document.addEventListener('DOMContentLoaded', function() {
+            // All sections start expanded by default
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,403 @@
+
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">
+<title>Token Activation Similarity Report</title><style>
+body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; padding: 20px; background-color: #f8f9fa; color: #212529; }
+.container { background-color: #ffffff; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.07); }
+h1 { color: #0056b3; text-align: center; margin-bottom: 25px; font-weight: 300;}
+h2 { color: #0056b3; border-bottom: 1px solid #dee2e6; padding-bottom: 10px; margin-top:0; font-size: 1.5em; font-weight: 400; }
+.token { padding: 3px 5px; margin: 2px 1px; border-radius: 4px; display: inline-block; border: 1px solid #ced4da; cursor: default; transition: transform 0.1s ease-out, box-shadow 0.1s ease-out; font-size: 0.9em; line-height: 1.5; }
+.token:hover { transform: translateY(-1px); box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+.token.highlight-window { border: 2px solid #c82333; font-weight: 600; background-color: #f8d7da !important; color: #721c24; }
+.sequence-display { margin-top: 12px; padding: 12px; border: 1px solid #e9ecef; background-color: #f8f9fa; border-radius: 6px; white-space: pre-wrap; word-wrap: break-word; line-height: 1.7; }
+.full-text-display { margin-top: 15px; padding: 10px; border: 1px solid #dfe6e9; background-color: #f9f9f9; border-radius: 6px; white-space: pre-wrap; word-wrap: break-word; line-height: 1.6; font-size: 0.95em; color: #333; }
+.tooltip { position: absolute; background-color: rgba(33,37,41,0.9); color: white; padding: 8px 12px; border-radius: 5px; visibility: hidden; z-index: 1000; pointer-events: none; font-size: 0.85em; max-width: 400px; }
+.details p { margin: 5px 0; font-size: 0.9em; color: #495057; } .details strong { color: #0056b3; }
+.footer-note { font-size: 0.8em; color: #6c757d; text-align: center; margin-top: 30px; }
+.global-max-info { background-color: #e3f2fd; padding: 10px; border-radius: 5px; margin-bottom: 20px; text-align: center; font-size: 0.9em; color: #1565c0; }
+.threshold-control { margin-top: 15px; padding: 10px; background-color: rgba(255,255,255,0.3); border-radius: 6px; }
+.threshold-slider { width: 200px; margin: 0 10px; }
+.threshold-value { font-weight: bold; color: #0056b3; }
+</style></head><body>
+<div class="explanation-section" style="background-color: #f0f8ff; padding: 15px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #0056b3;"><h3 style="color: #0056b3; margin-top: 0;">Feature Explanation</h3><div style="line-height: 1.6; color: #333;">It appears this feature “lights up” on hyphenated or split tokens—across a variety of domains (from technical specs and compound adjectives to proper names and mythological epithets). In short, it signals when a word is split by a dash (or similar marker) into parts that together form a compound or specialized term, thereby modulating meaning.</div></div><div class="global-max-info">
+    <strong>Query Type:</strong> 1-token sequences<br>
+    <strong>Query Vector Norms:</strong> ['10.0504']<br>
+    <strong>Global Max Sequence Similarities:</strong> [16.52235984802246]<br>
+    <div style="margin-top: 10px;">
+        <label style="font-weight: normal; cursor: pointer;">
+            <input type="checkbox" id="normalizeToggle" checked style="margin-right: 8px;">
+            Show Normalized Activations (divide by max per result)
+        </label>
+        <span id="normalizationStatus" style="margin-left: 15px; font-style: italic; color: #666;"></span>
+    </div>
+    <div class="threshold-control">
+        <label style="font-weight: normal;">
+            Activation Cutoff Threshold: <span class="threshold-value" id="thresholdValue">0.000</span>
+        </label><br>
+        <input type="range" id="thresholdSlider" class="threshold-slider"
+               min="0" max="1" step="0.001"
+               value="0.0">
+        <div style="margin-top: 5px; font-size: 0.8em; color: #666;">
+            No faithfulness data available - adjust manually
+        </div>
+    </div>
+</div>
+<div id="tooltip" class="tooltip"></div>
+
+<div class="container" id="container_result_0">
+    <h2>Result 1 (Sample Ref: 19786)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 16.5224</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">"/"</span></p>
+        <p><strong>Window Start Position:</strong> 4</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_0"></div>
+    <div class="full-text-display" id="full_text_display_result_0"></div>
+</div>
+<div class="container" id="container_result_1">
+    <h2>Result 2 (Sample Ref: 11035)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 16.0968</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">"-"</span></p>
+        <p><strong>Window Start Position:</strong> 3</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_1"></div>
+    <div class="full-text-display" id="full_text_display_result_1"></div>
+</div>
+<div class="container" id="container_result_2">
+    <h2>Result 3 (Sample Ref: 12305)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 15.9199</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">" 3"</span></p>
+        <p><strong>Window Start Position:</strong> 3</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_2"></div>
+    <div class="full-text-display" id="full_text_display_result_2"></div>
+</div>
+<div class="container" id="container_result_3">
+    <h2>Result 4 (Sample Ref: 9072)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 15.5323</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">"-"</span></p>
+        <p><strong>Window Start Position:</strong> 13</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_3"></div>
+    <div class="full-text-display" id="full_text_display_result_3"></div>
+</div>
+<div class="container" id="container_result_4">
+    <h2>Result 5 (Sample Ref: 12755)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 15.3538</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">"133"</span></p>
+        <p><strong>Window Start Position:</strong> 2</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_4"></div>
+    <div class="full-text-display" id="full_text_display_result_4"></div>
+</div>
+<div class="container" id="container_result_5">
+    <h2>Result 6 (Sample Ref: 3010)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 15.2417</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">" Hun"</span></p>
+        <p><strong>Window Start Position:</strong> 4</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_5"></div>
+    <div class="full-text-display" id="full_text_display_result_5"></div>
+</div>
+<div class="container" id="container_result_6">
+    <h2>Result 7 (Sample Ref: 2483)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 15.0398</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">"-"</span></p>
+        <p><strong>Window Start Position:</strong> 3</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_6"></div>
+    <div class="full-text-display" id="full_text_display_result_6"></div>
+</div>
+<div class="container" id="container_result_7">
+    <h2>Result 8 (Sample Ref: 3041)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 15.0370</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">"-"</span></p>
+        <p><strong>Window Start Position:</strong> 12</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_7"></div>
+    <div class="full-text-display" id="full_text_display_result_7"></div>
+</div>
+<div class="container" id="container_result_8">
+    <h2>Result 9 (Sample Ref: 2043)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 14.9133</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">" V"</span></p>
+        <p><strong>Window Start Position:</strong> 4</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_8"></div>
+    <div class="full-text-display" id="full_text_display_result_8"></div>
+</div>
+<div class="container" id="container_result_9">
+    <h2>Result 10 (Sample Ref: 7151)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 14.8841</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">" or"</span></p>
+        <p><strong>Window Start Position:</strong> 16</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_9"></div>
+    <div class="full-text-display" id="full_text_display_result_9"></div>
+</div>
+<div class="container" id="container_result_10">
+    <h2>Result 11 (Sample Ref: 6237)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 14.7718</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">" of"</span></p>
+        <p><strong>Window Start Position:</strong> 15</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_10"></div>
+    <div class="full-text-display" id="full_text_display_result_10"></div>
+</div>
+<div class="container" id="container_result_11">
+    <h2>Result 12 (Sample Ref: 4120)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 14.7320</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">"-"</span></p>
+        <p><strong>Window Start Position:</strong> 37</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_11"></div>
+    <div class="full-text-display" id="full_text_display_result_11"></div>
+</div>
+<div class="container" id="container_result_12">
+    <h2>Result 13 (Sample Ref: 13420)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 14.6717</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">"A"</span></p>
+        <p><strong>Window Start Position:</strong> 1</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_12"></div>
+    <div class="full-text-display" id="full_text_display_result_12"></div>
+</div>
+<div class="container" id="container_result_13">
+    <h2>Result 14 (Sample Ref: 13386)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 14.6276</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">" or"</span></p>
+        <p><strong>Window Start Position:</strong> 2</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_13"></div>
+    <div class="full-text-display" id="full_text_display_result_13"></div>
+</div>
+<div class="container" id="container_result_14">
+    <h2>Result 15 (Sample Ref: 57)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 14.5523</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">" men"</span></p>
+        <p><strong>Window Start Position:</strong> 1</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_14"></div>
+    <div class="full-text-display" id="full_text_display_result_14"></div>
+</div>
+<div class="container" id="container_result_15">
+    <h2>Result 16 (Sample Ref: 18036)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 14.5184</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">"uation"</span></p>
+        <p><strong>Window Start Position:</strong> 2</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_15"></div>
+    <div class="full-text-display" id="full_text_display_result_15"></div>
+</div>
+<div class="container" id="container_result_16">
+    <h2>Result 17 (Sample Ref: 13000)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 14.4382</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">" of"</span></p>
+        <p><strong>Window Start Position:</strong> 6</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_16"></div>
+    <div class="full-text-display" id="full_text_display_result_16"></div>
+</div>
+<div class="container" id="container_result_17">
+    <h2>Result 18 (Sample Ref: 11501)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 14.4006</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">" of"</span></p>
+        <p><strong>Window Start Position:</strong> 15</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_17"></div>
+    <div class="full-text-display" id="full_text_display_result_17"></div>
+</div>
+<div class="container" id="container_result_18">
+    <h2>Result 19 (Sample Ref: 13983)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 14.3883</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">" of"</span></p>
+        <p><strong>Window Start Position:</strong> 7</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_18"></div>
+    <div class="full-text-display" id="full_text_display_result_18"></div>
+</div>
+<div class="container" id="container_result_19">
+    <h2>Result 20 (Sample Ref: 433)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 14.3819</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">"-"</span></p>
+        <p><strong>Window Start Position:</strong> 2</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_19"></div>
+    <div class="full-text-display" id="full_text_display_result_19"></div>
+</div>
+<script>
+    const allResultsData = [{"id": "result_0", "sample_idx": 19786, "score": 16.52235984802246, "highlight_inds": [4], "matched_tokens_str": "/", "original_pos": 4, "full_sequence_tokens": ["The", " African", " Comprehensive", " HIV", "/", "AIDS", " Partnership", "s", " (", "ACH", "AP", ")", " played", " a", " major", " role", " in", " initiating", " B", "ots", "w", "ana", "&#x27;s", " ant", "iret", "roviral", " (", "AR", "V", ")", " program", " in", " 2001", ".", " A", "CH", "AP", " is", " a", " prominent", " public", "-", "private", " partnership"], "sequence_similarities": [[0.2860677242279053], [3.566208600997925], [8.021722793579102], [10.187980651855469], [16.52235984802246], [6.823400974273682], [6.630365371704102], [6.59499454498291], [6.45122766494751], [8.684127807617188], [7.2392377853393555], [5.597350120544434], [3.177712917327881], [2.1038925647735596], [0.4895973205566406], [2.7095930576324463], [-0.35657358169555664], [2.7706446647644043], [2.98856258392334], [5.1590423583984375], [7.570883750915527], [4.825991630554199], [4.6511077880859375], [3.716557025909424], [0.41114044189453125], [3.8562068939208984], [4.572099208831787], [4.683585166931152], [2.512082099914551], [0.12282401323318481], [1.924623966217041], [0.8997871279716492], [-2.9389655590057373], [-0.7914218902587891], [3.6854891777038574], [-2.9710371494293213], [4.307792663574219], [-0.5853749513626099], [2.1752912998199463], [-1.0199270248413086], [-3.209995985031128], [0.23461663722991943], [-3.1413819789886475], [2.295124053955078]], "normalized_similarities": [[0.01731397584080696], [0.2158413529396057], [0.4855071008205414], [0.616617739200592], [1.0], [0.4129798114299774], [0.4012965261936188], [0.39915573596954346], [0.39045438170433044], [0.5255985260009766], [0.4381479322910309], [0.33877426385879517], [0.19232803583145142], [0.12733608484268188], [0.029632408171892166], [0.16399551928043365], [-0.021581273525953293], [0.16769061982631683], [0.1808798909187317], [0.31224608421325684], [0.4582204818725586], [0.29208850860595703], [0.2815038561820984], [0.22494105994701385], [0.024883881211280823], [0.23339322209358215], [0.27672192454338074], [0.2834694981575012], [0.15204136073589325], [0.007433805614709854], [0.11648602038621902], [0.054458752274513245], [-0.17787808179855347], [-0.04790005087852478], [0.2230606973171234], [-0.17981918156147003], [0.2607250213623047], [-0.03542925789952278], [0.1316574215888977], [-0.06173010542988777], [-0.1942819356918335], [0.014199947007000446], [-0.1901291310787201], [0.1389101892709732]], "result_max_similarities": 16.52235984802246, "full_text_display": "The African Comprehensive HIV/AIDS Partnerships (ACHAP) played a major role in initiating Botswana&#x27;s antiretroviral (ARV) program in 2001. ACHAP is a prominent public-private partnership", "K": 1}, {"id": "result_1", "sample_idx": 11035, "score": 16.096792221069336, "highlight_inds": [3], "matched_tokens_str": "-", "original_pos": 3, "full_sequence_tokens": ["The", " published", " half", "-", "board", " rates", " for", " stays", " on", " the", " 31", " December", " include", " a", " mandatory", " fee", " for", " the", " gal", "a", " dinner", " held", " on", " that", " evening", ".", " The", " hotel", " restaurant", " will", " close", " after", " breakfast", " on", " 31", " December", ",", " therefore", " regular", " lunch", " and", " dinner", " service", " will"], "sequence_similarities": [[0.2860677242279053], [2.0782084465026855], [9.257078170776367], [16.096792221069336], [4.9531402587890625], [6.848830223083496], [6.8567070960998535], [1.7228734493255615], [-0.4040066599845886], [3.8040623664855957], [2.5931429862976074], [0.6644259691238403], [3.5332963466644287], [1.9621055126190186], [0.843086302280426], [1.3323795795440674], [3.232158660888672], [3.1214518547058105], [-1.0462894439697266], [2.0276119709014893], [3.1384694576263428], [3.1846585273742676], [0.9138468503952026], [0.6350041627883911], [-0.5244381427764893], [-1.8646726608276367], [2.822962760925293], [0.3911381959915161], [1.5690747499465942], [-1.0561151504516602], [-0.20662355422973633], [0.04703640937805176], [1.4892979860305786], [1.4080159664154053], [2.705667018890381], [0.24576663970947266], [-2.1321909427642822], [1.6431605815887451], [0.840181827545166], [0.6827100515365601], [-1.4777835607528687], [4.384091377258301], [-1.745312213897705], [1.3779319524765015]], "normalized_similarities": [[0.01731397584080696], [0.1257815808057785], [0.5602757930755615], [0.9742429256439209], [0.2997840642929077], [0.41451889276504517], [0.41499564051628113], [0.10427526384592056], [-0.02445211634039879], [0.2302372306585312], [0.15694749355316162], [0.04021374508738518], [0.21384938061237335], [0.1187545582652092], [0.05102699249982834], [0.0806409940123558], [0.19562330842018127], [0.18892288208007812], [-0.0633256658911705], [0.12271927297115326], [0.18995285034179688], [0.19274841248989105], [0.055309705436229706], [0.0384330190718174], [-0.03174111619591713], [-0.11285752803087234], [0.17085711658000946], [0.02367326430976391], [0.09496674686670303], [-0.06392035633325577], [-0.012505692429840565], [0.0028468335513025522], [0.09013833105564117], [0.08521881699562073], [0.16375790536403656], [0.014874790795147419], [-0.12904880940914154], [0.0994507223367691], [0.05085119977593422], [0.04132037237286568], [-0.08944143354892731], [0.26534292101860046], [-0.10563334822654724], [0.0833980143070221]], "result_max_similarities": 16.52235984802246, "full_text_display": "The published half-board rates for stays on the 31 December include a mandatory fee for the gala dinner held on that evening. The hotel restaurant will close after breakfast on 31 December, therefore regular lunch and dinner service will", "K": 1}, {"id": "result_2", "sample_idx": 12305, "score": 15.919879913330078, "highlight_inds": [3], "matched_tokens_str": " 3", "original_pos": 3, "full_sequence_tokens": ["The", " Google", " Pixel", " 3", " XL", " has", " been", " leaking", " like", " crazy", " over", " the", " last", " couple", " of", " weeks", ",", " and", " a", " new", " major", " leak", " has", " just", " surfaced", ",", " as", " someone", " left", " the", " Pixel", " 3", " XL", " in", " the", " back", " of", " a", " Ly", "ft", " car", " by", " accident", "."], "sequence_similarities": [[0.2860677242279053], [2.5774357318878174], [11.12387466430664], [15.919879913330078], [12.21767520904541], [4.578571796417236], [2.9070591926574707], [4.333016395568848], [5.618233680725098], [4.585128307342529], [4.614171028137207], [8.241684913635254], [7.829195976257324], [10.380522727966309], [8.456552505493164], [7.228396892547607], [2.4359254837036133], [4.570006847381592], [7.227933883666992], [2.7128210067749023], [5.894315242767334], [2.3654463291168213], [5.260197639465332], [2.7919931411743164], [2.030458927154541], [-0.09938597679138184], [2.5810322761535645], [3.5494327545166016], [-0.46664589643478394], [4.296806335449219], [1.8444808721542358], [10.03980541229248], [4.195573806762695], [1.9099892377853394], [5.35767936706543], [0.5433903932571411], [4.075827121734619], [5.153868675231934], [0.3747222423553467], [-0.5402615070343018], [2.8643798828125], [0.9525786638259888], [0.5835366249084473], [-0.8070659637451172]], "normalized_similarities": [[0.01731397584080696], [0.15599682927131653], [0.6732618808746338], [0.963535487651825], [0.7394630908966064], [0.277113676071167], [0.17594696581363678], [0.26225167512893677], [0.3400382101535797], [0.27751049399375916], [0.2792682945728302], [0.49882009625434875], [0.47385457158088684], [0.628271222114563], [0.5118247270584106], [0.4374918043613434], [0.14743205904960632], [0.2765952944755554], [0.43746376037597656], [0.1641908884048462], [0.3567477762699127], [0.14316637814044952], [0.31836843490600586], [0.16898271441459656], [0.12289158254861832], [-0.0060152411460876465], [0.15621450543403625], [0.21482601761817932], [-0.0282432958483696], [0.26006007194519043], [0.11163543909788132], [0.6076496243476868], [0.2539330720901489], [0.11560026556253433], [0.3242684006690979], [0.03288818150758743], [0.24668553471565247], [0.3119329512119293], [0.022679705172777176], [-0.03269881010055542], [0.1733638495206833], [0.05765391141176224], [0.03531799465417862], [-0.04884689301252365]], "result_max_similarities": 16.52235984802246, "full_text_display": "The Google Pixel 3 XL has been leaking like crazy over the last couple of weeks, and a new major leak has just surfaced, as someone left the Pixel 3 XL in the back of a Lyft car by accident.", "K": 1}, {"id": "result_3", "sample_idx": 9072, "score": 15.532341003417969, "highlight_inds": [13], "matched_tokens_str": "-", "original_pos": 13, "full_sequence_tokens": ["Our", " house", ",", " being", " a", " random", " and", " te", "eter", "ing", " pile", " of", " half", "-", "completed", " ref", "urb", "ish", "ments", " and", " ancient", " farm", ",", " has", " drainage", " that", " can", " only", " be", " described", " as", " unpredictable", ".", " Like", " most", " houses", " in", " the", " rural", " areas", " of", " France", ",", " we"], "sequence_similarities": [[-0.15250539779663086], [6.348376274108887], [4.442790985107422], [0.5886642336845398], [0.8398375511169434], [0.18270087242126465], [2.995514392852783], [7.46087121963501], [2.7352123260498047], [3.9129793643951416], [5.007600784301758], [4.565637588500977], [6.510686874389648], [15.532341003417969], [2.02569842338562], [1.8289902210235596], [-11.001864433288574], [-3.840019941329956], [-1.5252083539962769], [2.9595437049865723], [1.6107945442199707], [1.276102900505066], [1.884371280670166], [1.8947246074676514], [3.9282093048095703], [7.311598777770996], [5.143582820892334], [5.376354694366455], [3.7229790687561035], [-0.37219661474227905], [-1.0854483842849731], [-0.5562229156494141], [-1.5258216857910156], [-0.32814574241638184], [-0.6206934452056885], [2.697251319885254], [0.7747378945350647], [3.086555004119873], [-1.405116081237793], [-2.825118064880371], [1.8563066720962524], [-0.2462543249130249], [-1.3531842231750488], [0.25132322311401367]], "normalized_similarities": [[-0.009230243042111397], [0.3842293918132782], [0.2688956558704376], [0.035628337413072586], [0.05083036422729492], [0.011057795025408268], [0.18130064010620117], [0.4515620768070221], [0.16554610431194305], [0.23682932555675507], [0.3030802309513092], [0.276330828666687], [0.39405307173728943], [0.9400800466537476], [0.12260345369577408], [0.11069788038730621], [-0.6658772826194763], [-0.23241353034973145], [-0.09231177717447281], [0.17912355065345764], [0.0974917933344841], [0.0772349089384079], [0.1140497699379921], [0.11467639356851578], [0.23775111138820648], [0.44252750277519226], [0.31131041049957275], [0.325398713350296], [0.22532974183559418], [-0.02252684347331524], [-0.06569572538137436], [-0.03366485983133316], [-0.09234889596700668], [-0.019860707223415375], [-0.03756687790155411], [0.16324855387210846], [0.046890269964933395], [0.18681079149246216], [-0.08504330366849899], [-0.1709875613451004], [0.1123511791229248], [-0.014904307201504707], [-0.08190017938613892], [0.015211096964776516]], "result_max_similarities": 16.52235984802246, "full_text_display": "Our house, being a random and teetering pile of half-completed refurbishments and ancient farm, has drainage that can only be described as unpredictable. Like most houses in the rural areas of France, we", "K": 1}, {"id": "result_4", "sample_idx": 12755, "score": 15.35377025604248, "highlight_inds": [2], "matched_tokens_str": "133", "original_pos": 2, "full_sequence_tokens": ["The", " JP", "133", "ML", "R", " is", " a", " medium", " large", " bore", " B", "b", "/", "F", " ten", "or", " t", "rom", "bone", " made", " from", " yellow", " brass", " with", " a", " gold", " lac", "quer", " finish", " and", " 8", "&quot;", " rose", " brass", " bell", ".", "\n", "It", "&#x27;s", " the", " ideal", " instrument", " for", " student"], "sequence_similarities": [[0.2860677242279053], [4.997941017150879], [15.35377025604248], [10.115386009216309], [10.837478637695312], [5.824199676513672], [5.570621967315674], [1.1249725818634033], [6.5078887939453125], [-0.8299539089202881], [2.3774027824401855], [6.020530700683594], [6.92409610748291], [3.983647346496582], [5.2240705490112305], [7.129271984100342], [7.265161514282227], [4.035539627075195], [3.6976873874664307], [2.476128101348877], [1.0762114524841309], [1.8188517093658447], [1.3837217092514038], [1.0770115852355957], [5.391671180725098], [1.903606653213501], [0.4596872329711914], [-2.035881757736206], [-1.9889527559280396], [-0.36033427715301514], [5.035061836242676], [4.7717366218566895], [1.182494044303894], [1.785712480545044], [0.6827731132507324], [-1.028864860534668], [1.5644716024398804], [2.037706136703491], [1.4389238357543945], [3.5559988021850586], [-0.22188186645507812], [-2.663275718688965], [-2.879363536834717], [1.538987636566162]], "normalized_similarities": [[0.01731397584080696], [0.3024955987930298], [0.9292722344398499], [0.6122240424156189], [0.6559280157089233], [0.35250410437583923], [0.3371565639972687], [0.06808789074420929], [0.39388373494148254], [-0.050232164561748505], [0.14389002323150635], [0.3643868565559387], [0.41907429695129395], [0.24110643565654755], [0.31618186831474304], [0.4314923584461212], [0.4397169351577759], [0.244247168302536], [0.2237989902496338], [0.1498652845621109], [0.06513666361570358], [0.11008425801992416], [0.08374843001365662], [0.06518509238958359], [0.32632574439048767], [0.11521396785974503], [0.027822129428386688], [-0.123219795525074], [-0.12037946283817291], [-0.021808886900544167], [0.30474230647087097], [0.2888047993183136], [0.07156931608915329], [0.10807853937149048], [0.0413241870701313], [-0.062271058559417725], [0.09468814730644226], [0.12333021312952042], [0.08708948642015457], [0.21522341668605804], [-0.0134291872382164], [-0.16119220852851868], [-0.17427071928977966], [0.09314575046300888]], "result_max_similarities": 16.52235984802246, "full_text_display": "The JP133MLR is a medium large bore Bb/F tenor trombone made from yellow brass with a gold lacquer finish and 8&quot; rose brass bell.\nIt&#x27;s the ideal instrument for student", "K": 1}, {"id": "result_5", "sample_idx": 3010, "score": 15.241660118103027, "highlight_inds": [4], "matched_tokens_str": " Hun", "original_pos": 4, "full_sequence_tokens": ["Q", ":", " With", " Jon", " Hun", "ts", "man", " and", " Mitt", " Romney", " running", " for", " president", ",", " what", " do", " voters", " need", " to", " know", " about", " the", " history", " of", " Mormon", "ism", "?", "\n", "I", " think", " they", " would", " be", " enlightened", " to", " know", " that", " the", " same", " problems", " or", " challenges", " facing", " those"], "sequence_similarities": [[3.303781032562256], [7.484323501586914], [2.970111131668091], [8.543487548828125], [15.241660118103027], [10.373214721679688], [8.206564903259277], [6.979241371154785], [4.18332052230835], [10.779290199279785], [5.66403865814209], [5.667895317077637], [5.11370849609375], [0.6780974864959717], [2.533740997314453], [-0.2661755084991455], [4.319984436035156], [-4.003361225128174], [1.7514779567718506], [-3.153352975845337], [-4.458754539489746], [2.8645925521850586], [3.827488422393799], [2.4740028381347656], [1.6538883447647095], [-1.342494010925293], [2.0622618198394775], [-1.9588408470153809], [0.40303584933280945], [3.8023056983947754], [5.07305908203125], [2.8614072799682617], [-1.036635160446167], [-2.208157539367676], [0.033863961696624756], [0.94931960105896], [-2.5362443923950195], [3.6070597171783447], [-0.12490028142929077], [1.020035982131958], [4.066102027893066], [3.9712023735046387], [1.38590669631958], [1.321516513824463]], "normalized_similarities": [[0.1999581754207611], [0.45298150181770325], [0.17976312339305878], [0.517086386680603], [0.9224869012832642], [0.6278288960456848], [0.4966944754123688], [0.42241188883781433], [0.2531914710998535], [0.6524062156677246], [0.3428105115890503], [0.3430439233779907], [0.3095023036003113], [0.04104119911789894], [0.15335224568843842], [-0.016110017895698547], [0.261462926864624], [-0.24229960143566132], [0.10600652545690536], [-0.19085367023944855], [-0.2698618471622467], [0.17337672412395477], [0.2316550761461258], [0.1497366577386856], [0.10010001063346863], [-0.08125316351652145], [0.1248164176940918], [-0.11855696886777878], [0.024393359199166298], [0.23013091087341309], [0.30704203248023987], [0.17318393290042877], [-0.06274134665727615], [-0.133646622300148], [0.0020495839416980743], [0.05745666101574898], [-0.15350376069545746], [0.21831382811069489], [-0.007559469901025295], [0.06173669919371605], [0.2460969239473343], [0.24035321176052094], [0.08388067781925201], [0.07998351752758026]], "result_max_similarities": 16.52235984802246, "full_text_display": "Q: With Jon Huntsman and Mitt Romney running for president, what do voters need to know about the history of Mormonism?\nI think they would be enlightened to know that the same problems or challenges facing those", "K": 1}, {"id": "result_6", "sample_idx": 2483, "score": 15.039838790893555, "highlight_inds": [3], "matched_tokens_str": "-", "original_pos": 3, "full_sequence_tokens": ["The", " Canon", " EF", "-", "S", " 15", "-", "85", "mm", " ", "\ufffd", "\ufffd", "/", "3", ".", "5", "-", "5", ".", "6", " IS", " US", "M", " was", " released", " in", " September", " of", " 2009", ",", " as", " a", " replacement", " for", " the", " EF", "-", "S", " 17", "-", "85", "mm", " ", "\ufffd"], "sequence_similarities": [[0.2860677242279053], [0.5222898721694946], [3.670534133911133], [15.039838790893555], [5.200709819793701], [8.025052070617676], [7.857867240905762], [6.634983062744141], [3.598416328430176], [1.643005132675171], [4.705472946166992], [3.547563076019287], [6.631064414978027], [4.687859535217285], [0.032711029052734375], [6.021836757659912], [4.9125213623046875], [4.163311004638672], [3.057295560836792], [2.2303576469421387], [0.12229388952255249], [0.6692211627960205], [1.8101353645324707], [0.40336811542510986], [-3.626129627227783], [-0.5240484476089478], [-2.4121336936950684], [1.7831965684890747], [-1.7085864543914795], [-2.6638309955596924], [1.7098894119262695], [3.0646347999572754], [-8.580315589904785], [-3.2017199993133545], [2.159256935119629], [-1.027505874633789], [11.611757278442383], [1.6113944053649902], [1.848289966583252], [3.4393367767333984], [3.4140312671661377], [2.6279067993164062], [0.49469268321990967], [3.654893398284912]], "normalized_similarities": [[0.01731397584080696], [0.03161109238862991], [0.22215555608272552], [0.9102718234062195], [0.314767986536026], [0.4857085943222046], [0.4755898714065552], [0.4015759825706482], [0.21779070794582367], [0.09944131225347519], [0.28479424118995667], [0.21471285820007324], [0.4013388156890869], [0.2837282121181488], [0.001979803666472435], [0.3644658923149109], [0.29732564091682434], [0.25198042392730713], [0.18503987789154053], [0.13499026000499725], [0.007401720620691776], [0.04050397127866745], [0.10955671221017838], [0.024413468316197395], [-0.21946802735328674], [-0.03171753138303757], [-0.14599208533763885], [0.10792626440525055], [-0.10341055691242218], [-0.161225825548172], [0.10348942130804062], [0.18548408150672913], [-0.5193153619766235], [-0.1937810331583023], [0.130686953663826], [-0.062188807874917984], [0.7027904987335205], [0.09752810001373291], [0.11186598241329193], [0.2081625610589981], [0.20663097500801086], [0.1590515375137329], [0.029940800741314888], [0.22120891511440277]], "result_max_similarities": 16.52235984802246, "full_text_display": "The Canon EF-S 15-85mm \u0192/3.5-5.6 IS USM was released in September of 2009, as a replacement for the EF-S 17-85mm \ufffd", "K": 1}, {"id": "result_7", "sample_idx": 3041, "score": 15.037030220031738, "highlight_inds": [12], "matched_tokens_str": "-", "original_pos": 12, "full_sequence_tokens": ["This", " East", " End", " Ham", "pt", "ons", " gem", " sits", " on", " over", " a", " half", "-", "acre", " of", " prime", " bay", "front", " real", " estate", ".", " Of", "fered", " by", " First", " Hampton", " International", " Re", "alty", ",", " this", " is", " 53", " D", "une", " Road", ".", "\n", "At", " 4", ",", "600", " square", " feet"], "sequence_similarities": [[-1.0042290687561035], [3.536611557006836], [1.3597230911254883], [4.370589733123779], [2.4464337825775146], [6.217010974884033], [0.21332931518554688], [-0.1635955572128296], [2.0416347980499268], [1.5981945991516113], [6.8104329109191895], [6.526013374328613], [15.037030220031738], [5.139293193817139], [7.702889442443848], [4.766275405883789], [0.8044718503952026], [1.2637641429901123], [3.3758161067962646], [-0.2665877342224121], [-0.429290771484375], [7.150002479553223], [0.16053366661071777], [2.0553700923919678], [1.2239543199539185], [0.9480084180831909], [1.0913362503051758], [-1.3962578773498535], [-1.7109277248382568], [0.641567587852478], [1.787262201309204], [-0.5817198753356934], [2.6775765419006348], [-0.9713926315307617], [-1.3414433002471924], [-3.6122121810913086], [1.871368169784546], [0.46955567598342896], [-1.6322498321533203], [3.7823901176452637], [1.1322917938232422], [0.3054933547973633], [1.2750959396362305], [3.1269350051879883]], "normalized_similarities": [[-0.06078000366687775], [0.2140500247478485], [0.08229593932628632], [0.26452574133872986], [0.14806805551052094], [0.3762786388397217], [0.01291155256330967], [-0.009901463985443115], [0.12356799095869064], [0.09672919660806656], [0.4121949374675751], [0.39498069882392883], [0.9101018309593201], [0.31105080246925354], [0.4662100076675415], [0.28847426176071167], [0.048689886927604675], [0.07648811489343643], [0.20431803166866302], [-0.016134968027472496], [-0.025982413440942764], [0.4327470362186432], [0.009716146625578403], [0.12439930438995361], [0.07407866418361664], [0.057377301156520844], [0.06605207920074463], [-0.08450716733932495], [-0.10355225950479507], [0.038830265402793884], [0.10817233473062515], [-0.03520803898572922], [0.1620577573776245], [-0.058792609721422195], [-0.08118957281112671], [-0.21862567961215973], [0.11326276510953903], [0.028419407084584236], [-0.09879035502672195], [0.22892554104328156], [0.06853087246417999], [0.018489692360162735], [0.07717396318912506], [0.1892547458410263]], "result_max_similarities": 16.52235984802246, "full_text_display": "This East End Hamptons gem sits on over a half-acre of prime bayfront real estate. Offered by First Hampton International Realty, this is 53 Dune Road.\nAt 4,600 square feet", "K": 1}, {"id": "result_8", "sample_idx": 2043, "score": 14.913257598876953, "highlight_inds": [4], "matched_tokens_str": " V", "original_pos": 4, "full_sequence_tokens": ["The", " Go", " To", " Wide", " V", "-", "Ne", "ck", " is", " designed", " to", " become", " a", " go", "-", "to", " piece", " in", " your", " wardrobe", ".", " This", " dual", "-", "purpose", " piece", " acts", " as", " both", " a", " tank", " and", " a", " tun", "ic", ".", " This", " sle", "e", "vel", "ess", " top", " works", " well"], "sequence_similarities": [[0.2860677242279053], [2.331247329711914], [7.131175518035889], [12.244756698608398], [14.913257598876953], [10.773279190063477], [7.92762565612793], [3.7276055812835693], [3.1432552337646484], [0.05633103847503662], [0.18113815784454346], [2.5429327487945557], [0.6079315543174744], [4.169025897979736], [2.6368417739868164], [-3.158954620361328], [2.967592239379883], [3.2552330493927], [5.809011936187744], [-0.3877805471420288], [-1.192692756652832], [0.8054307699203491], [-3.1092419624328613], [-2.6357970237731934], [-3.4858052730560303], [-0.22711169719696045], [-1.3022669553756714], [-1.0219416618347168], [-3.5186424255371094], [2.6629981994628906], [-1.4335654973983765], [1.5444512367248535], [6.525544166564941], [3.0274064540863037], [6.035827159881592], [3.0827863216400146], [0.8027878999710083], [0.49426162242889404], [1.3128995895385742], [0.26922011375427246], [-8.861042976379395], [-0.551067590713501], [1.0195093154907227], [-3.18666672706604]], "normalized_similarities": [[0.01731397584080696], [0.14109651744365692], [0.43160757422447205], [0.7411021590232849], [0.9026105999946594], [0.6520423889160156], [0.4798119366168976], [0.22560974955558777], [0.19024251401424408], [0.003409382188692689], [0.010963213630020618], [0.15390856564044952], [0.036794476211071014], [0.2523263096809387], [0.15959231555461884], [-0.19119270145893097], [0.17961068451404572], [0.19701986014842987], [0.35158488154411316], [-0.023470045998692513], [-0.07218658924102783], [0.04874792695045471], [-0.18818388879299164], [-0.15952908992767334], [-0.2109750211238861], [-0.013745717704296112], [-0.07881846278905869], [-0.06185204163193703], [-0.21296246349811554], [0.1611754149198532], [-0.08676517754793167], [0.09347642958164215], [0.39495229721069336], [0.18323087692260742], [0.3653126657009125], [0.18658268451690674], [0.048587966710329056], [0.02991471067070961], [0.07946199178695679], [0.016294289380311966], [-0.5363061428070068], [-0.03335283696651459], [0.06170482560992241], [-0.19286994636058807]], "result_max_similarities": 16.52235984802246, "full_text_display": "The Go To Wide V-Neck is designed to become a go-to piece in your wardrobe. This dual-purpose piece acts as both a tank and a tunic. This sleeveless top works well", "K": 1}, {"id": "result_9", "sample_idx": 7151, "score": 14.88410758972168, "highlight_inds": [16], "matched_tokens_str": " or", "original_pos": 16, "full_sequence_tokens": ["Lab", "ocon", " Micro", "plate", " Sh", "aker", " L", "MS", "-", "100", " Series", " provides", " regulated", " shaking", " for", " two", " or", " four", " micro", "plates", ".", " With", " a", " speed", " range", " of", " 300", " to", " 500", " rpm", ",", " it", " can", " be", " adjusted", " to", " suit", " gentle", " shaking", " to", " ensure", " that", " the", " well"], "sequence_similarities": [[-3.0161023139953613], [-1.6790485382080078], [3.3706231117248535], [2.311837911605835], [3.569032669067383], [3.0587997436523438], [3.9676618576049805], [2.065722942352295], [4.076834201812744], [4.413115501403809], [-1.8836383819580078], [-0.7235293388366699], [2.098416328430176], [0.7442107796669006], [1.8515475988388062], [3.4323768615722656], [14.88410758972168], [8.482698440551758], [7.47450590133667], [4.0955352783203125], [-0.5947742462158203], [1.3329380750656128], [4.8977508544921875], [1.9292857646942139], [1.9911611080169678], [5.6298441886901855], [2.7092995643615723], [3.5492377281188965], [2.966296911239624], [0.9584264755249023], [-1.8026598691940308], [2.0794060230255127], [0.2862356901168823], [4.25565242767334], [-2.0619964599609375], [-0.5574876666069031], [2.2201802730560303], [0.6770122051239014], [-0.7883380055427551], [1.4744184017181396], [-0.20775961875915527], [0.7470288276672363], [3.7184641361236572], [-0.5673685073852539]], "normalized_similarities": [[-0.1825467050075531], [-0.1016228049993515], [0.2040037363767624], [0.13992176949977875], [0.21601228415966034], [0.18513092398643494], [0.2401389330625534], [0.1250258982181549], [0.2467464804649353], [0.2670995891094208], [-0.11400540918111801], [-0.043790921568870544], [0.12700463831424713], [0.04504264518618584], [0.11206314712762833], [0.20774132013320923], [0.9008463621139526], [0.5134071707725525], [0.4523873031139374], [0.24787834286689758], [-0.0359981432557106], [0.08067479729652405], [0.29643169045448303], [0.11676817387342453], [0.12051311880350113], [0.3407409191131592], [0.1639777570962906], [0.2148142158985138], [0.1795322746038437], [0.05800784379243851], [-0.10910426080226898], [0.12585406005382538], [0.017324140295386314], [0.257569283246994], [-0.12480036169290543], [-0.033741407096385956], [0.13437429070472717], [0.04097551479935646], [-0.04771340265870094], [0.0892377644777298], [-0.012574451975524426], [0.04521320387721062], [0.2250564843416214], [-0.034339435398578644]], "result_max_similarities": 16.52235984802246, "full_text_display": "Labocon Microplate Shaker LMS-100 Series provides regulated shaking for two or four microplates. With a speed range of 300 to 500 rpm, it can be adjusted to suit gentle shaking to ensure that the well", "K": 1}, {"id": "result_10", "sample_idx": 6237, "score": 14.771793365478516, "highlight_inds": [15], "matched_tokens_str": " of", "original_pos": 15, "full_sequence_tokens": ["The", " He", "ist", " team", " often", " travels", " to", " different", " countries", " around", " the", " globe", ",", " and", " one", " of", " the", " incredible", " per", "ks", " is", " that", " we", " get", " to", " have", " a", " taste", " of", " local", " snacks", ",", " foods", ",", " and", " beverages", " \u2212", " indeed", " travel", " and", " taste", " buds", " are", " deeply"], "sequence_similarities": [[0.2860677242279053], [-0.6048374176025391], [5.599964141845703], [6.549331188201904], [5.591428279876709], [4.6704325675964355], [5.8593034744262695], [1.9669744968414307], [5.029692649841309], [3.5661089420318604], [4.664839744567871], [4.038395404815674], [2.2953569889068604], [6.156965255737305], [7.712089538574219], [14.771793365478516], [10.432867050170898], [5.315839767456055], [8.431320190429688], [2.9164788722991943], [4.193418502807617], [5.376340389251709], [4.249875068664551], [1.5917079448699951], [2.7787246704101562], [6.334152698516846], [3.2092583179473877], [-0.6818584203720093], [6.11602783203125], [2.1300196647644043], [2.4023752212524414], [1.5874577760696411], [4.618574619293213], [3.014580726623535], [6.021785259246826], [3.7563161849975586], [6.525987148284912], [2.599919080734253], [2.697108030319214], [3.697517156600952], [3.8505611419677734], [4.1851348876953125], [2.9877610206604004], [-1.7817777395248413]], "normalized_similarities": [[0.01731397584080696], [-0.036607205867767334], [0.33893245458602905], [0.39639198780059814], [0.33841583132743835], [0.2826734483242035], [0.3546287417411804], [0.11904924362897873], [0.30441734194755554], [0.2158353328704834], [0.28233495354652405], [0.24442000687122345], [0.13892428576946259], [0.37264442443847656], [0.4667668342590332], [0.8940486311912537], [0.6314392685890198], [0.32173609733581543], [0.5102975964546204], [0.1765170842409134], [0.253802627325058], [0.3253978490829468], [0.2572196125984192], [0.09633659571409225], [0.16817964613437653], [0.38336852192878723], [0.19423729181289673], [-0.04126882925629616], [0.37016671895980835], [0.128917396068573], [0.1454014629125595], [0.09607936441898346], [0.27953481674194336], [0.18245461583137512], [0.36446279287338257], [0.22734743356704712], [0.3949791193008423], [0.1573576182126999], [0.16323988139629364], [0.22378867864608765], [0.23305152356624603], [0.2533012926578522], [0.18083137273788452], [-0.1078403890132904]], "result_max_similarities": 16.52235984802246, "full_text_display": "The Heist team often travels to different countries around the globe, and one of the incredible perks is that we get to have a taste of local snacks, foods, and beverages \u2212 indeed travel and taste buds are deeply", "K": 1}, {"id": "result_11", "sample_idx": 4120, "score": 14.731983184814453, "highlight_inds": [37], "matched_tokens_str": "-", "original_pos": 37, "full_sequence_tokens": ["Product", " Description", ":", " Nar", "as", "im", "ha", " is", " the", " fourth", " incarn", "ation", " of", " Lord", " V", "ish", "nu", ".", " Nar", "as", "im", "ha", " or", " the", " Lion", " incarn", "ation", " as", " a", " creature", " who", " was", " half", "-", "lion", " and", " half", "-", "man", ",", " V", "ish", "nu", " killed"], "sequence_similarities": [[4.013507843017578], [2.2322683334350586], [2.6104958057403564], [2.8036508560180664], [6.819133281707764], [7.185769557952881], [6.297671318054199], [3.5028929710388184], [7.083972930908203], [4.440409183502197], [3.3234128952026367], [-1.5509295463562012], [1.7611950635910034], [2.4855458736419678], [3.410200834274292], [0.04784286022186279], [1.91163969039917], [1.4690580368041992], [0.5070157051086426], [3.496591567993164], [3.7062313556671143], [3.747343063354492], [6.056190013885498], [7.411619186401367], [2.0091183185577393], [2.3024396896362305], [-2.0695395469665527], [0.4986872673034668], [3.8537509441375732], [-3.851102590560913], [-0.7080792188644409], [2.075531482696533], [5.3366546630859375], [14.026832580566406], [3.6589393615722656], [4.901647090911865], [9.754276275634766], [14.731983184814453], [5.986105918884277], [5.57876443862915], [4.26466178894043], [1.5651447772979736], [3.475802421569824], [4.374086856842041]], "normalized_similarities": [[0.24291372299194336], [0.1351059079170227], [0.1579977571964264], [0.16968828439712524], [0.41272151470184326], [0.4349118173122406], [0.38116052746772766], [0.2120092362165451], [0.4287506639957428], [0.26875150203704834], [0.20114637911319733], [-0.09386852383613586], [0.10659464448690414], [0.15043528378009796], [0.20639914274215698], [0.002895643236115575], [0.11570016294717789], [0.08891332894563675], [0.0306866392493248], [0.21162785589694977], [0.22431610524654388], [0.22680434584617615], [0.3665451109409332], [0.44858115911483765], [0.1215999647974968], [0.1393529623746872], [-0.12525689601898193], [0.030182568356394768], [0.23324458301067352], [-0.2330842912197113], [-0.04285581782460213], [0.1256195604801178], [0.3229959011077881], [0.8489605784416199], [0.22145380079746246], [0.2966674864292145], [0.5903682112693787], [0.8916391730308533], [0.36230331659317017], [0.3376493752002716], [0.2581145763397217], [0.09472888708114624], [0.21036961674690247], [0.26473742723464966]], "result_max_similarities": 16.52235984802246, "full_text_display": "Product Description: Narasimha is the fourth incarnation of Lord Vishnu. Narasimha or the Lion incarnation as a creature who was half-lion and half-man, Vishnu killed", "K": 1}, {"id": "result_12", "sample_idx": 13420, "score": 14.671728134155273, "highlight_inds": [1], "matched_tokens_str": "A", "original_pos": 1, "full_sequence_tokens": ["FIF", "A", " Manager", " 11", " is", " the", " 10", "th", " edition", " of", " the", " franchise", ",", " featuring", " a", " vast", " array", " of", " all", "-", " new", " features", ".", " Thank", " you", " for", " using", " our", " software", " library", ".", " Well", " this", " is", " a", " little", " tutorial", " about", " how", " to", " change", " the", " language", " to"], "sequence_similarities": [[3.4456000328063965], [14.671728134155273], [5.744402885437012], [9.503893852233887], [-0.6633694171905518], [3.653940200805664], [5.441763877868652], [1.1033263206481934], [1.3414952754974365], [0.43212080001831055], [2.640119791030884], [2.8065316677093506], [-1.9139273166656494], [-1.1008511781692505], [-0.9879108667373657], [0.5857837200164795], [3.2029566764831543], [4.690712928771973], [3.659006357192993], [9.625188827514648], [0.27057188749313354], [-3.1341590881347656], [-1.3330211639404297], [-0.8375069499015808], [-5.832785129547119], [-2.361388683319092], [0.21776330471038818], [0.6532976627349854], [2.284184217453003], [-1.762763261795044], [0.39037495851516724], [-0.08387750387191772], [-2.129613161087036], [-2.507730007171631], [-0.29749596118927], [-1.9223774671554565], [-1.6483170986175537], [-4.711062908172607], [-3.7129034996032715], [1.5543097257614136], [0.3451716899871826], [0.7077921628952026], [-0.1938115358352661], [0.7357974648475647]], "normalized_similarities": [[0.2085416465997696], [0.887992262840271], [0.34767448902130127], [0.5752140879631042], [-0.04014979675412178], [0.2211512327194214], [0.3293575346469879], [0.06677776575088501], [0.08119271695613861], [0.026153696700930595], [0.15979072451591492], [0.16986264288425446], [-0.11583861708641052], [-0.06662796437740326], [-0.05979235842823982], [0.03545399755239487], [0.193855881690979], [0.2839009165763855], [0.2214578539133072], [0.58255535364151], [0.016376104205846786], [-0.18969197571277618], [-0.08067982643842697], [-0.05068930611014366], [-0.3530237376689911], [-0.14292079210281372], [0.013179915025830269], [0.03954021632671356], [0.13824805617332458], [-0.10668955743312836], [0.02362707071006298], [-0.005076605360955], [-0.12889279425144196], [-0.1517779529094696], [-0.01800565794110298], [-0.11635005474090576], [-0.09976281225681305], [-0.2851325571537018], [-0.22471992671489716], [0.0940731093287468], [0.020891185849905014], [0.0428384430706501], [-0.011730257421731949], [0.04453343525528908]], "result_max_similarities": 16.52235984802246, "full_text_display": "FIFA Manager 11 is the 10th edition of the franchise, featuring a vast array of all- new features. Thank you for using our software library. Well this is a little tutorial about how to change the language to", "K": 1}, {"id": "result_13", "sample_idx": 13386, "score": 14.627609252929688, "highlight_inds": [2], "matched_tokens_str": " or", "original_pos": 2, "full_sequence_tokens": ["Every", " iPhone", " or", " iPad", " in", " iOS", " 11", "/", "iOS", " 12", " has", " an", " Apple", " ID", ".", " That", " identification", " number", " is", " directly", " connected", " to", " Apple", "\u2019", "s", " anti", "-", "the", "ft", " service", ",", " the", " popular", " Find", " My", " iPhone", ".", " That", " way", ",", " you", " can", " be", " sure"], "sequence_similarities": [[5.7622222900390625], [6.270047187805176], [14.627609252929688], [6.494036674499512], [5.639134407043457], [4.579766750335693], [7.899251461029053], [5.815942287445068], [7.4332170486450195], [11.552684783935547], [5.730848789215088], [5.0276689529418945], [4.829085826873779], [2.874434471130371], [-1.4044952392578125], [0.8983514308929443], [2.333949089050293], [2.6799535751342773], [2.200521945953369], [-1.5337867736816406], [-2.6624231338500977], [0.4920957684516907], [3.081098794937134], [2.850095510482788], [1.7544775009155273], [0.7126909494400024], [6.568854331970215], [2.508916139602661], [-2.126811981201172], [-2.7470734119415283], [-1.1578001976013184], [2.6095447540283203], [0.7614409327507019], [1.1239359378814697], [2.4881033897399902], [1.430701494216919], [2.557058334350586], [1.8600901365280151], [1.8861079216003418], [3.499337673187256], [1.853975772857666], [-0.6629204154014587], [2.4085516929626465], [-1.7797333002090454]], "normalized_similarities": [[0.3487529754638672], [0.37948858737945557], [0.8853220343589783], [0.3930453360080719], [0.3413031995296478], [0.27718600630760193], [0.4780946373939514], [0.35200434923171997], [0.44988834857940674], [0.6992151737213135], [0.3468541204929352], [0.3042948544025421], [0.2922757863998413], [0.17397239804267883], [-0.0850057303905487], [0.05437185987830162], [0.141260027885437], [0.1622016280889511], [0.13318447768688202], [-0.09283097833395004], [-0.16114060580730438], [0.029783625155687332], [0.1864805519580841], [0.17249929904937744], [0.10618806630373001], [0.043134935200214386], [0.3975736200809479], [0.15184974670410156], [-0.12872326374053955], [-0.16626398265361786], [-0.07007474452257156], [0.15794019401073456], [0.04608548432588577], [0.0680251494050026], [0.15059007704257965], [0.08659183979034424], [0.15476350486278534], [0.11258017271757126], [0.1141548752784729], [0.21179406344890594], [0.11221010982990265], [-0.0401226244866848], [0.14577528834342957], [-0.1077166497707367]], "result_max_similarities": 16.52235984802246, "full_text_display": "Every iPhone or iPad in iOS 11/iOS 12 has an Apple ID. That identification number is directly connected to Apple\u2019s anti-theft service, the popular Find My iPhone. That way, you can be sure", "K": 1}, {"id": "result_14", "sample_idx": 57, "score": 14.552278518676758, "highlight_inds": [1], "matched_tokens_str": " men", "original_pos": 1, "full_sequence_tokens": ["Five", " men", " are", " arrested", " for", " breaking", " into", " the", " Democratic", " National", " Committee", " offices", " at", " the", " Water", "gate", " Hotel", " in", " Washington", ",", " D", ".", "C", ".", " Senate", " investigations", " eventually", " revealed", " that", " President", " Richard", " Nixon", " had", " been", " personally", " involved", " in", " the", " subsequent", " cover", "-", "up", " of", " the"], "sequence_similarities": [[10.227855682373047], [14.552278518676758], [9.747316360473633], [3.9430034160614014], [-0.09119224548339844], [3.100440502166748], [8.83405876159668], [5.236296653747559], [7.760627746582031], [4.783208847045898], [0.3721046447753906], [1.9008033275604248], [2.748548984527588], [1.919769287109375], [4.687067031860352], [1.39005708694458], [1.102505087852478], [2.1704182624816895], [-1.8419630527496338], [3.4973628520965576], [3.6765732765197754], [-0.9233560562133789], [6.25601053237915], [5.072824954986572], [3.6654162406921387], [1.6884874105453491], [0.7464350461959839], [-0.48500490188598633], [-1.9699459075927734], [2.6840338706970215], [2.8467111587524414], [1.7487130165100098], [0.58357834815979], [-1.0618391036987305], [-2.0922250747680664], [-3.386256217956543], [-1.6707522869110107], [-1.2166262865066528], [-1.3217166662216187], [-2.526345729827881], [3.623833179473877], [-2.1494641304016113], [-0.22994357347488403], [0.09020769596099854]], "normalized_similarities": [[0.6190311908721924], [0.8807626962661743], [0.589946985244751], [0.2386465072631836], [-0.005519323516637087], [0.18765118718147278], [0.5346729159355164], [0.31692183017730713], [0.4697045683860779], [0.2894991338253021], [0.022521277889609337], [0.11504430323839188], [0.16635330021381378], [0.11619219928979874], [0.2836802303791046], [0.0841318741440773], [0.06672806292772293], [0.13136248290538788], [-0.11148305237293243], [0.2116745412349701], [0.2225210815668106], [-0.05588524043560028], [0.3786390423774719], [0.3070278763771057], [0.221845805644989], [0.10219408571720123], [0.045177266001701355], [-0.029354456812143326], [-0.11922908574342728], [0.16244858503341675], [0.1722944676876068], [0.10583917796611786], [0.03532052040100098], [-0.06426679342985153], [-0.12662991881370544], [-0.20494991540908813], [-0.10112068057060242], [-0.07363513857126236], [-0.07999563217163086], [-0.1529046595096588], [0.21932902932167053], [-0.1300942599773407], [-0.013917114585638046], [0.005459734238684177]], "result_max_similarities": 16.52235984802246, "full_text_display": "Five men are arrested for breaking into the Democratic National Committee offices at the Watergate Hotel in Washington, D.C. Senate investigations eventually revealed that President Richard Nixon had been personally involved in the subsequent cover-up of the", "K": 1}, {"id": "result_15", "sample_idx": 18036, "score": 14.518351554870605, "highlight_inds": [3], "matched_tokens_str": "uation", "original_pos": 2, "full_sequence_tokens": ["The", " Business", " Val", "uation", " Resources", " section", " presents", " guidance", " on", " performing", " val", "uations", " of", " closely", "-", "held", " businesses", " and", " int", "ang", "ible", " assets", ",", " including", " an", " overview", " of", " the", " valuation", " process", ",", " the", " factors", " to", " consider", " before", " accepting", " the", " valuation", " engagement", ",", " and", " the", " various"], "sequence_similarities": [[0.2860677242279053], [5.01725959777832], [12.353604316711426], [14.518351554870605], [12.364118576049805], [-0.7729321122169495], [2.7143936157226562], [2.261475086212158], [1.4212315082550049], [3.883213996887207], [5.68546199798584], [5.548028945922852], [3.3739776611328125], [1.8563051223754883], [7.023254871368408], [-0.4264456629753113], [5.160772323608398], [3.2920339107513428], [7.343596458435059], [7.98386812210083], [-1.2647404670715332], [6.717671871185303], [2.0865373611450195], [6.26899528503418], [5.425453186035156], [5.021981716156006], [6.304564476013184], [6.913189888000488], [6.192561149597168], [5.064023971557617], [1.7886675596237183], [6.832798957824707], [3.750396728515625], [5.574313640594482], [3.0767323970794678], [0.1689397692680359], [1.139785885810852], [2.062351703643799], [4.568134307861328], [2.8057618141174316], [1.4975075721740723], [3.6874234676361084], [8.116701126098633], [3.6534643173217773]], "normalized_similarities": [[0.01731397584080696], [0.30366483330726624], [0.7476900815963745], [0.8787093162536621], [0.7483264207839966], [-0.04678097739815712], [0.1642860770225525], [0.13687361776828766], [0.08601867407560349], [0.23502780497074127], [0.34410715103149414], [0.33578914403915405], [0.20420676469802856], [0.11235108971595764], [0.4250757694244385], [-0.02581021562218666], [0.3123508095741272], [0.19924719631671906], [0.44446414709091187], [0.48321595788002014], [-0.07654720544815063], [0.4065806567668915], [0.12628567218780518], [0.37942492961883545], [0.3283703625202179], [0.30395063757896423], [0.381577730178833], [0.4184142053127289], [0.37479883432388306], [0.30649518966674805], [0.10825739055871964], [0.41354861855506897], [0.22698916494846344], [0.33737999200820923], [0.18621627986431122], [0.010224917903542519], [0.06898444890975952], [0.12482186406850815], [0.276481956243515], [0.1698160469532013], [0.09063521027565002], [0.22317777574062347], [0.4912555515766144], [0.22112242877483368]], "result_max_similarities": 16.52235984802246, "full_text_display": "The Business Valuation Resources section presents guidance on performing valuations of closely-held businesses and intangible assets, including an overview of the valuation process, the factors to consider before accepting the valuation engagement, and the various", "K": 1}, {"id": "result_16", "sample_idx": 13000, "score": 14.43817138671875, "highlight_inds": [6], "matched_tokens_str": " of", "original_pos": 6, "full_sequence_tokens": ["You", " must", " have", " to", ",", " first", " of", " all", ",", " understand", " that", " your", " in", "-", "laws", " are", " very", " special", " people", " to", " you", ",", " and", " mostly", " to", " your", " wife", ",", " and", " if", " at", " all", " you", " want", " to", " make", " them", " feel", " comfortable", " in", " your", " house", " for", " the"], "sequence_similarities": [[1.1632477045059204], [2.329432725906372], [7.204079627990723], [3.628171443939209], [3.7748661041259766], [3.5547633171081543], [14.43817138671875], [7.065255165100098], [7.182621955871582], [-2.3636765480041504], [-0.7684214115142822], [3.0616345405578613], [2.5668044090270996], [5.990976333618164], [2.5682804584503174], [2.2765870094299316], [1.7931040525436401], [-2.3437857627868652], [-1.2207629680633545], [1.7601277828216553], [2.856140613555908], [1.5159859657287598], [1.8465614318847656], [4.515204429626465], [4.531929969787598], [4.287166595458984], [0.17520415782928467], [1.3949567079544067], [2.663024425506592], [6.82150936126709], [6.420291423797607], [2.6634910106658936], [5.763208389282227], [-0.5681265592575073], [1.553676962852478], [3.826446056365967], [3.7916598320007324], [0.6568537950515747], [-6.152364730834961], [-2.333299160003662], [2.499356746673584], [-0.6211850643157959], [0.5957412719726562], [4.033438205718994]], "normalized_similarities": [[0.07040445506572723], [0.14098668098449707], [0.43602001667022705], [0.21959160268306732], [0.22847016155719757], [0.21514864265918732], [0.8738564848899841], [0.42761778831481934], [0.43472132086753845], [-0.14305925369262695], [-0.04650796949863434], [0.1853024959564209], [0.155353382229805], [0.36259809136390686], [0.1554427146911621], [0.13778825104236603], [0.10852590203285217], [-0.141855388879776], [-0.07388550788164139], [0.10653004795312881], [0.17286516726016998], [0.09175359457731247], [0.11176136136054993], [0.2732784152030945], [0.27429071068763733], [0.2594766616821289], [0.010604063980281353], [0.08442841470241547], [0.16117700934410095], [0.4128653109073639], [0.3885819911956787], [0.1612052470445633], [0.34881266951560974], [-0.0343853160738945], [0.09403481334447861], [0.23159198462963104], [0.2294865846633911], [0.0397554449737072], [-0.3723659813404083], [-0.14122068881988525], [0.15127117931842804], [-0.03759663179516792], [0.03605667129158974], [0.24411998689174652]], "result_max_similarities": 16.52235984802246, "full_text_display": "You must have to, first of all, understand that your in-laws are very special people to you, and mostly to your wife, and if at all you want to make them feel comfortable in your house for the", "K": 1}, {"id": "result_17", "sample_idx": 11501, "score": 14.400562286376953, "highlight_inds": [42], "matched_tokens_str": " of", "original_pos": 15, "full_sequence_tokens": ["S", "yd", "ney", " is", " home", " to", " around", " five", " million", " people", ",", " more", " than", " a", " fifth", " of", " the", " entire", " Australian", " population", ".", " With", " a", " bust", "ling", " downtown", " area", ",", " very", " active", " night", "life", ",", " dozens", " of", " beautiful", " parks", " and", " protected", " areas", " and", " some", " of", " the"], "sequence_similarities": [[0.2238616943359375], [5.3666863441467285], [5.027997016906738], [1.4316575527191162], [1.8332008123397827], [3.823544502258301], [0.3986332416534424], [1.508482813835144], [8.075782775878906], [7.540214538574219], [4.1396870613098145], [5.21293306350708], [8.630661010742188], [6.963296890258789], [6.267339706420898], [10.684294700622559], [6.893434524536133], [4.603989124298096], [0.06563949584960938], [-0.02172255516052246], [-1.482522964477539], [2.6414403915405273], [4.087597846984863], [2.0314130783081055], [3.337890148162842], [-0.7468965649604797], [2.2477831840515137], [0.251162052154541], [0.9181081652641296], [-1.8242554664611816], [0.4120011329650879], [-7.094762325286865], [-0.6865131258964539], [-1.1461843252182007], [5.587280750274658], [-1.7159537076950073], [1.910710334777832], [2.9981913566589355], [-1.3377659320831299], [-0.9678412079811096], [3.2085862159729004], [5.769785404205322], [14.400562286376953], [6.570866584777832]], "normalized_similarities": [[0.013549014925956726], [0.3248135447502136], [0.3043147027492523], [0.08664970099925995], [0.1109527200460434], [0.23141637444496155], [0.024126894772052765], [0.09129947423934937], [0.4887790083885193], [0.4563642740249634], [0.25055059790611267], [0.31550776958465576], [0.522362470626831], [0.42144685983657837], [0.379324734210968], [0.6466566920280457], [0.41721850633621216], [0.27865204215049744], [0.003972767386585474], [-0.0013147367862984538], [-0.08972828090190887], [0.15987065434455872], [0.24739794433116913], [0.12294933199882507], [0.20202259719371796], [-0.04520519822835922], [0.1360449194908142], [0.015201342292129993], [0.05556761845946312], [-0.11041131615638733], [0.024935973808169365], [-0.429403692483902], [-0.04155055060982704], [-0.06937170773744583], [0.3381648063659668], [-0.10385645180940628], [0.11564391106367111], [0.18146266043186188], [-0.0809670016169548], [-0.05857766047120094], [0.19419661164283752], [0.3492107391357422], [0.8715802431106567], [0.397695392370224]], "result_max_similarities": 16.52235984802246, "full_text_display": "Sydney is home to around five million people, more than a fifth of the entire Australian population. With a bustling downtown area, very active nightlife, dozens of beautiful parks and protected areas and some of the", "K": 1}, {"id": "result_18", "sample_idx": 13983, "score": 14.388258934020996, "highlight_inds": [7], "matched_tokens_str": " of", "original_pos": 7, "full_sequence_tokens": ["I", " love", " pencil", " skirts", " and", " have", " several", " of", " them", ".", " I", " wear", " them", " mostly", " for", " work", " as", " I", " find", " them", " so", " easy", " to", " throw", " on", " and", " it", " looks", " stylish", " with", " both", " a", " shirt", " and", " statement", " neck", "l", "aces", " and", " with", " a", " bl", "azer", " and"], "sequence_similarities": [[2.6608121395111084], [0.4380619525909424], [4.906793117523193], [3.2921504974365234], [2.308593273162842], [5.218442440032959], [7.925061225891113], [14.388258934020996], [9.706875801086426], [-0.28153324127197266], [4.887228012084961], [-0.3320760130882263], [3.569291353225708], [0.9754922389984131], [1.5454847812652588], [1.805885910987854], [1.3825161457061768], [4.13190221786499], [4.056194305419922], [2.325152635574341], [-0.498546302318573], [-0.5656280517578125], [1.661142110824585], [-1.9848662614822388], [-1.6563094854354858], [0.16094577312469482], [6.182932376861572], [-1.8006306886672974], [-1.0484739542007446], [0.4458044767379761], [-1.058438777923584], [4.421319961547852], [1.7466500997543335], [2.1383025646209717], [0.040650367736816406], [1.9810090065002441], [5.001553058624268], [1.8597002029418945], [2.2302985191345215], [5.372061729431152], [5.280850887298584], [4.915895462036133], [2.062528371810913], [2.8885786533355713]], "normalized_similarities": [[0.16104310750961304], [0.02651328034698963], [0.2969789505004883], [0.19925425946712494], [0.13972540199756622], [0.3158412277698517], [0.47965672612190247], [0.8708356022834778], [0.5874993801116943], [-0.017039529979228973], [0.2957947850227356], [-0.020098581910133362], [0.21602794528007507], [0.05904073268175125], [0.09353898465633392], [0.10929951816797256], [0.08367546647787094], [0.2500794231891632], [0.24549727141857147], [0.14072763919830322], [-0.03017403744161129], [-0.034234095364809036], [0.10053903609514236], [-0.12013212591409683], [-0.10024654120206833], [0.00974108837544918], [0.3742160499095917], [-0.10898144543170929], [-0.06345788389444351], [0.026981888338923454], [-0.0640609934926033], [0.26759615540504456], [0.10571432113647461], [0.12941871583461761], [0.0024603246711194515], [0.11989866942167282], [0.30271419882774353], [0.1125565767288208], [0.13498668372631073], [0.3251388967037201], [0.31961843371391296], [0.2975298762321472], [0.12483255565166473], [0.1748284548521042]], "result_max_similarities": 16.52235984802246, "full_text_display": "I love pencil skirts and have several of them. I wear them mostly for work as I find them so easy to throw on and it looks stylish with both a shirt and statement necklaces and with a blazer and", "K": 1}, {"id": "result_19", "sample_idx": 433, "score": 14.3818941116333, "highlight_inds": [2], "matched_tokens_str": "-", "original_pos": 2, "full_sequence_tokens": ["The", " Asia", "-", "Pacific", " region", " has", " seen", " an", " online", " boom", " over", " the", " past", " decade", ",", " particularly", " in", " e", "-", "commerce", ".", "\n", "In", " fact", ",", " this", " part", " of", " the", " world", " actually", " has", " the", " largest", " online", " market", " globally", " and", " high", " levels", " of", " growth", " in", " the"], "sequence_similarities": [[0.2860677242279053], [8.166089057922363], [14.3818941116333], [9.938554763793945], [1.2958250045776367], [6.18422794342041], [3.9916300773620605], [2.0239996910095215], [1.654559850692749], [5.774467468261719], [5.633457183837891], [7.912742614746094], [3.779449462890625], [6.37264347076416], [2.35794734954834], [6.371990203857422], [4.074206829071045], [4.036313056945801], [5.98477840423584], [0.859377384185791], [0.21340560913085938], [3.060516595840454], [2.405292510986328], [2.0265049934387207], [3.005861759185791], [0.7781663537025452], [1.4546420574188232], [4.017487525939941], [4.589240074157715], [0.6665857434272766], [0.13635236024856567], [1.010427474975586], [3.8230185508728027], [0.1690438985824585], [1.414598822593689], [0.5702533721923828], [1.1379896402359009], [-1.6643650531768799], [4.8526201248168945], [2.361513137817383], [4.931681156158447], [1.6442512273788452], [4.324314117431641], [4.039431571960449]], "normalized_similarities": [[0.01731397584080696], [0.4942447245121002], [0.8704503774642944], [0.6015214920043945], [0.07842856645584106], [0.3742944598197937], [0.24158959090709686], [0.12250064313411713], [0.10014064610004425], [0.3494940996170044], [0.3409596085548401], [0.4789111614227295], [0.22874756157398224], [0.385698139667511], [0.14271250367164612], [0.3856585919857025], [0.24658747017383575], [0.24429398775100708], [0.36222296953201294], [0.05201299116015434], [0.012916170060634613], [0.18523482978343964], [0.1455780267715454], [0.12265226989984512], [0.1819269061088562], [0.04709777235984802], [0.08804081380367279], [0.2431545853614807], [0.2777593731880188], [0.04034446179866791], [0.00825259555131197], [0.061155155301094055], [0.2313845306634903], [0.010231220163404942], [0.08561723679304123], [0.034514039754867554], [0.06887573003768921], [-0.10073409974575043], [0.2937001883983612], [0.1429283171892166], [0.29848527908325195], [0.09951672703027725], [0.26172497868537903], [0.24448272585868835]], "result_max_similarities": 16.52235984802246, "full_text_display": "The Asia-Pacific region has seen an online boom over the past decade, particularly in e-commerce.\nIn fact, this part of the world actually has the largest online market globally and high levels of growth in the", "K": 1}];
+    const globalMaxSequenceSimilarity = [16.52235984802246];
+    const tooltip = document.getElementById('tooltip');
+    let isNormalized = true;
+    let currentThreshold = 0.0;
+
+    function htmlDecode(input) {
+        const doc = new DOMParser().parseFromString(input, "text/html");
+        return doc.documentElement.textContent;
+    }
+
+    function getColorForSimilarity(sim, maxSim, isNormalizedMode = false, threshold = 0.0) {
+        if (sim === -Infinity || maxSim <= 0) {
+            return { backgroundColor: '#f8f9fa', color: '#6c757d' };
+        }
+
+        // Apply threshold cutoff - if below threshold, return transparent/no color
+        if (sim <= threshold) {
+            return { backgroundColor: 'transparent', color: '#6c757d' };
+        }
+
+        let t;
+        if (isNormalizedMode) {
+            // In normalized mode, use a more sensitive scale since values are 0-1
+            // Apply a power function to make smaller differences more visible
+            const normalizedT = Math.max(0, Math.min(1, sim / maxSim));
+            t = Math.pow(normalizedT, 0.7); // Makes mid-range values more visible
+        } else {
+            // In raw mode, use linear scaling
+            t = Math.max(0, Math.min(1, sim / maxSim));
+        }
+
+        let r, g, b;
+        if (isNormalizedMode) {
+            // Use white to red gradient for normalized mode (same as raw mode)
+            r = 255;
+            g = b = Math.round(255 * (1 - t));
+        } else {
+            // Original red gradient for raw mode
+            r = 255;
+            g = b = Math.round(255 * (1 - t));
+        }
+
+        const textColor = (r + g + b) / 3 > 127 ? '#000000' : '#FFFFFF';
+        return { backgroundColor: `rgb(${r},${g},${b})`, color: textColor };
+    }
+
+    function renderResult(resultData) {
+        const displayDiv = document.getElementById(`sequence_display_${resultData.id}`);
+        const fullTextDiv = document.getElementById(`full_text_display_${resultData.id}`);
+        if (!displayDiv) return;
+
+        // Choose which similarities to use based on toggle state
+        const currentSimilarities = isNormalized ? resultData.normalized_similarities : resultData.sequence_similarities;
+        const currentMaxSimilarities = isNormalized ? Array(resultData.K).fill(1) : globalMaxSequenceSimilarity; // Normalized max is always 1
+
+        displayDiv.innerHTML = '';
+        resultData.full_sequence_tokens.forEach((tokenHtml, i) => {
+            const span = document.createElement('span');
+            span.className = 'token';
+            span.innerHTML = tokenHtml;
+
+            const seqSim = currentSimilarities[i];
+            const rawSeqSim = resultData.sequence_similarities[i];
+            let maxIdx = 0
+            let K = resultData.K;
+            let maxSim = Number.NEGATIVE_INFINITY;
+            for (let j = 0; j < K; j++) {
+                if (currentSimilarities[i] && currentSimilarities[i][j] > maxSim) {
+                    maxIdx = j;
+                    maxSim = currentSimilarities[i][j];
+                }
+            }
+
+            try{
+                const colors = getColorForSimilarity(seqSim[maxIdx], currentMaxSimilarities[maxIdx], isNormalized, currentThreshold);
+                span.style.backgroundColor = colors.backgroundColor;
+                span.style.color = colors.color;
+            } catch { console.log("Get color for sim doesn't work") }
+
+            if (resultData.highlight_inds.includes(i)) {
+                span.classList.add('highlight-window');
+            }
+
+            span.onmousemove = e => {
+                tooltip.style.visibility = 'visible';
+                let rawTokenSimsText = resultData.sequence_similarities[i].map((s, j) => `Q${j+1}: ${s.toFixed(4)}`).join(', ');
+                let normalizedTokenSimsText = resultData.normalized_similarities[i].map((s, j) => `Q${j+1}: ${s.toFixed(4)}`).join(', ');
+
+                let tooltipContent = `<b>${htmlDecode(tokenHtml)}</b> (Index: ${i})<br>`;
+                if (isNormalized) {
+                    tooltipContent += `Normalized Sim: ${seqSim[maxIdx].toFixed(4)}<br>`;
+                    tooltipContent += `Raw Sim: ${rawSeqSim[maxIdx].toFixed(4)}<br>`;
+                    tooltipContent += `Normalized Token Sims: ${normalizedTokenSimsText}<br>`;
+                } else {
+                    tooltipContent += `Raw Sim: ${seqSim[maxIdx].toFixed(4)}<br>`;
+                    tooltipContent += `Raw Token Sims: ${rawTokenSimsText}<br>`;
+                }
+                tooltipContent += `Vector index match: ${maxIdx + 1}`;
+
+                tooltip.innerHTML = tooltipContent;
+                tooltip.style.left = `${e.pageX + 15}px`;
+                tooltip.style.top = `${e.pageY + 15}px`;
+            };
+            span.onmouseout = () => { tooltip.style.visibility = 'hidden'; };
+            displayDiv.appendChild(span);
+        });
+
+        if (fullTextDiv && resultData.full_text_display) {
+            fullTextDiv.innerHTML = `<p><strong>Full Text:</strong></p><p>${resultData.full_text_display}</p>`;
+        }
+    }
+
+    function toggleNormalization() {
+        isNormalized = !isNormalized;
+        const statusSpan = document.getElementById('normalizationStatus');
+        if (isNormalized) {
+            statusSpan.innerHTML = 'Showing normalized values (max = 1.0 per result) | <span style="background: linear-gradient(90deg, white, pink, red); padding: 2px 8px; border-radius: 3px; color: black; font-size: 0.8em;">White→Red colors</span>';
+            statusSpan.style.color = '#28a745';
+        } else {
+            statusSpan.innerHTML = 'Showing raw values (global scale) | <span style="background: linear-gradient(90deg, white, pink, red); padding: 2px 8px; border-radius: 3px; color: black; font-size: 0.8em;">White→Red colors</span>';
+            statusSpan.style.color = '#666';
+        }
+
+        // Re-render all results with new normalization setting
+        allResultsData.forEach(renderResult);
+    }
+
+    function updateThreshold() {
+        const slider = document.getElementById('thresholdSlider');
+        const valueDisplay = document.getElementById('thresholdValue');
+        currentThreshold = parseFloat(slider.value);
+        valueDisplay.textContent = currentThreshold.toFixed(3);
+
+        // Re-render all results with new threshold setting
+        allResultsData.forEach(renderResult);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        // Initialize normalization status (start with normalized mode)
+        const statusSpan = document.getElementById('normalizationStatus');
+        statusSpan.innerHTML = 'Showing normalized values (max = 1.0 per result) | <span style="background: linear-gradient(90deg, white, pink, red); padding: 2px 8px; border-radius: 3px; color: black; font-size: 0.8em;">White→Red colors</span>';
+        statusSpan.style.color = '#28a745';
+
+        // Set up toggle event listener
+        const toggleCheckbox = document.getElementById('normalizeToggle');
+        toggleCheckbox.addEventListener('change', toggleNormalization);
+
+        // Set up threshold slider event listener
+        const thresholdSlider = document.getElementById('thresholdSlider');
+        thresholdSlider.addEventListener('input', updateThreshold);
+
+        // Render initial results
+        allResultsData.forEach(renderResult);
+    });
+</script>
+</body></html>

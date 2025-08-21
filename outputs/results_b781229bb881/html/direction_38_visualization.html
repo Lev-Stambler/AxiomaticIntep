@@ -1,0 +1,403 @@
+
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">
+<title>Token Activation Similarity Report</title><style>
+body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; padding: 20px; background-color: #f8f9fa; color: #212529; }
+.container { background-color: #ffffff; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.07); }
+h1 { color: #0056b3; text-align: center; margin-bottom: 25px; font-weight: 300;}
+h2 { color: #0056b3; border-bottom: 1px solid #dee2e6; padding-bottom: 10px; margin-top:0; font-size: 1.5em; font-weight: 400; }
+.token { padding: 3px 5px; margin: 2px 1px; border-radius: 4px; display: inline-block; border: 1px solid #ced4da; cursor: default; transition: transform 0.1s ease-out, box-shadow 0.1s ease-out; font-size: 0.9em; line-height: 1.5; }
+.token:hover { transform: translateY(-1px); box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+.token.highlight-window { border: 2px solid #c82333; font-weight: 600; background-color: #f8d7da !important; color: #721c24; }
+.sequence-display { margin-top: 12px; padding: 12px; border: 1px solid #e9ecef; background-color: #f8f9fa; border-radius: 6px; white-space: pre-wrap; word-wrap: break-word; line-height: 1.7; }
+.full-text-display { margin-top: 15px; padding: 10px; border: 1px solid #dfe6e9; background-color: #f9f9f9; border-radius: 6px; white-space: pre-wrap; word-wrap: break-word; line-height: 1.6; font-size: 0.95em; color: #333; }
+.tooltip { position: absolute; background-color: rgba(33,37,41,0.9); color: white; padding: 8px 12px; border-radius: 5px; visibility: hidden; z-index: 1000; pointer-events: none; font-size: 0.85em; max-width: 400px; }
+.details p { margin: 5px 0; font-size: 0.9em; color: #495057; } .details strong { color: #0056b3; }
+.footer-note { font-size: 0.8em; color: #6c757d; text-align: center; margin-top: 30px; }
+.global-max-info { background-color: #e3f2fd; padding: 10px; border-radius: 5px; margin-bottom: 20px; text-align: center; font-size: 0.9em; color: #1565c0; }
+.threshold-control { margin-top: 15px; padding: 10px; background-color: rgba(255,255,255,0.3); border-radius: 6px; }
+.threshold-slider { width: 200px; margin: 0 10px; }
+.threshold-value { font-weight: bold; color: #0056b3; }
+</style></head><body>
+<div class="explanation-section" style="background-color: #f0f8ff; padding: 15px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #0056b3;"><h3 style="color: #0056b3; margin-top: 0;">Feature Explanation</h3><div style="line-height: 1.6; color: #333;">It appears that this feature “lights up” on sentence‐initiating interrogative (or statement–introductory) tokens—especially words like “What” (and in one case “True”)—and it encourages the network to “uncontract” the following auxiliary (predicting “is” or a punctuation) rather than tacking on a clitic “s.” In short, the feature encodes that the token is the head of an interrogative (or declarative) clause, steering the model toward the proper expansion of the subsequent function word instead of a contracted form.</div></div><div class="global-max-info">
+    <strong>Query Type:</strong> 1-token sequences<br>
+    <strong>Query Vector Norms:</strong> ['43.7186']<br>
+    <strong>Global Max Sequence Similarities:</strong> [68.79483795166016]<br>
+    <div style="margin-top: 10px;">
+        <label style="font-weight: normal; cursor: pointer;">
+            <input type="checkbox" id="normalizeToggle" checked style="margin-right: 8px;">
+            Show Normalized Activations (divide by max per result)
+        </label>
+        <span id="normalizationStatus" style="margin-left: 15px; font-style: italic; color: #666;"></span>
+    </div>
+    <div class="threshold-control">
+        <label style="font-weight: normal;">
+            Activation Cutoff Threshold: <span class="threshold-value" id="thresholdValue">0.000</span>
+        </label><br>
+        <input type="range" id="thresholdSlider" class="threshold-slider"
+               min="0" max="1" step="0.001"
+               value="0.0">
+        <div style="margin-top: 5px; font-size: 0.8em; color: #666;">
+            No faithfulness data available - adjust manually
+        </div>
+    </div>
+</div>
+<div id="tooltip" class="tooltip"></div>
+
+<div class="container" id="container_result_0">
+    <h2>Result 1 (Sample Ref: 10201)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 68.7948</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">"True"</span></p>
+        <p><strong>Window Start Position:</strong> 0</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_0"></div>
+    <div class="full-text-display" id="full_text_display_result_0"></div>
+</div>
+<div class="container" id="container_result_1">
+    <h2>Result 2 (Sample Ref: 2196)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 65.1636</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">"What"</span></p>
+        <p><strong>Window Start Position:</strong> 0</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_1"></div>
+    <div class="full-text-display" id="full_text_display_result_1"></div>
+</div>
+<div class="container" id="container_result_2">
+    <h2>Result 3 (Sample Ref: 1985)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 65.1636</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">"What"</span></p>
+        <p><strong>Window Start Position:</strong> 0</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_2"></div>
+    <div class="full-text-display" id="full_text_display_result_2"></div>
+</div>
+<div class="container" id="container_result_3">
+    <h2>Result 4 (Sample Ref: 2165)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 65.1636</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">"What"</span></p>
+        <p><strong>Window Start Position:</strong> 0</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_3"></div>
+    <div class="full-text-display" id="full_text_display_result_3"></div>
+</div>
+<div class="container" id="container_result_4">
+    <h2>Result 5 (Sample Ref: 151)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 65.1636</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">"What"</span></p>
+        <p><strong>Window Start Position:</strong> 0</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_4"></div>
+    <div class="full-text-display" id="full_text_display_result_4"></div>
+</div>
+<div class="container" id="container_result_5">
+    <h2>Result 6 (Sample Ref: 88)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 65.1636</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">"What"</span></p>
+        <p><strong>Window Start Position:</strong> 0</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_5"></div>
+    <div class="full-text-display" id="full_text_display_result_5"></div>
+</div>
+<div class="container" id="container_result_6">
+    <h2>Result 7 (Sample Ref: 222)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 65.1636</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">"What"</span></p>
+        <p><strong>Window Start Position:</strong> 0</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_6"></div>
+    <div class="full-text-display" id="full_text_display_result_6"></div>
+</div>
+<div class="container" id="container_result_7">
+    <h2>Result 8 (Sample Ref: 2131)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 65.1636</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">"What"</span></p>
+        <p><strong>Window Start Position:</strong> 0</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_7"></div>
+    <div class="full-text-display" id="full_text_display_result_7"></div>
+</div>
+<div class="container" id="container_result_8">
+    <h2>Result 9 (Sample Ref: 1448)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 65.1636</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">"What"</span></p>
+        <p><strong>Window Start Position:</strong> 0</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_8"></div>
+    <div class="full-text-display" id="full_text_display_result_8"></div>
+</div>
+<div class="container" id="container_result_9">
+    <h2>Result 10 (Sample Ref: 870)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 65.1636</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">"What"</span></p>
+        <p><strong>Window Start Position:</strong> 0</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_9"></div>
+    <div class="full-text-display" id="full_text_display_result_9"></div>
+</div>
+<div class="container" id="container_result_10">
+    <h2>Result 11 (Sample Ref: 690)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 65.1636</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">"What"</span></p>
+        <p><strong>Window Start Position:</strong> 0</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_10"></div>
+    <div class="full-text-display" id="full_text_display_result_10"></div>
+</div>
+<div class="container" id="container_result_11">
+    <h2>Result 12 (Sample Ref: 862)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 65.1636</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">"What"</span></p>
+        <p><strong>Window Start Position:</strong> 0</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_11"></div>
+    <div class="full-text-display" id="full_text_display_result_11"></div>
+</div>
+<div class="container" id="container_result_12">
+    <h2>Result 13 (Sample Ref: 1456)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 65.1636</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">"What"</span></p>
+        <p><strong>Window Start Position:</strong> 0</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_12"></div>
+    <div class="full-text-display" id="full_text_display_result_12"></div>
+</div>
+<div class="container" id="container_result_13">
+    <h2>Result 14 (Sample Ref: 1018)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 65.1636</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">"What"</span></p>
+        <p><strong>Window Start Position:</strong> 0</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_13"></div>
+    <div class="full-text-display" id="full_text_display_result_13"></div>
+</div>
+<div class="container" id="container_result_14">
+    <h2>Result 15 (Sample Ref: 1823)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 65.1636</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">"What"</span></p>
+        <p><strong>Window Start Position:</strong> 0</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_14"></div>
+    <div class="full-text-display" id="full_text_display_result_14"></div>
+</div>
+<div class="container" id="container_result_15">
+    <h2>Result 16 (Sample Ref: 426)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 65.1636</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">"What"</span></p>
+        <p><strong>Window Start Position:</strong> 0</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_15"></div>
+    <div class="full-text-display" id="full_text_display_result_15"></div>
+</div>
+<div class="container" id="container_result_16">
+    <h2>Result 17 (Sample Ref: 976)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 65.1636</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">"What"</span></p>
+        <p><strong>Window Start Position:</strong> 0</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_16"></div>
+    <div class="full-text-display" id="full_text_display_result_16"></div>
+</div>
+<div class="container" id="container_result_17">
+    <h2>Result 18 (Sample Ref: 681)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 65.1636</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">"What"</span></p>
+        <p><strong>Window Start Position:</strong> 0</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_17"></div>
+    <div class="full-text-display" id="full_text_display_result_17"></div>
+</div>
+<div class="container" id="container_result_18">
+    <h2>Result 19 (Sample Ref: 385)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 65.1636</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">"What"</span></p>
+        <p><strong>Window Start Position:</strong> 0</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_18"></div>
+    <div class="full-text-display" id="full_text_display_result_18"></div>
+</div>
+<div class="container" id="container_result_19">
+    <h2>Result 20 (Sample Ref: 470)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 65.1636</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">"What"</span></p>
+        <p><strong>Window Start Position:</strong> 0</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_19"></div>
+    <div class="full-text-display" id="full_text_display_result_19"></div>
+</div>
+<script>
+    const allResultsData = [{"id": "result_0", "sample_idx": 10201, "score": 68.79483795166016, "highlight_inds": [0], "matched_tokens_str": "True", "original_pos": 0, "full_sequence_tokens": ["True", " vertical", " till", "age", " has", " become", " the", " standard", " for", " yield", "-", "boost", "ing", " seed", "bed", " preparation", ".", " The", " industry", "-", "leading", " Tur", "bo", "-", "Max", " offers", " ag", "ron", "omic", " benefits", " of", " both", " spring", " vertical", " till", "age", " and", " autumn", " residue", " management", ".", " Tur", "bo", "-"], "sequence_similarities": [[68.79483795166016], [-4.089583396911621], [-34.53476333618164], [-27.76789093017578], [-23.594524383544922], [-14.453213691711426], [-9.056966781616211], [-14.008635520935059], [3.012254238128662], [-12.195215225219727], [-8.783180236816406], [-5.133436679840088], [-0.8440170288085938], [-18.994508743286133], [2.189321994781494], [-11.19582462310791], [2.327500820159912], [-12.912248611450195], [-3.7161498069763184], [16.119644165039062], [10.744497299194336], [-3.734706163406372], [-6.421908378601074], [-2.6228787899017334], [-7.74418830871582], [3.812577247619629], [-2.9437379837036133], [-5.634855270385742], [-6.975663185119629], [10.95551872253418], [16.592988967895508], [18.184844970703125], [2.3509652614593506], [-0.35549479722976685], [-12.329747200012207], [-27.922401428222656], [-17.904930114746094], [-22.105693817138672], [-11.290716171264648], [-5.228444576263428], [-4.408010482788086], [-1.6200575828552246], [-6.130791187286377], [-5.4417724609375]], "normalized_similarities": [[1.0], [-0.059446077793836594], [-0.5019964575767517], [-0.40363335609436035], [-0.3429693877696991], [-0.21009154617786407], [-0.13165183365345], [-0.20362916588783264], [0.043786048889160156], [-0.1772693395614624], [-0.12767207622528076], [-0.07461950182914734], [-0.012268610298633575], [-0.2761037051677704], [0.03182392939925194], [-0.16274221241474152], [0.03383249044418335], [-0.18769212067127228], [-0.05401785671710968], [0.23431473970413208], [0.15618173778057098], [-0.05428759381175041], [-0.09334869682788849], [-0.03812609985470772], [-0.11256932467222214], [0.055419523268938065], [-0.04279009997844696], [-0.08190811425447464], [-0.1013980582356453], [0.15924914181232452], [0.24119526147842407], [0.26433444023132324], [0.034173570573329926], [-0.005167463328689337], [-0.179224893450737], [-0.40587931871414185], [-0.26026561856269836], [-0.321327805519104], [-0.16412155330181122], [-0.07600053399801254], [-0.06407472491264343], [-0.023549115285277367], [-0.08911702036857605], [-0.07910146564245224]], "result_max_similarities": 68.79483795166016, "full_text_display": "True vertical tillage has become the standard for yield-boosting seedbed preparation. The industry-leading Turbo-Max offers agronomic benefits of both spring vertical tillage and autumn residue management. Turbo-", "K": 1}, {"id": "result_1", "sample_idx": 2196, "score": 65.16358184814453, "highlight_inds": [0], "matched_tokens_str": "What", "original_pos": 0, "full_sequence_tokens": ["What", " is", " this", " un", "fore", "seen", " wonder", " that", " is", " happening", " even", " now", "?", "\n", "in", " his", " Father", "\u2019", "s", " heaven", ",", " and", " remains", " hidden", "?", "\n", "Does", " God", " now", " wish", " to", " be", " seen", " by", " s", "inners", " also", "?", "\n", "God", " Al", "mighty", ",", " the"], "sequence_similarities": [[65.16358184814453], [49.338226318359375], [42.93925476074219], [24.283641815185547], [-7.074642181396484], [13.370140075683594], [7.505025863647461], [2.247708797454834], [-1.904407024383545], [-17.770896911621094], [14.969340324401855], [-2.378013849258423], [-1.38576078414917], [14.012947082519531], [15.560139656066895], [7.5495452880859375], [-7.5330376625061035], [-9.720973014831543], [-0.16648626327514648], [1.3324365615844727], [4.424657821655273], [4.434604167938232], [-1.9538311958312988], [13.85737133026123], [7.989605903625488], [-4.423644065856934], [11.13093376159668], [-12.854287147521973], [-7.245073318481445], [12.982379913330078], [4.1977925300598145], [21.081527709960938], [-5.622663497924805], [4.251517295837402], [-4.981647968292236], [-8.391798973083496], [9.90191650390625], [2.622577667236328], [-10.401348114013672], [-5.451191425323486], [8.084775924682617], [-8.327596664428711], [3.6257987022399902], [-8.362112998962402]], "normalized_similarities": [[0.9472161531448364], [0.7171791791915894], [0.6241639256477356], [0.3529863953590393], [-0.10283681750297546], [0.19434800744056702], [0.10909286141395569], [0.032672636210918427], [-0.027682412415742874], [-0.2583172917366028], [0.2175939530134201], [-0.03456674888730049], [-0.020143384113907814], [0.20369184017181396], [0.2261817902326584], [0.1097399964928627], [-0.10950004309415817], [-0.14130380749702454], [-0.0024200400803238153], [0.019368262961506844], [0.06431671231985092], [0.06446129083633423], [-0.028400840237736702], [0.20143039524555206], [0.11613670736551285], [-0.0643019750714302], [0.16179896891117096], [-0.18684959411621094], [-0.10531420260667801], [0.18871153891086578], [0.06101900339126587], [0.306440532207489], [-0.08173089474439621], [0.061799947172403336], [-0.07241310924291611], [-0.12198297679424286], [0.14393401145935059], [0.038121722638607025], [-0.15119372308254242], [-0.07923837751150131], [0.11752009391784668], [-0.12104973196983337], [0.05270451679825783], [-0.12155146151781082]], "result_max_similarities": 68.79483795166016, "full_text_display": "What is this unforeseen wonder that is happening even now?\nin his Father\u2019s heaven, and remains hidden?\nDoes God now wish to be seen by sinners also?\nGod Almighty, the", "K": 1}, {"id": "result_2", "sample_idx": 1985, "score": 65.16358184814453, "highlight_inds": [0], "matched_tokens_str": "What", "original_pos": 0, "full_sequence_tokens": ["What", " percent", " of", " the", " Earth", "\u2019", "s", " fresh", " water", " is", " found", " in", " glac", "iers", "?", "\n", "What", " type", " of", " glac", "ier", " exists", " in", " the", " Southern", " Al", "ps", ",", " New", " Zealand", "?", "\n", "What", " type", " of", " glac", "ier", " exists", " at", " the", " Tor", "ng", "at", " Mountains"], "sequence_similarities": [[65.16358184814453], [17.73293685913086], [17.847394943237305], [13.842988014221191], [4.302980422973633], [-0.4666781425476074], [14.933680534362793], [4.176230430603027], [0.006580352783203125], [9.597633361816406], [2.887777090072632], [5.92595100402832], [3.56011962890625], [-12.022931098937988], [5.280749320983887], [12.744324684143066], [17.952632904052734], [21.028276443481445], [-19.52062225341797], [-1.3901238441467285], [-12.533230781555176], [-1.115002155303955], [-6.109783172607422], [-7.521231651306152], [-8.890600204467773], [4.328398704528809], [-28.681184768676758], [-12.242181777954102], [-2.1420392990112305], [-5.497402191162109], [3.9739294052124023], [-2.8584401607513428], [12.82813549041748], [8.904232025146484], [-25.920495986938477], [-2.654432773590088], [-23.277076721191406], [-12.237114906311035], [-5.20942497253418], [-4.227602958679199], [-14.055285453796387], [-13.885889053344727], [-4.600436687469482], [-12.67764663696289]], "normalized_similarities": [[0.9472161531448364], [0.2577655017375946], [0.25942927598953247], [0.2012213170528412], [0.06254801154136658], [-0.00678362138569355], [0.21707560122013092], [0.060705579817295074], [9.565184154780582e-05], [0.13951095938682556], [0.041976653039455414], [0.08613947033882141], [0.051749806851148605], [-0.17476502060890198], [0.07676083594560623], [0.1852511763572693], [0.2609589993953705], [0.3056664764881134], [-0.2837512791156769], [-0.02020680531859398], [-0.18218271434307098], [-0.01620764285326004], [-0.08881165087223053], [-0.10932843387126923], [-0.12923353910446167], [0.06291749328374863], [-0.41690897941589355], [-0.17795203626155853], [-0.03113662824034691], [-0.07991009950637817], [0.0577649362385273], [-0.04155021160840988], [0.1864694505929947], [0.12943169474601746], [-0.3767796754837036], [-0.038584765046834946], [-0.33835500478744507], [-0.17787839472293854], [-0.07572406530380249], [-0.06145232915878296], [-0.20430727303028107], [-0.2018449306488037], [-0.06687182933092117], [-0.18428194522857666]], "result_max_similarities": 68.79483795166016, "full_text_display": "What percent of the Earth\u2019s fresh water is found in glaciers?\nWhat type of glacier exists in the Southern Alps, New Zealand?\nWhat type of glacier exists at the Torngat Mountains", "K": 1}, {"id": "result_3", "sample_idx": 2165, "score": 65.16358184814453, "highlight_inds": [0], "matched_tokens_str": "What", "original_pos": 0, "full_sequence_tokens": ["What", " can", " we", " learn", " from", " Pit", "cher", " plants", "?", "\n", "P", "it", "cher", " plants", " stay", " in", " one", " place", " but", " hunt", " moving", " creatures", " by", " their", " art", " of", " lethal", " attraction", ".", " Some", " of", " the", " pitcher", " plants", " consume", " small", " rodents", ",", " snakes", ",", " and", " insects", " in", " whole"], "sequence_similarities": [[65.16358184814453], [35.626827239990234], [8.032123565673828], [-2.529538154602051], [3.2711002826690674], [-11.850297927856445], [11.236863136291504], [-2.4158132076263428], [2.019771099090576], [21.500507354736328], [13.986576080322266], [12.54964542388916], [2.942308187484741], [-6.745578289031982], [-7.530622959136963], [-0.40855884552001953], [5.126477241516113], [-17.790058135986328], [-16.463077545166016], [5.1787309646606445], [-4.961585998535156], [-15.421611785888672], [-9.477275848388672], [-28.99916648864746], [-11.681077003479004], [-3.357968807220459], [-6.038118362426758], [-16.161819458007812], [-10.035465240478516], [-11.21063232421875], [-4.005886554718018], [-6.392641544342041], [-0.7373561859130859], [-0.024155616760253906], [-16.017112731933594], [-11.855393409729004], [-7.575977802276611], [-2.686983108520508], [-10.634119033813477], [-16.591672897338867], [-1.5896587371826172], [-8.367431640625], [-10.10594367980957], [-14.847286224365234]], "normalized_similarities": [[0.9472161531448364], [0.5178706645965576], [0.11675474047660828], [-0.03676930069923401], [0.047548629343509674], [-0.17225562036037445], [0.16333875060081482], [-0.035116199404001236], [0.02935934066772461], [0.3125308156013489], [0.20330850780010223], [0.18242132663726807], [0.04276931658387184], [-0.09805355221033096], [-0.10946494340896606], [-0.005938800983130932], [0.0745183452963829], [-0.2585958242416382], [-0.23930686712265015], [0.0752779021859169], [-0.07212148606777191], [-0.22416815161705017], [-0.1377614438533783], [-0.42153114080429077], [-0.16979584097862244], [-0.048811350017786026], [-0.08776993304491043], [-0.23492778837680817], [-0.1458752602338791], [-0.16295745968818665], [-0.058229465037584305], [-0.09292327612638474], [-0.010718191042542458], [-0.0003511254326440394], [-0.23282434046268463], [-0.17232969403266907], [-0.11012421548366547], [-0.03905791789293289], [-0.15457728505134583], [-0.24117612838745117], [-0.023107238113880157], [-0.1216287687420845], [-0.1468997448682785], [-0.21581977605819702]], "result_max_similarities": 68.79483795166016, "full_text_display": "What can we learn from Pitcher plants?\nPitcher plants stay in one place but hunt moving creatures by their art of lethal attraction. Some of the pitcher plants consume small rodents, snakes, and insects in whole", "K": 1}, {"id": "result_4", "sample_idx": 151, "score": 65.16358184814453, "highlight_inds": [0], "matched_tokens_str": "What", "original_pos": 0, "full_sequence_tokens": ["What", " is", " Green", "ies", " Pill", " P", "ockets", "?", "\n", "Green", "ies", " Pill", " P", "ockets", " are", " a", " nut", "rit", "ious", " treat", " for", " dogs", " and", " cats", " that", " contain", " a", " built", "-", "in", " pocket", ",", " perfect", " for", " hiding", " a", " tablet", " or", " capsule", ".", " P", "ets", " love", " the"], "sequence_similarities": [[65.16358184814453], [49.338226318359375], [0.9845819473266602], [3.419942855834961], [2.741166114807129], [-1.462652564048767], [-3.505280017852783], [-0.35830020904541016], [24.058212280273438], [2.6558725833892822], [-7.52829122543335], [4.300503253936768], [-0.23450517654418945], [-5.992310047149658], [-1.216203212738037], [2.466923713684082], [16.341060638427734], [-5.4334716796875], [11.769444465637207], [3.0039124488830566], [5.269182205200195], [-4.592581748962402], [-13.73592472076416], [-13.67668628692627], [-10.890290260314941], [-1.5434770584106445], [-7.254001140594482], [0.20350241661071777], [-12.256467819213867], [8.846348762512207], [-11.97999382019043], [-0.8549857139587402], [-14.02236557006836], [8.854551315307617], [-0.3891594409942627], [3.4505763053894043], [-8.25648307800293], [-3.659412384033203], [5.482453346252441], [-2.7256431579589844], [10.805458068847656], [27.267234802246094], [12.061447143554688], [4.458314418792725]], "normalized_similarities": [[0.9472161531448364], [0.7171791791915894], [0.014311857521533966], [0.049712203443050385], [0.03984551876783371], [-0.021261079236865044], [-0.05095266178250313], [-0.005208242684602737], [0.34970957040786743], [0.038605697453022], [-0.10943105071783066], [0.06251200288534164], [-0.003408761229366064], [-0.08710406720638275], [-0.017678698524832726], [0.03585914149880409], [0.23753324151039124], [-0.07898080348968506], [0.1710803359746933], [0.04366479441523552], [0.07659269869327545], [-0.06675764918327332], [-0.19966505467891693], [-0.19880396127700806], [-0.15830098092556], [-0.02243594266474247], [-0.10544397681951523], [0.0029581058770418167], [-0.178159698843956], [0.12859030067920685], [-0.17414088547229767], [-0.012428050860762596], [-0.20382875204086304], [0.12870952486991882], [-0.005656811874359846], [0.05015748739242554], [-0.12001602351665497], [-0.05319312587380409], [0.07969280332326889], [-0.03961987793445587], [0.15706786513328552], [0.39635583758354187], [0.17532488703727722], [0.06480594724416733]], "result_max_similarities": 68.79483795166016, "full_text_display": "What is Greenies Pill Pockets?\nGreenies Pill Pockets are a nutritious treat for dogs and cats that contain a built-in pocket, perfect for hiding a tablet or capsule. Pets love the", "K": 1}, {"id": "result_5", "sample_idx": 88, "score": 65.16358184814453, "highlight_inds": [0], "matched_tokens_str": "What", "original_pos": 0, "full_sequence_tokens": ["What", " Happ", "ens", " When", " You", " Ref", "in", "ance", " into", " a", " Reverse", " Mortgage", "?", "\n", "When", " you", " choose", " me", " to", " help", " you", " obtain", " a", " reverse", " mortgage", ",", " feel", " confident", " that", " you", " made", " the", " right", " decision", ".", "\n", "No", " more", " monthly", " mortgage", " payments", " and", " you", " will"], "sequence_similarities": [[65.16358184814453], [14.871042251586914], [1.4026126861572266], [-13.4672212600708], [-17.323387145996094], [-19.580209732055664], [-16.25632095336914], [-36.85929870605469], [-13.65644645690918], [-23.451583862304688], [-12.07840347290039], [-22.08557891845703], [-1.8160576820373535], [15.10767936706543], [1.944511890411377], [-15.8392915725708], [3.1471738815307617], [4.910872459411621], [-8.446648597717285], [13.644596099853516], [-7.622150897979736], [-4.156915664672852], [-10.752738952636719], [-13.862327575683594], [-3.96097731590271], [0.15724468231201172], [-2.8382863998413086], [-13.20115852355957], [-4.562485694885254], [-9.162816047668457], [7.057222366333008], [-9.233906745910645], [-18.601425170898438], [-6.205774307250977], [-5.238885402679443], [-0.7346060276031494], [9.033580780029297], [8.661331176757812], [-6.65496826171875], [4.732235908508301], [-5.7332658767700195], [-4.6105875968933105], [-19.348031997680664], [-12.979684829711914]], "normalized_similarities": [[0.9472161531448364], [0.21616509556770325], [0.020388342440128326], [-0.19575917720794678], [-0.25181230902671814], [-0.28461742401123047], [-0.2363014668226242], [-0.5357857942581177], [-0.19850975275039673], [-0.34089162945747375], [-0.17557136714458466], [-0.3210354149341583], [-0.02639816701412201], [0.21960483491420746], [0.028265375643968582], [-0.23023954033851624], [0.045747239142656326], [0.07138431817293167], [-0.12278027087450027], [0.19833749532699585], [-0.11079539358615875], [-0.060424819588661194], [-0.15630154311656952], [-0.20150244235992432], [-0.05757666379213333], [0.002285704715177417], [-0.041257258504629135], [-0.19189170002937317], [-0.06632017344236374], [-0.13319045305252075], [0.10258360207080841], [-0.1342238336801529], [-0.2703898251056671], [-0.09020697325468063], [-0.07615230232477188], [-0.010678214021027088], [0.13131189346313477], [0.12590089440345764], [-0.09673644602298737], [0.06878765672445297], [-0.08333860337734222], [-0.06701938062906265], [-0.2812424898147583], [-0.18867236375808716]], "result_max_similarities": 68.79483795166016, "full_text_display": "What Happens When You Refinance into a Reverse Mortgage?\nWhen you choose me to help you obtain a reverse mortgage, feel confident that you made the right decision.\nNo more monthly mortgage payments and you will", "K": 1}, {"id": "result_6", "sample_idx": 222, "score": 65.16358184814453, "highlight_inds": [0], "matched_tokens_str": "What", "original_pos": 0, "full_sequence_tokens": ["What", " are", " the", " 4", "C", "\u2019", "s", " of", " Diamond", " Quality", "?", "\n", "The", " 4", "C", "\u2019", "s", " -", " cut", ",", " color", ",", " clarity", ",", " and", " car", "at", " -", " refer", " to", " to", " the", " global", " standards", " set", " by", " the", " Gem", "ological", " Institute", " of", " America", " (", "G"], "sequence_similarities": [[65.16358184814453], [49.50780487060547], [43.34476089477539], [23.92198371887207], [0.4474809169769287], [4.700122833251953], [7.855922698974609], [15.494935035705566], [-12.743547439575195], [-4.9346818923950195], [6.012721061706543], [20.80160140991211], [-6.483665943145752], [9.66744613647461], [-14.033946990966797], [4.385793685913086], [-6.373666763305664], [5.311760902404785], [-1.7321231365203857], [-1.7150869369506836], [-7.732961654663086], [-11.204364776611328], [-12.662694931030273], [-2.409461498260498], [2.619436264038086], [-18.349517822265625], [-7.314912796020508], [-4.577545166015625], [10.576736450195312], [-17.806734085083008], [-17.592697143554688], [-19.25248908996582], [-3.3312535285949707], [-12.213302612304688], [-3.6000876426696777], [11.55030345916748], [-11.961771011352539], [-14.06610107421875], [-9.094919204711914], [-9.513376235961914], [21.639169692993164], [4.877037048339844], [4.680833339691162], [5.59545373916626]], "normalized_similarities": [[0.9472161531448364], [0.7196441888809204], [0.6300583481788635], [0.347729355096817], [0.0065045710653066635], [0.0683208629488945], [0.11419349163770676], [0.22523397207260132], [-0.18523988127708435], [-0.07173041254281998], [0.08740075677633286], [0.3023715317249298], [-0.09424640238285065], [0.14052574336528778], [-0.20399709045886993], [0.06375178694725037], [-0.09264745563268661], [0.07721161842346191], [-0.025178097188472748], [-0.02493046037852764], [-0.11240613460540771], [-0.16286635398864746], [-0.1840646117925644], [-0.035023871809244156], [0.03807605803012848], [-0.26672813296318054], [-0.10632938146591187], [-0.06653907895088196], [0.15374316275119781], [-0.2588382363319397], [-0.25572699308395386], [-0.2798537015914917], [-0.04842301458120346], [-0.17753225564956665], [-0.052330780774354935], [0.16789491474628448], [-0.17387600243091583], [-0.20446448028087616], [-0.13220351934432983], [-0.13828618824481964], [0.3145464062690735], [0.07089248299598694], [0.06804047524929047], [0.08133537322282791]], "result_max_similarities": 68.79483795166016, "full_text_display": "What are the 4C\u2019s of Diamond Quality?\nThe 4C\u2019s - cut, color, clarity, and carat - refer to to the global standards set by the Gemological Institute of America (G", "K": 1}, {"id": "result_7", "sample_idx": 2131, "score": 65.16358184814453, "highlight_inds": [0], "matched_tokens_str": "What", "original_pos": 0, "full_sequence_tokens": ["What", "&#x27;s", " next", " for", " Cover", " Oregon", " in", " its", " post", "-", "Or", "acle", " future", "?", " That", "&#x27;s", " the", " question", " now", " facing", " Bruce", " Goldberg", ",", " acting", " head", " of", " Cover", " Oregon", ",", " and", " Gov", ".", " John", " K", "itz", "hab", "er", ".", "\n", ",", " The", " Oregon", "ian", " has"], "sequence_similarities": [[65.16358184814453], [43.66457748413086], [42.895816802978516], [24.652263641357422], [23.017234802246094], [8.116232872009277], [12.124390602111816], [8.317859649658203], [17.674999237060547], [27.986186981201172], [10.04272174835205], [-10.711676597595215], [22.13178825378418], [11.900232315063477], [14.20759105682373], [13.307991027832031], [6.592057228088379], [3.2358570098876953], [4.399888038635254], [23.45475196838379], [-7.69636869430542], [-7.435286998748779], [-10.595919609069824], [1.2677435874938965], [-3.8750085830688477], [3.0929722785949707], [10.059829711914062], [-3.104771375656128], [-10.787240028381348], [0.902216911315918], [2.6051042079925537], [5.323247909545898], [11.247995376586914], [5.361915588378906], [14.745134353637695], [30.466604232788086], [4.1780781745910645], [-12.272488594055176], [0.9378819465637207], [3.710324764251709], [-4.486119270324707], [3.8965659141540527], [-15.1174898147583], [2.3965587615966797]], "normalized_similarities": [[0.9472161531448364], [0.6347071528434753], [0.6235324740409851], [0.3583446741104126], [0.3345779478549957], [0.11797735095024109], [0.17623983323574066], [0.12090819329023361], [0.2569233477115631], [0.40680649876594543], [0.14598074555397034], [-0.15570466220378876], [0.3217070996761322], [0.17298147082328796], [0.2065211832523346], [0.1934446096420288], [0.09582197666168213], [0.04703633487224579], [0.06395666301250458], [0.34093767404556274], [-0.11187421530485153], [-0.10807914286851883], [-0.15402202308177948], [0.018427887931466103], [-0.05632702633738518], [0.04495936632156372], [0.14622943103313446], [-0.04513087868690491], [-0.15680304169654846], [0.01311460230499506], [0.03786772862076759], [0.07737859338521957], [0.16350057721138], [0.07794066518545151], [0.2143348902463913], [0.44286176562309265], [0.060732435435056686], [-0.17839257419109344], [0.01363302767276764], [0.05393318459391594], [-0.06521011143922806], [0.0566403828561306], [-0.21974743902683258], [0.03483631834387779]], "result_max_similarities": 68.79483795166016, "full_text_display": "What&#x27;s next for Cover Oregon in its post-Oracle future? That&#x27;s the question now facing Bruce Goldberg, acting head of Cover Oregon, and Gov. John Kitzhaber.\n, The Oregonian has", "K": 1}, {"id": "result_8", "sample_idx": 1448, "score": 65.16358184814453, "highlight_inds": [0], "matched_tokens_str": "What", "original_pos": 0, "full_sequence_tokens": ["What", " every", " player", " should", " know", " about", " plastic", " mouth", "pieces", " compared", " to", " metal", ".", "\n", "We", " offer", " a", " variety", " of", " materials", " in", " order", " to", " meet", " certain", " player", " requirements", ",", " and", " also", " to", " make", " it", " easier", " for", " players", " to", " try", " a", " Wed", "ge", " mouth", "piece", "."], "sequence_similarities": [[65.16358184814453], [30.767108917236328], [-1.3007102012634277], [-19.874717712402344], [-6.7471184730529785], [-7.785968780517578], [-19.21440315246582], [-22.611984252929688], [-12.819547653198242], [-36.613197326660156], [-39.28211212158203], [-18.746238708496094], [-4.484734535217285], [-9.279562950134277], [-8.876300811767578], [7.535549640655518], [15.56364631652832], [7.7694292068481445], [6.6333208084106445], [-0.23940658569335938], [4.247206211090088], [9.375507354736328], [-5.999551296234131], [10.042573928833008], [4.602970600128174], [3.350135326385498], [-8.862019538879395], [5.127022743225098], [4.374514102935791], [1.8616158962249756], [-14.765892028808594], [8.357415199279785], [-4.9197797775268555], [-16.273733139038086], [-13.632192611694336], [-4.181764602661133], [-17.38907241821289], [-5.802389621734619], [-7.886906147003174], [4.769874572753906], [-10.630329132080078], [-8.25454330444336], [-3.1771066188812256], [-6.57149600982666]], "normalized_similarities": [[0.9472161531448364], [0.44722989201545715], [-0.01890709064900875], [-0.28889837861061096], [-0.09807594120502472], [-0.11317664384841919], [-0.2793000638484955], [-0.32868722081184387], [-0.18634460866451263], [-0.5322085022926331], [-0.571003794670105], [-0.2724948525428772], [-0.06518998742103577], [-0.1348874866962433], [-0.1290256828069687], [0.1095365583896637], [0.22623276710510254], [0.11293622106313705], [0.09642177820205688], [-0.003480008104816079], [0.06173728033900261], [0.13628213107585907], [-0.0872093215584755], [0.14597859978675842], [0.06690866500139236], [0.04869748279452324], [-0.1288180947303772], [0.07452627271413803], [0.06358782202005386], [0.02706040069460869], [-0.21463662385940552], [0.12148316949605942], [-0.07151379436254501], [-0.2365545630455017], [-0.1981572061777115], [-0.06078602373600006], [-0.2527671158313751], [-0.08434338867664337], [-0.11464386433362961], [0.06933477520942688], [-0.15452219545841217], [-0.11998783051967621], [-0.04618234187364578], [-0.09552309662103653]], "result_max_similarities": 68.79483795166016, "full_text_display": "What every player should know about plastic mouthpieces compared to metal.\nWe offer a variety of materials in order to meet certain player requirements, and also to make it easier for players to try a Wedge mouthpiece.", "K": 1}, {"id": "result_9", "sample_idx": 870, "score": 65.16358184814453, "highlight_inds": [0], "matched_tokens_str": "What", "original_pos": 0, "full_sequence_tokens": ["What", " a", " house", "!", " 4", " bedroom", " 2", " 1", "/", "2", " bathrooms", " in", " the", " lake", "view", " school", " district", ",", " next", " door", " to", " everything", ",", " you", " couldn", "&#x27;t", " ask", " for", " a", " better", " location", ".", " H", "uge", " living", " room", ",", " formal", " dining", " room", ",", " kitchen", " with", " eating"], "sequence_similarities": [[65.16358184814453], [27.052024841308594], [0.3073101043701172], [17.57842445373535], [3.821906566619873], [5.221285820007324], [-7.487163543701172], [-8.34554386138916], [2.411670684814453], [-10.268474578857422], [-12.032061576843262], [8.194526672363281], [-11.978226661682129], [-5.176297187805176], [-3.314575672149658], [-13.55253791809082], [-4.417357921600342], [-7.008012771606445], [-6.150259017944336], [4.1677350997924805], [5.537780284881592], [-0.6133556365966797], [2.0579376220703125], [-8.563569068908691], [-0.9919812679290771], [-16.99423599243164], [7.029167175292969], [1.1431732177734375], [-5.803452491760254], [-34.5806999206543], [-8.056694984436035], [-2.0205459594726562], [4.394919395446777], [13.465089797973633], [-5.33827018737793], [-19.588592529296875], [-0.5681253671646118], [-23.815492630004883], [-4.360014915466309], [-3.2396960258483887], [-4.529470443725586], [-13.936779022216797], [8.606210708618164], [-2.506619930267334]], "normalized_similarities": [[0.9472161531448364], [0.39322754740715027], [0.004467051941901445], [0.2555195391178131], [0.055555135011672974], [0.0758964791893959], [-0.10883321613073349], [-0.12131061404943466], [0.0350559838116169], [-0.14926227927207947], [-0.17489774525165558], [0.1191154271364212], [-0.17411519587039948], [-0.0752425268292427], [-0.04818058758974075], [-0.19699934124946594], [-0.06421060115098953], [-0.10186829417943954], [-0.08940000832080841], [0.06058209016919136], [0.08049703389406204], [-0.00891572143882513], [0.0299141276627779], [-0.12447982281446457], [-0.014419414103031158], [-0.24702778458595276], [0.10217579454183578], [0.01661713607609272], [-0.0843588337302208], [-0.5026641488075256], [-0.11711191385984421], [-0.02937060408294201], [0.063884437084198], [0.19572819769382477], [-0.07759695500135422], [-0.28473928570747375], [-0.008258256129920483], [-0.34618139266967773], [-0.06337706744670868], [-0.04709213972091675], [-0.06584026664495468], [-0.2025846689939499], [0.12509965896606445], [-0.036436162889003754]], "result_max_similarities": 68.79483795166016, "full_text_display": "What a house! 4 bedroom 2 1/2 bathrooms in the lakeview school district, next door to everything, you couldn&#x27;t ask for a better location. Huge living room, formal dining room, kitchen with eating", "K": 1}, {"id": "result_10", "sample_idx": 690, "score": 65.16358184814453, "highlight_inds": [0], "matched_tokens_str": "What", "original_pos": 0, "full_sequence_tokens": ["What", "&#x27;s", " a", " good", " time", " for", " a", " four", " mile", " climb", " that", " gains", " 660", " feet", "?", "\n", "F", "aster", " than", " the", " last", " time", " you", " climbed", " it", "?", "\n", "That", "&#x27;s", " an", " average", " of", " right", " at", " 3", "%", " grade", ".", " 350", " w", "atts", " would", " get", " a"], "sequence_similarities": [[65.16358184814453], [43.66457748413086], [25.579404830932617], [19.767993927001953], [19.772430419921875], [13.864053726196289], [2.4733574390411377], [9.204517364501953], [3.8064186573028564], [-10.531105995178223], [-6.0295610427856445], [-12.285747528076172], [-17.457706451416016], [5.263448715209961], [2.9435253143310547], [16.82186508178711], [7.35675048828125], [9.190866470336914], [-3.257080316543579], [-22.07516860961914], [-29.477766036987305], [-5.794437408447266], [3.3339648246765137], [-11.343825340270996], [-12.456344604492188], [-7.416253089904785], [-10.821712493896484], [11.647027969360352], [11.813827514648438], [2.616726875305176], [-2.52091646194458], [6.475681304931641], [-5.349565505981445], [1.6414825916290283], [-2.7319869995117188], [-6.279128551483154], [-0.07322120666503906], [-10.056656837463379], [-1.398608922958374], [8.206757545471191], [5.934147834777832], [-4.250232696533203], [-12.084650039672852], [-7.47182559967041]], "normalized_similarities": [[0.9472161531448364], [0.6347071528434753], [0.3718215823173523], [0.28734704852104187], [0.28741154074668884], [0.20152753591537476], [0.03595266118645668], [0.13379663228988647], [0.055330004543066025], [-0.15307988226413727], [-0.08764554560184479], [-0.17858530580997467], [-0.2537647783756256], [0.07650935649871826], [0.04278700798749924], [0.24452219903469086], [0.10693753510713577], [0.133598193526268], [-0.047344837337732315], [-0.3208840787410736], [-0.4284880459308624], [-0.0842277929186821], [0.04846242815256119], [-0.16489355266094208], [-0.18106511235237122], [-0.10780246555805206], [-0.15730413794517517], [0.1693008989095688], [0.17172549664974213], [0.03803667426109314], [-0.03664397820830345], [0.09413033723831177], [-0.07776114344596863], [0.023860549554228783], [-0.039712093770504], [-0.0912732481956482], [-0.00106434163171798], [-0.1461833119392395], [-0.020330144092440605], [0.1192932203412056], [0.08625862002372742], [-0.061781272292137146], [-0.17566215991973877], [-0.10861026495695114]], "result_max_similarities": 68.79483795166016, "full_text_display": "What&#x27;s a good time for a four mile climb that gains 660 feet?\nFaster than the last time you climbed it?\nThat&#x27;s an average of right at 3% grade. 350 watts would get a", "K": 1}, {"id": "result_11", "sample_idx": 862, "score": 65.16358184814453, "highlight_inds": [0], "matched_tokens_str": "What", "original_pos": 0, "full_sequence_tokens": ["What", " the", " Heck", "&#x27;s", " a", " &quot;", "Phil", "ist", "in", "iph", "ony", "&quot;?", "\n", "This", " is", " just", " an", " interesting", " word", " we", " made", " up", " to", " call", " our", " (", "or", "iginally", " a", " demo", " [", "if", " you", " know", " what", " that", " means", "])", " group", ".", " If", " you", " were", " to"], "sequence_similarities": [[65.16358184814453], [33.43403625488281], [5.653232574462891], [6.974514007568359], [10.81149959564209], [-0.6073489189147949], [-9.72541618347168], [-5.523784637451172], [-18.964252471923828], [-14.045721054077148], [-5.063998222351074], [6.485100746154785], [15.526615142822266], [12.339324951171875], [8.281387329101562], [17.069000244140625], [8.33757209777832], [22.30544090270996], [11.725473403930664], [11.063316345214844], [9.45112419128418], [4.855756759643555], [-1.5242944955825806], [-8.820171356201172], [0.9520673751831055], [-4.856982231140137], [2.920187473297119], [-14.134462356567383], [-13.830272674560547], [-4.823947906494141], [1.588059902191162], [4.59442138671875], [-1.8401355743408203], [-2.964236259460449], [2.487154960632324], [-5.9598188400268555], [10.851771354675293], [-11.403462409973145], [-14.173135757446289], [-2.9842770099639893], [7.095010757446289], [-6.469428062438965], [8.35045051574707], [-7.884599685668945]], "normalized_similarities": [[0.9472161531448364], [0.4859963059425354], [0.08217524737119675], [0.10138135403394699], [0.15715567767620087], [-0.00882840808480978], [-0.14136840403079987], [-0.08029358834028244], [-0.2756638824939728], [-0.20416824519634247], [-0.07361014932394028], [0.09426725655794144], [0.225694477558136], [0.17936411499977112], [0.1203780323266983], [0.24811455607414246], [0.1211947351694107], [0.3242313265800476], [0.1704411804676056], [0.16081608831882477], [0.13738130033016205], [0.07058315724134445], [-0.022157106548547745], [-0.12820978462696075], [0.01383922714740038], [-0.0706009715795517], [0.0424477718770504], [-0.20545817911624908], [-0.2010364830493927], [-0.07012078166007996], [0.023083997890353203], [0.06678438931703568], [-0.026748163625597954], [-0.04308806359767914], [0.036153219640254974], [-0.08663177490234375], [0.15774106979370117], [-0.16576044261455536], [-0.20602034032344818], [-0.04337937384843826], [0.10313289612531662], [-0.0940394401550293], [0.12138193100690842], [-0.11461033672094345]], "result_max_similarities": 68.79483795166016, "full_text_display": "What the Heck&#x27;s a &quot;Philistiniphony&quot;?\nThis is just an interesting word we made up to call our (originally a demo [if you know what that means]) group. If you were to", "K": 1}, {"id": "result_12", "sample_idx": 1456, "score": 65.16358184814453, "highlight_inds": [0], "matched_tokens_str": "What", "original_pos": 0, "full_sequence_tokens": ["What", " a", " great", " start", " to", " the", " week", "!", " We", " learn", " today", " that", " H", "unted", ":", " The", " Dem", "on", "\u2019", "s", " For", "ge", ",", " the", " dark", " third", "-", "person", " co", "-", "op", " Action", " thriller", " currently", " being", " developed", " by", " in", "X", "ile", ",", " will", " be", " published"], "sequence_similarities": [[65.16358184814453], [27.052024841308594], [21.120532989501953], [18.072311401367188], [7.591890335083008], [1.4730250835418701], [-1.3529548645019531], [-4.338077068328857], [-3.674881935119629], [-4.3019700050354], [14.909161567687988], [3.8772425651550293], [-2.1411375999450684], [-1.5545520782470703], [-9.29092025756836], [-18.719715118408203], [-13.296661376953125], [1.4714679718017578], [-5.019869804382324], [-0.43026065826416016], [-7.571598052978516], [-17.00092124938965], [-10.78944206237793], [-21.766212463378906], [-3.783578872680664], [-1.9925570487976074], [13.97047233581543], [-8.69649887084961], [-4.281135559082031], [3.6179981231689453], [-13.202438354492188], [2.0572614669799805], [4.623072147369385], [8.110862731933594], [10.270634651184082], [8.617879867553711], [8.437399864196777], [-1.3019018173217773], [-18.12373161315918], [-6.260135650634766], [2.6831674575805664], [-2.5028886795043945], [-0.9138134121894836], [17.647247314453125]], "normalized_similarities": [[0.9472161531448364], [0.39322754740715027], [0.3070075213909149], [0.2626986503601074], [0.11035552620887756], [0.021411854773759842], [-0.0196665171533823], [-0.06305817514657974], [-0.05341798812150955], [-0.06253332644701004], [0.21671919524669647], [0.05635949969291687], [-0.03112352080643177], [-0.022596929222345352], [-0.13505257666110992], [-0.2721092998981476], [-0.1932799220085144], [0.021389219909906387], [-0.07296869903802872], [-0.006254258099943399], [-0.11006055772304535], [-0.24712495505809784], [-0.15683504939079285], [-0.316393107175827], [-0.0549980066716671], [-0.028963757678866386], [0.20307442545890808], [-0.12641207873821259], [-0.06223047524690628], [0.052591126412153244], [-0.19191031157970428], [0.029904300346970558], [0.06720086187124252], [0.11789929121732712], [0.1492936760187149], [0.12526927888393402], [0.12264582514762878], [-0.01892441138625145], [-0.2634460926055908], [-0.09099717438220978], [0.03900245204567909], [-0.03638192638754845], [-0.013283167965710163], [0.25651994347572327]], "result_max_similarities": 68.79483795166016, "full_text_display": "What a great start to the week! We learn today that Hunted: The Demon\u2019s Forge, the dark third-person co-op Action thriller currently being developed by inXile, will be published", "K": 1}, {"id": "result_13", "sample_idx": 1018, "score": 65.16358184814453, "highlight_inds": [0], "matched_tokens_str": "What", "original_pos": 0, "full_sequence_tokens": ["What", " Does", " it", " Take", " to", " Bec", "ome", " More", " Success", "ful", "?", "\n", "Many", " people", " are", " confused", " in", " today", "&#x27;s", " climate", ",", " about", " a", " basic", " question", ":", " What", " does", " it", " take", " to", " be", " more", " Success", "ful", "?", "\n", "Life", " is", " what", " you", " make", " of", " it"], "sequence_similarities": [[65.16358184814453], [43.068115234375], [13.798500061035156], [6.425839424133301], [-7.81907844543457], [-8.9230318069458], [16.967185974121094], [34.18339157104492], [2.3116912841796875], [10.52488899230957], [-0.6212408542633057], [19.48246955871582], [2.5798490047454834], [-25.557430267333984], [8.519279479980469], [12.921545028686523], [-2.698843479156494], [-3.975106716156006], [9.485631942749023], [6.464480400085449], [-3.405975103378296], [-10.447345733642578], [-4.296489715576172], [-10.553722381591797], [3.9164414405822754], [17.100906372070312], [3.3761415481567383], [6.746302604675293], [-5.568576335906982], [3.7592966556549072], [-12.654742240905762], [-1.3588223457336426], [11.211122512817383], [-3.0371947288513184], [-4.1381120681762695], [-0.4295492172241211], [-5.530881881713867], [0.35644805431365967], [15.119216918945312], [5.1753339767456055], [0.26471400260925293], [17.838180541992188], [-2.5772881507873535], [-17.08861541748047]], "normalized_similarities": [[0.9472161531448364], [0.6260370016098022], [0.20057463645935059], [0.0934058353304863], [-0.11365792155265808], [-0.12970496714115143], [0.2466345727443695], [0.4968889057636261], [0.03360268473625183], [0.15298952162265778], [-0.009030341170728207], [0.28319668769836426], [0.037500619888305664], [-0.371502161026001], [0.12383602559566498], [0.1878272444009781], [-0.03923032060265541], [-0.05778205022215843], [0.13788290321826935], [0.09396751970052719], [-0.04950916767120361], [-0.15186235308647156], [-0.06245366483926773], [-0.15340863168239594], [0.056929294019937515], [0.24857833981513977], [0.04907550662755966], [0.09806407988071442], [-0.08094467967748642], [0.05464503914117813], [-0.18394900858402252], [-0.019751807674765587], [0.1629645824432373], [-0.044148582965135574], [-0.060151491314172745], [-0.006243916228413582], [-0.08039675652980804], [0.005181319545954466], [0.2197725474834442], [0.07522851973772049], [0.00384787586517632], [0.25929534435272217], [-0.037463393062353134], [-0.24839967489242554]], "result_max_similarities": 68.79483795166016, "full_text_display": "What Does it Take to Become More Successful?\nMany people are confused in today&#x27;s climate, about a basic question: What does it take to be more Successful?\nLife is what you make of it", "K": 1}, {"id": "result_14", "sample_idx": 1823, "score": 65.16358184814453, "highlight_inds": [0], "matched_tokens_str": "What", "original_pos": 0, "full_sequence_tokens": ["What", " should", " I", " do", " if", " one", " of", " my", " accounts", " is", " not", " shown", " online", "?", "\n", "If", " your", " account", " was", " showing", " online", " but", " is", " now", " no", " longer", " visible", " it", " might", " mean", " there", " is", " an", " issue", " with", " your", " account", ".", " In", " this", " case", " you", " would", " need"], "sequence_similarities": [[65.16358184814453], [27.47127914428711], [0.20743560791015625], [13.826047897338867], [0.7802238464355469], [6.144156455993652], [-3.6725497245788574], [11.187460899353027], [-4.360481262207031], [12.533987998962402], [2.705505132675171], [27.472858428955078], [11.199331283569336], [4.36121940612793], [21.470802307128906], [3.918670177459717], [-3.493349075317383], [-4.035455703735352], [9.435117721557617], [2.197652578353882], [2.3164615631103516], [-1.7859272956848145], [-6.278700351715088], [-4.534087181091309], [2.9815409183502197], [5.272783279418945], [-4.498349189758301], [-4.2052412033081055], [-11.055728912353516], [-9.283516883850098], [-0.9992971420288086], [-4.405727386474609], [-14.567255020141602], [-3.7111268043518066], [-5.088334083557129], [-9.985546112060547], [-8.273957252502441], [-3.4157652854919434], [5.497519493103027], [3.428764581680298], [4.294354438781738], [10.78095817565918], [-6.5590033531188965], [-7.764166831970215]], "normalized_similarities": [[0.9472161531448364], [0.3993217945098877], [0.0030152786057442427], [0.20097507536411285], [0.01134131383150816], [0.08931130170822144], [-0.05338408797979355], [0.1626206487417221], [-0.06338384747505188], [0.18219372630119324], [0.03932715207338333], [0.3993447721004486], [0.16279318928718567], [0.06339457631111145], [0.31209903955459595], [0.05696168914437294], [-0.050779230892658234], [-0.058659281581640244], [0.1371486335992813], [0.03194501996040344], [0.0336720272898674], [-0.025960193946957588], [-0.09126702696084976], [-0.06590737402439117], [0.043339602649211884], [0.07664503902196884], [-0.06538788974285126], [-0.061127278953790665], [-0.1607057899236679], [-0.13494496047496796], [-0.014525757171213627], [-0.06404154002666473], [-0.21174924075603485], [-0.053944844752550125], [-0.07396389544010162], [-0.14514964818954468], [-0.1202700287103653], [-0.04965147748589516], [0.07991180568933487], [0.04984043538570404], [0.062422625720500946], [0.15671172738075256], [-0.0953415036201477], [-0.11285973340272903]], "result_max_similarities": 68.79483795166016, "full_text_display": "What should I do if one of my accounts is not shown online?\nIf your account was showing online but is now no longer visible it might mean there is an issue with your account. In this case you would need", "K": 1}, {"id": "result_15", "sample_idx": 426, "score": 65.16358184814453, "highlight_inds": [0], "matched_tokens_str": "What", "original_pos": 0, "full_sequence_tokens": ["What", " kinds", " of", " properties", " do", " your", " diagnostic", " reports", " cover", "?", "\n", "Our", " remed", "ial", " diagnostics", " consultants", " in", " Sydney", " complete", " diagnostic", " reports", " to", " cover", " a", " wide", " variety", " of", " properties", " whether", " they", " are", " new", ",", " older", ",", " faulty", ",", " damaged", " or", " under", " construction", ".", " Properties", " include"], "sequence_similarities": [[65.16358184814453], [7.924335479736328], [-4.159822463989258], [2.8175878524780273], [6.930205345153809], [9.966200828552246], [10.427329063415527], [-0.08443307876586914], [12.894109725952148], [3.714165210723877], [19.348501205444336], [10.368705749511719], [14.724960327148438], [-8.238985061645508], [-9.776995658874512], [-11.81268310546875], [-2.0353755950927734], [-14.168607711791992], [-5.505873203277588], [-0.09696483612060547], [-12.837730407714844], [-6.045119285583496], [6.8637237548828125], [-3.5326342582702637], [2.3325490951538086], [2.3555307388305664], [-0.5992892980575562], [-9.397397994995117], [2.894432544708252], [-12.888751983642578], [-2.6248393058776855], [0.8897082805633545], [7.518398284912109], [-4.522174835205078], [8.703229904174805], [-23.782997131347656], [4.853473663330078], [-8.870107650756836], [-1.8128151893615723], [-9.296849250793457], [0.3676185607910156], [-8.590014457702637], [-14.020559310913086], [-4.267207145690918]], "normalized_similarities": [[0.9472161531448364], [0.11518793553113937], [-0.06046707183122635], [0.04095638543367386], [0.10073728859424591], [0.14486843347549438], [0.1515713930130005], [-0.0012273170286789536], [0.18742844462394714], [0.05398901179432869], [0.2812493145465851], [0.15071924030780792], [0.21404165029525757], [-0.11976167559623718], [-0.1421181559562683], [-0.1717088520526886], [-0.029586168006062508], [-0.20595452189445496], [-0.08003323525190353], [-0.0014094783691689372], [-0.1866089254617691], [-0.08787170052528381], [0.0997709110379219], [-0.05135028064250946], [0.03390587493777275], [0.034239932894706726], [-0.008711254224181175], [-0.1366003304719925], [0.04207339882850647], [-0.1873505711555481], [-0.03815459832549095], [0.012932776473462582], [0.10928724706172943], [-0.06573421508073807], [0.1265099197626114], [-0.34570902585983276], [0.07054997235536575], [-0.12893564999103546], [-0.02635103464126587], [-0.13513876497745514], [0.005343693774193525], [-0.12486422806978226], [-0.20380249619483948], [-0.06202801316976547]], "result_max_similarities": 68.79483795166016, "full_text_display": "What kinds of properties do your diagnostic reports cover?\nOur remedial diagnostics consultants in Sydney complete diagnostic reports to cover a wide variety of properties whether they are new, older, faulty, damaged or under construction. Properties include", "K": 1}, {"id": "result_16", "sample_idx": 976, "score": 65.16358184814453, "highlight_inds": [0], "matched_tokens_str": "What", "original_pos": 0, "full_sequence_tokens": ["What", " an", " amazing", " weekend", " -", " we", " pulled", " it", " off", " and", " had", " a", " very", " large", " audience", " over", " the", " weekend", " of", " 2", "/", "3", " July", " 2016", ".", " The", " event", " was", " supported", " by", " South", " Hill", " Park", ",", " funded", " by", " an", " Arts", " Council", " England", " grant", " and", " organised", " by"], "sequence_similarities": [[65.16358184814453], [23.365814208984375], [26.405624389648438], [19.785232543945312], [32.38511657714844], [0.23357605934143066], [-5.596711158752441], [4.792885780334473], [9.706293106079102], [-9.37051010131836], [-13.13467788696289], [-16.233715057373047], [5.538280487060547], [-17.450769424438477], [-0.18653392791748047], [-3.5108792781829834], [3.0276403427124023], [0.23298168182373047], [-6.783294677734375], [-6.842219829559326], [-16.119539260864258], [-23.427989959716797], [-7.294928550720215], [-0.6568964719772339], [8.061062812805176], [-3.1165049076080322], [-13.365728378295898], [-0.5787062644958496], [7.962574005126953], [16.647563934326172], [-4.769289970397949], [-10.983428955078125], [-22.33318328857422], [1.4255609512329102], [10.716243743896484], [16.533483505249023], [6.816445827484131], [-6.777212619781494], [-1.987771987915039], [9.550217628479004], [5.322474479675293], [5.461386680603027], [2.1582725048065186], [5.163355827331543]], "normalized_similarities": [[0.9472161531448364], [0.3396448791027069], [0.3838314712047577], [0.2875976264476776], [0.47074922919273376], [0.0033952556550502777], [-0.08135364949703217], [0.06966926157474518], [0.14109042286872864], [-0.13620948791503906], [-0.19092534482479095], [-0.23597286641597748], [0.08050430566072464], [-0.25366392731666565], [-0.0027114523109048605], [-0.051034051924943924], [0.044009704142808914], [0.00338661577552557], [-0.098601795732975], [-0.09945832937955856], [-0.2343132048845291], [-0.34054866433143616], [-0.1060388907790184], [-0.009548630565404892], [0.1171754002571106], [-0.04530143365263939], [-0.1942838877439499], [-0.008412059396505356], [0.11574377119541168], [0.24198856949806213], [-0.06932627409696579], [-0.15965484082698822], [-0.3246345818042755], [0.02072191797196865], [0.15577104687690735], [0.2403302937746048], [0.09908368438482285], [-0.09851338714361191], [-0.028894202783703804], [0.13882172107696533], [0.07736735045909882], [0.07938657701015472], [0.03137259557843208], [0.07505440711975098]], "result_max_similarities": 68.79483795166016, "full_text_display": "What an amazing weekend - we pulled it off and had a very large audience over the weekend of 2/3 July 2016. The event was supported by South Hill Park, funded by an Arts Council England grant and organised by", "K": 1}, {"id": "result_17", "sample_idx": 681, "score": 65.16358184814453, "highlight_inds": [0], "matched_tokens_str": "What", "original_pos": 0, "full_sequence_tokens": ["What", " harsh", " words", ",", " that", " just", " broke", " my", " heart", ".", " And", " they", " w", "ern", "&#x27;t", " even", " directed", " at", " me", ".", "\n", "&quot;", "I", " don", "&#x27;t", " love", " you", " daddy", "&quot;", "\n", "Which", " brought", " R", " to", " tears", " and", " me", " close", ".", " When", " what", " he", " really", " meant"], "sequence_similarities": [[65.16358184814453], [-19.41607666015625], [-16.39504623413086], [5.632043838500977], [-10.999061584472656], [-23.62796401977539], [-18.973119735717773], [5.611451148986816], [-0.09039878845214844], [1.2854280471801758], [-0.004218578338623047], [-20.594026565551758], [-8.26125717163086], [-0.9619581699371338], [-4.159713268280029], [35.96426010131836], [-8.706620216369629], [-5.07841157913208], [-4.026241302490234], [-15.111486434936523], [-9.708152770996094], [5.942380428314209], [4.745031356811523], [-2.9380812644958496], [6.479968070983887], [15.786572456359863], [22.068239212036133], [-5.704842567443848], [-0.6222577095031738], [-2.6395225524902344], [4.681105613708496], [-11.024335861206055], [3.625545024871826], [-4.882389068603516], [9.922691345214844], [-2.0011472702026367], [-13.759422302246094], [-14.896525382995605], [-1.2324798107147217], [1.45316743850708], [5.881631851196289], [-8.501988410949707], [0.9899077415466309], [25.36850357055664]], "normalized_similarities": [[0.9472161531448364], [-0.2822315990924835], [-0.23831796646118164], [0.08186724781990051], [-0.1598820835351944], [-0.3434554934501648], [-0.27579277753829956], [0.0815679132938385], [-0.001314034452661872], [0.018684949725866318], [-6.13211450399831e-05], [-0.2993542551994324], [-0.12008542567491531], [-0.013982999138534069], [-0.060465484857559204], [0.5227755904197693], [-0.12655921280384064], [-0.07381965965032578], [-0.058525338768959045], [-0.2196601778268814], [-0.14111745357513428], [0.08637829124927521], [0.06897365301847458], [-0.04270787537097931], [0.09419264644384384], [0.22947321832180023], [0.3207833468914032], [-0.08292544633150101], [-0.009045122191309929], [-0.03836803138256073], [0.06804443150758743], [-0.16024945676326752], [0.05270082876086235], [-0.07097028195858002], [0.1442359834909439], [-0.02908862568438053], [-0.2000066041946411], [-0.2165355086326599], [-0.01791529543697834], [0.02112320438027382], [0.0854952484369278], [-0.12358468770980835], [0.014389273710548878], [0.36875590682029724]], "result_max_similarities": 68.79483795166016, "full_text_display": "What harsh words, that just broke my heart. And they wern&#x27;t even directed at me.\n&quot;I don&#x27;t love you daddy&quot;\nWhich brought R to tears and me close. When what he really meant", "K": 1}, {"id": "result_18", "sample_idx": 385, "score": 65.16358184814453, "highlight_inds": [0], "matched_tokens_str": "What", "original_pos": 0, "full_sequence_tokens": ["What", " is", " the", " meaning", " of", " the", " name", " Y", "AR", "U", "IM", " UE", "BY", "V", "Y", "IG", "R", " A", "EV", "?", "\n", "What", " is", " the", " meaning", "/", "definition", " of", " the", " letters", " in", " the", " name", " Y", "AR", "U", "IM", " UE", "BY", "V", "Y", "IG", "R", " A"], "sequence_similarities": [[65.16358184814453], [49.338226318359375], [45.979881286621094], [-10.53180980682373], [6.0460004806518555], [-3.1619324684143066], [2.6075377464294434], [6.72631311416626], [-6.650925636291504], [-16.98658561706543], [-5.177212238311768], [0.14706897735595703], [6.494132041931152], [-10.023368835449219], [-10.828662872314453], [-11.430593490600586], [-0.7844700813293457], [2.0026235580444336], [3.1719446182250977], [11.50594425201416], [22.03252410888672], [23.56114959716797], [45.8255615234375], [32.955116271972656], [-13.647972106933594], [-7.786558628082275], [-3.2890162467956543], [-5.342611312866211], [-7.413115978240967], [-11.757070541381836], [3.0856740474700928], [-3.427985906600952], [-0.19926023483276367], [9.78811264038086], [-12.277547836303711], [-21.91347312927246], [-18.625865936279297], [-4.481563568115234], [-12.732386589050293], [-16.84218406677246], [-20.580881118774414], [-28.089277267456055], [-17.028051376342773], [-5.693537712097168]], "normalized_similarities": [[0.9472161531448364], [0.7171791791915894], [0.6683623790740967], [-0.15309011936187744], [0.08788450807332993], [-0.04596176743507385], [0.03790310025215149], [0.09777351468801498], [-0.09667768329381943], [-0.24691657721996307], [-0.07525582611560822], [0.0021377908997237682], [0.09439853578805923], [-0.1456994265317917], [-0.15740516781806946], [-0.16615481674671173], [-0.0114030372351408], [0.02911008521914482], [0.04610730707645416], [0.1672501116991043], [0.32026422023773193], [0.3424842655658722], [0.6661191582679749], [0.4790347218513489], [-0.19838657975196838], [-0.11318521946668625], [-0.04780905693769455], [-0.07766006141901016], [-0.10775686055421829], [-0.17090047895908356], [0.04485327750444412], [-0.049829114228487015], [-0.002896441612392664], [0.1422797590494156], [-0.17846612632274628], [-0.31853368878364563], [-0.27074509859085083], [-0.0651438906788826], [-0.18507765233516693], [-0.2448175549507141], [-0.29916316270828247], [-0.40830501914024353], [-0.24751931428909302], [-0.08276111632585526]], "result_max_similarities": 68.79483795166016, "full_text_display": "What is the meaning of the name YARUIM UEBYVYIGR AEV?\nWhat is the meaning/definition of the letters in the name YARUIM UEBYVYIGR A", "K": 1}, {"id": "result_19", "sample_idx": 470, "score": 65.16358184814453, "highlight_inds": [0], "matched_tokens_str": "What", "original_pos": 0, "full_sequence_tokens": ["What", " are", " initial", " signs", " and", " symptoms", " of", " drug", " addiction", "?", "\n", "What", " are", " the", " signs", " and", " symptoms", " of", " a", " drug", " addict", "?", "\n", "What", " r", " signs", " and", " symptoms", " of", " drug", " addiction", "?", "\n", "What", " are", " the", " difference", " of", " signs", " and", " symptoms", " of", " pregnancy", " from"], "sequence_similarities": [[65.16358184814453], [49.50780487060547], [25.58179473876953], [-24.19223403930664], [0.410275936126709], [-27.32379722595215], [-21.678340911865234], [-18.88482093811035], [-9.024670600891113], [-2.848616361618042], [9.771291732788086], [3.6366333961486816], [29.864524841308594], [22.33079719543457], [-27.376264572143555], [-5.423050880432129], [-28.083534240722656], [-24.358680725097656], [-19.781396865844727], [-8.893445014953613], [-3.30733585357666], [-5.912560939788818], [-10.479999542236328], [1.5614142417907715], [-13.683164596557617], [-29.785282135009766], [-14.508241653442383], [-27.532922744750977], [-23.17521095275879], [-13.869796752929688], [-17.630760192871094], [-9.97632122039795], [-11.488799095153809], [-0.9980616569519043], [19.65613555908203], [12.583911895751953], [1.9855995178222656], [-17.55720329284668], [-34.45323944091797], [-17.864513397216797], [-29.342758178710938], [-28.189495086669922], [-9.327972412109375], [-17.125289916992188]], "normalized_similarities": [[0.9472161531448364], [0.7196441888809204], [0.37185630202293396], [-0.3516576886177063], [0.005963760428130627], [-0.3971780240535736], [-0.3151158094406128], [-0.2745092809200287], [-0.13118238747119904], [-0.04140741378068924], [0.14203524589538574], [0.0528620108962059], [0.43410995602607727], [0.32459989190101624], [-0.39794066548347473], [-0.078829325735569], [-0.4082215428352356], [-0.35407716035842896], [-0.28754186630249023], [-0.1292748898267746], [-0.048075348138809204], [-0.08594483137130737], [-0.1523369997739792], [0.02269667759537697], [-0.19889813661575317], [-0.43295809626579285], [-0.21089142560958862], [-0.40021786093711853], [-0.3368742763996124], [-0.2016110122203827], [-0.2562802731990814], [-0.14501555263996124], [-0.1670008897781372], [-0.014507798478007317], [0.285721093416214], [0.1829194277524948], [0.028862623497843742], [-0.2552110552787781], [-0.5008113980293274], [-0.25967809557914734], [-0.4265255928039551], [-0.40976178646087646], [-0.13559116423130035], [-0.24893277883529663]], "result_max_similarities": 68.79483795166016, "full_text_display": "What are initial signs and symptoms of drug addiction?\nWhat are the signs and symptoms of a drug addict?\nWhat r signs and symptoms of drug addiction?\nWhat are the difference of signs and symptoms of pregnancy from", "K": 1}];
+    const globalMaxSequenceSimilarity = [68.79483795166016];
+    const tooltip = document.getElementById('tooltip');
+    let isNormalized = true;
+    let currentThreshold = 0.0;
+
+    function htmlDecode(input) {
+        const doc = new DOMParser().parseFromString(input, "text/html");
+        return doc.documentElement.textContent;
+    }
+
+    function getColorForSimilarity(sim, maxSim, isNormalizedMode = false, threshold = 0.0) {
+        if (sim === -Infinity || maxSim <= 0) {
+            return { backgroundColor: '#f8f9fa', color: '#6c757d' };
+        }
+
+        // Apply threshold cutoff - if below threshold, return transparent/no color
+        if (sim <= threshold) {
+            return { backgroundColor: 'transparent', color: '#6c757d' };
+        }
+
+        let t;
+        if (isNormalizedMode) {
+            // In normalized mode, use a more sensitive scale since values are 0-1
+            // Apply a power function to make smaller differences more visible
+            const normalizedT = Math.max(0, Math.min(1, sim / maxSim));
+            t = Math.pow(normalizedT, 0.7); // Makes mid-range values more visible
+        } else {
+            // In raw mode, use linear scaling
+            t = Math.max(0, Math.min(1, sim / maxSim));
+        }
+
+        let r, g, b;
+        if (isNormalizedMode) {
+            // Use white to red gradient for normalized mode (same as raw mode)
+            r = 255;
+            g = b = Math.round(255 * (1 - t));
+        } else {
+            // Original red gradient for raw mode
+            r = 255;
+            g = b = Math.round(255 * (1 - t));
+        }
+
+        const textColor = (r + g + b) / 3 > 127 ? '#000000' : '#FFFFFF';
+        return { backgroundColor: `rgb(${r},${g},${b})`, color: textColor };
+    }
+
+    function renderResult(resultData) {
+        const displayDiv = document.getElementById(`sequence_display_${resultData.id}`);
+        const fullTextDiv = document.getElementById(`full_text_display_${resultData.id}`);
+        if (!displayDiv) return;
+
+        // Choose which similarities to use based on toggle state
+        const currentSimilarities = isNormalized ? resultData.normalized_similarities : resultData.sequence_similarities;
+        const currentMaxSimilarities = isNormalized ? Array(resultData.K).fill(1) : globalMaxSequenceSimilarity; // Normalized max is always 1
+
+        displayDiv.innerHTML = '';
+        resultData.full_sequence_tokens.forEach((tokenHtml, i) => {
+            const span = document.createElement('span');
+            span.className = 'token';
+            span.innerHTML = tokenHtml;
+
+            const seqSim = currentSimilarities[i];
+            const rawSeqSim = resultData.sequence_similarities[i];
+            let maxIdx = 0
+            let K = resultData.K;
+            let maxSim = Number.NEGATIVE_INFINITY;
+            for (let j = 0; j < K; j++) {
+                if (currentSimilarities[i] && currentSimilarities[i][j] > maxSim) {
+                    maxIdx = j;
+                    maxSim = currentSimilarities[i][j];
+                }
+            }
+
+            try{
+                const colors = getColorForSimilarity(seqSim[maxIdx], currentMaxSimilarities[maxIdx], isNormalized, currentThreshold);
+                span.style.backgroundColor = colors.backgroundColor;
+                span.style.color = colors.color;
+            } catch { console.log("Get color for sim doesn't work") }
+
+            if (resultData.highlight_inds.includes(i)) {
+                span.classList.add('highlight-window');
+            }
+
+            span.onmousemove = e => {
+                tooltip.style.visibility = 'visible';
+                let rawTokenSimsText = resultData.sequence_similarities[i].map((s, j) => `Q${j+1}: ${s.toFixed(4)}`).join(', ');
+                let normalizedTokenSimsText = resultData.normalized_similarities[i].map((s, j) => `Q${j+1}: ${s.toFixed(4)}`).join(', ');
+
+                let tooltipContent = `<b>${htmlDecode(tokenHtml)}</b> (Index: ${i})<br>`;
+                if (isNormalized) {
+                    tooltipContent += `Normalized Sim: ${seqSim[maxIdx].toFixed(4)}<br>`;
+                    tooltipContent += `Raw Sim: ${rawSeqSim[maxIdx].toFixed(4)}<br>`;
+                    tooltipContent += `Normalized Token Sims: ${normalizedTokenSimsText}<br>`;
+                } else {
+                    tooltipContent += `Raw Sim: ${seqSim[maxIdx].toFixed(4)}<br>`;
+                    tooltipContent += `Raw Token Sims: ${rawTokenSimsText}<br>`;
+                }
+                tooltipContent += `Vector index match: ${maxIdx + 1}`;
+
+                tooltip.innerHTML = tooltipContent;
+                tooltip.style.left = `${e.pageX + 15}px`;
+                tooltip.style.top = `${e.pageY + 15}px`;
+            };
+            span.onmouseout = () => { tooltip.style.visibility = 'hidden'; };
+            displayDiv.appendChild(span);
+        });
+
+        if (fullTextDiv && resultData.full_text_display) {
+            fullTextDiv.innerHTML = `<p><strong>Full Text:</strong></p><p>${resultData.full_text_display}</p>`;
+        }
+    }
+
+    function toggleNormalization() {
+        isNormalized = !isNormalized;
+        const statusSpan = document.getElementById('normalizationStatus');
+        if (isNormalized) {
+            statusSpan.innerHTML = 'Showing normalized values (max = 1.0 per result) | <span style="background: linear-gradient(90deg, white, pink, red); padding: 2px 8px; border-radius: 3px; color: black; font-size: 0.8em;">White→Red colors</span>';
+            statusSpan.style.color = '#28a745';
+        } else {
+            statusSpan.innerHTML = 'Showing raw values (global scale) | <span style="background: linear-gradient(90deg, white, pink, red); padding: 2px 8px; border-radius: 3px; color: black; font-size: 0.8em;">White→Red colors</span>';
+            statusSpan.style.color = '#666';
+        }
+
+        // Re-render all results with new normalization setting
+        allResultsData.forEach(renderResult);
+    }
+
+    function updateThreshold() {
+        const slider = document.getElementById('thresholdSlider');
+        const valueDisplay = document.getElementById('thresholdValue');
+        currentThreshold = parseFloat(slider.value);
+        valueDisplay.textContent = currentThreshold.toFixed(3);
+
+        // Re-render all results with new threshold setting
+        allResultsData.forEach(renderResult);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        // Initialize normalization status (start with normalized mode)
+        const statusSpan = document.getElementById('normalizationStatus');
+        statusSpan.innerHTML = 'Showing normalized values (max = 1.0 per result) | <span style="background: linear-gradient(90deg, white, pink, red); padding: 2px 8px; border-radius: 3px; color: black; font-size: 0.8em;">White→Red colors</span>';
+        statusSpan.style.color = '#28a745';
+
+        // Set up toggle event listener
+        const toggleCheckbox = document.getElementById('normalizeToggle');
+        toggleCheckbox.addEventListener('change', toggleNormalization);
+
+        // Set up threshold slider event listener
+        const thresholdSlider = document.getElementById('thresholdSlider');
+        thresholdSlider.addEventListener('input', updateThreshold);
+
+        // Render initial results
+        allResultsData.forEach(renderResult);
+    });
+</script>
+</body></html>

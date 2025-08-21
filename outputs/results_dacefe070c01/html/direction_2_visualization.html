@@ -1,0 +1,403 @@
+
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">
+<title>Token Activation Similarity Report</title><style>
+body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; padding: 20px; background-color: #f8f9fa; color: #212529; }
+.container { background-color: #ffffff; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.07); }
+h1 { color: #0056b3; text-align: center; margin-bottom: 25px; font-weight: 300;}
+h2 { color: #0056b3; border-bottom: 1px solid #dee2e6; padding-bottom: 10px; margin-top:0; font-size: 1.5em; font-weight: 400; }
+.token { padding: 3px 5px; margin: 2px 1px; border-radius: 4px; display: inline-block; border: 1px solid #ced4da; cursor: default; transition: transform 0.1s ease-out, box-shadow 0.1s ease-out; font-size: 0.9em; line-height: 1.5; }
+.token:hover { transform: translateY(-1px); box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+.token.highlight-window { border: 2px solid #c82333; font-weight: 600; background-color: #f8d7da !important; color: #721c24; }
+.sequence-display { margin-top: 12px; padding: 12px; border: 1px solid #e9ecef; background-color: #f8f9fa; border-radius: 6px; white-space: pre-wrap; word-wrap: break-word; line-height: 1.7; }
+.full-text-display { margin-top: 15px; padding: 10px; border: 1px solid #dfe6e9; background-color: #f9f9f9; border-radius: 6px; white-space: pre-wrap; word-wrap: break-word; line-height: 1.6; font-size: 0.95em; color: #333; }
+.tooltip { position: absolute; background-color: rgba(33,37,41,0.9); color: white; padding: 8px 12px; border-radius: 5px; visibility: hidden; z-index: 1000; pointer-events: none; font-size: 0.85em; max-width: 400px; }
+.details p { margin: 5px 0; font-size: 0.9em; color: #495057; } .details strong { color: #0056b3; }
+.footer-note { font-size: 0.8em; color: #6c757d; text-align: center; margin-top: 30px; }
+.global-max-info { background-color: #e3f2fd; padding: 10px; border-radius: 5px; margin-bottom: 20px; text-align: center; font-size: 0.9em; color: #1565c0; }
+.threshold-control { margin-top: 15px; padding: 10px; background-color: rgba(255,255,255,0.3); border-radius: 6px; }
+.threshold-slider { width: 200px; margin: 0 10px; }
+.threshold-value { font-weight: bold; color: #0056b3; }
+</style></head><body>
+<div class="explanation-section" style="background-color: #f0f8ff; padding: 15px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #0056b3;"><h3 style="color: #0056b3; margin-top: 0;">Feature Explanation</h3><div style="line-height: 1.6; color: #333;">This feature signals when the text contains a formatted header or boilerplate—such as file‐metadata, copyright/license notices, and legal citations—indicating that the passage is a standardized comment or header block.</div></div><div class="global-max-info">
+    <strong>Query Type:</strong> 1-token sequences<br>
+    <strong>Query Vector Norms:</strong> ['1.0043']<br>
+    <strong>Global Max Sequence Similarities:</strong> [3.492927074432373]<br>
+    <div style="margin-top: 10px;">
+        <label style="font-weight: normal; cursor: pointer;">
+            <input type="checkbox" id="normalizeToggle" checked style="margin-right: 8px;">
+            Show Normalized Activations (divide by max per result)
+        </label>
+        <span id="normalizationStatus" style="margin-left: 15px; font-style: italic; color: #666;"></span>
+    </div>
+    <div class="threshold-control">
+        <label style="font-weight: normal;">
+            Activation Cutoff Threshold: <span class="threshold-value" id="thresholdValue">0.000</span>
+        </label><br>
+        <input type="range" id="thresholdSlider" class="threshold-slider"
+               min="0" max="1" step="0.001"
+               value="0.0">
+        <div style="margin-top: 5px; font-size: 0.8em; color: #666;">
+            No faithfulness data available - adjust manually
+        </div>
+    </div>
+</div>
+<div id="tooltip" class="tooltip"></div>
+
+<div class="container" id="container_result_0">
+    <h2>Result 1 (Sample Ref: 18788)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 3.4929</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">" Oct"</span></p>
+        <p><strong>Window Start Position:</strong> 20</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_0"></div>
+    <div class="full-text-display" id="full_text_display_result_0"></div>
+</div>
+<div class="container" id="container_result_1">
+    <h2>Result 2 (Sample Ref: 10209)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 3.2526</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">" HEAD"</span></p>
+        <p><strong>Window Start Position:</strong> 37</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_1"></div>
+    <div class="full-text-display" id="full_text_display_result_1"></div>
+</div>
+<div class="container" id="container_result_2">
+    <h2>Result 3 (Sample Ref: 9638)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 3.2492</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">" HEAD"</span></p>
+        <p><strong>Window Start Position:</strong> 37</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_2"></div>
+    <div class="full-text-display" id="full_text_display_result_2"></div>
+</div>
+<div class="container" id="container_result_3">
+    <h2>Result 4 (Sample Ref: 9006)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 3.2472</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">" HEAD"</span></p>
+        <p><strong>Window Start Position:</strong> 37</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_3"></div>
+    <div class="full-text-display" id="full_text_display_result_3"></div>
+</div>
+<div class="container" id="container_result_4">
+    <h2>Result 5 (Sample Ref: 4745)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 3.2439</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">" HEAD"</span></p>
+        <p><strong>Window Start Position:</strong> 37</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_4"></div>
+    <div class="full-text-display" id="full_text_display_result_4"></div>
+</div>
+<div class="container" id="container_result_5">
+    <h2>Result 6 (Sample Ref: 8832)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 3.2427</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">" HEAD"</span></p>
+        <p><strong>Window Start Position:</strong> 37</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_5"></div>
+    <div class="full-text-display" id="full_text_display_result_5"></div>
+</div>
+<div class="container" id="container_result_6">
+    <h2>Result 7 (Sample Ref: 2703)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 3.2125</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">" HEAD"</span></p>
+        <p><strong>Window Start Position:</strong> 37</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_6"></div>
+    <div class="full-text-display" id="full_text_display_result_6"></div>
+</div>
+<div class="container" id="container_result_7">
+    <h2>Result 8 (Sample Ref: 16935)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 3.2099</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">" HEAD"</span></p>
+        <p><strong>Window Start Position:</strong> 37</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_7"></div>
+    <div class="full-text-display" id="full_text_display_result_7"></div>
+</div>
+<div class="container" id="container_result_8">
+    <h2>Result 9 (Sample Ref: 4814)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 3.1917</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">" HEAD"</span></p>
+        <p><strong>Window Start Position:</strong> 37</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_8"></div>
+    <div class="full-text-display" id="full_text_display_result_8"></div>
+</div>
+<div class="container" id="container_result_9">
+    <h2>Result 10 (Sample Ref: 1671)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 3.0527</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">" Cafe"</span></p>
+        <p><strong>Window Start Position:</strong> 19</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_9"></div>
+    <div class="full-text-display" id="full_text_display_result_9"></div>
+</div>
+<div class="container" id="container_result_10">
+    <h2>Result 11 (Sample Ref: 9229)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 3.0500</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">"Enter"</span></p>
+        <p><strong>Window Start Position:</strong> 30</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_10"></div>
+    <div class="full-text-display" id="full_text_display_result_10"></div>
+</div>
+<div class="container" id="container_result_11">
+    <h2>Result 12 (Sample Ref: 4741)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 3.0499</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">" formatting"</span></p>
+        <p><strong>Window Start Position:</strong> 15</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_11"></div>
+    <div class="full-text-display" id="full_text_display_result_11"></div>
+</div>
+<div class="container" id="container_result_12">
+    <h2>Result 13 (Sample Ref: 4791)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 3.0034</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">" Cafe"</span></p>
+        <p><strong>Window Start Position:</strong> 18</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_12"></div>
+    <div class="full-text-display" id="full_text_display_result_12"></div>
+</div>
+<div class="container" id="container_result_13">
+    <h2>Result 14 (Sample Ref: 2251)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 2.8592</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">" FOUR"</span></p>
+        <p><strong>Window Start Position:</strong> 16</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_13"></div>
+    <div class="full-text-display" id="full_text_display_result_13"></div>
+</div>
+<div class="container" id="container_result_14">
+    <h2>Result 15 (Sample Ref: 19129)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 2.8592</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">" FOUR"</span></p>
+        <p><strong>Window Start Position:</strong> 16</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_14"></div>
+    <div class="full-text-display" id="full_text_display_result_14"></div>
+</div>
+<div class="container" id="container_result_15">
+    <h2>Result 16 (Sample Ref: 1217)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 2.8486</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">"fav"</span></p>
+        <p><strong>Window Start Position:</strong> 27</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_15"></div>
+    <div class="full-text-display" id="full_text_display_result_15"></div>
+</div>
+<div class="container" id="container_result_16">
+    <h2>Result 17 (Sample Ref: 2156)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 2.8412</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">" FOUR"</span></p>
+        <p><strong>Window Start Position:</strong> 16</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_16"></div>
+    <div class="full-text-display" id="full_text_display_result_16"></div>
+</div>
+<div class="container" id="container_result_17">
+    <h2>Result 18 (Sample Ref: 19666)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 2.8412</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">" FOUR"</span></p>
+        <p><strong>Window Start Position:</strong> 16</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_17"></div>
+    <div class="full-text-display" id="full_text_display_result_17"></div>
+</div>
+<div class="container" id="container_result_18">
+    <h2>Result 19 (Sample Ref: 9877)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 2.8220</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">"fav"</span></p>
+        <p><strong>Window Start Position:</strong> 27</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_18"></div>
+    <div class="full-text-display" id="full_text_display_result_18"></div>
+</div>
+<div class="container" id="container_result_19">
+    <h2>Result 20 (Sample Ref: 12554)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 2.7640</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">" FOUR"</span></p>
+        <p><strong>Window Start Position:</strong> 16</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_19"></div>
+    <div class="full-text-display" id="full_text_display_result_19"></div>
+</div>
+<script>
+    const allResultsData = [{"id": "result_0", "sample_idx": 18788, "score": 3.492927074432373, "highlight_inds": [20], "matched_tokens_str": " Oct", "original_pos": 20, "full_sequence_tokens": ["//", "\n", "//", "     ", "Generated", " by", " class", "-", "dump", " 3", ".", "5", " (", "64", " bit", ")", " (", "Debug", " version", " compiled", " Oct", " 15", " 2018", " 10", ":", "31", ":", "50", ").", "\n", "//", "\n", "//", "     ", "class", "-", "dump", " is", " Copyright", " (", "C", ")", " 1997", "-"], "sequence_similarities": [[-1.8594176769256592], [-6.512901782989502], [-1.694074034690857], [-1.1492706537246704], [-1.064481496810913], [-0.6909927129745483], [-1.7169443368911743], [-0.201890230178833], [2.6701574325561523], [1.6561930179595947], [1.1216899156570435], [1.8818687200546265], [0.6947209239006042], [1.1276053190231323], [-0.08496260643005371], [0.30551379919052124], [0.5237217545509338], [-0.4310581684112549], [-0.8460544943809509], [-0.04788398742675781], [3.492927074432373], [3.1762940883636475], [2.036710023880005], [1.3482270240783691], [0.7749396562576294], [0.6869475841522217], [0.8947452306747437], [0.4432903528213501], [0.3121534585952759], [1.1609549522399902], [0.2805691957473755], [0.8886124491691589], [-0.09483587741851807], [0.7234958410263062], [0.3173755407333374], [0.014898926019668579], [1.6460175514221191], [-1.4204442501068115], [1.6345758438110352], [-0.29628321528434753], [-0.5160547494888306], [0.6136829853057861], [1.360681176185608], [1.1012825965881348]], "normalized_similarities": [[-0.5323379635810852], [-1.8645970821380615], [-0.48500126600265503], [-0.3290279507637024], [-0.3047534227371216], [-0.19782626628875732], [-0.4915488660335541], [-0.057799726724624634], [0.7644469738006592], [0.4741562008857727], [0.32113179564476013], [0.538765549659729], [0.19889362156391144], [0.3228253126144409], [-0.024324186146259308], [0.08746641129255295], [0.14993779361248016], [-0.12340886890888214], [-0.24221934378147125], [-0.013708842918276787], [1.0], [0.9093502163887024], [0.5830954909324646], [0.3859877288341522], [0.22185967862606049], [0.19666817784309387], [0.2561591565608978], [0.12691085040569305], [0.08936730027198792], [0.33237308263778687], [0.08032494783401489], [0.25440338253974915], [-0.02715083211660385], [0.20713168382644653], [0.09086234122514725], [0.00426545599475503], [0.4712430238723755], [-0.4066630005836487], [0.46796736121177673], [-0.08482376486063004], [-0.14774277806282043], [0.17569305002689362], [0.3895532786846161], [0.31528931856155396]], "result_max_similarities": 3.492927074432373, "full_text_display": "//\n//     Generated by class-dump 3.5 (64 bit) (Debug version compiled Oct 15 2018 10:31:50).\n//\n//     class-dump is Copyright (C) 1997-", "K": 1}, {"id": "result_1", "sample_idx": 10209, "score": 3.2526321411132812, "highlight_inds": [37], "matched_tokens_str": " HEAD", "original_pos": 37, "full_sequence_tokens": ["/*", "\n", " *", " Copyright", " (", "c", ")", " 2005", ",", " 2006", ",", " Oracle", " and", "/", "or", " its", " affiliates", ".", " All", " rights", " reserved", ".", "\n", " *", " DO", " NOT", " AL", "TER", " OR", " REM", "OVE", " COPYRIGHT", " NOT", "ICES", " OR", " THIS", " FILE", " HEAD", "ER", ".", "\n", " *", "\n", " *"], "sequence_similarities": [[-2.480400323867798], [-6.164207935333252], [-2.469665765762329], [-1.0323784351348877], [-1.2783253192901611], [-0.550088107585907], [-0.9729785323143005], [-0.03693801164627075], [-2.0012240409851074], [-0.10246950387954712], [-1.634597897529602], [-0.32526808977127075], [-1.7999489307403564], [-0.18515342473983765], [-0.592983603477478], [-1.560638427734375], [0.8667597770690918], [-1.0563805103302002], [-0.2510833442211151], [1.141327142715454], [0.5442541837692261], [-1.1387057304382324], [-0.7740551829338074], [-0.7007449865341187], [0.2011616826057434], [0.13814985752105713], [-0.39954906702041626], [0.8911178112030029], [0.5180256366729736], [0.4302060902118683], [-1.8006885051727295], [1.2890760898590088], [0.31258073449134827], [2.405914783477783], [0.46171844005584717], [0.6825212240219116], [1.6237914562225342], [3.2526321411132812], [-0.31577736139297485], [-0.187585711479187], [0.3697941303253174], [0.3184948265552521], [0.1474626064300537], [0.14671075344085693]], "normalized_similarities": [[-0.7101208567619324], [-1.7647686004638672], [-0.7070476412773132], [-0.2955625653266907], [-0.36597537994384766], [-0.15748628973960876], [-0.27855679392814636], [-0.010575087741017342], [-0.5729361176490784], [-0.02933628484606743], [-0.4679736793041229], [-0.09312192350625992], [-0.5153124928474426], [-0.053008098155260086], [-0.16976696252822876], [-0.4467996060848236], [0.248147115111351], [-0.30243417620658875], [-0.07188336551189423], [0.32675379514694214], [0.15581607818603516], [-0.3260032832622528], [-0.22160644829273224], [-0.20061826705932617], [0.05759114772081375], [0.03955131396651268], [-0.11438803374767303], [0.2551206350326538], [0.14830702543258667], [0.12316492199897766], [-0.5155242085456848], [0.3690532445907593], [0.08948962390422821], [0.6887961626052856], [0.1321866810321808], [0.19540093839168549], [0.4648798704147339], [0.9312052726745605], [-0.09040479362010956], [-0.05370444431900978], [0.10586941242218018], [0.09118279069662094], [0.04221748933196068], [0.04200223833322525]], "result_max_similarities": 3.492927074432373, "full_text_display": "/*\n * Copyright (c) 2005, 2006, Oracle and/or its affiliates. All rights reserved.\n * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n *\n *", "K": 1}, {"id": "result_2", "sample_idx": 9638, "score": 3.2491798400878906, "highlight_inds": [37], "matched_tokens_str": " HEAD", "original_pos": 37, "full_sequence_tokens": ["/*", "\n", " *", " Copyright", " (", "c", ")", " 2007", ",", " 2012", ",", " Oracle", " and", "/", "or", " its", " affiliates", ".", " All", " rights", " reserved", ".", "\n", " *", " DO", " NOT", " AL", "TER", " OR", " REM", "OVE", " COPYRIGHT", " NOT", "ICES", " OR", " THIS", " FILE", " HEAD", "ER", ".", "\n", " *", "\n", " *"], "sequence_similarities": [[-2.480400323867798], [-6.164207935333252], [-2.469665765762329], [-1.0323784351348877], [-1.2783253192901611], [-0.550088107585907], [-0.9729785323143005], [0.05356764793395996], [-1.9510047435760498], [-0.04892170429229736], [-1.5933034420013428], [-0.31721192598342896], [-1.7361018657684326], [-0.12041175365447998], [-0.5375875234603882], [-1.5825800895690918], [0.9004827737808228], [-0.9985928535461426], [-0.2271275669336319], [1.206452488899231], [0.561181366443634], [-1.1077847480773926], [-0.7609947323799133], [-0.6834813952445984], [0.22360169887542725], [0.12871965765953064], [-0.3732537031173706], [0.88813316822052], [0.5167173147201538], [0.4134450852870941], [-1.7996718883514404], [1.2921053171157837], [0.3196084499359131], [2.412137985229492], [0.4651893973350525], [0.7043606042861938], [1.6062359809875488], [3.2491798400878906], [-0.3143234848976135], [-0.17431938648223877], [0.38245663046836853], [0.32988083362579346], [0.16075509786605835], [0.15659436583518982]], "normalized_similarities": [[-0.7101208567619324], [-1.7647686004638672], [-0.7070476412773132], [-0.2955625653266907], [-0.36597537994384766], [-0.15748628973960876], [-0.27855679392814636], [0.015336033888161182], [-0.5585587024688721], [-0.01400593388825655], [-0.4561513662338257], [-0.09081549942493439], [-0.4970335364341736], [-0.03447302430868149], [-0.15390746295452118], [-0.453081339597702], [0.25780177116394043], [-0.28588998317718506], [-0.06502499431371689], [0.3453986942768097], [0.1606622040271759], [-0.3171508312225342], [-0.21786734461784363], [-0.1956758201122284], [0.06401556730270386], [0.036851514130830765], [-0.10685986280441284], [0.2542661726474762], [0.14793246984481812], [0.11836636811494827], [-0.5152331590652466], [0.3699204921722412], [0.09150160849094391], [0.6905778050422668], [0.1331803947687149], [0.201653391122818], [0.459853857755661], [0.930216908454895], [-0.08998855948448181], [-0.04990639165043831], [0.10949459671974182], [0.09444251656532288], [0.04602303355932236], [0.04483184590935707]], "result_max_similarities": 3.492927074432373, "full_text_display": "/*\n * Copyright (c) 2007, 2012, Oracle and/or its affiliates. All rights reserved.\n * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n *\n *", "K": 1}, {"id": "result_3", "sample_idx": 9006, "score": 3.2472426891326904, "highlight_inds": [37], "matched_tokens_str": " HEAD", "original_pos": 37, "full_sequence_tokens": ["/*", "\n", " *", " Copyright", " (", "c", ")", " 2015", ",", " 2017", ",", " Oracle", " and", "/", "or", " its", " affiliates", ".", " All", " rights", " reserved", ".", "\n", " *", " DO", " NOT", " AL", "TER", " OR", " REM", "OVE", " COPYRIGHT", " NOT", "ICES", " OR", " THIS", " FILE", " HEAD", "ER", ".", "\n", " *", "\n", " *"], "sequence_similarities": [[-2.480400323867798], [-6.164207935333252], [-2.469665765762329], [-1.0323784351348877], [-1.2783253192901611], [-0.550088107585907], [-0.9729785323143005], [-0.24631759524345398], [-2.1022160053253174], [-0.0955352783203125], [-1.5716465711593628], [-0.1068149209022522], [-1.6688525676727295], [-0.13882970809936523], [-0.5340107679367065], [-1.682085633277893], [0.9317911863327026], [-1.0654706954956055], [-0.17862538993358612], [1.2319004535675049], [0.5306656360626221], [-1.130934476852417], [-0.8175303936004639], [-0.7084459066390991], [0.23084616661071777], [0.10823929309844971], [-0.38294413685798645], [0.8728311061859131], [0.4994537830352783], [0.3834525942802429], [-1.808988094329834], [1.2692855596542358], [0.30460572242736816], [2.4016306400299072], [0.46012985706329346], [0.6848026514053345], [1.6002517938613892], [3.2472426891326904], [-0.3207438588142395], [-0.17596513032913208], [0.3628929853439331], [0.31631577014923096], [0.1431593894958496], [0.1454457938671112]], "normalized_similarities": [[-0.7101208567619324], [-1.7647686004638672], [-0.7070476412773132], [-0.2955625653266907], [-0.36597537994384766], [-0.15748628973960876], [-0.27855679392814636], [-0.07051896303892136], [-0.601849377155304], [-0.02735106647014618], [-0.4499511420726776], [-0.030580347403883934], [-0.4777805209159851], [-0.03974594920873642], [-0.15288345515727997], [-0.4815690815448761], [0.26676514744758606], [-0.30503663420677185], [-0.051139168441295624], [0.35268428921699524], [0.15192577242851257], [-0.3237784504890442], [-0.2340530902147293], [-0.2028229832649231], [0.06608960032463074], [0.030988134443759918], [-0.1096341609954834], [0.24988529086112976], [0.14299003779888153], [0.1097797304391861], [-0.5179003477096558], [0.3633873760700226], [0.08720643818378448], [0.6875696778297424], [0.13173188269138336], [0.1960541009902954], [0.45814061164855957], [0.9296623468399048], [-0.0918266698718071], [-0.050377555191516876], [0.10389366000890732], [0.09055893868207932], [0.040985506027936935], [0.041640087962150574]], "result_max_similarities": 3.492927074432373, "full_text_display": "/*\n * Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.\n * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n *\n *", "K": 1}, {"id": "result_4", "sample_idx": 4745, "score": 3.24392032623291, "highlight_inds": [37], "matched_tokens_str": " HEAD", "original_pos": 37, "full_sequence_tokens": ["/*", "\n", " *", " Copyright", " (", "c", ")", " 2010", ",", " 2014", ",", " Oracle", " and", "/", "or", " its", " affiliates", ".", " All", " rights", " reserved", ".", "\n", " *", " DO", " NOT", " AL", "TER", " OR", " REM", "OVE", " COPYRIGHT", " NOT", "ICES", " OR", " THIS", " FILE", " HEAD", "ER", ".", "\n", " *", "\n", " *"], "sequence_similarities": [[-2.480400323867798], [-6.164207935333252], [-2.469665765762329], [-1.0323784351348877], [-1.2783253192901611], [-0.550088107585907], [-0.9729785323143005], [-0.22427797317504883], [-2.0890798568725586], [0.06800210475921631], [-1.6008013486862183], [-0.272339403629303], [-1.8058149814605713], [-0.11385631561279297], [-0.5872632265090942], [-1.6262643337249756], [0.8971450328826904], [-1.0337835550308228], [-0.23389717936515808], [1.1909273862838745], [0.5832921266555786], [-1.1437499523162842], [-0.7791545391082764], [-0.6871707439422607], [0.19225144386291504], [0.11849379539489746], [-0.3921666443347931], [0.8877806663513184], [0.5057007670402527], [0.40770065784454346], [-1.8078866004943848], [1.2815635204315186], [0.30001747608184814], [2.421485424041748], [0.4617503881454468], [0.6945164203643799], [1.618159294128418], [3.24392032623291], [-0.31466853618621826], [-0.18162000179290771], [0.3716229498386383], [0.32894518971443176], [0.15355777740478516], [0.15304416418075562]], "normalized_similarities": [[-0.7101208567619324], [-1.7647686004638672], [-0.7070476412773132], [-0.2955625653266907], [-0.36597537994384766], [-0.15748628973960876], [-0.27855679392814636], [-0.06420917809009552], [-0.5980886220932007], [0.0194685161113739], [-0.4582979679107666], [-0.07796882092952728], [-0.516991913318634], [-0.032596249133348465], [-0.16812925040721893], [-0.4655878245830536], [0.25684618949890137], [-0.2959648370742798], [-0.0669630840420723], [0.3409539759159088], [0.16699235141277313], [-0.32744741439819336], [-0.22306635975837708], [-0.1967320591211319], [0.055040210485458374], [0.0339239239692688], [-0.11227449774742126], [0.2541652321815491], [0.14477850496768951], [0.11672177910804749], [-0.5175849795341492], [0.3669024407863617], [0.08589285612106323], [0.6932539343833923], [0.1321958303451538], [0.1988350749015808], [0.46326741576194763], [0.9287111759185791], [-0.09008734673261642], [-0.05199650675058365], [0.1063929870724678], [0.09417465329170227], [0.04396248981356621], [0.04381544888019562]], "result_max_similarities": 3.492927074432373, "full_text_display": "/*\n * Copyright (c) 2010, 2014, Oracle and/or its affiliates. All rights reserved.\n * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n *\n *", "K": 1}, {"id": "result_5", "sample_idx": 8832, "score": 3.242699146270752, "highlight_inds": [37], "matched_tokens_str": " HEAD", "original_pos": 37, "full_sequence_tokens": ["/*", "\n", " *", " Copyright", " (", "c", ")", " 2000", ",", " 2004", ",", " Oracle", " and", "/", "or", " its", " affiliates", ".", " All", " rights", " reserved", ".", "\n", " *", " DO", " NOT", " AL", "TER", " OR", " REM", "OVE", " COPYRIGHT", " NOT", "ICES", " OR", " THIS", " FILE", " HEAD", "ER", ".", "\n", " *", "\n", " *"], "sequence_similarities": [[-2.480400323867798], [-6.164207935333252], [-2.469665765762329], [-1.0323784351348877], [-1.2783253192901611], [-0.550088107585907], [-0.9729785323143005], [-0.15202748775482178], [-2.1545870304107666], [-0.0680742859840393], [-1.83781099319458], [-0.3879914879798889], [-1.773795485496521], [-0.14925652742385864], [-0.6328873634338379], [-1.6506478786468506], [0.8312896490097046], [-1.067819595336914], [-0.26964229345321655], [1.1004488468170166], [0.5517655611038208], [-1.147112250328064], [-0.7754685878753662], [-0.7073546648025513], [0.1532469391822815], [0.11946094036102295], [-0.4301736354827881], [0.8804614543914795], [0.5124601721763611], [0.39507758617401123], [-1.8003973960876465], [1.2658498287200928], [0.30625566840171814], [2.4080796241760254], [0.4697479009628296], [0.6737254858016968], [1.629547357559204], [3.242699146270752], [-0.3263513445854187], [-0.1933726668357849], [0.3702501952648163], [0.33406978845596313], [0.1582452654838562], [0.15538126230239868]], "normalized_similarities": [[-0.7101208567619324], [-1.7647686004638672], [-0.7070476412773132], [-0.2955625653266907], [-0.36597537994384766], [-0.15748628973960876], [-0.27855679392814636], [-0.04352438077330589], [-0.6168428063392639], [-0.01948918029665947], [-0.5261521339416504], [-0.11107918620109558], [-0.5078249573707581], [-0.04273107275366783], [-0.1811911165714264], [-0.47256866097450256], [0.2379922717809677], [-0.3057090938091278], [-0.07719665765762329], [0.3150506317615509], [0.1579665243625641], [-0.3284100294113159], [-0.22201110422611237], [-0.20251058042049408], [0.04387350007891655], [0.03420080989599228], [-0.1231556311249733], [0.2520698010921478], [0.14671367406845093], [0.11310788244009018], [-0.5154408812522888], [0.3624037504196167], [0.08767880499362946], [0.6894159317016602], [0.13448545336723328], [0.19288277626037598], [0.4665277302265167], [0.9283615350723267], [-0.09343205392360687], [-0.05536120757460594], [0.10599997639656067], [0.09564178436994553], [0.04530448466539383], [0.044484540820121765]], "result_max_similarities": 3.492927074432373, "full_text_display": "/*\n * Copyright (c) 2000, 2004, Oracle and/or its affiliates. All rights reserved.\n * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n *\n *", "K": 1}, {"id": "result_6", "sample_idx": 2703, "score": 3.212501049041748, "highlight_inds": [37], "matched_tokens_str": " HEAD", "original_pos": 37, "full_sequence_tokens": ["/*", "\n", " *", " Copyright", " (", "c", ")", " 1997", ",", " 2013", ",", " Oracle", " and", "/", "or", " its", " affiliates", ".", " All", " rights", " reserved", ".", "\n", " *", " DO", " NOT", " AL", "TER", " OR", " REM", "OVE", " COPYRIGHT", " NOT", "ICES", " OR", " THIS", " FILE", " HEAD", "ER", ".", "\n", " *", "\n", " *"], "sequence_similarities": [[-2.480400323867798], [-6.164207935333252], [-2.469665765762329], [-1.0323784351348877], [-1.2783253192901611], [-0.550088107585907], [-0.9729785323143005], [0.122589111328125], [-2.068430185317993], [0.1544068455696106], [-1.7860080003738403], [-0.35574740171432495], [-1.7967705726623535], [-0.12909060716629028], [-0.584674060344696], [-1.6229802370071411], [0.7970308065414429], [-1.0515363216400146], [-0.25425058603286743], [1.1591277122497559], [0.5518890023231506], [-1.1510047912597656], [-0.7919654846191406], [-0.6998799443244934], [0.18216490745544434], [0.12450748682022095], [-0.4140687584877014], [0.8863477110862732], [0.5136869549751282], [0.3899082541465759], [-1.7988207340240479], [1.2812283039093018], [0.3080301284790039], [2.4151525497436523], [0.4657173752784729], [0.6956700086593628], [1.6230978965759277], [3.212501049041748], [-0.31772977113723755], [-0.1776944398880005], [0.36354348063468933], [0.3248559832572937], [0.1573001742362976], [0.15463972091674805]], "normalized_similarities": [[-0.7101208567619324], [-1.7647686004638672], [-0.7070476412773132], [-0.2955625653266907], [-0.36597537994384766], [-0.15748628973960876], [-0.27855679392814636], [0.03509638458490372], [-0.5921767354011536], [0.044205572456121445], [-0.5113213062286377], [-0.10184793174266815], [-0.5144025683403015], [-0.03695771470665932], [-0.16738799214363098], [-0.4646476209163666], [0.22818420827388763], [-0.30104732513427734], [-0.07279012352228165], [0.33184996247291565], [0.1580018699169159], [-0.329524427652359], [-0.22673404216766357], [-0.20037060976028442], [0.05215250700712204], [0.03564560040831566], [-0.11854492127895355], [0.25375500321388245], [0.14706489443778992], [0.11162793636322021], [-0.5149894952774048], [0.3668064773082733], [0.0881868228316307], [0.6914408802986145], [0.1333315521478653], [0.19916534423828125], [0.4646812975406647], [0.9197160601615906], [-0.09096375852823257], [-0.050872646272182465], [0.10407989472150803], [0.09300394356250763], [0.04503391310572624], [0.04427224397659302]], "result_max_similarities": 3.492927074432373, "full_text_display": "/*\n * Copyright (c) 1997, 2013, Oracle and/or its affiliates. All rights reserved.\n * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n *\n *", "K": 1}, {"id": "result_7", "sample_idx": 16935, "score": 3.2098546028137207, "highlight_inds": [37], "matched_tokens_str": " HEAD", "original_pos": 37, "full_sequence_tokens": ["/*", "\n", " *", " Copyright", " (", "c", ")", " 1997", ",", " 2019", ",", " Oracle", " and", "/", "or", " its", " affiliates", ".", " All", " rights", " reserved", ".", "\n", " *", " DO", " NOT", " AL", "TER", " OR", " REM", "OVE", " COPYRIGHT", " NOT", "ICES", " OR", " THIS", " FILE", " HEAD", "ER", ".", "\n", " *", "\n", " *"], "sequence_similarities": [[-2.480400323867798], [-6.164207935333252], [-2.469665765762329], [-1.0323784351348877], [-1.2783253192901611], [-0.550088107585907], [-0.9729785323143005], [0.122589111328125], [-2.068430185317993], [0.2069413661956787], [-1.8732593059539795], [-0.230865478515625], [-1.6974250078201294], [-0.08913445472717285], [-0.5319379568099976], [-1.614479899406433], [0.8595934510231018], [-1.0586769580841064], [-0.20620933175086975], [1.1988887786865234], [0.5626174211502075], [-1.1218047142028809], [-0.7955510020256042], [-0.6839800477027893], [0.24631083011627197], [0.146539568901062], [-0.38610661029815674], [0.8989934325218201], [0.5231280326843262], [0.3883916139602661], [-1.7886395454406738], [1.2940869331359863], [0.31382620334625244], [2.4256234169006348], [0.4704815149307251], [0.6939396858215332], [1.6244796514511108], [3.2098546028137207], [-0.30481868982315063], [-0.18077367544174194], [0.3591994643211365], [0.32994046807289124], [0.15453529357910156], [0.15782779455184937]], "normalized_similarities": [[-0.7101208567619324], [-1.7647686004638672], [-0.7070476412773132], [-0.2955625653266907], [-0.36597537994384766], [-0.15748628973960876], [-0.27855679392814636], [0.03509638458490372], [-0.5921767354011536], [0.05924583226442337], [-0.5363007187843323], [-0.06609513610601425], [-0.48596063256263733], [-0.02551855519413948], [-0.15229003131389618], [-0.46221402287483215], [0.2460954487323761], [-0.3030916154384613], [-0.0590362548828125], [0.34323325753211975], [0.16107334196567535], [-0.32116466760635376], [-0.22776055335998535], [-0.19581858813762665], [0.07051702588796616], [0.041953228414058685], [-0.11053955554962158], [0.2573753893375397], [0.14976780116558075], [0.11119373887777328], [-0.5120747089385986], [0.3704878091812134], [0.08984619379043579], [0.694438636302948], [0.13469548523426056], [0.19866995513439178], [0.46507689356803894], [0.9189583659172058], [-0.08726740628480911], [-0.05175421014428139], [0.1028362363576889], [0.09445959329605103], [0.04424234852194786], [0.045184966176748276]], "result_max_similarities": 3.492927074432373, "full_text_display": "/*\n * Copyright (c) 1997, 2019, Oracle and/or its affiliates. All rights reserved.\n * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n *\n *", "K": 1}, {"id": "result_8", "sample_idx": 4814, "score": 3.1916871070861816, "highlight_inds": [37], "matched_tokens_str": " HEAD", "original_pos": 37, "full_sequence_tokens": ["/*", "\n", " *", " Copyright", " (", "c", ")", " 2018", ",", " Oracle", " and", "/", "or", " its", " affiliates", ".", " All", " rights", " reserved", ".", "\n", " *", " \n", " *", " DO", " NOT", " AL", "TER", " OR", " REM", "OVE", " COPYRIGHT", " NOT", "ICES", " OR", " THIS", " FILE", " HEAD", "ER", ".", "\n", " *", "\n", " *"], "sequence_similarities": [[-2.480400323867798], [-6.164207935333252], [-2.469665765762329], [-1.0323784351348877], [-1.2783253192901611], [-0.550088107585907], [-0.9729785323143005], [0.005903005599975586], [-1.986486554145813], [-0.5588886737823486], [-1.5287706851959229], [-0.16933029890060425], [-0.7707837820053101], [-1.7748998403549194], [0.567763090133667], [-0.9963729381561279], [-0.3293241262435913], [0.9998207092285156], [0.4982425272464752], [-1.1272544860839844], [-0.8492299318313599], [-0.7497488856315613], [-0.8616405129432678], [-0.8734291791915894], [6.35385513305664e-05], [-0.016675293445587158], [-0.547443151473999], [0.8547015190124512], [0.4445907473564148], [0.40524351596832275], [-1.8796560764312744], [1.1810283660888672], [0.2267380952835083], [2.3553712368011475], [0.36828309297561646], [0.7088505625724792], [1.5713382959365845], [3.1916871070861816], [-0.39452630281448364], [-0.1313694715499878], [0.5061396360397339], [0.4041721820831299], [0.2371923327445984], [0.2308347225189209]], "normalized_similarities": [[-0.7101208567619324], [-1.7647686004638672], [-0.7070476412773132], [-0.2955625653266907], [-0.36597537994384766], [-0.15748628973960876], [-0.27855679392814636], [0.001689988188445568], [-0.5687168836593628], [-0.1600058227777481], [-0.4376761019229889], [-0.04847805202007294], [-0.22066988050937653], [-0.5081411004066467], [0.16254650056362152], [-0.28525444865226746], [-0.09428314119577408], [0.2862415015697479], [0.1426432728767395], [-0.3227248787879944], [-0.2431284487247467], [-0.21464774012565613], [-0.24668151140213013], [-0.25005650520324707], [1.8190632545156404e-05], [-0.004774017259478569], [-0.156729057431221], [0.24469491839408875], [0.12728314101696014], [0.11601831763982773], [-0.5381320714950562], [0.3381199538707733], [0.06491348892450333], [0.6743258833885193], [0.10543680936098099], [0.20293883979320526], [0.44986289739608765], [0.9137571454048157], [-0.11295005679130554], [-0.037610139697790146], [0.14490415155887604], [0.11571159958839417], [0.0679064691066742], [0.06608632951974869]], "result_max_similarities": 3.492927074432373, "full_text_display": "/*\n * Copyright (c) 2018, Oracle and/or its affiliates. All rights reserved.\n * \n * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n *\n *", "K": 1}, {"id": "result_9", "sample_idx": 1671, "score": 3.052741765975952, "highlight_inds": [19], "matched_tokens_str": " Cafe", "original_pos": 19, "full_sequence_tokens": ["Send", " me", " email", " updates", " about", " messages", " I", "&#x27;ve", " received", "\n", "on", " the", " site", " and", " the", " latest", " news", " from", " The", " Cafe", "Mom", " Team", ".", "By", " signing", " up", ",", " you", " cert", "ify", " that", "\n", "you", " are", " female", " and", " accept", " the", " Terms", " of", " Service", " and", " have", " read"], "sequence_similarities": [[-5.051913261413574], [-1.6950252056121826], [-2.216310501098633], [-3.2460319995880127], [-2.147573947906494], [-3.756221294403076], [-2.1428043842315674], [-1.8362826108932495], [-2.628286361694336], [-4.635374546051025], [-0.878192663192749], [-2.1002204418182373], [-2.1925806999206543], [-1.683640718460083], [-2.0363759994506836], [-2.1549859046936035], [-1.9770838022232056], [-1.656838059425354], [-2.002309560775757], [3.052741765975952], [-2.1040902137756348], [-1.1593174934387207], [-1.3531744480133057], [-1.3622713088989258], [-0.33287596702575684], [-0.6159834265708923], [-1.7302577495574951], [-1.4292000532150269], [-0.7115543484687805], [-0.8586235046386719], [-0.7449214458465576], [-1.103252649307251], [-2.42179799079895], [-2.3252744674682617], [-2.134438991546631], [-2.0593225955963135], [-1.3884550333023071], [-1.9540125131607056], [0.059788525104522705], [0.85103440284729], [0.5006811022758484], [-1.6292452812194824], [-2.040894031524658], [-0.27925556898117065]], "normalized_similarities": [[-1.4463266134262085], [-0.4852735698223114], [-0.634513795375824], [-0.9293156862258911], [-0.6148350238800049], [-1.0753792524337769], [-0.6134695410728455], [-0.5257145762443542], [-0.7524595856666565], [-1.3270745277404785], [-0.251420259475708], [-0.6012780666351318], [-0.6277201771736145], [-0.4820142686367035], [-0.5829998850822449], [-0.6169570088386536], [-0.5660249590873718], [-0.47434085607528687], [-0.5732468962669373], [0.8739780783653259], [-0.602385938167572], [-0.3319042921066284], [-0.3874041438102722], [-0.39000850915908813], [-0.09530000388622284], [-0.1763516366481781], [-0.495360404253006], [-0.4091697335243225], [-0.20371291041374207], [-0.24581776559352875], [-0.21326567232608795], [-0.3158533275127411], [-0.6933434009552002], [-0.6657094359397888], [-0.6110745668411255], [-0.5895693302154541], [-0.3975047171115875], [-0.5594198107719421], [0.017117027193307877], [0.2436450570821762], [0.14334140717983246], [-0.46644124388694763], [-0.5842933654785156], [-0.07994887232780457]], "result_max_similarities": 3.492927074432373, "full_text_display": "Send me email updates about messages I&#x27;ve received\non the site and the latest news from The CafeMom Team.By signing up, you certify that\nyou are female and accept the Terms of Service and have read", "K": 1}, {"id": "result_10", "sample_idx": 9229, "score": 3.0499606132507324, "highlight_inds": [30], "matched_tokens_str": "Enter", "original_pos": 30, "full_sequence_tokens": ["Hang", " on", " for", " a", " minute", "...", "we", "&#x27;re", " trying", " to", " find", " some", " more", " stories", " you", " might", " like", ".", "\n", "\n", "Email", " This", " Story", "\n", "\n", "Send", " email", " to", " this", " address", "Enter", " Your", " Name", "Add", " a", " comment", " here", "Ver", "ification", "\n", "\n", "What", " issues", " are"], "sequence_similarities": [[-4.0305376052856445], [-1.3476589918136597], [-1.5410557985305786], [-3.0737054347991943], [-1.0216659307479858], [-0.42222774028778076], [-2.534227132797241], [-0.570612907409668], [0.7079505920410156], [-2.4461071491241455], [-2.831036329269409], [-2.483691930770874], [-2.4273416996002197], [-1.6505969762802124], [-2.2338316440582275], [-2.005087375640869], [-2.168532609939575], [-9.37646484375], [-1.0796705484390259], [-1.585936188697815], [-1.6384979486465454], [-0.9960138201713562], [0.02385684847831726], [-1.7873512506484985], [-1.6466059684753418], [-1.9352362155914307], [0.18303805589675903], [-0.600737452507019], [0.8487722873687744], [0.22902798652648926], [3.0499606132507324], [0.633232057094574], [-0.5864062309265137], [-0.817536473274231], [-1.1792166233062744], [-1.3096108436584473], [0.3222993016242981], [0.044664859771728516], [-1.0997012853622437], [-1.1103875637054443], [-1.1032079458236694], [-1.6331855058670044], [-2.1676573753356934], [-2.2395524978637695]], "normalized_similarities": [[-1.1539140939712524], [-0.38582512736320496], [-0.44119322299957275], [-0.8799798488616943], [-0.29249563813209534], [-0.12088077515363693], [-0.7255311012268066], [-0.16336238384246826], [0.20268118381500244], [-0.7003029584884644], [-0.8105054497718811], [-0.7110632061958313], [-0.6949305534362793], [-0.472554087638855], [-0.6395300030708313], [-0.5740421414375305], [-0.6208353638648987], [-2.6844146251678467], [-0.309101939201355], [-0.4540421664714813], [-0.46909022331237793], [-0.2851516306400299], [0.006830045022070408], [-0.5117058753967285], [-0.47141149640083313], [-0.554044246673584], [0.05240248516201973], [-0.17198683321475983], [0.2429974228143692], [0.06556907296180725], [0.8731818795204163], [0.18128980696201324], [-0.16788390278816223], [-0.234054833650589], [-0.33760127425193787], [-0.374932199716568], [0.09227198362350464], [0.012787229381501675], [-0.3148365914821625], [-0.3178960084915161], [-0.31584054231643677], [-0.4675693213939667], [-0.6205847859382629], [-0.6411678194999695]], "result_max_similarities": 3.492927074432373, "full_text_display": "Hang on for a minute...we&#x27;re trying to find some more stories you might like.\n\nEmail This Story\n\nSend email to this addressEnter Your NameAdd a comment hereVerification\n\nWhat issues are", "K": 1}, {"id": "result_11", "sample_idx": 4741, "score": 3.0498666763305664, "highlight_inds": [15], "matched_tokens_str": " formatting", "original_pos": 15, "full_sequence_tokens": ["Got", " my", " usual", " order", " of", " Chinese", " food", "\n", "\n", "Get", " over", " 50", " fonts", ",", " text", " formatting", ",", " optional", " waterm", "arks", " and", " NO", " ad", "verts", "!", " Get", " your", " free", " account", " now", "!", "\n", "\n", "They", " only", " gave", " me", " one", " fortune", " cookie", " with", " my", " usual", " order"], "sequence_similarities": [[-5.384737968444824], [-4.952166557312012], [-4.362396717071533], [-2.943187952041626], [-1.147996187210083], [-3.032087564468384], [-2.557520866394043], [-6.878451347351074], [-2.599149703979492], [-2.661324977874756], [-0.8922562599182129], [-2.695889711380005], [1.9263582229614258], [-1.119524359703064], [-0.04823300242424011], [3.0498666763305664], [-0.06131559610366821], [-0.961226224899292], [0.8676307201385498], [-0.5198242664337158], [-0.9527182579040527], [-0.6370221376419067], [0.3579767346382141], [-0.45225000381469727], [0.10793280601501465], [-1.24880850315094], [-0.816308856010437], [-0.01467132568359375], [-0.39794909954071045], [-0.3928248882293701], [0.14683979749679565], [-0.2396240234375], [-0.7607697248458862], [-2.287318706512451], [-1.3513038158416748], [-1.7678496837615967], [-1.8263436555862427], [-1.8968693017959595], [-1.1781293153762817], [-1.6985615491867065], [-1.8190698623657227], [-1.9359033107757568], [-1.76688814163208], [-1.0624332427978516]], "normalized_similarities": [[-1.541611909866333], [-1.4177697896957397], [-1.2489229440689087], [-0.8426136374473572], [-0.32866308093070984], [-0.8680649399757385], [-0.7321999073028564], [-1.9692513942718506], [-0.7441179156303406], [-0.761918306350708], [-0.25544658303260803], [-0.7718139290809631], [0.5515025854110718], [-0.3205118179321289], [-0.013808762654662132], [0.8731549978256226], [-0.01755421608686447], [-0.27519217133522034], [0.24839645624160767], [-0.14882196485996246], [-0.2727563977241516], [-0.18237487971782684], [0.10248617827892303], [-0.129475936293602], [0.030900388956069946], [-0.35752493143081665], [-0.2337033748626709], [-0.00420029554516077], [-0.11392997950315475], [-0.11246295273303986], [0.0420391820371151], [-0.06860264390707016], [-0.21780292689800262], [-0.6548429727554321], [-0.38686859607696533], [-0.5061227083206177], [-0.5228691101074219], [-0.5430600643157959], [-0.3372899889945984], [-0.4862860143184662], [-0.5207866430282593], [-0.5542352795600891], [-0.5058473944664001], [-0.3041670322418213]], "result_max_similarities": 3.492927074432373, "full_text_display": "Got my usual order of Chinese food\n\nGet over 50 fonts, text formatting, optional watermarks and NO adverts! Get your free account now!\n\nThey only gave me one fortune cookie with my usual order", "K": 1}, {"id": "result_12", "sample_idx": 4791, "score": 3.003401041030884, "highlight_inds": [18], "matched_tokens_str": " Cafe", "original_pos": 18, "full_sequence_tokens": ["Send", " me", " email", " updates", " about", " messages", " I", "&#x27;ve", " received", " on", " the", " site", " and", " the", " latest", " news", " from", " The", " Cafe", "Mom", " Team", ".", "\n", "By", " signing", " up", ",", " you", " cert", "ify", " that", " you", " are", " female", " and", " accept", " the", " Terms", " of", " Service", " and", " have", " read", " the"], "sequence_similarities": [[-5.051913261413574], [-1.6950252056121826], [-2.216310501098633], [-3.2460319995880127], [-2.147573947906494], [-3.756221294403076], [-2.1428043842315674], [-1.8362826108932495], [-2.628286361694336], [-1.9740818738937378], [-2.5324158668518066], [-1.7177711725234985], [-1.933264970779419], [-2.2983551025390625], [-2.1008529663085938], [-2.0972137451171875], [-1.7592657804489136], [-2.2148139476776123], [3.003401041030884], [-2.0589797496795654], [-1.0488002300262451], [-6.269343852996826], [-0.7778303027153015], [-0.7040579319000244], [-0.5480535626411438], [-0.5778759717941284], [-1.817298412322998], [-1.4685168266296387], [-0.8357250690460205], [-1.0299707651138306], [-0.7947835922241211], [-1.979601263999939], [-2.3876235485076904], [-2.0581955909729004], [-1.9322094917297363], [-1.2535310983657837], [-1.8942179679870605], [0.23632711172103882], [0.9376348257064819], [0.5613459348678589], [-1.548048973083496], [-1.9961568117141724], [-0.22653412818908691], [-1.877642035484314]], "normalized_similarities": [[-1.4463266134262085], [-0.4852735698223114], [-0.634513795375824], [-0.9293156862258911], [-0.6148350238800049], [-1.0753792524337769], [-0.6134695410728455], [-0.5257145762443542], [-0.7524595856666565], [-0.5651655197143555], [-0.7250125408172607], [-0.49178558588027954], [-0.5534799098968506], [-0.6580026149749756], [-0.6014591455459595], [-0.6004172563552856], [-0.5036652088165283], [-0.6340853571891785], [0.8598521947860718], [-0.589471161365509], [-0.30026400089263916], [-1.7948682308197021], [-0.2226872444152832], [-0.20156674087047577], [-0.15690380334854126], [-0.16544175148010254], [-0.5202795267105103], [-0.4204258620738983], [-0.23926210403442383], [-0.2948732376098633], [-0.22754085063934326], [-0.5667456388473511], [-0.6835595369338989], [-0.5892466306686401], [-0.5531777143478394], [-0.3588769733905792], [-0.5423010587692261], [0.06765875965356827], [0.2684381306171417], [0.16070932149887085], [-0.4431953430175781], [-0.5714854001998901], [-0.06485509872436523], [-0.537555456161499]], "result_max_similarities": 3.492927074432373, "full_text_display": "Send me email updates about messages I&#x27;ve received on the site and the latest news from The CafeMom Team.\nBy signing up, you certify that you are female and accept the Terms of Service and have read the", "K": 1}, {"id": "result_13", "sample_idx": 2251, "score": 2.859175205230713, "highlight_inds": [16], "matched_tokens_str": " FOUR", "original_pos": 16, "full_sequence_tokens": ["                        ", "       ", "UN", "PUBL", "ISHED", "\n\n", "                    ", "UNITED", " STATES", " COURT", " OF", " APPEALS", "\n", "                        ", "FOR", " THE", " FOUR", "TH", " CIRCUIT", "\n\n\n", "                        ", "       ", "No", ".", " 08", "-", "85", "53", "\n\n", "\n", "UNITED", " STATES", " OF", " AMERICA", ",", "\n\n", "                  ", "Plaintiff", " -", " Appellee", ",", "\n\n", "             ", "v"], "sequence_similarities": [[-3.1339781284332275], [-2.9002583026885986], [-1.3674407005310059], [-0.04545795917510986], [-1.1059709787368774], [-6.286052227020264], [-0.3921454846858978], [1.0907734632492065], [0.5674601197242737], [-0.2520673871040344], [0.28675219416618347], [0.7922899723052979], [-0.8889343738555908], [0.5476891994476318], [-0.1980670690536499], [-1.107113003730774], [2.859175205230713], [0.5752503275871277], [0.4337235391139984], [0.42792606353759766], [1.2175860404968262], [0.7455846071243286], [0.40928906202316284], [0.05318808555603027], [0.5309532284736633], [-0.07430785894393921], [-0.538907527923584], [-0.45395398139953613], [-0.6039842367172241], [-0.46161219477653503], [0.06290358304977417], [0.4259933531284332], [-0.42925727367401123], [-0.5015648603439331], [-1.057483196258545], [-0.2392614483833313], [0.02840864658355713], [-0.8583372831344604], [-1.0286028385162354], [-0.12416847795248032], [-1.018659234046936], [-0.1591058373451233], [-0.31177014112472534], [-0.3677564859390259]], "normalized_similarities": [[-0.8972355127334595], [-0.8303231596946716], [-0.3914884626865387], [-0.013014287687838078], [-0.316631555557251], [-1.7996517419815063], [-0.11226844042539597], [0.3122806251049042], [0.16245976090431213], [-0.07216508686542511], [0.08209510147571564], [0.22682695090770721], [-0.2544955313205719], [0.15679949522018433], [-0.056705184280872345], [-0.3169585168361664], [0.8185613751411438], [0.1646900475025177], [0.12417194247245789], [0.12251216918230057], [0.34858617186546326], [0.21345552802085876], [0.11717652529478073], [0.015227368101477623], [0.15200810134410858], [-0.021273808553814888], [-0.15428537130355835], [-0.12996377050876617], [-0.17291636765003204], [-0.13215626776218414], [0.018008844926953316], [0.12195884436368942], [-0.12289328128099442], [-0.143594428896904], [-0.3027498722076416], [-0.06849884241819382], [0.008133191615343094], [-0.24573580920696259], [-0.29448163509368896], [-0.03554854542016983], [-0.29163482785224915], [-0.045550860464572906], [-0.08925756067037582], [-0.10528604686260223]], "result_max_similarities": 3.492927074432373, "full_text_display": "                               UNPUBLISHED\n\n                    UNITED STATES COURT OF APPEALS\n                        FOR THE FOURTH CIRCUIT\n\n\n                               No. 08-8553\n\n\nUNITED STATES OF AMERICA,\n\n                  Plaintiff - Appellee,\n\n             v", "K": 1}, {"id": "result_14", "sample_idx": 19129, "score": 2.859175205230713, "highlight_inds": [16], "matched_tokens_str": " FOUR", "original_pos": 16, "full_sequence_tokens": ["                        ", "       ", "UN", "PUBL", "ISHED", "\n\n", "                    ", "UNITED", " STATES", " COURT", " OF", " APPEALS", "\n", "                        ", "FOR", " THE", " FOUR", "TH", " CIRCUIT", "\n\n\n", "                        ", "       ", "No", ".", " 14", "-", "65", "28", "\n\n", "\n", "UNITED", " STATES", " OF", " AMERICA", ",", "\n\n", "                ", "Plaintiff", " -", " Appellee", ",", "\n\n", "          ", "v"], "sequence_similarities": [[-3.1339781284332275], [-2.9002583026885986], [-1.3674407005310059], [-0.04545795917510986], [-1.1059709787368774], [-6.286052227020264], [-0.3921454846858978], [1.0907734632492065], [0.5674601197242737], [-0.2520673871040344], [0.28675219416618347], [0.7922899723052979], [-0.8889343738555908], [0.5476891994476318], [-0.1980670690536499], [-1.107113003730774], [2.859175205230713], [0.5752503275871277], [0.4337235391139984], [0.42792606353759766], [1.2175860404968262], [0.7455846071243286], [0.40928906202316284], [0.05318808555603027], [0.1990535855293274], [-0.12424933910369873], [-0.683585524559021], [-0.8377853631973267], [-0.5844283103942871], [-0.4815673530101776], [0.06523871421813965], [0.4156993329524994], [-0.43996304273605347], [-0.5057310461997986], [-1.0794068574905396], [-0.2461751103401184], [-0.3948430120944977], [-0.8081070184707642], [-1.1099191904067993], [-0.05194185674190521], [-1.0380382537841797], [-0.2143077552318573], [-0.5292648673057556], [-0.48507532477378845]], "normalized_similarities": [[-0.8972355127334595], [-0.8303231596946716], [-0.3914884626865387], [-0.013014287687838078], [-0.316631555557251], [-1.7996517419815063], [-0.11226844042539597], [0.3122806251049042], [0.16245976090431213], [-0.07216508686542511], [0.08209510147571564], [0.22682695090770721], [-0.2544955313205719], [0.15679949522018433], [-0.056705184280872345], [-0.3169585168361664], [0.8185613751411438], [0.1646900475025177], [0.12417194247245789], [0.12251216918230057], [0.34858617186546326], [0.21345552802085876], [0.11717652529478073], [0.015227368101477623], [0.056987617164850235], [-0.03557169437408447], [-0.19570563733577728], [-0.2398519515991211], [-0.16731764376163483], [-0.13786928355693817], [0.018677376210689545], [0.11901174485683441], [-0.12595826387405396], [-0.14478717744350433], [-0.30902644991874695], [-0.0704781711101532], [-0.11304072290658951], [-0.23135524988174438], [-0.31776192784309387], [-0.014870581217110157], [-0.29718291759490967], [-0.06135477498173714], [-0.15152473747730255], [-0.13887359201908112]], "result_max_similarities": 3.492927074432373, "full_text_display": "                               UNPUBLISHED\n\n                    UNITED STATES COURT OF APPEALS\n                        FOR THE FOURTH CIRCUIT\n\n\n                               No. 14-6528\n\n\nUNITED STATES OF AMERICA,\n\n                Plaintiff - Appellee,\n\n          v", "K": 1}, {"id": "result_15", "sample_idx": 1217, "score": 2.8486430644989014, "highlight_inds": [27], "matched_tokens_str": "fav", "original_pos": 27, "full_sequence_tokens": ["70", " F", ".", "3", "d", " 12", "63", "\n", "NOT", "ICE", ":", " Fourth", " Circuit", " Local", " Rule", " 36", "(", "c", ")", " states", " that", " citation", " of", " unpublished", " dispositions", " is", " dis", "fav", "ored", " except", " for", " establishing", " res", " judicata", ",", " estoppel", ",", " or", " the", " law", " of", " the", " case", " and"], "sequence_similarities": [[-4.313121318817139], [-4.286724090576172], [-8.179494857788086], [-1.2229559421539307], [-1.0052685737609863], [-1.2928118705749512], [-0.9093300104141235], [-1.5767593383789062], [-2.167426586151123], [0.21360641717910767], [-0.9269318580627441], [0.532527506351471], [1.769028663635254], [-1.398140788078308], [2.502861738204956], [0.3173307180404663], [0.6542004942893982], [-0.4243776500225067], [0.16873547434806824], [-1.2862422466278076], [-1.4232264757156372], [0.7987226247787476], [-0.5302259922027588], [0.6680543422698975], [1.314127802848816], [-1.7191224098205566], [-0.5307472944259644], [2.8486430644989014], [-1.3432947397232056], [0.725051999092102], [0.22118237614631653], [-1.6901130676269531], [-0.5295540690422058], [0.27157604694366455], [-1.8509693145751953], [2.3411312103271484], [-0.6624795794487], [0.2249346673488617], [-0.3724086880683899], [0.20439286530017853], [-0.13532868027687073], [-1.22559654712677], [-0.8724902272224426], [-0.3989174962043762]], "normalized_similarities": [[-1.2348157167434692], [-1.2272584438323975], [-2.341730833053589], [-0.3501235246658325], [-0.28780120611190796], [-0.3701227903366089], [-0.26033467054367065], [-0.45141491293907166], [-0.620518684387207], [0.06115398555994034], [-0.26537394523620605], [0.1524588167667389], [0.5064602494239807], [-0.400277704000473], [0.7165513634681702], [0.09084951132535934], [0.1872929185628891], [-0.12149628251791], [0.04830775782465935], [-0.36824193596839905], [-0.407459557056427], [0.22866857051849365], [-0.15179990231990814], [0.19125917553901672], [0.37622538208961487], [-0.4921724200248718], [-0.15194915235042572], [0.8155460953712463], [-0.38457566499710083], [0.2075771987438202], [0.06332293152809143], [-0.48386725783348083], [-0.15160754323005676], [0.07775028049945831], [-0.5299192667007446], [0.6702491044998169], [-0.18966315686702728], [0.0643971860408783], [-0.10661794245243073], [0.058516211807727814], [-0.038743630051612854], [-0.3508795201778412], [-0.24978770315647125], [-0.11420722305774689]], "result_max_similarities": 3.492927074432373, "full_text_display": "70 F.3d 1263\nNOTICE: Fourth Circuit Local Rule 36(c) states that citation of unpublished dispositions is disfavored except for establishing res judicata, estoppel, or the law of the case and", "K": 1}, {"id": "result_16", "sample_idx": 2156, "score": 2.841198444366455, "highlight_inds": [16], "matched_tokens_str": " FOUR", "original_pos": 16, "full_sequence_tokens": ["                        ", "      ", "UN", "PUBL", "ISHED", "\n\n", "                    ", "UNITED", " STATES", " COURT", " OF", " APPEALS", "\n", "                        ", "FOR", " THE", " FOUR", "TH", " CIRCUIT", "\n\n\n", "                        ", "      ", "No", ".", " 14", "-", "4", "288", "\n\n", "\n", "UNITED", " STATES", " OF", " AMERICA", ",", "\n\n", "                  ", "Plaintiff", " -", " Appellee", ",", "\n\n", "           ", "v"], "sequence_similarities": [[-3.1339781284332275], [-3.137850522994995], [-1.4325757026672363], [0.416147381067276], [-0.8936327695846558], [-6.0758538246154785], [0.11183616518974304], [1.1786167621612549], [0.6068210005760193], [-0.2012600302696228], [0.3500833511352539], [0.8075340986251831], [-0.8314061760902405], [0.6576666235923767], [-0.1847599744796753], [-1.0722179412841797], [2.841198444366455], [0.5967972874641418], [0.4424573481082916], [0.45956993103027344], [1.2261393070220947], [0.8067352771759033], [0.27029240131378174], [0.05197915434837341], [0.15297913551330566], [-0.10448390245437622], [-0.5019916892051697], [-1.019689679145813], [-0.4432021379470825], [-0.4858095943927765], [0.12058436870574951], [0.4264422655105591], [-0.42341816425323486], [-0.5132178068161011], [-1.0840203762054443], [-0.22211140394210815], [0.017165720462799072], [-0.8486906290054321], [-1.049373745918274], [-0.15418320894241333], [-1.025290846824646], [-0.15375977754592896], [-0.3841277062892914], [-0.5527967810630798]], "normalized_similarities": [[-0.8972355127334595], [-0.898344099521637], [-0.4101361632347107], [0.11914001405239105], [-0.2558406591415405], [-1.7394734621047974], [0.032017894089221954], [0.3374295234680176], [0.17372851073741913], [-0.057619303464889526], [0.10022635757923126], [0.2311912328004837], [-0.23802563548088074], [0.1882852464914322], [-0.05289545655250549], [-0.3069683015346527], [0.8134147524833679], [0.17085878551006317], [0.12667237222194672], [0.13157157599925995], [0.35103490948677063], [0.23096252977848053], [0.07738278061151505], [0.014881259761750698], [0.043796829879283905], [-0.02991299331188202], [-0.14371661841869354], [-0.29192984104156494], [-0.12688559293746948], [-0.13908380270004272], [0.034522440284490585], [0.12208736687898636], [-0.12122158706188202], [-0.14693057537078857], [-0.3103472590446472], [-0.06358890235424042], [0.004914422985166311], [-0.24297404289245605], [-0.300428181886673], [-0.04414154961705208], [-0.29353341460227966], [-0.04402032122015953], [-0.1099730134010315], [-0.1582617610692978]], "result_max_similarities": 3.492927074432373, "full_text_display": "                              UNPUBLISHED\n\n                    UNITED STATES COURT OF APPEALS\n                        FOR THE FOURTH CIRCUIT\n\n\n                              No. 14-4288\n\n\nUNITED STATES OF AMERICA,\n\n                  Plaintiff - Appellee,\n\n           v", "K": 1}, {"id": "result_17", "sample_idx": 19666, "score": 2.841198444366455, "highlight_inds": [16], "matched_tokens_str": " FOUR", "original_pos": 16, "full_sequence_tokens": ["                        ", "      ", "UN", "PUBL", "ISHED", "\n\n", "                    ", "UNITED", " STATES", " COURT", " OF", " APPEALS", "\n", "                        ", "FOR", " THE", " FOUR", "TH", " CIRCUIT", "\n\n\n", "                        ", "      ", "No", ".", " 14", "-", "71", "12", "\n\n", "\n", "UNITED", " STATES", " OF", " AMERICA", ",", "\n\n", "                  ", "Plaintiff", " -", " Appellee", ",", "\n\n", "          ", "v"], "sequence_similarities": [[-3.1339781284332275], [-3.137850522994995], [-1.4325757026672363], [0.416147381067276], [-0.8936327695846558], [-6.0758538246154785], [0.11183616518974304], [1.1786167621612549], [0.6068210005760193], [-0.2012600302696228], [0.3500833511352539], [0.8075340986251831], [-0.8314061760902405], [0.6576666235923767], [-0.1847599744796753], [-1.0722179412841797], [2.841198444366455], [0.5967972874641418], [0.4424573481082916], [0.45956993103027344], [1.2261393070220947], [0.8067352771759033], [0.27029240131378174], [0.05197915434837341], [0.15297913551330566], [-0.10448390245437622], [-0.8000212907791138], [-0.8327922821044922], [-0.5120841264724731], [-0.5377429127693176], [0.04697674512863159], [0.37399062514305115], [-0.46917593479156494], [-0.5286188125610352], [-1.1056774854660034], [-0.24056404829025269], [0.009850680828094482], [-0.8439797163009644], [-1.0561143159866333], [-0.14830917119979858], [-1.0346674919128418], [-0.16424965858459473], [-0.49175503849983215], [-0.4831160008907318]], "normalized_similarities": [[-0.8972355127334595], [-0.898344099521637], [-0.4101361632347107], [0.11914001405239105], [-0.2558406591415405], [-1.7394734621047974], [0.032017894089221954], [0.3374295234680176], [0.17372851073741913], [-0.057619303464889526], [0.10022635757923126], [0.2311912328004837], [-0.23802563548088074], [0.1882852464914322], [-0.05289545655250549], [-0.3069683015346527], [0.8134147524833679], [0.17085878551006317], [0.12667237222194672], [0.13157157599925995], [0.35103490948677063], [0.23096252977848053], [0.07738278061151505], [0.014881259761750698], [0.043796829879283905], [-0.02991299331188202], [-0.22904036939144135], [-0.2384224683046341], [-0.14660601317882538], [-0.15395194292068481], [0.013449105434119701], [0.10707083344459534], [-0.13432170450687408], [-0.15133978426456451], [-0.31654754281044006], [-0.06887176632881165], [0.002820179332047701], [-0.2416253536939621], [-0.3023579716682434], [-0.04245985299348831], [-0.2962178885936737], [-0.04702350124716759], [-0.14078594744205475], [-0.13831265270709991]], "result_max_similarities": 3.492927074432373, "full_text_display": "                              UNPUBLISHED\n\n                    UNITED STATES COURT OF APPEALS\n                        FOR THE FOURTH CIRCUIT\n\n\n                              No. 14-7112\n\n\nUNITED STATES OF AMERICA,\n\n                  Plaintiff - Appellee,\n\n          v", "K": 1}, {"id": "result_18", "sample_idx": 9877, "score": 2.8219642639160156, "highlight_inds": [27], "matched_tokens_str": "fav", "original_pos": 27, "full_sequence_tokens": ["92", " F", ".", "3", "d", " 117", "8", "\n", "NOT", "ICE", ":", " Fourth", " Circuit", " Local", " Rule", " 36", "(", "c", ")", " states", " that", " citation", " of", " unpublished", " dispositions", " is", " dis", "fav", "ored", " except", " for", " establishing", " res", " judicata", ",", " estoppel", ",", " or", " the", " law", " of", " the", " case", " and"], "sequence_similarities": [[-5.705764293670654], [-4.4030022621154785], [-8.051499366760254], [-1.1489546298980713], [-1.0845764875411987], [-1.0832411050796509], [-0.8544315695762634], [-1.4884629249572754], [-2.1891040802001953], [0.18153661489486694], [-0.9329285025596619], [0.5617661476135254], [1.718531847000122], [-1.4130243062973022], [2.500671148300171], [0.1625484824180603], [0.6580525040626526], [-0.42738091945648193], [0.17178237438201904], [-1.2522289752960205], [-1.4355487823486328], [0.825251042842865], [-0.5274369120597839], [0.6626288890838623], [1.317918062210083], [-1.7180712223052979], [-0.537448525428772], [2.8219642639160156], [-1.3428975343704224], [0.6977335214614868], [0.22177842259407043], [-1.7152762413024902], [-0.5520989894866943], [0.26161426305770874], [-1.8478331565856934], [2.327098846435547], [-0.659268856048584], [0.22140786051750183], [-0.37212204933166504], [0.19742783904075623], [-0.14100408554077148], [-1.2265963554382324], [-0.8839638233184814], [-0.4089338481426239]], "normalized_similarities": [[-1.6335194110870361], [-1.2605479955673218], [-2.305086612701416], [-0.32893747091293335], [-0.3105064928531647], [-0.31012415885925293], [-0.24461764097213745], [-0.4261362850666046], [-0.6267248392105103], [0.051972631365060806], [-0.26709073781967163], [0.16082961857318878], [0.49200335144996643], [-0.40453875064849854], [0.7159242630004883], [0.04653646796941757], [0.18839572370052338], [-0.12235609441995621], [0.04918006435036659], [-0.35850417613983154], [-0.41098734736442566], [0.2362634688615799], [-0.15100140869617462], [0.18970590829849243], [0.37731051445007324], [-0.4918714761734009], [-0.1538676619529724], [0.8079081773757935], [-0.3844619393348694], [0.19975611567497253], [0.06349357217550278], [-0.49107131361961365], [-0.15806198120117188], [0.07489828765392303], [-0.5290213823318481], [0.6662317514419556], [-0.1887439489364624], [0.06338748335838318], [-0.10653587430715561], [0.056522175669670105], [-0.0403684601187706], [-0.3511657416820526], [-0.25307250022888184], [-0.11707483232021332]], "result_max_similarities": 3.492927074432373, "full_text_display": "92 F.3d 1178\nNOTICE: Fourth Circuit Local Rule 36(c) states that citation of unpublished dispositions is disfavored except for establishing res judicata, estoppel, or the law of the case and", "K": 1}, {"id": "result_19", "sample_idx": 12554, "score": 2.763950824737549, "highlight_inds": [16], "matched_tokens_str": " FOUR", "original_pos": 16, "full_sequence_tokens": ["                        ", "      ", "UN", "PUBL", "ISHED", "\n\n", "                   ", "UNITED", " STATES", " COURT", " OF", " APPEALS", "\n", "                       ", "FOR", " THE", " FOUR", "TH", " CIRCUIT", "\n\n\n", "                        ", "      ", "No", ".", " 06", "-", "7", "759", "\n\n\n", "\n", "UNITED", " STATES", " OF", " AMERICA", ",", "\n\n", "                        ", "                       ", "Plaintiff", " -", " Appellee", ",", "\n\n", "          "], "sequence_similarities": [[-3.1339781284332275], [-3.137850522994995], [-1.4325757026672363], [0.416147381067276], [-0.8936327695846558], [-6.0758538246154785], [-0.1898822784423828], [1.1718316078186035], [0.4650202691555023], [-0.3913038969039917], [0.20741987228393555], [0.6284320950508118], [-0.8757773637771606], [0.100818932056427], [-0.3604598939418793], [-1.2956494092941284], [2.763950824737549], [0.6272324323654175], [0.4934738874435425], [0.45771750807762146], [1.4981344938278198], [0.9060792922973633], [0.39350369572639465], [0.05499768257141113], [0.38957157731056213], [-0.17862313985824585], [-0.9055773615837097], [-0.961808443069458], [0.15448665618896484], [-0.689017117023468], [0.19376030564308167], [0.4402660131454468], [-0.357185959815979], [-0.5053195953369141], [-1.0551074743270874], [-0.25322049856185913], [1.4648107290267944], [0.674178957939148], [-0.9681345820426941], [-1.0262725353240967], [-0.10967275500297546], [-0.9578326940536499], [-0.34121885895729065], [-0.4073735475540161]], "normalized_similarities": [[-0.8972355127334595], [-0.898344099521637], [-0.4101361632347107], [0.11914001405239105], [-0.2558406591415405], [-1.7394734621047974], [-0.05436193570494652], [0.3354870080947876], [0.1331319659948349], [-0.11202750355005264], [0.05938282236456871], [0.17991560697555542], [-0.2507287859916687], [0.028863737359642982], [-0.10319708287715912], [-0.3709351420402527], [0.7912993431091309], [0.17957215011119843], [0.14127804338932037], [0.1310412436723709], [0.4289051592350006], [0.2594040036201477], [0.11265728622674942], [0.015745442360639572], [0.11153154820203781], [-0.05113852396607399], [-0.25926029682159424], [-0.2753588557243347], [0.04422842338681221], [-0.19726066291332245], [0.05547218769788742], [0.12604500353336334], [-0.10225978493690491], [-0.14466938376426697], [-0.3020697236061096], [-0.07249521464109421], [0.4193648099899292], [0.19301261007785797], [-0.27717000246047974], [-0.293814480304718], [-0.03139852359890938], [-0.27422064542770386], [-0.09768851846456528], [-0.11662812530994415]], "result_max_similarities": 3.492927074432373, "full_text_display": "                              UNPUBLISHED\n\n                   UNITED STATES COURT OF APPEALS\n                       FOR THE FOURTH CIRCUIT\n\n\n                              No. 06-7759\n\n\n\nUNITED STATES OF AMERICA,\n\n                                               Plaintiff - Appellee,\n\n          ", "K": 1}];
+    const globalMaxSequenceSimilarity = [3.492927074432373];
+    const tooltip = document.getElementById('tooltip');
+    let isNormalized = true;
+    let currentThreshold = 0.0;
+
+    function htmlDecode(input) {
+        const doc = new DOMParser().parseFromString(input, "text/html");
+        return doc.documentElement.textContent;
+    }
+
+    function getColorForSimilarity(sim, maxSim, isNormalizedMode = false, threshold = 0.0) {
+        if (sim === -Infinity || maxSim <= 0) {
+            return { backgroundColor: '#f8f9fa', color: '#6c757d' };
+        }
+
+        // Apply threshold cutoff - if below threshold, return transparent/no color
+        if (sim <= threshold) {
+            return { backgroundColor: 'transparent', color: '#6c757d' };
+        }
+
+        let t;
+        if (isNormalizedMode) {
+            // In normalized mode, use a more sensitive scale since values are 0-1
+            // Apply a power function to make smaller differences more visible
+            const normalizedT = Math.max(0, Math.min(1, sim / maxSim));
+            t = Math.pow(normalizedT, 0.7); // Makes mid-range values more visible
+        } else {
+            // In raw mode, use linear scaling
+            t = Math.max(0, Math.min(1, sim / maxSim));
+        }
+
+        let r, g, b;
+        if (isNormalizedMode) {
+            // Use white to red gradient for normalized mode (same as raw mode)
+            r = 255;
+            g = b = Math.round(255 * (1 - t));
+        } else {
+            // Original red gradient for raw mode
+            r = 255;
+            g = b = Math.round(255 * (1 - t));
+        }
+
+        const textColor = (r + g + b) / 3 > 127 ? '#000000' : '#FFFFFF';
+        return { backgroundColor: `rgb(${r},${g},${b})`, color: textColor };
+    }
+
+    function renderResult(resultData) {
+        const displayDiv = document.getElementById(`sequence_display_${resultData.id}`);
+        const fullTextDiv = document.getElementById(`full_text_display_${resultData.id}`);
+        if (!displayDiv) return;
+
+        // Choose which similarities to use based on toggle state
+        const currentSimilarities = isNormalized ? resultData.normalized_similarities : resultData.sequence_similarities;
+        const currentMaxSimilarities = isNormalized ? Array(resultData.K).fill(1) : globalMaxSequenceSimilarity; // Normalized max is always 1
+
+        displayDiv.innerHTML = '';
+        resultData.full_sequence_tokens.forEach((tokenHtml, i) => {
+            const span = document.createElement('span');
+            span.className = 'token';
+            span.innerHTML = tokenHtml;
+
+            const seqSim = currentSimilarities[i];
+            const rawSeqSim = resultData.sequence_similarities[i];
+            let maxIdx = 0
+            let K = resultData.K;
+            let maxSim = Number.NEGATIVE_INFINITY;
+            for (let j = 0; j < K; j++) {
+                if (currentSimilarities[i] && currentSimilarities[i][j] > maxSim) {
+                    maxIdx = j;
+                    maxSim = currentSimilarities[i][j];
+                }
+            }
+
+            try{
+                const colors = getColorForSimilarity(seqSim[maxIdx], currentMaxSimilarities[maxIdx], isNormalized, currentThreshold);
+                span.style.backgroundColor = colors.backgroundColor;
+                span.style.color = colors.color;
+            } catch { console.log("Get color for sim doesn't work") }
+
+            if (resultData.highlight_inds.includes(i)) {
+                span.classList.add('highlight-window');
+            }
+
+            span.onmousemove = e => {
+                tooltip.style.visibility = 'visible';
+                let rawTokenSimsText = resultData.sequence_similarities[i].map((s, j) => `Q${j+1}: ${s.toFixed(4)}`).join(', ');
+                let normalizedTokenSimsText = resultData.normalized_similarities[i].map((s, j) => `Q${j+1}: ${s.toFixed(4)}`).join(', ');
+
+                let tooltipContent = `<b>${htmlDecode(tokenHtml)}</b> (Index: ${i})<br>`;
+                if (isNormalized) {
+                    tooltipContent += `Normalized Sim: ${seqSim[maxIdx].toFixed(4)}<br>`;
+                    tooltipContent += `Raw Sim: ${rawSeqSim[maxIdx].toFixed(4)}<br>`;
+                    tooltipContent += `Normalized Token Sims: ${normalizedTokenSimsText}<br>`;
+                } else {
+                    tooltipContent += `Raw Sim: ${seqSim[maxIdx].toFixed(4)}<br>`;
+                    tooltipContent += `Raw Token Sims: ${rawTokenSimsText}<br>`;
+                }
+                tooltipContent += `Vector index match: ${maxIdx + 1}`;
+
+                tooltip.innerHTML = tooltipContent;
+                tooltip.style.left = `${e.pageX + 15}px`;
+                tooltip.style.top = `${e.pageY + 15}px`;
+            };
+            span.onmouseout = () => { tooltip.style.visibility = 'hidden'; };
+            displayDiv.appendChild(span);
+        });
+
+        if (fullTextDiv && resultData.full_text_display) {
+            fullTextDiv.innerHTML = `<p><strong>Full Text:</strong></p><p>${resultData.full_text_display}</p>`;
+        }
+    }
+
+    function toggleNormalization() {
+        isNormalized = !isNormalized;
+        const statusSpan = document.getElementById('normalizationStatus');
+        if (isNormalized) {
+            statusSpan.innerHTML = 'Showing normalized values (max = 1.0 per result) | <span style="background: linear-gradient(90deg, white, pink, red); padding: 2px 8px; border-radius: 3px; color: black; font-size: 0.8em;">White→Red colors</span>';
+            statusSpan.style.color = '#28a745';
+        } else {
+            statusSpan.innerHTML = 'Showing raw values (global scale) | <span style="background: linear-gradient(90deg, white, pink, red); padding: 2px 8px; border-radius: 3px; color: black; font-size: 0.8em;">White→Red colors</span>';
+            statusSpan.style.color = '#666';
+        }
+
+        // Re-render all results with new normalization setting
+        allResultsData.forEach(renderResult);
+    }
+
+    function updateThreshold() {
+        const slider = document.getElementById('thresholdSlider');
+        const valueDisplay = document.getElementById('thresholdValue');
+        currentThreshold = parseFloat(slider.value);
+        valueDisplay.textContent = currentThreshold.toFixed(3);
+
+        // Re-render all results with new threshold setting
+        allResultsData.forEach(renderResult);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        // Initialize normalization status (start with normalized mode)
+        const statusSpan = document.getElementById('normalizationStatus');
+        statusSpan.innerHTML = 'Showing normalized values (max = 1.0 per result) | <span style="background: linear-gradient(90deg, white, pink, red); padding: 2px 8px; border-radius: 3px; color: black; font-size: 0.8em;">White→Red colors</span>';
+        statusSpan.style.color = '#28a745';
+
+        // Set up toggle event listener
+        const toggleCheckbox = document.getElementById('normalizeToggle');
+        toggleCheckbox.addEventListener('change', toggleNormalization);
+
+        // Set up threshold slider event listener
+        const thresholdSlider = document.getElementById('thresholdSlider');
+        thresholdSlider.addEventListener('input', updateThreshold);
+
+        // Render initial results
+        allResultsData.forEach(renderResult);
+    });
+</script>
+</body></html>

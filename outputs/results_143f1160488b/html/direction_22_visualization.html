@@ -1,0 +1,406 @@
+
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">
+<title>Token Activation Similarity Report</title><style>
+body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; padding: 20px; background-color: #f8f9fa; color: #212529; }
+.container { background-color: #ffffff; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.07); }
+h1 { color: #0056b3; text-align: center; margin-bottom: 25px; font-weight: 300;}
+h2 { color: #0056b3; border-bottom: 1px solid #dee2e6; padding-bottom: 10px; margin-top:0; font-size: 1.5em; font-weight: 400; }
+.token { padding: 3px 5px; margin: 2px 1px; border-radius: 4px; display: inline-block; border: 1px solid #ced4da; cursor: default; transition: transform 0.1s ease-out, box-shadow 0.1s ease-out; font-size: 0.9em; line-height: 1.5; }
+.token:hover { transform: translateY(-1px); box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+.token.highlight-window { border: 2px solid #c82333; font-weight: 600; background-color: #f8d7da !important; color: #721c24; }
+.sequence-display { margin-top: 12px; padding: 12px; border: 1px solid #e9ecef; background-color: #f8f9fa; border-radius: 6px; white-space: pre-wrap; word-wrap: break-word; line-height: 1.7; }
+.full-text-display { margin-top: 15px; padding: 10px; border: 1px solid #dfe6e9; background-color: #f9f9f9; border-radius: 6px; white-space: pre-wrap; word-wrap: break-word; line-height: 1.6; font-size: 0.95em; color: #333; }
+.tooltip { position: absolute; background-color: rgba(33,37,41,0.9); color: white; padding: 8px 12px; border-radius: 5px; visibility: hidden; z-index: 1000; pointer-events: none; font-size: 0.85em; max-width: 400px; }
+.details p { margin: 5px 0; font-size: 0.9em; color: #495057; } .details strong { color: #0056b3; }
+.footer-note { font-size: 0.8em; color: #6c757d; text-align: center; margin-top: 30px; }
+.global-max-info { background-color: #e3f2fd; padding: 10px; border-radius: 5px; margin-bottom: 20px; text-align: center; font-size: 0.9em; color: #1565c0; }
+.threshold-control { margin-top: 15px; padding: 10px; background-color: rgba(255,255,255,0.3); border-radius: 6px; }
+.threshold-slider { width: 200px; margin: 0 10px; }
+.threshold-value { font-weight: bold; color: #0056b3; }
+</style></head><body>
+<div class="explanation-section" style="background-color: #f0f8ff; padding: 15px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #0056b3;"><h3 style="color: #0056b3; margin-top: 0;">Feature Explanation</h3><div style="line-height: 1.6; color: #333;">It’s a feature that detects an end‐of‐sentence (full-stop) marker—signaling a sentence boundary so that the model predicts a new sentence start rather than a continuation (e.g. an adverbial “-ively” suffix). </div></div><div class="global-max-info">
+    <strong>Query Type:</strong> 1-token sequences<br>
+    <strong>Query Vector Norms:</strong> ['34.6734']<br>
+    <strong>Global Max Sequence Similarities:</strong> [424.42578125]<br>
+    <div style="margin-top: 10px;">
+        <label style="font-weight: normal; cursor: pointer;">
+            <input type="checkbox" id="normalizeToggle" checked style="margin-right: 8px;">
+            Show Normalized Activations (divide by max per result)
+        </label>
+        <span id="normalizationStatus" style="margin-left: 15px; font-style: italic; color: #666;"></span>
+    </div>
+    <div class="threshold-control">
+        <label style="font-weight: normal;">
+            Activation Cutoff Threshold: <span class="threshold-value" id="thresholdValue">0.000</span>
+        </label><br>
+        <input type="range" id="thresholdSlider" class="threshold-slider"
+               min="0" max="1" step="0.001"
+               value="0.0">
+        <div style="margin-top: 5px; font-size: 0.8em; color: #666;">
+            No faithfulness data available - adjust manually
+        </div>
+    </div>
+</div>
+<div id="tooltip" class="tooltip"></div>
+
+<div class="container" id="container_result_0">
+    <h2>Result 1 (Sample Ref: 1118)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 424.4258</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">"."</span></p>
+        <p><strong>Window Start Position:</strong> 28</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_0"></div>
+    <div class="full-text-display" id="full_text_display_result_0"></div>
+</div>
+<div class="container" id="container_result_1">
+    <h2>Result 2 (Sample Ref: 1268)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 420.7635</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">"."</span></p>
+        <p><strong>Window Start Position:</strong> 7</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_1"></div>
+    <div class="full-text-display" id="full_text_display_result_1"></div>
+</div>
+<div class="container" id="container_result_2">
+    <h2>Result 3 (Sample Ref: 3404)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 420.0942</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">"
+"</span></p>
+        <p><strong>Window Start Position:</strong> 21</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_2"></div>
+    <div class="full-text-display" id="full_text_display_result_2"></div>
+</div>
+<div class="container" id="container_result_3">
+    <h2>Result 4 (Sample Ref: 14073)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 419.5648</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">"."</span></p>
+        <p><strong>Window Start Position:</strong> 9</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_3"></div>
+    <div class="full-text-display" id="full_text_display_result_3"></div>
+</div>
+<div class="container" id="container_result_4">
+    <h2>Result 5 (Sample Ref: 5479)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 419.5243</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">"."</span></p>
+        <p><strong>Window Start Position:</strong> 34</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_4"></div>
+    <div class="full-text-display" id="full_text_display_result_4"></div>
+</div>
+<div class="container" id="container_result_5">
+    <h2>Result 6 (Sample Ref: 1598)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 419.2775</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">"."</span></p>
+        <p><strong>Window Start Position:</strong> 21</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_5"></div>
+    <div class="full-text-display" id="full_text_display_result_5"></div>
+</div>
+<div class="container" id="container_result_6">
+    <h2>Result 7 (Sample Ref: 11071)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 419.0687</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">"."</span></p>
+        <p><strong>Window Start Position:</strong> 2</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_6"></div>
+    <div class="full-text-display" id="full_text_display_result_6"></div>
+</div>
+<div class="container" id="container_result_7">
+    <h2>Result 8 (Sample Ref: 6418)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 418.7065</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">"."</span></p>
+        <p><strong>Window Start Position:</strong> 29</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_7"></div>
+    <div class="full-text-display" id="full_text_display_result_7"></div>
+</div>
+<div class="container" id="container_result_8">
+    <h2>Result 9 (Sample Ref: 173)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 418.3185</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">"."</span></p>
+        <p><strong>Window Start Position:</strong> 8</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_8"></div>
+    <div class="full-text-display" id="full_text_display_result_8"></div>
+</div>
+<div class="container" id="container_result_9">
+    <h2>Result 10 (Sample Ref: 12367)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 418.3016</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">"."</span></p>
+        <p><strong>Window Start Position:</strong> 17</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_9"></div>
+    <div class="full-text-display" id="full_text_display_result_9"></div>
+</div>
+<div class="container" id="container_result_10">
+    <h2>Result 11 (Sample Ref: 18839)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 417.1600</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">"."</span></p>
+        <p><strong>Window Start Position:</strong> 18</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_10"></div>
+    <div class="full-text-display" id="full_text_display_result_10"></div>
+</div>
+<div class="container" id="container_result_11">
+    <h2>Result 12 (Sample Ref: 19060)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 415.3836</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">"."</span></p>
+        <p><strong>Window Start Position:</strong> 9</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_11"></div>
+    <div class="full-text-display" id="full_text_display_result_11"></div>
+</div>
+<div class="container" id="container_result_12">
+    <h2>Result 13 (Sample Ref: 822)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 414.2059</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">"."</span></p>
+        <p><strong>Window Start Position:</strong> 9</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_12"></div>
+    <div class="full-text-display" id="full_text_display_result_12"></div>
+</div>
+<div class="container" id="container_result_13">
+    <h2>Result 14 (Sample Ref: 10996)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 414.1640</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">"
+"</span></p>
+        <p><strong>Window Start Position:</strong> 9</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_13"></div>
+    <div class="full-text-display" id="full_text_display_result_13"></div>
+</div>
+<div class="container" id="container_result_14">
+    <h2>Result 15 (Sample Ref: 5049)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 413.3804</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">"."</span></p>
+        <p><strong>Window Start Position:</strong> 4</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_14"></div>
+    <div class="full-text-display" id="full_text_display_result_14"></div>
+</div>
+<div class="container" id="container_result_15">
+    <h2>Result 16 (Sample Ref: 11388)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 413.0560</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">"."</span></p>
+        <p><strong>Window Start Position:</strong> 15</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_15"></div>
+    <div class="full-text-display" id="full_text_display_result_15"></div>
+</div>
+<div class="container" id="container_result_16">
+    <h2>Result 17 (Sample Ref: 3949)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 412.9198</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">"."</span></p>
+        <p><strong>Window Start Position:</strong> 12</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_16"></div>
+    <div class="full-text-display" id="full_text_display_result_16"></div>
+</div>
+<div class="container" id="container_result_17">
+    <h2>Result 18 (Sample Ref: 19243)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 412.4107</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">"."</span></p>
+        <p><strong>Window Start Position:</strong> 16</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_17"></div>
+    <div class="full-text-display" id="full_text_display_result_17"></div>
+</div>
+<div class="container" id="container_result_18">
+    <h2>Result 19 (Sample Ref: 18443)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 412.2266</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">"."</span></p>
+        <p><strong>Window Start Position:</strong> 8</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_18"></div>
+    <div class="full-text-display" id="full_text_display_result_18"></div>
+</div>
+<div class="container" id="container_result_19">
+    <h2>Result 20 (Sample Ref: 11487)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 410.9741</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">"
+"</span></p>
+        <p><strong>Window Start Position:</strong> 9</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_19"></div>
+    <div class="full-text-display" id="full_text_display_result_19"></div>
+</div>
+<script>
+    const allResultsData = [{"id": "result_0", "sample_idx": 1118, "score": 424.42578125, "highlight_inds": [28], "matched_tokens_str": ".", "original_pos": 28, "full_sequence_tokens": ["The", " San", " Juan", " Regional", " Medical", " Center", "\u2019", "s", " Emergency", " Medical", " Services", " Department", " received", " the", " American", " Heart", " Association", "\u2019", "s", " Mission", ":", " Lif", "eline", " EMS", " Gold", " Award", " on", " Dec", ".", " 5", " in", " Farm", "ington", ",", " making", " it", " the", " third", " year", " to", " receive", " the", " award", "."], "sequence_similarities": [[212.85052490234375], [3.0485410690307617], [21.035945892333984], [29.7701416015625], [13.55253791809082], [2.2815566062927246], [-2.6011290550231934], [3.878722667694092], [-5.688199996948242], [-18.044803619384766], [-7.484392166137695], [-18.86142349243164], [-15.647046089172363], [-18.148048400878906], [-4.228424072265625], [-3.343564510345459], [0.5514607429504395], [-4.550042152404785], [-8.335033416748047], [-4.056457042694092], [-10.706804275512695], [-11.980512619018555], [1.5319857597351074], [-5.176382064819336], [-8.694498062133789], [17.262348175048828], [-21.005380630493164], [-12.15450668334961], [424.42578125], [-15.025959014892578], [-20.28585433959961], [-3.4633893966674805], [4.681677341461182], [5.257131576538086], [16.225709915161133], [-9.299322128295898], [-7.328418731689453], [-2.5669116973876953], [-2.3445591926574707], [9.252640724182129], [17.102951049804688], [-6.117445945739746], [2.031142234802246], [-5.757771968841553]], "normalized_similarities": [[0.5015023350715637], [0.007182742469012737], [0.04956330731511116], [0.07014216482639313], [0.03193146735429764], [0.005375631619244814], [-0.006128584034740925], [0.00913875363767147], [-0.013402107171714306], [-0.04251580312848091], [-0.017634160816669464], [-0.04443986341357231], [-0.03686638921499252], [-0.042759060859680176], [-0.00996269378811121], [-0.007877854630351067], [0.0012993102427572012], [-0.010720466263592243], [-0.01963837631046772], [-0.009557518176734447], [-0.025226565077900887], [-0.028227580711245537], [0.003609549254179001], [-0.012196200899779797], [-0.020485321059823036], [0.040672242641448975], [-0.04949129372835159], [-0.028637532144784927], [1.0], [-0.03540303185582161], [-0.04779599979519844], [-0.008160176686942577], [0.01103061530739069], [0.012386457063257694], [0.038229793310165405], [-0.02191036194562912], [-0.017266666516661644], [-0.006047963630408049], [-0.005524073261767626], [0.02180037461221218], [0.040296681225299835], [-0.014413464814424515], [0.004785623867064714], [-0.013566027395427227]], "result_max_similarities": 424.42578125, "full_text_display": "The San Juan Regional Medical Center\u2019s Emergency Medical Services Department received the American Heart Association\u2019s Mission: Lifeline EMS Gold Award on Dec. 5 in Farmington, making it the third year to receive the award.", "K": 1}, {"id": "result_1", "sample_idx": 1268, "score": 420.7635498046875, "highlight_inds": [7], "matched_tokens_str": ".", "original_pos": 7, "full_sequence_tokens": ["History", " Notes", ":", " Rule", "making", " Authority", " Art", ".", " IV", ",", " Sec", ".", " 9", ",", " Fla", ".", " Const", ".", " Law", " Im", "plemented", " Art", ".", " IV", ",", " Sec", ".", " 9", ",", " Fla", ".", " Const", ".", " History", "\u2013", "New", " 12", "-", "11", "-", "86", ",", " Amended", " 1"], "sequence_similarities": [[117.0513916015625], [122.76954650878906], [-4.056506633758545], [-11.183523178100586], [9.455167770385742], [7.778229236602783], [3.992290496826172], [420.7635498046875], [-2.4439918994903564], [1.1125545501708984], [34.180870056152344], [15.320051193237305], [4.859913349151611], [-0.6726222038269043], [12.04401683807373], [0.6074552536010742], [-2.1462831497192383], [1.216212272644043], [-0.6996865272521973], [8.155807495117188], [2.780041217803955], [-16.774681091308594], [-6.825756549835205], [-13.758143424987793], [-6.855119705200195], [13.30302906036377], [4.172056674957275], [-3.7657012939453125], [-7.832871437072754], [5.200746536254883], [-2.820309638977051], [-8.336823463439941], [-0.9201145172119141], [2.4342525005340576], [-6.10687255859375], [-9.332523345947266], [-10.251884460449219], [-8.421927452087402], [-6.990245819091797], [-21.284347534179688], [-16.97817611694336], [-19.579275131225586], [-13.296831130981445], [-22.712987899780273]], "normalized_similarities": [[0.2757876515388489], [0.2892603278160095], [-0.009557634592056274], [-0.02634977363049984], [0.022277552634477615], [0.018326476216316223], [0.009406333789229393], [0.9913713335990906], [-0.005758349318057299], [0.0026213170494884253], [0.08053438365459442], [0.03609594702720642], [0.011450560763478279], [-0.001584781683050096], [0.02837720327079296], [0.0014312402345240116], [-0.005056910216808319], [0.0028655475471168756], [-0.0016485486412420869], [0.01921609789133072], [0.0065501234494149685], [-0.03952323645353317], [-0.016082333400845528], [-0.03241590037941933], [-0.016151515766978264], [0.03134359419345856], [0.009829885326325893], [-0.008872461505234241], [-0.018455220386385918], [0.01225360669195652], [-0.0066450005397200584], [-0.019642595201730728], [-0.002167904283851385], [0.005735401995480061], [-0.01438855193555355], [-0.021988587453961372], [-0.024154717102646828], [-0.01984311081469059], [-0.016469890251755714], [-0.05014857277274132], [-0.040002696216106415], [-0.04613121226429939], [-0.031328991055488586], [-0.05351462960243225]], "result_max_similarities": 424.42578125, "full_text_display": "History Notes: Rulemaking Authority Art. IV, Sec. 9, Fla. Const. Law Implemented Art. IV, Sec. 9, Fla. Const. History\u2013New 12-11-86, Amended 1", "K": 1}, {"id": "result_2", "sample_idx": 3404, "score": 420.09423828125, "highlight_inds": [21], "matched_tokens_str": "\n", "original_pos": 21, "full_sequence_tokens": ["Home", " \u00bb", " Community", " \u00bb", " Tech", "S", "oup", " Town", " Hall", " \u00bb", " consequences", " of", " net", " neutrality", " change", " for", " USA", " non", "pro", "fits", "?", "\n", "What", " might", " the", " consequences", " of", " a", " change", " in", " net", " neutrality", " be", " for", " non", "pro", "fits", " in", " the", " USA", "?", "\n", "Just", " wondering"], "sequence_similarities": [[134.78753662109375], [-8.155729293823242], [-9.054361343383789], [-17.46906280517578], [-14.217683792114258], [11.0161771774292], [-8.173759460449219], [-10.28522777557373], [-1.4291372299194336], [-1.065408706665039], [-0.5814404487609863], [-6.362285614013672], [-1.5753211975097656], [13.632596969604492], [8.678434371948242], [5.283328533172607], [-0.5339207649230957], [4.868788242340088], [13.450942993164062], [-2.4379796981811523], [-3.54604434967041], [420.09423828125], [-7.312875747680664], [-7.145290374755859], [-3.5809197425842285], [6.981257438659668], [4.208582878112793], [-5.981633186340332], [1.8593697547912598], [17.100418090820312], [19.788169860839844], [20.192434310913086], [7.093502044677734], [-6.116011142730713], [-6.6061601638793945], [12.591863632202148], [1.328458309173584], [-5.787921905517578], [-1.0729260444641113], [-2.4528303146362305], [9.364998817443848], [-6.797908782958984], [-6.088228702545166], [-0.5544617176055908]], "normalized_similarities": [[0.31757622957229614], [-0.019215913489460945], [-0.021333202719688416], [-0.041159287095069885], [-0.03349863365292549], [0.025955485180020332], [-0.019258394837379456], [-0.024233277887105942], [-0.003367225406691432], [-0.002510235644876957], [-0.0013699460541829467], [-0.014990337193012238], [-0.0037116529420018196], [0.03212009742856026], [0.020447472110390663], [0.012448180466890335], [-0.0012579838512465358], [0.01147147174924612], [0.03169209510087967], [-0.005744183901697397], [-0.008354921825230122], [0.9897943735122681], [-0.017230046913027763], [-0.01683519408106804], [-0.00843709334731102], [0.01644871197640896], [0.009915945120155811], [-0.014093472622334957], [0.00438090693205595], [0.0402907133102417], [0.04662339389324188], [0.04757589101791382], [0.016713174059987068], [-0.01441008411347866], [-0.015564936213195324], [0.02966799959540367], [0.00313001312315464], [-0.013637064956128597], [-0.0025279473047703505], [-0.005779173690825701], [0.02206510305404663], [-0.016016719862818718], [-0.014344625174999237], [-0.001306380843743682]], "result_max_similarities": 424.42578125, "full_text_display": "Home \u00bb Community \u00bb TechSoup Town Hall \u00bb consequences of net neutrality change for USA nonprofits?\nWhat might the consequences of a change in net neutrality be for nonprofits in the USA?\nJust wondering", "K": 1}, {"id": "result_3", "sample_idx": 14073, "score": 419.56475830078125, "highlight_inds": [9], "matched_tokens_str": ".", "original_pos": 9, "full_sequence_tokens": ["On", " 14", " October", " 2014", ",", " Professor", " Constantin", "-", "C", ".", " Cous", "s", "ios", ",", " Professor", " of", " Biomed", "ical", " Engineering", ",", " Profess", "orial", " Fellow", " of", " Mag", "dal", "en", " College", ",", " Oxford", ",", " kicked", " off", " The", " 2014", " \u201c", "Building", " a", " Business", "\u201d", " Lecture", " Series", " to", " a"], "sequence_similarities": [[258.1238098144531], [23.29781150817871], [18.777812957763672], [7.175968170166016], [4.004055500030518], [11.455012321472168], [10.039995193481445], [10.274527549743652], [17.847658157348633], [419.56475830078125], [20.12091636657715], [34.3736572265625], [15.895858764648438], [25.254493713378906], [27.765657424926758], [12.22403335571289], [-4.018816947937012], [-6.445483684539795], [-6.989124774932861], [-11.397212982177734], [-5.276924133300781], [-14.705567359924316], [-5.860357284545898], [-0.04974508285522461], [-14.753520011901855], [16.450428009033203], [-2.2950782775878906], [-8.829264640808105], [-15.898331642150879], [2.7112951278686523], [-6.301312446594238], [-3.609386444091797], [16.760555267333984], [-4.152790069580078], [-4.189111709594727], [-9.234829902648926], [-2.1408748626708984], [4.955767631530762], [-8.717913627624512], [-3.748539686203003], [-7.547353744506836], [-16.939062118530273], [-4.2867841720581055], [-18.03316879272461]], "normalized_similarities": [[0.608171820640564], [0.05489254370331764], [0.04424286633729935], [0.016907474026083946], [0.009434053674340248], [0.026989435777068138], [0.02365547977387905], [0.0242080669850111], [0.04205130413174629], [0.9885468482971191], [0.04740738496184349], [0.08098861575126648], [0.03745262324810028], [0.0595027320086956], [0.06541934609413147], [0.028801344335079193], [-0.009468832984566689], [-0.015186361968517303], [-0.016467249020934105], [-0.026853254064917564], [-0.01243309024721384], [-0.034648146480321884], [-0.013807731680572033], [-0.00011720560723915696], [-0.034761130809783936], [0.0387592576444149], [-0.00540749030187726], [-0.020802848041057587], [-0.037458449602127075], [0.006388149224221706], [-0.014846676960587502], [-0.008504164405167103], [0.039489954710006714], [-0.009784490801393986], [-0.009870069101452827], [-0.021758409217000008], [-0.00504416786134243], [0.011676405556499958], [-0.020540490746498108], [-0.008832026273012161], [-0.017782505601644516], [-0.039910539984703064], [-0.010100197046995163], [-0.04248839244246483]], "result_max_similarities": 424.42578125, "full_text_display": "On 14 October 2014, Professor Constantin-C. Coussios, Professor of Biomedical Engineering, Professorial Fellow of Magdalen College, Oxford, kicked off The 2014 \u201cBuilding a Business\u201d Lecture Series to a", "K": 1}, {"id": "result_4", "sample_idx": 5479, "score": 419.5243225097656, "highlight_inds": [34], "matched_tokens_str": ".", "original_pos": 34, "full_sequence_tokens": ["H", "ubl", "ot", " Big", " Bang", " Watch", " -", " 41", "mm", " -", " 18", "k", " RG", " -", " Black", " Cer", "amic", " Be", "zel", " -", " Black", " Carbon", " D", "ial", " -", " Chron", "ograph", " -", " Rub", "ber", " St", "rap", " -", " Ref", ".", " 341", ".", "PB", ".", "131", ".", "RX", " -", " Hal"], "sequence_similarities": [[236.43539428710938], [-15.53996467590332], [-8.5808744430542], [-1.4723286628723145], [9.972196578979492], [7.049057960510254], [-1.9811687469482422], [-21.82350730895996], [-23.283824920654297], [-10.430232048034668], [-9.3253173828125], [-0.7856476306915283], [1.2584724426269531], [-0.0976715087890625], [17.198516845703125], [17.305513381958008], [13.985393524169922], [13.439334869384766], [-1.8239893913269043], [14.96700382232666], [9.235218048095703], [18.957984924316406], [0.7987966537475586], [-3.022451400756836], [6.259387969970703], [14.299210548400879], [17.20178985595703], [-4.991788864135742], [-9.648237228393555], [6.707362174987793], [4.972194671630859], [8.059310913085938], [-3.0397043228149414], [7.268902778625488], [419.5243225097656], [-9.995582580566406], [-21.125333786010742], [-14.276575088500977], [-7.804900169372559], [3.534524440765381], [-6.840497016906738], [5.407470226287842], [14.063436508178711], [20.869516372680664]], "normalized_similarities": [[0.5570712089538574], [-0.03661409392952919], [-0.02021760866045952], [-0.0034689896274358034], [0.023495737463235855], [0.016608458012342453], [-0.004667880479246378], [-0.05141890048980713], [-0.05485958978533745], [-0.024574926123023033], [-0.021971609443426132], [-0.0018510837107896805], [0.0029651178047060966], [-0.0002301262429682538], [0.04052184894680977], [0.040773943066596985], [0.03295132890343666], [0.03166474774479866], [-0.004297546111047268], [0.03526412323117256], [0.02175932377576828], [0.04466737434267998], [0.001882064389064908], [-0.0071212719194591045], [0.014747897163033485], [0.03369072079658508], [0.040529560297727585], [-0.011761276051402092], [-0.0227324478328228], [0.0158033799380064], [0.011715109460055828], [0.01898873969912529], [-0.007161921821534634], [0.01712644100189209], [0.9884515404701233], [-0.023550838232040405], [-0.049773916602134705], [-0.0336373895406723], [-0.018389316275715828], [0.008327779360115528], [-0.01611706241965294], [0.012740673497319221], [0.03313520923256874], [0.04917117953300476]], "result_max_similarities": 424.42578125, "full_text_display": "Hublot Big Bang Watch - 41mm - 18k RG - Black Ceramic Bezel - Black Carbon Dial - Chronograph - Rubber Strap - Ref. 341.PB.131.RX - Hal", "K": 1}, {"id": "result_5", "sample_idx": 1598, "score": 419.27752685546875, "highlight_inds": [21], "matched_tokens_str": ".", "original_pos": 21, "full_sequence_tokens": ["The", " SH", "S", " Class", " of", " 1972", " will", " celebrate", " its", " 45", "-", "year", " reunion", " at", " a", " dinner", " dance", " on", " Saturday", ",", " Nov", ".", " 4", "th", " from", " 6", ":", "30", " to", " 11", ":", "30", " p", ".", "m", ".", " at", " the", " Mar", "ri", "ott", " Hotel", " and", " Spa"], "sequence_similarities": [[212.85052490234375], [-18.33173370361328], [-10.82278060913086], [-15.498682022094727], [-1.3073921203613281], [-25.04943084716797], [-7.530734062194824], [-8.145919799804688], [-6.052437782287598], [-3.2981629371643066], [3.927562952041626], [-2.445787191390991], [-0.6109790802001953], [-9.348920822143555], [-14.19333267211914], [-6.750650882720947], [-20.641796112060547], [-26.642738342285156], [-3.8606700897216797], [-22.72559928894043], [-7.21904182434082], [419.27752685546875], [-14.087714195251465], [-27.72909164428711], [-12.871746063232422], [3.34718918800354], [21.46004295349121], [0.6508512496948242], [14.443790435791016], [6.415586471557617], [14.131791114807129], [-9.644754409790039], [-14.825828552246094], [-18.51696014404297], [-10.887454986572266], [-19.586483001708984], [1.1028530597686768], [-2.2332887649536133], [-0.30983567237854004], [12.724611282348633], [3.6541056632995605], [-9.536968231201172], [-1.3949356079101562], [-4.401080131530762]], "normalized_similarities": [[0.5015023350715637], [-0.04319184646010399], [-0.025499818846583366], [-0.03651682659983635], [-0.0030803787522017956], [-0.059019580483436584], [-0.017743347212672234], [-0.019192801788449287], [-0.014260297641158104], [-0.007770882453769445], [0.00925382785499096], [-0.005762579385191202], [-0.0014395428588613868], [-0.02202722243964672], [-0.03344126045703888], [-0.01590537466108799], [-0.048634640872478485], [-0.06277360767126083], [-0.009096219204366207], [-0.05354434251785278], [-0.017008962109684944], [0.9878700971603394], [-0.033192407339811325], [-0.06533319503068924], [-0.030327437445521355], [0.00788639485836029], [0.050562534481287], [0.0015334866475313902], [0.03403136879205704], [0.015115920454263687], [0.033296260982751846], [-0.022724242880940437], [-0.034931499511003494], [-0.0436282642185688], [-0.025652199983596802], [-0.04614819213747978], [0.0025984591338783503], [-0.005261906422674656], [-0.0007300114375539124], [0.029980769380927086], [0.008609527722001076], [-0.02247028425335884], [-0.0032866420224308968], [-0.010369492694735527]], "result_max_similarities": 424.42578125, "full_text_display": "The SHS Class of 1972 will celebrate its 45-year reunion at a dinner dance on Saturday, Nov. 4th from 6:30 to 11:30 p.m. at the Marriott Hotel and Spa", "K": 1}, {"id": "result_6", "sample_idx": 11071, "score": 419.0687255859375, "highlight_inds": [2], "matched_tokens_str": ".", "original_pos": 2, "full_sequence_tokens": ["More", " Space", ".", " Less", " Money", ".", " Makes", " Sense", ".", " Extra", " large", " New", " Westminster", " cond", "os", " are", " coming", " soon", " the", " market", " at", " the", " West", "bourne", " Res", "idences", " featuring", " 1", ",", " 2", " and", " 3", " bedroom", " floor", " plans", " starting", " from", " just", " $", "199", ",", "900", "!", " Park"], "sequence_similarities": [[184.0662078857422], [6.98343563079834], [419.0687255859375], [-17.1383056640625], [-1.3586225509643555], [-9.243245124816895], [-3.5024142265319824], [-1.4304609298706055], [4.834609031677246], [-2.5260510444641113], [-5.072359085083008], [10.368270874023438], [2.2784061431884766], [-9.563138961791992], [-15.933353424072266], [12.404439926147461], [1.6980311870574951], [-3.8724007606506348], [3.489685535430908], [-9.585733413696289], [-7.233216762542725], [-9.301258087158203], [-17.890886306762695], [-19.60138702392578], [-13.291662216186523], [-20.08834457397461], [-22.258098602294922], [0.0647268295288086], [0.6457886695861816], [21.174654006958008], [16.49254608154297], [21.733436584472656], [14.075039863586426], [17.394563674926758], [19.57975196838379], [5.293264389038086], [-9.716419219970703], [12.757478713989258], [16.77032470703125], [1.751664161682129], [5.469712257385254], [-0.6082956790924072], [4.2722015380859375], [-2.5481786727905273]], "normalized_similarities": [[0.433682918548584], [0.01645384356379509], [0.9873781204223633], [-0.04037998244166374], [-0.003201083978638053], [-0.02177823707461357], [-0.008252124302089214], [-0.0033703441731631756], [0.011390941217541695], [-0.005951690953224897], [-0.011951109394431114], [0.02442893758416176], [0.005368208512663841], [-0.022531947121024132], [-0.03754096478223801], [0.029226405546069145], [0.004000773187726736], [-0.00912385806441307], [0.008222133852541447], [-0.022585181519389153], [-0.017042359337210655], [-0.021914921700954437], [-0.04215315729379654], [-0.04618331044912338], [-0.031316813081502914], [-0.04733064025640488], [-0.05244285240769386], [0.00015250446449499577], [0.0015215585008263588], [0.049890123307704926], [0.03885849192738533], [0.05120668187737465], [0.033162545412778854], [0.04098375886678696], [0.04613233357667923], [0.01247159019112587], [-0.022893093526363373], [0.030058208853006363], [0.03951297327876091], [0.004127138759940863], [0.012887323275208473], [-0.001433220342732966], [0.010065838694572449], [-0.006003826390951872]], "result_max_similarities": 424.42578125, "full_text_display": "More Space. Less Money. Makes Sense. Extra large New Westminster condos are coming soon the market at the Westbourne Residences featuring 1, 2 and 3 bedroom floor plans starting from just $199,900! Park", "K": 1}, {"id": "result_7", "sample_idx": 6418, "score": 418.70654296875, "highlight_inds": [29], "matched_tokens_str": ".", "original_pos": 29, "full_sequence_tokens": ["Ready", ",", " set", " ...", " start", " shopping", "!", " We", " have", " designed", " this", " easy", "-", "to", "-", "nav", "igate", " web", " store", " just", " for", " M", "ANC", "HE", "STER", " AC", "AD", "EM", "Y", ".", " Select", " a", " category", " and", " go", "!", "\n", "Ad", "ult", " sizes", " on", " back", "order", " until"], "sequence_similarities": [[305.95245361328125], [13.809659957885742], [22.225433349609375], [11.011966705322266], [7.238848686218262], [-3.8326735496520996], [-2.4298043251037598], [-17.610931396484375], [0.008413195610046387], [-7.92506217956543], [-28.897090911865234], [-18.039989471435547], [16.439777374267578], [35.73866653442383], [26.734758377075195], [10.661378860473633], [25.2757568359375], [0.7801418304443359], [17.363845825195312], [-10.73112678527832], [-5.492673397064209], [-24.831645965576172], [10.411521911621094], [-9.710619926452637], [-3.0628480911254883], [-11.114618301391602], [-17.528522491455078], [-10.679981231689453], [-15.056835174560547], [418.70654296875], [-4.612102031707764], [-5.270665168762207], [-6.261150360107422], [-11.376730918884277], [0.059268951416015625], [3.216416358947754], [-11.826824188232422], [-12.836288452148438], [-9.681239128112793], [-9.239487648010254], [1.9232816696166992], [16.139732360839844], [22.933813095092773], [20.94144058227539]], "normalized_similarities": [[0.720862090587616], [0.03253727778792381], [0.05236588791012764], [0.025945564731955528], [0.017055628821253777], [-0.009030256420373917], [-0.005724921822547913], [-0.04149354621767998], [1.9822537069558166e-05], [-0.018672432750463486], [-0.06808514147996902], [-0.04250446334481239], [0.03873416408896446], [0.08420474827289581], [0.06299041956663132], [0.025119535624980927], [0.05955282971262932], [0.0018381113186478615], [0.04091138392686844], [-0.025283871218562126], [-0.012941422872245312], [-0.058506451547145844], [0.024530842900276184], [-0.022879429161548615], [-0.0072164516896009445], [-0.02618742547929287], [-0.041299380362033844], [-0.02516336552798748], [-0.035475779324769974], [0.986524760723114], [-0.010866686701774597], [-0.012418343685567379], [-0.014752049930393696], [-0.02680499479174614], [0.00013964502431917936], [0.0075782774947583675], [-0.027865471318364143], [-0.030243894085288048], [-0.022810205817222595], [-0.021769383922219276], [0.004531491082161665], [0.03802721947431564], [0.054034918546676636], [0.04934064298868179]], "result_max_similarities": 424.42578125, "full_text_display": "Ready, set ... start shopping! We have designed this easy-to-navigate web store just for MANCHESTER ACADEMY. Select a category and go!\nAdult sizes on backorder until", "K": 1}, {"id": "result_8", "sample_idx": 173, "score": 418.3184814453125, "highlight_inds": [8], "matched_tokens_str": ".", "original_pos": 8, "full_sequence_tokens": ["The", " office", " will", " be", " closed", " tomorrow", ",", " Oct", ".", " 6", "th", " at", " 12", " PM", " and", " closed", " all", " day", " Friday", ",", " Oct", ".", " 7", ".", "\n", "Office", " hours", " are", " by", " appointment", " only", ".", " We", " believe", " in", " mutual", " respect", " of", " your", " time", " and", " ours", ".", " We"], "sequence_similarities": [[212.85052490234375], [-6.344723224639893], [-13.021930694580078], [-20.683570861816406], [-29.806921005249023], [0.23058128356933594], [-12.552518844604492], [-0.528630256652832], [418.3184814453125], [-13.509462356567383], [-14.550447463989258], [-4.117454528808594], [-9.022817611694336], [-4.023703575134277], [1.5651755332946777], [8.646770477294922], [14.376764297485352], [-7.7037858963012695], [-1.257088303565979], [-22.32562255859375], [-7.832907199859619], [-1.5630760192871094], [-13.502975463867188], [-7.569838523864746], [-5.897322177886963], [-7.718652725219727], [2.111703872680664], [-4.5142693519592285], [-4.349247455596924], [-2.3623456954956055], [-6.429780006408691], [-14.202676773071289], [-10.191835403442383], [-12.869597434997559], [-10.593745231628418], [-9.18242359161377], [15.519775390625], [1.8663744926452637], [-10.719450950622559], [-17.441505432128906], [-1.3804631233215332], [-2.0370612144470215], [-3.0635061264038086], [-11.757741928100586]], "normalized_similarities": [[0.5015023350715637], [-0.014948958531022072], [-0.030681289732456207], [-0.048733070492744446], [-0.07022881507873535], [0.0005432782345451415], [-0.029575297608971596], [-0.0012455186806619167], [0.9856104254722595], [-0.03182997554540634], [-0.03428266569972038], [-0.009701235219836235], [-0.02125888131558895], [-0.00948034692555666], [0.0036877484526485205], [0.020372867584228516], [0.03387344628572464], [-0.01815107837319374], [-0.002961856545880437], [-0.052601948380470276], [-0.018455304205417633], [-0.0036828017327934504], [-0.03181469067931175], [-0.017835482954978943], [-0.013894825242459774], [-0.018186107277870178], [0.004975437186658382], [-0.010636180639266968], [-0.0102473683655262], [-0.005565980449318886], [-0.01514936238527298], [-0.03346327692270279], [-0.024013234302401543], [-0.030322374776005745], [-0.02496018260717392], [-0.021634934470057487], [0.03656652197241783], [0.004397410899400711], [-0.025256361812353134], [-0.04109435901045799], [-0.003252543043345213], [-0.004799569956958294], [-0.007218001876026392], [-0.027702704071998596]], "result_max_similarities": 424.42578125, "full_text_display": "The office will be closed tomorrow, Oct. 6th at 12 PM and closed all day Friday, Oct. 7.\nOffice hours are by appointment only. We believe in mutual respect of your time and ours. We", "K": 1}, {"id": "result_9", "sample_idx": 12367, "score": 418.3016052246094, "highlight_inds": [17], "matched_tokens_str": ".", "original_pos": 17, "full_sequence_tokens": ["The", " city", "\u2019", "s", " war", " on", " litter", " received", " reinforce", "ments", " during", " the", " Mobile", " City", " Council", " meeting", " Aug", ".", " 5", ".", "\n", "Represent", "atives", " from", " Mobile", " Bay", "keeper", " and", " the", " Alabama", " Coast", "al", " Heritage", " Trust", " handed", " out", " the", " first", " of", " 1", ",", "000", " \u201c", "l"], "sequence_similarities": [[212.85052490234375], [7.108980655670166], [1.4024677276611328], [8.78081226348877], [6.255135536193848], [17.730182647705078], [0.936302661895752], [11.071608543395996], [2.89551043510437], [6.725919723510742], [-5.871871471405029], [-12.564470291137695], [-10.38371753692627], [1.6056127548217773], [-5.371803283691406], [5.22818660736084], [-26.565505981445312], [418.3016052246094], [-21.061256408691406], [-14.041131973266602], [-10.818965911865234], [-19.86722755432129], [-14.028266906738281], [-10.897979736328125], [1.4058799743652344], [1.4435863494873047], [-6.591497898101807], [-1.7080576419830322], [-1.9320855140686035], [5.085102558135986], [-3.600766658782959], [-6.886331081390381], [-6.01350212097168], [-11.727682113647461], [1.378401756286621], [10.213532447814941], [-18.016101837158203], [6.837385177612305], [22.588029861450195], [-12.453041076660156], [-3.5349555015563965], [5.3163743019104], [-4.085854530334473], [-3.5690693855285645]], "normalized_similarities": [[0.5015023350715637], [0.01674964465200901], [0.0033043886069208384], [0.02068868651986122], [0.014737877994775772], [0.04177451878786087], [0.0022060456685721874], [0.02608608826994896], [0.006822183262556791], [0.01584710367023945], [-0.013834860175848007], [-0.02960345707833767], [-0.024465331807732582], [0.0037830236833542585], [-0.012656637467443943], [0.012318259105086327], [-0.06259164214134216], [0.9855706691741943], [-0.04962294176220894], [-0.03308265656232834], [-0.025490831583738327], [-0.046809662133455276], [-0.033052343875169754], [-0.025676997378468513], [0.0033124282490462065], [0.00340126920491457], [-0.015530389733612537], [-0.004024396650493145], [-0.004552233964204788], [0.011981135234236717], [-0.008483855053782463], [-0.016225052997469902], [-0.014168559573590755], [-0.02763187885284424], [0.003247686196118593], [0.024064354598522186], [-0.04244817793369293], [0.016109731048345566], [0.05322021245956421], [-0.029340915381908417], [-0.008328795433044434], [0.012526039965450764], [-0.00962678249925375], [-0.008409172296524048]], "result_max_similarities": 424.42578125, "full_text_display": "The city\u2019s war on litter received reinforcements during the Mobile City Council meeting Aug. 5.\nRepresentatives from Mobile Baykeeper and the Alabama Coastal Heritage Trust handed out the first of 1,000 \u201cl", "K": 1}, {"id": "result_10", "sample_idx": 18839, "score": 417.1600036621094, "highlight_inds": [18], "matched_tokens_str": ".", "original_pos": 18, "full_sequence_tokens": ["We", " would", " recommend", " using", " the", " special", " delivery", " service", " provided", " by", " Royal", " Mail", " or", " Mail", " Box", "es", " Et", "c", ".", "\n", "If", " you", " choose", " to", " use", " Royal", " Mail", ",", " we", " will", " securely", " package", " your", " items", " and", " arrange", " their", " collection", " and", " delivery", " for", " you", ".", " However"], "sequence_similarities": [[198.13148498535156], [-15.03429126739502], [-14.882689476013184], [-6.41953182220459], [-3.0855660438537598], [0.8704636096954346], [8.67133903503418], [-10.96712589263916], [1.8419079780578613], [-9.761617660522461], [0.4074643850326538], [23.920595169067383], [17.347829818725586], [3.0402379035949707], [1.1096782684326172], [3.771486282348633], [-9.396062850952148], [3.894918441772461], [417.1600036621094], [1.4856042861938477], [-12.813512802124023], [-1.1651372909545898], [12.622732162475586], [-5.449331283569336], [15.567079544067383], [17.57218360900879], [29.757545471191406], [4.348382949829102], [-0.498307466506958], [7.629708766937256], [-21.161367416381836], [2.2364444732666016], [-2.2480978965759277], [0.38608455657958984], [-4.084338188171387], [16.156526565551758], [11.223810195922852], [7.932871341705322], [-14.738405227661133], [10.925979614257812], [-0.6476583480834961], [-17.06739044189453], [-7.8065900802612305], [-12.158095359802246]], "normalized_similarities": [[0.46682244539260864], [-0.035422664135694504], [-0.03506546840071678], [-0.015125216916203499], [-0.007269978057593107], [0.002050920622423291], [0.020430754870176315], [-0.025839913636446], [0.004339764825999737], [-0.022999586537480354], [0.0009600368211977184], [0.056359902024269104], [0.04087364673614502], [0.0071631791070103645], [0.0026145402807742357], [0.008886091411113739], [-0.022138293832540512], [0.00917691271752119], [0.9828809499740601], [0.0035002687945961952], [-0.030190231278538704], [-0.002745208563283086], [0.029740728437900543], [-0.012839303351938725], [0.03667797893285751], [0.04140225425362587], [0.07011248171329498], [0.010245331563055515], [-0.001174074481241405], [0.0179765447974205], [-0.04985881596803665], [0.005269341636449099], [-0.005296798422932625], [0.0009096632711589336], [-0.00962320901453495], [0.038066789507865906], [0.02644469402730465], [0.01869083195924759], [-0.03472551703453064], [0.025742968544363976], [-0.0015259637730196118], [-0.04021289572119713], [-0.018393298611044884], [-0.028645986691117287]], "result_max_similarities": 424.42578125, "full_text_display": "We would recommend using the special delivery service provided by Royal Mail or Mail Boxes Etc.\nIf you choose to use Royal Mail, we will securely package your items and arrange their collection and delivery for you. However", "K": 1}, {"id": "result_11", "sample_idx": 19060, "score": 415.38360595703125, "highlight_inds": [9], "matched_tokens_str": ".", "original_pos": 9, "full_sequence_tokens": ["This", " beautiful", " duplex", " ev", "okes", " classic", " European", " eleg", "ance", ".", " Enjoy", " lake", " views", " through", " picture", " windows", " from", " the", " living", " room", " and", " master", " in", " this", " 3", " bedroom", ",", " 3", ".", "1", " bath", ",", " 4000", " S", "Q", "FT", " residence", " at", " 199", " E", ".", " Lake", " Shore", " Drive"], "sequence_similarities": [[214.50177001953125], [31.77294158935547], [10.518058776855469], [3.8038179874420166], [20.677400588989258], [8.256823539733887], [36.77606201171875], [9.881832122802734], [22.92816925048828], [415.38360595703125], [-1.4488401412963867], [-5.271736145019531], [-6.373385906219482], [-21.8190975189209], [-8.58952522277832], [-20.253124237060547], [-14.125397682189941], [-8.531250953674316], [-16.407695770263672], [-16.826082229614258], [-7.718437194824219], [-9.790141105651855], [-6.373426914215088], [-25.47589874267578], [-23.57476806640625], [-2.9808080196380615], [3.0064616203308105], [8.8406982421875], [18.02796173095703], [13.90312671661377], [6.686052322387695], [7.870505332946777], [10.173206329345703], [-0.73946213722229], [11.595602035522461], [3.309323787689209], [18.004398345947266], [2.705965042114258], [5.119819164276123], [-10.57564926147461], [-20.60948371887207], [-10.422730445861816], [-9.812689781188965], [-17.22445297241211]], "normalized_similarities": [[0.5053929090499878], [0.07486100494861603], [0.024781856685876846], [0.008962268941104412], [0.04871853068470955], [0.0194541048258543], [0.08664898574352264], [0.02328282780945301], [0.054021622985601425], [0.9786955118179321], [-0.0034136478789150715], [-0.012420866638422012], [-0.01501649059355259], [-0.05140851065516472], [-0.020237991586327553], [-0.04771888256072998], [-0.033281195908784866], [-0.02010069042444229], [-0.03865857422351837], [-0.03964434564113617], [-0.018185598775744438], [-0.023066792637109756], [-0.01501658745110035], [-0.06002439185976982], [-0.05554508790373802], [-0.007023154757916927], [0.007083598058670759], [0.020829785615205765], [0.042476121336221695], [0.03275749832391739], [0.01575317233800888], [0.018543891608715057], [0.023969341069459915], [-0.0017422648379579186], [0.027320683002471924], [0.007797178812325001], [0.04242060333490372], [0.006375590804964304], [0.012062931433320045], [-0.024917546659708023], [-0.04855851083993912], [-0.02455725148320198], [-0.023119919002056122], [-0.04058295488357544]], "result_max_similarities": 424.42578125, "full_text_display": "This beautiful duplex evokes classic European elegance. Enjoy lake views through picture windows from the living room and master in this 3 bedroom, 3.1 bath, 4000 SQFT residence at 199 E. Lake Shore Drive", "K": 1}, {"id": "result_12", "sample_idx": 822, "score": 414.2059326171875, "highlight_inds": [9], "matched_tokens_str": ".", "original_pos": 9, "full_sequence_tokens": ["This", " document", " describes", " the", " security", " content", " of", " iOS", " 4", ".", "3", ".", "\n", "This", " document", " describes", " the", " security", " content", " of", " iOS", " 4", ".", "3", ",", " which", " can", " be", " downloaded", " and", " installed", " using", " iTunes", ".", "\n", "Description", ":", " A", " buffer", " overflow", " existed", " in", " lib", "TI"], "sequence_similarities": [[214.50177001953125], [-9.547497749328613], [-19.800552368164062], [-23.17690658569336], [-8.398076057434082], [2.1281304359436035], [-12.1070556640625], [-15.173759460449219], [12.572402000427246], [414.2059326171875], [4.062989234924316], [3.9619011878967285], [15.043764114379883], [-9.688692092895508], [-3.809332847595215], [-8.417728424072266], [-11.874451637268066], [4.401482582092285], [2.859238624572754], [-9.724055290222168], [-15.628498077392578], [5.2615509033203125], [2.509603500366211], [3.318596363067627], [7.738707542419434], [17.023746490478516], [9.112785339355469], [13.852910995483398], [10.66230297088623], [4.54404878616333], [29.457195281982422], [14.894746780395508], [18.63128662109375], [5.457160949707031], [2.900881767272949], [-1.5432024002075195], [-4.394728183746338], [-16.291576385498047], [-0.21709728240966797], [-18.115407943725586], [-6.68496036529541], [-20.560836791992188], [-19.718250274658203], [12.170812606811523]], "normalized_similarities": [[0.5053929090499878], [-0.022495094686746597], [-0.04665256664156914], [-0.05460767820477486], [-0.019786912947893143], [0.005014140158891678], [-0.028525730594992638], [-0.03575126826763153], [0.029622144997119904], [0.9759207367897034], [0.009572908282279968], [0.00933473277837038], [0.03544498234987259], [-0.022827764973044395], [-0.008975262753665447], [-0.019833216443657875], [-0.027977686375379562], [0.010370440781116486], [0.006736722309142351], [-0.022911084815859795], [-0.036822687834501266], [0.012396869249641895], [0.005912938620895147], [0.007819026708602905], [0.01823335886001587], [0.040110066533088684], [0.02147085778415203], [0.03263918310403824], [0.025121713057160378], [0.010706344619393349], [0.06940481811761856], [0.03509387746453285], [0.043897632509469986], [0.012857750989496708], [0.006834838539361954], [-0.0036359771620482206], [-0.010354527272284031], [-0.03838498145341873], [-0.0005115082603879273], [-0.04268215596675873], [-0.015750600025057793], [-0.04844389110803604], [-0.0464586541056633], [0.028675951063632965]], "result_max_similarities": 424.42578125, "full_text_display": "This document describes the security content of iOS 4.3.\nThis document describes the security content of iOS 4.3, which can be downloaded and installed using iTunes.\nDescription: A buffer overflow existed in libTI", "K": 1}, {"id": "result_13", "sample_idx": 10996, "score": 414.1640319824219, "highlight_inds": [9], "matched_tokens_str": "\n", "original_pos": 9, "full_sequence_tokens": ["What", "??", " Nobody", " from", " Southeast", " US", " on", " here", "????", "\n", "How", "s", " the", " weather", " in", " Florida", "????", "\n", "It", "&#x27;s", " really", " beautiful", " here", " on", " the", " Red", "neck", " Riv", "iera", ".", " Tem", "per", "atures", " in", " the", " low", " 80", "s", " now", " and", " lots", " of", " sunshine", "."], "sequence_similarities": [[179.8145294189453], [8.513586044311523], [-22.431743621826172], [24.505521774291992], [6.9257988929748535], [13.033243179321289], [-3.0743837356567383], [21.445568084716797], [3.574664831161499], [414.1640319824219], [-18.658397674560547], [19.88590431213379], [10.375808715820312], [-1.905533790588379], [1.233543872833252], [-9.278318405151367], [-5.147772789001465], [-11.315179824829102], [-6.989869594573975], [-11.777057647705078], [-21.988384246826172], [-13.152242660522461], [1.9294111728668213], [1.4967267513275146], [-2.95754337310791], [-6.789039611816406], [-0.08562231063842773], [-6.165566921234131], [13.372173309326172], [-2.4075350761413574], [18.23292350769043], [22.888954162597656], [21.501117706298828], [13.279335021972656], [3.4039106369018555], [-7.505149841308594], [-0.25716543197631836], [-10.749099731445312], [-6.322892189025879], [7.110253810882568], [6.250741481781006], [10.208849906921387], [0.7624635696411133], [4.48737907409668]], "normalized_similarities": [[0.42366543412208557], [0.020059069618582726], [-0.05285198241472244], [0.057738061994314194], [0.016318045556545258], [0.030707944184541702], [-0.007243630941957235], [0.050528429448604584], [0.00842235516756773], [0.9758220314979553], [-0.04396151006221771], [0.04685366898775101], [0.024446697905659676], [-0.004489675164222717], [0.002906383015215397], [-0.021860873326659203], [-0.012128793634474277], [-0.026659972965717316], [-0.01646900363266468], [-0.027748214080929756], [-0.05180737003684044], [-0.03098832257091999], [0.004545933101326227], [0.003526474582031369], [-0.006968340370804071], [-0.015995822846889496], [-0.00020173682423774153], [-0.014526843093335629], [0.031506504863500595], [-0.0056724525056779385], [0.04295903816819191], [0.05392922833561897], [0.050659310072660446], [0.03128776699304581], [0.008020037785172462], [-0.01768306829035282], [-0.0006059138104319572], [-0.025326218456029892], [-0.014897521585226059], [0.016752643510699272], [0.014727525413036346], [0.02405332215130329], [0.0017964590806514025], [0.010572823695838451]], "result_max_similarities": 424.42578125, "full_text_display": "What?? Nobody from Southeast US on here????\nHows the weather in Florida????\nIt&#x27;s really beautiful here on the Redneck Riviera. Temperatures in the low 80s now and lots of sunshine.", "K": 1}, {"id": "result_14", "sample_idx": 5049, "score": 413.38037109375, "highlight_inds": [4], "matched_tokens_str": ".", "original_pos": 4, "full_sequence_tokens": ["Sen", "ne", ",", " Ann", ".", " Protect", "ing", " The", " Elder", "ly", " From", " Financial", " Abuse", ".", " Financial", " Ad", "visor", " Magazine", ".", " June", " 20", ",", " 2018", ".", "\n", "G", "iv", "ens", ",", " O", "rie", ".", " Hudson", " Valley", " Groups", " Team", " Up", " to", " Fight", " Elder", " Abuse", " .", " Spectrum", " News"], "sequence_similarities": [[189.66114807128906], [-3.854313373565674], [-9.024900436401367], [-16.519378662109375], [413.38037109375], [0.18812131881713867], [-1.0210819244384766], [-0.573937177658081], [-5.077550888061523], [2.300976514816284], [8.65990924835205], [3.0080065727233887], [-5.722406387329102], [-6.161825180053711], [-4.176634311676025], [-0.29606151580810547], [-9.698526382446289], [-10.79902458190918], [-7.031063556671143], [-15.033863067626953], [-31.18121910095215], [-24.358917236328125], [-17.84324836730957], [-11.083578109741211], [-8.151302337646484], [-12.861475944519043], [4.570187091827393], [8.715261459350586], [20.620059967041016], [27.826364517211914], [22.0791015625], [20.177080154418945], [10.23689079284668], [24.45882797241211], [9.126107215881348], [-8.451265335083008], [10.41569709777832], [-5.457376480102539], [-4.519252300262451], [-5.9074320793151855], [-0.6943988800048828], [-2.3967506885528564], [-12.55398178100586], [-1.7724857330322266]], "normalized_similarities": [[0.4468652904033661], [-0.009081242606043816], [-0.021263789385557175], [-0.03892171382904053], [0.973975658416748], [0.00044323725160211325], [-0.0024057962000370026], [-0.001352267456240952], [-0.011963342316448689], [0.005421387031674385], [0.020403824746608734], [0.007087238132953644], [-0.01348270196467638], [-0.014518027193844318], [-0.009840670973062515], [-0.0006975578144192696], [-0.02285093627870083], [-0.025443846359848976], [-0.016566060483455658], [-0.03542165458202362], [-0.07346683740615845], [-0.05739264190196991], [-0.04204091429710388], [-0.026114290580153465], [-0.019205482676625252], [-0.030303239822387695], [0.010767930187284946], [0.020534241572022438], [0.04858342930674553], [0.06556238234043121], [0.05202111229300499], [0.047539714723825455], [0.024119390174746513], [0.057628046721220016], [0.021502245217561722], [-0.01991223357617855], [0.024540679529309273], [-0.012858258560299873], [-0.01064792089164257], [-0.013918645679950714], [-0.0016360902227461338], [-0.005647043231874704], [-0.029578745365142822], [-0.004176197107881308]], "result_max_similarities": 424.42578125, "full_text_display": "Senne, Ann. Protecting The Elderly From Financial Abuse. Financial Advisor Magazine. June 20, 2018.\nGivens, Orie. Hudson Valley Groups Team Up to Fight Elder Abuse . Spectrum News", "K": 1}, {"id": "result_15", "sample_idx": 11388, "score": 413.0560302734375, "highlight_inds": [15], "matched_tokens_str": ".", "original_pos": 15, "full_sequence_tokens": ["This", " memorandum", " announces", " the", " 2004", " annual", " review", " of", " special", " salary", " rates", " authorized", " under", " 5", " U", ".", "S", ".", "C", ".", " 5", "305", " and", " 5", " C", "FR", " part", " 530", ",", " sub", "part", " C", ",", " and", " requests", " agency", " recommendations", " on", " the", " adjustment", " of", " special", " rate", " schedules"], "sequence_similarities": [[214.50177001953125], [-13.033613204956055], [-9.370504379272461], [-11.05552864074707], [-12.24878215789795], [-16.215295791625977], [-10.333502769470215], [-10.673811912536621], [-18.819107055664062], [-10.974327087402344], [-16.435993194580078], [-21.205965042114258], [-27.32512092590332], [-11.0791597366333], [0.7195513248443604], [413.0560302734375], [-13.001092910766602], [-9.565042495727539], [-5.501672744750977], [-20.408733367919922], [-9.113266944885254], [-24.707443237304688], [2.594820022583008], [3.900874137878418], [11.839689254760742], [10.4258451461792], [17.268726348876953], [-2.6290807723999023], [4.477728366851807], [5.899579048156738], [-1.6150527000427246], [8.335265159606934], [-3.1236133575439453], [14.40970516204834], [20.254920959472656], [-2.9838600158691406], [0.6094303131103516], [-16.935867309570312], [-18.426847457885742], [-4.937474727630615], [3.7129807472229004], [-3.993898868560791], [9.773100852966309], [-8.610817909240723]], "normalized_similarities": [[0.5053929090499878], [-0.030708815902471542], [-0.022078074514865875], [-0.0260482020676136], [-0.028859656304121017], [-0.03820525482296944], [-0.02434702031314373], [-0.025148829445242882], [-0.04434015974402428], [-0.025856880471110344], [-0.038725245743989944], [-0.04996389523148537], [-0.06438139081001282], [-0.026103880256414413], [0.0016953524900600314], [0.9732114672660828], [-0.030632194131612778], [-0.02253643050789833], [-0.012962626293301582], [-0.048085518181324005], [-0.021471992135047913], [-0.058213815093040466], [0.006113719195127487], [0.009190944954752922], [0.02789578214287758], [0.02456459030508995], [0.04068727046251297], [-0.006194441579282284], [0.010550085455179214], [0.013900143094360828], [-0.0038052652962505817], [0.019638922065496445], [-0.007359622046351433], [0.033951058983802795], [0.04772311821579933], [-0.007030345965176821], [0.0014358937041833997], [-0.03990301117300987], [-0.04341594874858856], [-0.011633305810391903], [0.008748245425522327], [-0.009410123340785503], [0.023026643320918083], [-0.02028816007077694]], "result_max_similarities": 424.42578125, "full_text_display": "This memorandum announces the 2004 annual review of special salary rates authorized under 5 U.S.C. 5305 and 5 CFR part 530, subpart C, and requests agency recommendations on the adjustment of special rate schedules", "K": 1}, {"id": "result_16", "sample_idx": 3949, "score": 412.9198303222656, "highlight_inds": [12], "matched_tokens_str": ".", "original_pos": 12, "full_sequence_tokens": ["This", " week", " Adobe", " released", " version", " 5", " of", " its", " Creative", " Suite", " software", " compilation", ".", " CEO", " Sh", "ant", "anu", " Nar", "ay", "en", " has", " naturally", " hit", " the", " interview", " trail", " to", " promote", " his", " company", "&#x27;s", " w", "ares", ",", " but", " the", " biggest", " news", " from", " him", " is", " actually", " a", " delay"], "sequence_similarities": [[214.50177001953125], [-11.54129409790039], [22.833091735839844], [10.492956161499023], [-11.60739517211914], [13.163612365722656], [11.288042068481445], [-0.3360629677772522], [19.14974021911621], [1.7457289695739746], [9.069938659667969], [20.53961944580078], [412.9198303222656], [11.17324447631836], [-0.04925811290740967], [14.929258346557617], [-3.1637260913848877], [22.298187255859375], [35.9912109375], [1.3197174072265625], [10.095842361450195], [18.129575729370117], [31.10434341430664], [1.5942411422729492], [4.71826171875], [-0.03576207160949707], [4.148212432861328], [-0.739471435546875], [-24.891860961914062], [-10.967887878417969], [-14.778298377990723], [-5.853981018066406], [12.835134506225586], [-2.331778049468994], [8.176441192626953], [6.382582664489746], [21.473480224609375], [18.435991287231445], [-1.300248146057129], [-3.1259710788726807], [0.006657600402832031], [-10.88298225402832], [-8.446554183959961], [-0.7319788932800293]], "normalized_similarities": [[0.5053929090499878], [-0.027192726731300354], [0.053797606378793716], [0.024722712114453316], [-0.027348468080163002], [0.03101510927081108], [0.026596032083034515], [-0.0007918062037788332], [0.04511917382478714], [0.004113154951483011], [0.021369904279708862], [0.04839390143752098], [0.9728905558586121], [0.02632555551826954], [-0.00011605824693106115], [0.03517519310116768], [-0.0074541326612234116], [0.052537307143211365], [0.08479977399110794], [0.0031094185542315245], [0.023787062615156174], [0.042715538293123245], [0.07328570634126663], [0.0037562306970357895], [0.011116812005639076], [-8.425989653915167e-05], [0.009773705154657364], [-0.001742286840453744], [-0.05864832550287247], [-0.025841709226369858], [-0.03481950983405113], [-0.01379270851612091], [0.03024117462337017], [-0.005493959411978722], [0.019264712929725647], [0.015038159675896168], [0.05059419199824333], [0.04343749210238457], [-0.0030635464936494827], [-0.007365177385509014], [1.568613515701145e-05], [-0.025641661137342453], [-0.019901134073734283], [-0.0017246333882212639]], "result_max_similarities": 424.42578125, "full_text_display": "This week Adobe released version 5 of its Creative Suite software compilation. CEO Shantanu Narayen has naturally hit the interview trail to promote his company&#x27;s wares, but the biggest news from him is actually a delay", "K": 1}, {"id": "result_17", "sample_idx": 19243, "score": 412.41070556640625, "highlight_inds": [16], "matched_tokens_str": ".", "original_pos": 16, "full_sequence_tokens": ["When", " you", " finally", " get", " around", " to", " searching", " for", " rain", " gut", "ter", " clean", " out", " services", " around", " St", ".", " Louis", ",", " then", " you", " need", " to", " be", " trying", " to", " find", " a", " professional", " business", " and", " not", " some", " local", " hand", "yman", ".", " As", " soon", " as", " you", "\u2019", "ve", " decided"], "sequence_similarities": [[231.6537322998047], [4.925624847412109], [1.498133659362793], [0.42586612701416016], [-9.096000671386719], [-7.014128684997559], [3.49760103225708], [0.07900619506835938], [-14.178783416748047], [25.07123565673828], [4.860009670257568], [1.7878072261810303], [7.182757377624512], [-14.366508483886719], [-11.56629753112793], [-14.691490173339844], [412.41070556640625], [-1.130441665649414], [-3.3212013244628906], [7.301015853881836], [2.881422519683838], [10.43875503540039], [-0.8359603881835938], [15.738033294677734], [0.25614452362060547], [7.014942169189453], [11.178108215332031], [-6.363431930541992], [-17.061391830444336], [-5.208494663238525], [-10.335436820983887], [17.231773376464844], [0.11307621002197266], [-1.6561717987060547], [9.130046844482422], [22.671724319458008], [7.001340389251709], [-4.719782829284668], [-1.25722074508667], [10.410943984985352], [1.1645994186401367], [-15.49840259552002], [-3.1677517890930176], [-1.725494384765625]], "normalized_similarities": [[0.545805037021637], [0.011605385690927505], [0.0035297893919050694], [0.0010033936705440283], [-0.02143131010234356], [-0.01652616076171398], [0.008240783587098122], [0.00018614843429531902], [-0.03340698033571243], [0.059070952236652374], [0.011450788006186485], [0.0042122965678572655], [0.01692347042262554], [-0.033849284052848816], [-0.02725163660943508], [-0.03461498022079468], [0.9716910123825073], [-0.002663461258634925], [-0.007825164124369621], [0.017202103510499], [0.006788990460336208], [0.024595007300376892], [-0.001969626871868968], [0.03708076477050781], [0.0006035083788447082], [0.01652807742357254], [0.026337014511227608], [-0.014993038028478622], [-0.04019876569509506], [-0.012271862477064133], [-0.02435157634317875], [0.04060020297765732], [0.0002664216444827616], [-0.0039021470583975315], [0.02151152677834034], [0.05341740697622299], [0.01649603061378002], [-0.011120395734906197], [-0.002962168538942933], [0.024529481306672096], [0.002743941266089678], [-0.03651616722345352], [-0.007463617715984583], [-0.00406547961756587]], "result_max_similarities": 424.42578125, "full_text_display": "When you finally get around to searching for rain gutter clean out services around St. Louis, then you need to be trying to find a professional business and not some local handyman. As soon as you\u2019ve decided", "K": 1}, {"id": "result_18", "sample_idx": 18443, "score": 412.22662353515625, "highlight_inds": [8], "matched_tokens_str": ".", "original_pos": 8, "full_sequence_tokens": ["This", " Dor", "r", " HD", " Wide", " Ang", "le", " 0", ".", "45", "x", " Con", "version", " L", "ens", " has", " a", " built", "-", "in", " zoom", " lens", ".", " Dor", "r", " wide", "-", "angle", " conversion", " lenses", " shorten", " the", " focal", " length", " zoom", " for", " the", " given", " factor", " and", " the", " angle", " of", " view"], "sequence_similarities": [[214.50177001953125], [1.6833264827728271], [8.029463768005371], [9.214828491210938], [-5.346780776977539], [18.752811431884766], [2.680083751678467], [4.769314765930176], [412.22662353515625], [-19.55101776123047], [-12.607414245605469], [-3.623188018798828], [24.16478729248047], [0.0872964859008789], [19.48894691467285], [9.957700729370117], [-0.32059013843536377], [-7.416644096374512], [10.355914115905762], [3.4657363891601562], [14.317051887512207], [29.357688903808594], [21.16836929321289], [5.779135704040527], [21.58611297607422], [21.434999465942383], [25.081615447998047], [7.79215145111084], [12.197183609008789], [1.2796239852905273], [27.24013900756836], [3.861963987350464], [8.556672096252441], [-2.427886962890625], [0.07349777221679688], [15.12100601196289], [-8.25348949432373], [-2.5208773612976074], [11.885858535766602], [2.584459066390991], [11.866268157958984], [28.049633026123047], [26.046480178833008], [-7.723287105560303]], "normalized_similarities": [[0.5053929090499878], [0.003966127056628466], [0.018918417394161224], [0.021711284294724464], [-0.012597681023180485], [0.04418395832180977], [0.006314611062407494], [0.011237099766731262], [0.9712572693824768], [-0.04606463387608528], [-0.029704637825489044], [-0.008536682464182377], [0.05693524703383446], [0.0002056813973467797], [0.045918386429548264], [0.023461584001779556], [-0.0007553502800874412], [-0.01747453771531582], [0.02439982257783413], [0.008165706880390644], [0.03373275697231293], [0.06917037069797516], [0.04987531527876854], [0.013616363517940044], [0.05085957050323486], [0.050503529608249664], [0.05909540876746178], [0.01835927926003933], [0.028738083317875862], [0.003014953574165702], [0.06418115645647049], [0.009099268354475498], [0.020160585641860962], [-0.005720403976738453], [0.00017316990124527365], [0.03562697395682335], [-0.019446250051259995], [-0.005939500872045755], [0.028004562482237816], [0.006089307367801666], [0.027958406135439873], [0.06608843058347702], [0.061368752270936966], [-0.01819702610373497]], "result_max_similarities": 424.42578125, "full_text_display": "This Dorr HD Wide Angle 0.45x Conversion Lens has a built-in zoom lens. Dorr wide-angle conversion lenses shorten the focal length zoom for the given factor and the angle of view", "K": 1}, {"id": "result_19", "sample_idx": 11487, "score": 410.97406005859375, "highlight_inds": [9], "matched_tokens_str": "\n", "original_pos": 9, "full_sequence_tokens": ["How", " far", " back", " do", " I", " look", " for", " Original", "?", "\n", "Ok", " I", " get", " fresh", " and", " original", ",", " what", " I", " am", " having", " trouble", " with", " is", " when", " looking", " left", " for", " original", " how", " far", " back", " do", " you", " look", "?", " You", " will", " always", " find", " something", " if", " you", " look"], "sequence_similarities": [[141.83203125], [-1.2214064598083496], [10.727803230285645], [-6.589332580566406], [-5.980924606323242], [3.740939140319824], [-11.330215454101562], [-4.166995048522949], [6.348056793212891], [410.97406005859375], [2.7578353881835938], [10.920038223266602], [23.012470245361328], [3.638899087905884], [21.10336685180664], [27.25525665283203], [20.922943115234375], [17.026386260986328], [25.908153533935547], [0.9788639545440674], [-7.126604080200195], [4.508551597595215], [16.69122314453125], [12.954404830932617], [13.533985137939453], [22.263256072998047], [-7.534571170806885], [-3.521139621734619], [-6.674005031585693], [-2.3962745666503906], [24.16054916381836], [20.015968322753906], [-1.8043301105499268], [-18.592754364013672], [-6.554647445678711], [6.314237594604492], [-3.610478401184082], [8.14072036743164], [-6.294838905334473], [-6.024723052978516], [-15.214996337890625], [-11.724781036376953], [6.95201301574707], [6.387221813201904]], "normalized_similarities": [[0.33417391777038574], [-0.002877785824239254], [0.02527604065835476], [-0.015525287948548794], [-0.014091803692281246], [0.008814118802547455], [-0.02669539861381054], [-0.009817959740757942], [0.014956812374293804], [0.9683060646057129], [0.00649780360981822], [0.025728970766067505], [0.05422024428844452], [0.008573699742555618], [0.04972216114401817], [0.06421677768230438], [0.04929706081748009], [0.040116287767887115], [0.06104283779859543], [0.0023063253611326218], [-0.016791166737675667], [0.010622709058225155], [0.03932660073041916], [0.030522191897034645], [0.031887754797935486], [0.052455004304647446], [-0.0177523884922266], [-0.008296243846416473], [-0.01572478748857975], [-0.00564592145383358], [0.05692526325583458], [0.04716011509299278], [-0.00425122631713748], [-0.04380684345960617], [-0.01544356532394886], [0.014877130277454853], [-0.00850673671811819], [0.019180551171302795], [-0.014831424690783024], [-0.01419499795883894], [-0.035848427563905716], [-0.02762504480779171], [0.016379809007048607], [0.015049089677631855]], "result_max_similarities": 424.42578125, "full_text_display": "How far back do I look for Original?\nOk I get fresh and original, what I am having trouble with is when looking left for original how far back do you look? You will always find something if you look", "K": 1}];
+    const globalMaxSequenceSimilarity = [424.42578125];
+    const tooltip = document.getElementById('tooltip');
+    let isNormalized = true;
+    let currentThreshold = 0.0;
+
+    function htmlDecode(input) {
+        const doc = new DOMParser().parseFromString(input, "text/html");
+        return doc.documentElement.textContent;
+    }
+
+    function getColorForSimilarity(sim, maxSim, isNormalizedMode = false, threshold = 0.0) {
+        if (sim === -Infinity || maxSim <= 0) {
+            return { backgroundColor: '#f8f9fa', color: '#6c757d' };
+        }
+
+        // Apply threshold cutoff - if below threshold, return transparent/no color
+        if (sim <= threshold) {
+            return { backgroundColor: 'transparent', color: '#6c757d' };
+        }
+
+        let t;
+        if (isNormalizedMode) {
+            // In normalized mode, use a more sensitive scale since values are 0-1
+            // Apply a power function to make smaller differences more visible
+            const normalizedT = Math.max(0, Math.min(1, sim / maxSim));
+            t = Math.pow(normalizedT, 0.7); // Makes mid-range values more visible
+        } else {
+            // In raw mode, use linear scaling
+            t = Math.max(0, Math.min(1, sim / maxSim));
+        }
+
+        let r, g, b;
+        if (isNormalizedMode) {
+            // Use white to red gradient for normalized mode (same as raw mode)
+            r = 255;
+            g = b = Math.round(255 * (1 - t));
+        } else {
+            // Original red gradient for raw mode
+            r = 255;
+            g = b = Math.round(255 * (1 - t));
+        }
+
+        const textColor = (r + g + b) / 3 > 127 ? '#000000' : '#FFFFFF';
+        return { backgroundColor: `rgb(${r},${g},${b})`, color: textColor };
+    }
+
+    function renderResult(resultData) {
+        const displayDiv = document.getElementById(`sequence_display_${resultData.id}`);
+        const fullTextDiv = document.getElementById(`full_text_display_${resultData.id}`);
+        if (!displayDiv) return;
+
+        // Choose which similarities to use based on toggle state
+        const currentSimilarities = isNormalized ? resultData.normalized_similarities : resultData.sequence_similarities;
+        const currentMaxSimilarities = isNormalized ? Array(resultData.K).fill(1) : globalMaxSequenceSimilarity; // Normalized max is always 1
+
+        displayDiv.innerHTML = '';
+        resultData.full_sequence_tokens.forEach((tokenHtml, i) => {
+            const span = document.createElement('span');
+            span.className = 'token';
+            span.innerHTML = tokenHtml;
+
+            const seqSim = currentSimilarities[i];
+            const rawSeqSim = resultData.sequence_similarities[i];
+            let maxIdx = 0
+            let K = resultData.K;
+            let maxSim = Number.NEGATIVE_INFINITY;
+            for (let j = 0; j < K; j++) {
+                if (currentSimilarities[i] && currentSimilarities[i][j] > maxSim) {
+                    maxIdx = j;
+                    maxSim = currentSimilarities[i][j];
+                }
+            }
+
+            try{
+                const colors = getColorForSimilarity(seqSim[maxIdx], currentMaxSimilarities[maxIdx], isNormalized, currentThreshold);
+                span.style.backgroundColor = colors.backgroundColor;
+                span.style.color = colors.color;
+            } catch { console.log("Get color for sim doesn't work") }
+
+            if (resultData.highlight_inds.includes(i)) {
+                span.classList.add('highlight-window');
+            }
+
+            span.onmousemove = e => {
+                tooltip.style.visibility = 'visible';
+                let rawTokenSimsText = resultData.sequence_similarities[i].map((s, j) => `Q${j+1}: ${s.toFixed(4)}`).join(', ');
+                let normalizedTokenSimsText = resultData.normalized_similarities[i].map((s, j) => `Q${j+1}: ${s.toFixed(4)}`).join(', ');
+
+                let tooltipContent = `<b>${htmlDecode(tokenHtml)}</b> (Index: ${i})<br>`;
+                if (isNormalized) {
+                    tooltipContent += `Normalized Sim: ${seqSim[maxIdx].toFixed(4)}<br>`;
+                    tooltipContent += `Raw Sim: ${rawSeqSim[maxIdx].toFixed(4)}<br>`;
+                    tooltipContent += `Normalized Token Sims: ${normalizedTokenSimsText}<br>`;
+                } else {
+                    tooltipContent += `Raw Sim: ${seqSim[maxIdx].toFixed(4)}<br>`;
+                    tooltipContent += `Raw Token Sims: ${rawTokenSimsText}<br>`;
+                }
+                tooltipContent += `Vector index match: ${maxIdx + 1}`;
+
+                tooltip.innerHTML = tooltipContent;
+                tooltip.style.left = `${e.pageX + 15}px`;
+                tooltip.style.top = `${e.pageY + 15}px`;
+            };
+            span.onmouseout = () => { tooltip.style.visibility = 'hidden'; };
+            displayDiv.appendChild(span);
+        });
+
+        if (fullTextDiv && resultData.full_text_display) {
+            fullTextDiv.innerHTML = `<p><strong>Full Text:</strong></p><p>${resultData.full_text_display}</p>`;
+        }
+    }
+
+    function toggleNormalization() {
+        isNormalized = !isNormalized;
+        const statusSpan = document.getElementById('normalizationStatus');
+        if (isNormalized) {
+            statusSpan.innerHTML = 'Showing normalized values (max = 1.0 per result) | <span style="background: linear-gradient(90deg, white, pink, red); padding: 2px 8px; border-radius: 3px; color: black; font-size: 0.8em;">White→Red colors</span>';
+            statusSpan.style.color = '#28a745';
+        } else {
+            statusSpan.innerHTML = 'Showing raw values (global scale) | <span style="background: linear-gradient(90deg, white, pink, red); padding: 2px 8px; border-radius: 3px; color: black; font-size: 0.8em;">White→Red colors</span>';
+            statusSpan.style.color = '#666';
+        }
+
+        // Re-render all results with new normalization setting
+        allResultsData.forEach(renderResult);
+    }
+
+    function updateThreshold() {
+        const slider = document.getElementById('thresholdSlider');
+        const valueDisplay = document.getElementById('thresholdValue');
+        currentThreshold = parseFloat(slider.value);
+        valueDisplay.textContent = currentThreshold.toFixed(3);
+
+        // Re-render all results with new threshold setting
+        allResultsData.forEach(renderResult);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        // Initialize normalization status (start with normalized mode)
+        const statusSpan = document.getElementById('normalizationStatus');
+        statusSpan.innerHTML = 'Showing normalized values (max = 1.0 per result) | <span style="background: linear-gradient(90deg, white, pink, red); padding: 2px 8px; border-radius: 3px; color: black; font-size: 0.8em;">White→Red colors</span>';
+        statusSpan.style.color = '#28a745';
+
+        // Set up toggle event listener
+        const toggleCheckbox = document.getElementById('normalizeToggle');
+        toggleCheckbox.addEventListener('change', toggleNormalization);
+
+        // Set up threshold slider event listener
+        const thresholdSlider = document.getElementById('thresholdSlider');
+        thresholdSlider.addEventListener('input', updateThreshold);
+
+        // Render initial results
+        allResultsData.forEach(renderResult);
+    });
+</script>
+</body></html>

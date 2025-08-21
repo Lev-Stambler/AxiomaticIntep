@@ -1,0 +1,403 @@
+
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">
+<title>Token Activation Similarity Report</title><style>
+body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; padding: 20px; background-color: #f8f9fa; color: #212529; }
+.container { background-color: #ffffff; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.07); }
+h1 { color: #0056b3; text-align: center; margin-bottom: 25px; font-weight: 300;}
+h2 { color: #0056b3; border-bottom: 1px solid #dee2e6; padding-bottom: 10px; margin-top:0; font-size: 1.5em; font-weight: 400; }
+.token { padding: 3px 5px; margin: 2px 1px; border-radius: 4px; display: inline-block; border: 1px solid #ced4da; cursor: default; transition: transform 0.1s ease-out, box-shadow 0.1s ease-out; font-size: 0.9em; line-height: 1.5; }
+.token:hover { transform: translateY(-1px); box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+.token.highlight-window { border: 2px solid #c82333; font-weight: 600; background-color: #f8d7da !important; color: #721c24; }
+.sequence-display { margin-top: 12px; padding: 12px; border: 1px solid #e9ecef; background-color: #f8f9fa; border-radius: 6px; white-space: pre-wrap; word-wrap: break-word; line-height: 1.7; }
+.full-text-display { margin-top: 15px; padding: 10px; border: 1px solid #dfe6e9; background-color: #f9f9f9; border-radius: 6px; white-space: pre-wrap; word-wrap: break-word; line-height: 1.6; font-size: 0.95em; color: #333; }
+.tooltip { position: absolute; background-color: rgba(33,37,41,0.9); color: white; padding: 8px 12px; border-radius: 5px; visibility: hidden; z-index: 1000; pointer-events: none; font-size: 0.85em; max-width: 400px; }
+.details p { margin: 5px 0; font-size: 0.9em; color: #495057; } .details strong { color: #0056b3; }
+.footer-note { font-size: 0.8em; color: #6c757d; text-align: center; margin-top: 30px; }
+.global-max-info { background-color: #e3f2fd; padding: 10px; border-radius: 5px; margin-bottom: 20px; text-align: center; font-size: 0.9em; color: #1565c0; }
+.threshold-control { margin-top: 15px; padding: 10px; background-color: rgba(255,255,255,0.3); border-radius: 6px; }
+.threshold-slider { width: 200px; margin: 0 10px; }
+.threshold-value { font-weight: bold; color: #0056b3; }
+</style></head><body>
+<div class="explanation-section" style="background-color: #f0f8ff; padding: 15px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #0056b3;"><h3 style="color: #0056b3; margin-top: 0;">Feature Explanation</h3><div style="line-height: 1.6; color: #333;">It appears that this feature “lights up” on text segments that serve as formal, structured metadata – the kind of language found in citations, technical specifications, publication details, and other official document or reference information.</div></div><div class="global-max-info">
+    <strong>Query Type:</strong> 1-token sequences<br>
+    <strong>Query Vector Norms:</strong> ['10.0720']<br>
+    <strong>Global Max Sequence Similarities:</strong> [13.110857009887695]<br>
+    <div style="margin-top: 10px;">
+        <label style="font-weight: normal; cursor: pointer;">
+            <input type="checkbox" id="normalizeToggle" checked style="margin-right: 8px;">
+            Show Normalized Activations (divide by max per result)
+        </label>
+        <span id="normalizationStatus" style="margin-left: 15px; font-style: italic; color: #666;"></span>
+    </div>
+    <div class="threshold-control">
+        <label style="font-weight: normal;">
+            Activation Cutoff Threshold: <span class="threshold-value" id="thresholdValue">0.000</span>
+        </label><br>
+        <input type="range" id="thresholdSlider" class="threshold-slider"
+               min="0" max="1" step="0.001"
+               value="0.0">
+        <div style="margin-top: 5px; font-size: 0.8em; color: #666;">
+            No faithfulness data available - adjust manually
+        </div>
+    </div>
+</div>
+<div id="tooltip" class="tooltip"></div>
+
+<div class="container" id="container_result_0">
+    <h2>Result 1 (Sample Ref: 2303)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 13.1109</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">";"</span></p>
+        <p><strong>Window Start Position:</strong> 37</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_0"></div>
+    <div class="full-text-display" id="full_text_display_result_0"></div>
+</div>
+<div class="container" id="container_result_1">
+    <h2>Result 2 (Sample Ref: 19371)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 11.0318</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">"idad"</span></p>
+        <p><strong>Window Start Position:</strong> 5</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_1"></div>
+    <div class="full-text-display" id="full_text_display_result_1"></div>
+</div>
+<div class="container" id="container_result_2">
+    <h2>Result 3 (Sample Ref: 4882)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 10.4755</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">" information"</span></p>
+        <p><strong>Window Start Position:</strong> 23</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_2"></div>
+    <div class="full-text-display" id="full_text_display_result_2"></div>
+</div>
+<div class="container" id="container_result_3">
+    <h2>Result 4 (Sample Ref: 12053)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 9.9660</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">"eties"</span></p>
+        <p><strong>Window Start Position:</strong> 8</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_3"></div>
+    <div class="full-text-display" id="full_text_display_result_3"></div>
+</div>
+<div class="container" id="container_result_4">
+    <h2>Result 5 (Sample Ref: 16483)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 9.9075</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">";"</span></p>
+        <p><strong>Window Start Position:</strong> 20</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_4"></div>
+    <div class="full-text-display" id="full_text_display_result_4"></div>
+</div>
+<div class="container" id="container_result_5">
+    <h2>Result 6 (Sample Ref: 1252)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 9.8630</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">"�"</span></p>
+        <p><strong>Window Start Position:</strong> 39</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_5"></div>
+    <div class="full-text-display" id="full_text_display_result_5"></div>
+</div>
+<div class="container" id="container_result_6">
+    <h2>Result 7 (Sample Ref: 3938)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 9.5496</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">"2008"</span></p>
+        <p><strong>Window Start Position:</strong> 43</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_6"></div>
+    <div class="full-text-display" id="full_text_display_result_6"></div>
+</div>
+<div class="container" id="container_result_7">
+    <h2>Result 8 (Sample Ref: 3046)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 9.5254</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">"ASE"</span></p>
+        <p><strong>Window Start Position:</strong> 5</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_7"></div>
+    <div class="full-text-display" id="full_text_display_result_7"></div>
+</div>
+<div class="container" id="container_result_8">
+    <h2>Result 9 (Sample Ref: 9397)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 9.4654</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">" rights"</span></p>
+        <p><strong>Window Start Position:</strong> 21</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_8"></div>
+    <div class="full-text-display" id="full_text_display_result_8"></div>
+</div>
+<div class="container" id="container_result_9">
+    <h2>Result 10 (Sample Ref: 15948)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 9.4243</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">";"</span></p>
+        <p><strong>Window Start Position:</strong> 12</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_9"></div>
+    <div class="full-text-display" id="full_text_display_result_9"></div>
+</div>
+<div class="container" id="container_result_10">
+    <h2>Result 11 (Sample Ref: 16778)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 9.3883</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">" presented"</span></p>
+        <p><strong>Window Start Position:</strong> 22</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_10"></div>
+    <div class="full-text-display" id="full_text_display_result_10"></div>
+</div>
+<div class="container" id="container_result_11">
+    <h2>Result 12 (Sample Ref: 671)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 9.3654</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">" reviewed"</span></p>
+        <p><strong>Window Start Position:</strong> 7</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_11"></div>
+    <div class="full-text-display" id="full_text_display_result_11"></div>
+</div>
+<div class="container" id="container_result_12">
+    <h2>Result 13 (Sample Ref: 18745)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 9.2601</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">" charged"</span></p>
+        <p><strong>Window Start Position:</strong> 20</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_12"></div>
+    <div class="full-text-display" id="full_text_display_result_12"></div>
+</div>
+<div class="container" id="container_result_13">
+    <h2>Result 14 (Sample Ref: 5051)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 9.2256</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">" 2003"</span></p>
+        <p><strong>Window Start Position:</strong> 28</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_13"></div>
+    <div class="full-text-display" id="full_text_display_result_13"></div>
+</div>
+<div class="container" id="container_result_14">
+    <h2>Result 15 (Sample Ref: 5706)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 9.2229</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">" investigated"</span></p>
+        <p><strong>Window Start Position:</strong> 26</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_14"></div>
+    <div class="full-text-display" id="full_text_display_result_14"></div>
+</div>
+<div class="container" id="container_result_15">
+    <h2>Result 16 (Sample Ref: 9864)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 9.1819</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">" 2008"</span></p>
+        <p><strong>Window Start Position:</strong> 42</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_15"></div>
+    <div class="full-text-display" id="full_text_display_result_15"></div>
+</div>
+<div class="container" id="container_result_16">
+    <h2>Result 17 (Sample Ref: 4030)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 9.1216</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">" PDF"</span></p>
+        <p><strong>Window Start Position:</strong> 40</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_16"></div>
+    <div class="full-text-display" id="full_text_display_result_16"></div>
+</div>
+<div class="container" id="container_result_17">
+    <h2>Result 18 (Sample Ref: 6144)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 9.1211</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">" 2011"</span></p>
+        <p><strong>Window Start Position:</strong> 31</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_17"></div>
+    <div class="full-text-display" id="full_text_display_result_17"></div>
+</div>
+<div class="container" id="container_result_18">
+    <h2>Result 19 (Sample Ref: 15780)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 9.0847</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">" of"</span></p>
+        <p><strong>Window Start Position:</strong> 5</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_18"></div>
+    <div class="full-text-display" id="full_text_display_result_18"></div>
+</div>
+<div class="container" id="container_result_19">
+    <h2>Result 20 (Sample Ref: 11121)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 9.0732</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">" recorded"</span></p>
+        <p><strong>Window Start Position:</strong> 18</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_19"></div>
+    <div class="full-text-display" id="full_text_display_result_19"></div>
+</div>
+<script>
+    const allResultsData = [{"id": "result_0", "sample_idx": 2303, "score": 13.110857009887695, "highlight_inds": [37], "matched_tokens_str": ";", "original_pos": 37, "full_sequence_tokens": ["12", " magnets", " alternating", " N", "/", "S", " evenly", " spaced", " 161", " mm", " apart", ".", "\n", "9", " Magn", "ets", " in", " clusters", " of", " 3", " spaced", " 53", "mm", " apart", " to", " simulate", " a", " 36", " magnet", " wheel", ".", "\n", "Last", " edited", " by", " De", "uis", ";", " 02", "-", "16", "-", "2018", " at"], "sequence_similarities": [[-11.74744987487793], [-8.587738037109375], [-8.5711030960083], [-6.39682674407959], [-2.239375114440918], [-2.010343551635742], [-2.6497597694396973], [-6.344788551330566], [-4.872530937194824], [-3.2952919006347656], [-3.158581256866455], [-7.330729961395264], [1.8757236003875732], [-1.7997387647628784], [-5.107682704925537], [-3.904939651489258], [-3.4470295906066895], [-5.862890243530273], [-2.9267940521240234], [-1.389634370803833], [-4.91389274597168], [-3.166975975036621], [-2.0430548191070557], [-3.552772283554077], [-3.9624075889587402], [-1.8179163932800293], [-1.6750434637069702], [-4.044262409210205], [-2.334851026535034], [-3.0799062252044678], [-0.7153346538543701], [1.1794400215148926], [-0.7808620929718018], [7.812593460083008], [7.147600173950195], [2.0219593048095703], [1.5759841203689575], [13.110857009887695], [6.774435043334961], [4.045446395874023], [2.441845655441284], [0.2560464143753052], [5.4854936599731445], [6.426984786987305]], "normalized_similarities": [[-0.8960093259811401], [-0.6550096869468689], [-0.6537408828735352], [-0.48790302872657776], [-0.17080309987068176], [-0.15333425998687744], [-0.20210424065589905], [-0.4839339256286621], [-0.3716409206390381], [-0.25134068727493286], [-0.24091340601444244], [-0.559134304523468], [0.1430664360523224], [-0.13727086782455444], [-0.38957658410072327], [-0.2978401482105255], [-0.26291412115097046], [-0.44717827439308167], [-0.2232343852519989], [-0.10599111765623093], [-0.37479570508003235], [-0.24155369400978088], [-0.15582923591136932], [-0.2709794044494629], [-0.3022233843803406], [-0.1386573314666748], [-0.12776002287864685], [-0.30846667289733887], [-0.1780853122472763], [-0.23491264879703522], [-0.054560478776693344], [0.0899590328335762], [-0.059558432549238205], [0.595887303352356], [0.5451664924621582], [0.15422022342681885], [0.12020450830459595], [1.0], [0.5167042016983032], [0.3085569739341736], [0.1862460821866989], [0.019529342651367188], [0.41839322447776794], [0.49020326137542725]], "result_max_similarities": 13.110857009887695, "full_text_display": "12 magnets alternating N/S evenly spaced 161 mm apart.\n9 Magnets in clusters of 3 spaced 53mm apart to simulate a 36 magnet wheel.\nLast edited by Deuis; 02-16-2018 at", "K": 1}, {"id": "result_1", "sample_idx": 19371, "score": 11.031807899475098, "highlight_inds": [5], "matched_tokens_str": "idad", "original_pos": 5, "full_sequence_tokens": ["Its", " official", " name", " is", " Univers", "idad", " but", " it", "\ufffd", "s", " mostly", " known", " as", " Mal", "asa", "\ufffd", "a", " or", " as", " \ufffd", "\ufffd\ufffd", "Bar", "rio", " de", " las", " Mar", "av", "illas", "\ufffd", ".", " It", " is", " located", " in", " the", " centre", " of", " Madrid", ".", " It", " is", " delim", "itated", " by"], "sequence_similarities": [[-2.3400368690490723], [-1.9751110076904297], [0.8147066831588745], [-0.05243551731109619], [3.8006367683410645], [11.031807899475098], [5.207082748413086], [0.24814844131469727], [1.3072144985198975], [-0.029842257499694824], [2.9760613441467285], [-0.3057892322540283], [1.2263505458831787], [-1.8152105808258057], [0.5646350383758545], [-1.3852760791778564], [-0.900568962097168], [-2.8638558387756348], [-2.3277318477630615], [4.521878242492676], [1.4483686685562134], [-3.1209940910339355], [-0.8361153602600098], [0.7763941287994385], [-2.135465145111084], [-1.890321135520935], [-8.000791549682617], [-2.3232061862945557], [-1.864660382270813], [-12.675902366638184], [0.5606817007064819], [-0.6411041021347046], [3.9024360179901123], [1.3445868492126465], [-2.0921833515167236], [-2.0644378662109375], [-1.0832056999206543], [4.47393798828125], [2.5450406074523926], [2.949249267578125], [0.8053738474845886], [0.7078371047973633], [-1.9598866701126099], [-0.03393113613128662]], "normalized_similarities": [[-0.1784808486700058], [-0.15064698457717896], [0.0621398501098156], [-0.003999396692961454], [0.28988468647003174], [0.841425359249115], [0.39715808629989624], [0.018926942721009254], [0.09970473498106003], [-0.0022761484142392874], [0.22699213027954102], [-0.023323358967900276], [0.09353702515363693], [-0.13845095038414001], [0.04306621849536896], [-0.10565869510173798], [-0.06868879497051239], [-0.2184339165687561], [-0.1775423139333725], [0.34489569067955017], [0.11047093570232391], [-0.2380465418100357], [-0.06377274543046951], [0.059217650443315506], [-0.16287761926651], [-0.1441798359155655], [-0.610241711139679], [-0.17719712853431702], [-0.14222261309623718], [-0.9668248295783997], [0.04276468604803085], [-0.04889871925115585], [0.29764920473098755], [0.10255522280931473], [-0.1595764011144638], [-0.15746018290519714], [-0.08261898159980774], [0.34123918414115906], [0.19411702454090118], [0.22494709491729736], [0.0614280104637146], [0.05398862063884735], [-0.149485781788826], [-0.002588018076494336]], "result_max_similarities": 13.110857009887695, "full_text_display": "Its official name is Universidad but it\ufffds mostly known as Malasa\ufffda or as \ufffdBarrio de las Maravillas\ufffd. It is located in the centre of Madrid. It is delimitated by", "K": 1}, {"id": "result_2", "sample_idx": 4882, "score": 10.475454330444336, "highlight_inds": [23], "matched_tokens_str": " information", "original_pos": 23, "full_sequence_tokens": ["List", "ing", " provided", " courtesy", " of", " Crystal", " Lay", " of", " Stein", "born", " &amp;", " Associates", ":", " (", "575", ")", " 522", "-", "36", "98", ".", " All", " listing", " information", " was", " provided", " by", " Southern", " New", " Mexico", " Multiple", " List", "ing", " Service", ".", "\n", "\u00a9", " 2019", " Southern", " New", " Mexico", " Multiple", " List", "ing"], "sequence_similarities": [[2.7614636421203613], [4.654904365539551], [-2.1438910961151123], [-2.9127964973449707], [-0.6376636028289795], [1.644955039024353], [-0.8070008754730225], [-0.1290590763092041], [-0.5633484125137329], [-0.3336024880409241], [1.3122916221618652], [-1.2921334505081177], [-0.4122561812400818], [-1.2123255729675293], [2.3336832523345947], [-1.9022573232650757], [0.8263136744499207], [0.01870548725128174], [-0.3158508539199829], [0.7624936103820801], [-6.863992214202881], [0.7898647785186768], [4.548417091369629], [10.475454330444336], [2.111055612564087], [8.960265159606934], [2.317136526107788], [5.2199273109436035], [-1.6393380165100098], [1.0980497598648071], [1.589012861251831], [1.6671857833862305], [3.478376626968384], [5.076466083526611], [2.448390245437622], [4.58014440536499], [4.116020202636719], [4.784499645233154], [2.143071174621582], [-0.6934821605682373], [2.0301687717437744], [2.35086989402771], [2.47562313079834], [5.396783828735352]], "normalized_similarities": [[0.21062418818473816], [0.3550419509410858], [-0.16352029144763947], [-0.2221667468547821], [-0.0486363023519516], [0.12546510994434357], [-0.06155210733413696], [-0.009843680076301098], [-0.042968083173036575], [-0.025444751605391502], [0.10009197890758514], [-0.09855446219444275], [-0.03144387900829315], [-0.092467300593853], [0.17799623310565948], [-0.1450902372598648], [0.06302514672279358], [0.0014267173828557134], [-0.024090785533189774], [0.05815741792321205], [-0.5235349535942078], [0.0602450929582119], [0.3469198942184448], [0.798990786075592], [0.1610158383846283], [0.6834232807159424], [0.17673417925834656], [0.39813777804374695], [-0.12503667175769806], [0.08375117927789688], [0.12119824439287186], [0.1271606981754303], [0.2653050422668457], [0.3871955871582031], [0.18674524128437042], [0.3493398129940033], [0.3139398396015167], [0.3649265468120575], [0.1634577512741089], [-0.052893731743097305], [0.15484638512134552], [0.17930711805820465], [0.18882237374782562], [0.4116270840167999]], "result_max_similarities": 13.110857009887695, "full_text_display": "Listing provided courtesy of Crystal Lay of Steinborn &amp; Associates: (575) 522-3698. All listing information was provided by Southern New Mexico Multiple Listing Service.\n\u00a9 2019 Southern New Mexico Multiple Listing", "K": 1}, {"id": "result_3", "sample_idx": 12053, "score": 9.966017723083496, "highlight_inds": [37], "matched_tokens_str": "eties", "original_pos": 8, "full_sequence_tokens": ["O", "&#x27;", "H", "ara", ",", " K", "ieron", " (", "2005", ")", " The", " Ethics", " of", " Cyber", " Trust", ".", " In", ",", " Mans", "ell", ",", " Robin", " and", " Collins", ",", " Brian", " S", ".", " (", "eds", ".)", " Trust", " and", " Crime", " in", " Information", " Soci", "eties", ".", " Edward", " El", "gar", ",", " pp"], "sequence_similarities": [[-6.036355018615723], [-7.24993896484375], [-2.2744007110595703], [-1.9885060787200928], [1.3555569648742676], [0.039370059967041016], [-3.963649034500122], [-1.6648616790771484], [6.283939361572266], [-1.3052725791931152], [1.6867852210998535], [3.8539702892303467], [0.9270834922790527], [-0.4170016646385193], [1.4095485210418701], [-8.247196197509766], [3.8925938606262207], [1.0072206258773804], [2.521104335784912], [-4.4778056144714355], [0.696463406085968], [-1.1925408840179443], [-3.7145016193389893], [1.426840901374817], [-0.7349181175231934], [-0.2185988426208496], [0.5291225910186768], [1.315841555595398], [-0.403592586517334], [4.082269191741943], [5.044515609741211], [-0.1590389609336853], [1.7125988006591797], [3.1467533111572266], [2.2879512310028076], [2.8183493614196777], [2.1986582279205322], [9.966017723083496], [3.8351802825927734], [2.352658748626709], [0.5657882690429688], [-4.157503128051758], [4.271489143371582], [3.60979962348938]], "normalized_similarities": [[-0.46040889620780945], [-0.552972137928009], [-0.17347460985183716], [-0.15166865289211273], [0.10339194536209106], [0.0030028594192117453], [-0.3023180663585663], [-0.1269834339618683], [0.4792928099632263], [-0.09955661743879318], [0.1286555975675583], [0.2939525842666626], [0.07071112841367722], [-0.03180582821369171], [0.1075100228190422], [-0.6290356516838074], [0.2968985140323639], [0.0768233984708786], [0.19229134917259216], [-0.34153416752815247], [0.05312111973762512], [-0.09095826745033264], [-0.28331494331359863], [0.10882895439863205], [-0.056054163724184036], [-0.016673116013407707], [0.04035758972167969], [0.10036274045705795], [-0.03078308142721653], [0.31136554479599], [0.3847586512565613], [-0.01213032566010952], [0.13062447309494019], [0.24001125991344452], [0.17450813949108124], [0.21496301889419556], [0.16769751906394958], [0.760134756565094], [0.2925194203853607], [0.17944355309009552], [0.04315418004989624], [-0.3171038329601288], [0.3257978558540344], [0.27532902359962463]], "result_max_similarities": 13.110857009887695, "full_text_display": "O&#x27;Hara, Kieron (2005) The Ethics of Cyber Trust. In, Mansell, Robin and Collins, Brian S. (eds.) Trust and Crime in Information Societies. Edward Elgar, pp", "K": 1}, {"id": "result_4", "sample_idx": 16483, "score": 9.907548904418945, "highlight_inds": [6], "matched_tokens_str": ";", "original_pos": 20, "full_sequence_tokens": ["Last", " edited", " by", " j", "ay", "may", ";", " 04", "-", "04", "-", "2016", " at", " 09", ":", "06", " AM", ".", "\n", "no", " one", " has", " anything", " to", " input", "?", "\n", "Did", " you", " try", " replacing", " the", " battery", "?", "\n", "T", "rolling", "?", " Just", " following", " up", " on", " your", " own"], "sequence_similarities": [[-3.3981735706329346], [2.9599111080169678], [5.818721294403076], [-0.5206776857376099], [-1.850433111190796], [0.26411640644073486], [9.907548904418945], [6.744226455688477], [3.7569057941436768], [3.9397315979003906], [-1.1729798316955566], [5.824411869049072], [4.759821891784668], [-0.8851723670959473], [1.1651359796524048], [-1.169306993484497], [4.832921504974365], [-7.2204132080078125], [5.3836822509765625], [5.135623455047607], [7.611875057220459], [0.43809396028518677], [1.9885352849960327], [1.5052543878555298], [1.2380609512329102], [1.3300869464874268], [2.730419635772705], [-0.36926859617233276], [2.7052083015441895], [0.8839051723480225], [-0.2787371277809143], [-2.6432254314422607], [-1.4040037393569946], [0.8958734273910522], [2.4722819328308105], [-0.3079182803630829], [1.1620110273361206], [1.190866231918335], [-0.4056912660598755], [-0.23186469078063965], [-0.9674385786056519], [-2.279399871826172], [-2.5442657470703125], [-2.942915439605713]], "normalized_similarities": [[-0.2591877579689026], [0.2257603108882904], [0.4438093900680542], [-0.03971347585320473], [-0.14113746583461761], [0.020144861191511154], [0.7556751370429993], [0.5144001245498657], [0.2865492105484009], [0.30049383640289307], [-0.08946629613637924], [0.4442434012889862], [0.36304429173469543], [-0.06751445680856705], [0.08886802941560745], [-0.0891861617565155], [0.36861979961395264], [-0.5507201552391052], [0.4106277823448181], [0.3917076885700226], [0.5805779695510864], [0.03341459482908249], [0.1516708880662918], [0.11480976641178131], [0.09443020820617676], [0.10144927352666855], [0.20825637876987457], [-0.028165100142359734], [0.2063334435224533], [0.06741780042648315], [-0.02126002311706543], [-0.20160584151744843], [-0.10708710551261902], [0.06833065301179886], [0.18856753408908844], [-0.02348574809730053], [0.08862967789173126], [0.09083054214715958], [-0.03094315342605114], [-0.01768493838608265], [-0.07378911972045898], [-0.17385590076446533], [-0.19405792653560638], [-0.22446399927139282]], "result_max_similarities": 13.110857009887695, "full_text_display": "Last edited by jaymay; 04-04-2016 at 09:06 AM.\nno one has anything to input?\nDid you try replacing the battery?\nTrolling? Just following up on your own", "K": 1}, {"id": "result_5", "sample_idx": 1252, "score": 9.862966537475586, "highlight_inds": [22], "matched_tokens_str": "\ufffd", "original_pos": 39, "full_sequence_tokens": ["\ufffd", "\ufffd", " &quot;", "Basic", " Information", " of", " Municip", "ality", "&quot;.", " Ad", "il", "abad", " Municip", "ality", ".", " Ret", "rieved", " 19", " September", " 2015", ".", "\n", "\ufffd", "\ufffd", " ", "\ufffd", "\ufffd", ".", "\ufffd", "\ufffd", " ", "\ufffd", "\ufffd", ".", "\ufffd", "\ufffd", " &quot;", "District", " Census", " Handbook", " \u2013", " Ad", "il", "abad"], "sequence_similarities": [[3.373011827468872], [2.4697022438049316], [-2.329348087310791], [-0.9209331274032593], [-0.5120143890380859], [-0.860832929611206], [1.9709410667419434], [0.3065072298049927], [4.2912821769714355], [0.475600004196167], [-0.5088318586349487], [3.223564863204956], [2.9938864707946777], [2.347477912902832], [-8.13180923461914], [1.7912403345108032], [4.504737377166748], [1.9986662864685059], [1.97916841506958], [4.137612342834473], [3.0546696186065674], [5.536195755004883], [9.862966537475586], [4.004765510559082], [5.8425397872924805], [4.447704315185547], [-0.6341941356658936], [2.1492819786071777], [3.858640432357788], [-0.16555774211883545], [1.9776649475097656], [2.186582565307617], [-1.4714057445526123], [0.6967337131500244], [3.233898639678955], [-1.2461496591567993], [-0.8401325941085815], [1.8324187994003296], [7.203152179718018], [5.551473140716553], [1.8006740808486938], [1.3088958263397217], [-2.932041645050049], [1.6092884540557861]], "normalized_similarities": [[0.25726860761642456], [0.18837076425552368], [-0.1776655912399292], [-0.0702420249581337], [-0.039052702486515045], [-0.06565801799297333], [0.15032893419265747], [0.023378122597932816], [0.3273075222969055], [0.03627527877688408], [-0.03880996257066727], [0.24586987495422363], [0.22835169732570648], [0.17904838919639587], [-0.6202347874641418], [0.13662266731262207], [0.34358832240104675], [0.15244360268115997], [0.15095645189285278], [0.31558671593666077], [0.23298779129981995], [0.4222604036331177], [0.752274751663208], [0.3054541349411011], [0.44562608003616333], [0.3392382562160492], [-0.04837167635560036], [0.1639314591884613], [0.29430878162384033], [-0.01262752991169691], [0.15084177255630493], [0.16677647829055786], [-0.11222803592681885], [0.05314173549413681], [0.2466580718755722], [-0.09504715353250504], [-0.064079150557518], [0.1397634595632553], [0.5494036078453064], [0.4234256446361542], [0.13734221458435059], [0.09983297437429428], [-0.22363463044166565], [0.12274471670389175]], "result_max_similarities": 13.110857009887695, "full_text_display": "\u2191 &quot;Basic Information of Municipality&quot;. Adilabad Municipality. Retrieved 19 September 2015.\n\u2191 \u0968.\u0966 \u0968.\u0967 &quot;District Census Handbook \u2013 Adilabad", "K": 1}, {"id": "result_6", "sample_idx": 3938, "score": 9.549560546875, "highlight_inds": [43], "matched_tokens_str": "2008", "original_pos": 43, "full_sequence_tokens": ["How", " many", " infants", " are", " affected", " by", " or", " at", " risk", " of", " nec", "rot", "izing", " enter", "ocol", "itis", " (", "N", "EC", ")?", "\n", "Lin", ",", " P", ".", " W", ".,", " Nas", "r", ",", " T", ".", " R", ".,", " &amp;", " St", "oll", ",", " B", ".", " J", ".", " (", "2008"], "sequence_similarities": [[-0.17050790786743164], [3.7751903533935547], [0.5815770626068115], [2.686286687850952], [0.8699455857276917], [-1.8302206993103027], [-0.25078344345092773], [-4.3137335777282715], [2.406512498855591], [-1.7885658740997314], [-0.7432969808578491], [-3.9321985244750977], [-0.9937503337860107], [-2.5053293704986572], [-2.3352081775665283], [1.2105557918548584], [2.157046318054199], [1.5633974075317383], [-2.628493309020996], [1.6619402170181274], [-5.739751815795898], [0.4896002411842346], [2.45173978805542], [1.6209485530853271], [2.665637731552124], [2.5029916763305664], [2.4597344398498535], [0.029413700103759766], [-6.192612648010254], [1.797797441482544], [1.3007339239120483], [2.6383137702941895], [2.0921452045440674], [1.428181767463684], [2.6213691234588623], [1.158666968345642], [1.103034257888794], [3.7521770000457764], [2.187703847885132], [0.3260383605957031], [2.7503914833068848], [1.9828293323516846], [1.267456293106079], [9.549560546875]], "normalized_similarities": [[-0.013005092740058899], [0.28794384002685547], [0.04435843229293823], [0.20489023625850677], [0.06635306775569916], [-0.13959580659866333], [-0.019127922132611275], [-0.3290199637413025], [0.1835511177778244], [-0.1364186853170395], [-0.056693241000175476], [-0.2999192476272583], [-0.0757959857583046], [-0.19108814001083374], [-0.17811255156993866], [0.09233231842517853], [0.1645236760377884], [0.11924448609352112], [-0.20048218965530396], [0.1267606019973755], [-0.43778616189956665], [0.037343114614486694], [0.18700072169303894], [0.12363406270742416], [0.20331528782844543], [0.19090984761714935], [0.18761050701141357], [0.0022434613201767206], [-0.4723270535469055], [0.13712279498577118], [0.09921044111251831], [0.2012312263250351], [0.159573495388031], [0.10893122851848602], [0.1999388039112091], [0.08837461471557617], [0.08413136005401611], [0.286188542842865], [0.16686199605464935], [0.024867814034223557], [0.20977969467639923], [0.1512356698513031], [0.09667226672172546], [0.7283704280853271]], "result_max_similarities": 13.110857009887695, "full_text_display": "How many infants are affected by or at risk of necrotizing enterocolitis (NEC)?\nLin, P. W., Nasr, T. R., &amp; Stoll, B. J. (2008", "K": 1}, {"id": "result_7", "sample_idx": 3046, "score": 9.52543830871582, "highlight_inds": [1], "matched_tokens_str": "ASE", "original_pos": 5, "full_sequence_tokens": ["PLE", "ASE", " READ", " THIS", " BE", "FORE", " PR", "INT", "ING", " THE", " CAP", " T", "APE", ".", "\n", "Check", " the", " packaging", " on", " the", " youth", " swim", " caps", " to", " find", " a", " few", " that", " are", " within", " the", " size", " range", " for", " your", " child", "&#x27;s", " head", " circumference", ".", " Typically", ",", " caps", " only"], "sequence_similarities": [[1.0817384719848633], [9.52543830871582], [-2.4521615505218506], [0.2878740429878235], [2.28311824798584], [6.331897258758545], [2.222844123840332], [-8.945695877075195], [-4.803918361663818], [1.8165507316589355], [-2.7723240852355957], [-4.21697473526001], [0.5876790285110474], [-10.818582534790039], [4.202434539794922], [-2.4210243225097656], [-3.9795384407043457], [-0.7512750625610352], [-2.817115306854248], [-5.532259941101074], [-2.94288969039917], [0.43429136276245117], [-2.3669347763061523], [-4.235508918762207], [-4.5862321853637695], [-2.9312326908111572], [-2.667743682861328], [-0.4240191578865051], [-5.585288047790527], [-1.2768135070800781], [-3.3215126991271973], [-0.8426353335380554], [1.0299396514892578], [-1.3392786979675293], [-3.8053956031799316], [1.6727888584136963], [-3.0429277420043945], [-0.46778419613838196], [1.15305757522583], [-0.19128459692001343], [-1.766836404800415], [2.4345850944519043], [0.7007118463516235], [-0.21709728240966797]], "normalized_similarities": [[0.08250707387924194], [0.7265305519104004], [-0.18703289330005646], [0.021956920623779297], [0.17413951456546783], [0.48295068740844727], [0.16954223811626434], [-0.6823120713233948], [-0.3664076626300812], [0.13855315744876862], [-0.21145254373550415], [-0.32163989543914795], [0.044823843985795975], [-0.8251621127128601], [0.32053089141845703], [-0.1846579760313034], [-0.3035300076007843], [-0.057301752269268036], [-0.21486888825893402], [-0.4219602048397064], [-0.22446203231811523], [0.03312455862760544], [-0.18053242564201355], [-0.3230535387992859], [-0.349804162979126], [-0.22357292473316193], [-0.2034759223461151], [-0.03234107047319412], [-0.4260047972202301], [-0.0973859652876854], [-0.25334063172340393], [-0.06427004188299179], [0.07855623960494995], [-0.10215035825967789], [-0.2902476489543915], [0.12758806347846985], [-0.23209220170974731], [-0.03567914664745331], [0.08794677257537842], [-0.014589785598218441], [-0.13476131856441498], [0.18569229543209076], [0.05344516038894653], [-0.016558587551116943]], "result_max_similarities": 13.110857009887695, "full_text_display": "PLEASE READ THIS BEFORE PRINTING THE CAP TAPE.\nCheck the packaging on the youth swim caps to find a few that are within the size range for your child&#x27;s head circumference. Typically, caps only", "K": 1}, {"id": "result_8", "sample_idx": 9397, "score": 9.465446472167969, "highlight_inds": [21], "matched_tokens_str": " rights", "original_pos": 21, "full_sequence_tokens": ["necessary", " to", " promote", " a", " financially", " and", " environmentally", " sustainable", " future", ".", "\n", "\u00a9", "2017", " Pione", "er", " Green", " Energy", ",", " LLC", ".", " All", " rights", " reserved", ".", "\n", "or", " affiliated", " with", " any", " of", " the", " companies", " owning", " projects", " referenced", " herein", "."], "sequence_similarities": [[-10.949747085571289], [-0.2202620506286621], [-0.5572391748428345], [-2.291067123413086], [-6.495555400848389], [-5.102205753326416], [-3.5358903408050537], [-2.1860880851745605], [-5.033181190490723], [-11.362796783447266], [4.186460494995117], [3.868626832962036], [4.957462787628174], [0.8238266706466675], [-1.9459973573684692], [-0.509384036064148], [2.3723230361938477], [6.2702531814575195], [6.748453140258789], [3.9111833572387695], [6.9375715255737305], [9.465446472167969], [6.549381256103516], [3.9286911487579346], [5.196041107177734], [2.963874578475952], [2.278271436691284], [1.6289021968841553], [1.6852753162384033], [6.148936748504639], [3.960930347442627], [-0.8251902461051941], [-1.3937640190124512], [-1.8359096050262451], [0.2688528299331665], [2.6397151947021484], [2.02335786819458]], "normalized_similarities": [[-0.8351663947105408], [-0.01679997332394123], [-0.04250211641192436], [-0.17474579811096191], [-0.49543333053588867], [-0.38915881514549255], [-0.2696917653083801], [-0.16673876345157623], [-0.383894145488739], [-0.8666707873344421], [0.3193124830722809], [0.29507046937942505], [0.3781189024448395], [0.0628354549407959], [-0.14842639863491058], [-0.03885207697749138], [0.18094339966773987], [0.4782489240169525], [0.5147225260734558], [0.2983163893222809], [0.5291470885276794], [0.7219548225402832], [0.49953874945640564], [0.29965174198150635], [0.39631590247154236], [0.22606261074543], [0.17376983165740967], [0.12424071133136749], [0.12854044139385223], [0.4689957797527313], [0.3021107017993927], [-0.06293945759534836], [-0.10630609840154648], [-0.14002971351146698], [0.0205061212182045], [0.20133811235427856], [0.1543269008398056]], "result_max_similarities": 13.110857009887695, "full_text_display": "necessary to promote a financially and environmentally sustainable future.\n\u00a92017 Pioneer Green Energy, LLC. All rights reserved.\nor affiliated with any of the companies owning projects referenced herein.", "K": 1}, {"id": "result_9", "sample_idx": 15948, "score": 9.424306869506836, "highlight_inds": [7], "matched_tokens_str": ";", "original_pos": 12, "full_sequence_tokens": ["Last", " edited", " by", " Steve", " Sh", "aug", "er", ";", " 07", "-", "03", "-", "2018", " at", " 01", ":", "00", " PM", ".", "\n", "Nice", " shirt", "!", " Dam", "n", " fine", " shade", " of", " purple", " on", " the", " car", ".", "\n", "Hey", " I", " finally", " can", " sign", " up", "!!", " Thank", " You", " everybody"], "sequence_similarities": [[-3.3981735706329346], [2.9599111080169678], [5.818721294403076], [3.5094642639160156], [-1.9035429954528809], [-0.04770076274871826], [-4.137516498565674], [9.424306869506836], [8.258077621459961], [6.216706275939941], [2.947160243988037], [-1.4004648923873901], [5.112151145935059], [4.154189586639404], [0.9430426359176636], [1.7943878173828125], [-0.19484472274780273], [5.367945671081543], [-8.004915237426758], [5.4334211349487305], [2.348964214324951], [2.6836869716644287], [2.492096185684204], [-0.10685718059539795], [-1.7627298831939697], [-1.7827092409133911], [2.3481359481811523], [-3.2663891315460205], [0.7804481983184814], [-2.059786081314087], [-2.245083808898926], [-1.1119892597198486], [0.23183977603912354], [3.2352724075317383], [1.6412819623947144], [3.10927677154541], [2.129267454147339], [-1.038780689239502], [0.8868395090103149], [-3.6676793098449707], [1.73085355758667], [1.2494761943817139], [2.0318307876586914], [3.076467514038086]], "normalized_similarities": [[-0.2591877579689026], [0.2257603108882904], [0.4438093900680542], [0.2676762044429779], [-0.14518830180168152], [-0.0036382642574608326], [-0.3155794143676758], [0.7188169956207275], [0.6298655867576599], [0.474164754152298], [0.22478777170181274], [-0.10681718587875366], [0.38991740345954895], [0.31685110926628113], [0.07192837446928024], [0.13686273992061615], [-0.014861325733363628], [0.4094275236129761], [-0.6105562448501587], [0.4144214987754822], [0.17916175723075867], [0.20469196140766144], [0.19007880985736847], [-0.008150282315909863], [-0.1344481110572815], [-0.13597197830677032], [0.17909859120845795], [-0.24913620948791504], [0.05952686443924904], [-0.15710537135601044], [-0.17123852670192719], [-0.08481438457965851], [0.017683036625385284], [0.24676284193992615], [0.12518495321273804], [0.2371528297662735], [0.16240490972995758], [-0.07923056930303574], [0.06764161586761475], [-0.27974367141723633], [0.13201680779457092], [0.09530087560415268], [0.15497314929962158], [0.2346503734588623]], "result_max_similarities": 13.110857009887695, "full_text_display": "Last edited by Steve Shauger; 07-03-2018 at 01:00 PM.\nNice shirt! Damn fine shade of purple on the car.\nHey I finally can sign up!! Thank You everybody", "K": 1}, {"id": "result_10", "sample_idx": 16778, "score": 9.388315200805664, "highlight_inds": [22], "matched_tokens_str": " presented", "original_pos": 22, "full_sequence_tokens": ["An", " assay", " on", " the", " flow", " analysis", " of", " pg", " mL", " -", "1", " level", " ka", "emp", "fer", "ol", " with", " chem", "il", "uminescence", " detection", " was", " presented", " in", " this", " paper", ".", " It", " was", " found", " that", " the", " chem", "il", "uminescence", " intensity", " from", " the", " oxidation", " reaction", " between", " lumin", "ol", " and"], "sequence_similarities": [[-7.274775505065918], [0.7673944234848022], [-0.5617473125457764], [-3.7445263862609863], [-4.4703216552734375], [1.1816296577453613], [-0.504278302192688], [-2.6062331199645996], [1.009124517440796], [-1.743666648864746], [-1.9883595705032349], [-2.108372926712036], [-5.310009956359863], [1.1145453453063965], [-2.885488510131836], [-0.6212178468704224], [-3.7365028858184814], [-0.8884761333465576], [-5.703277111053467], [0.6557644605636597], [-0.9771589636802673], [2.246643304824829], [9.388315200805664], [2.6298470497131348], [-2.671992301940918], [4.441603660583496], [-8.677481651306152], [2.4777212142944336], [-0.4027268886566162], [5.067885398864746], [3.4581687450408936], [1.000870943069458], [0.7296519875526428], [-4.5046491622924805], [2.2361364364624023], [0.80064857006073], [-1.9301660060882568], [-0.8764011263847351], [-0.7184536457061768], [-3.6920881271362305], [-2.6315948963165283], [-0.02458512783050537], [0.17198747396469116], [-4.002914905548096]], "normalized_similarities": [[-0.5548664927482605], [0.05853121727705002], [-0.042845964431762695], [-0.2856050133705139], [-0.34096333384513855], [0.09012604504823685], [-0.038462650030851364], [-0.19878435134887695], [0.07696861773729324], [-0.13299410045146942], [-0.15165747702121735], [-0.16081121563911438], [-0.40500861406326294], [0.08500934392213821], [-0.22008389234542847], [-0.047381941229104996], [-0.2849930226802826], [-0.06776644289493561], [-0.4350041449069977], [0.05001690238714218], [-0.07453051954507828], [0.17135746777057648], [0.7160718441009521], [0.20058543980121613], [-0.20379997789859772], [0.3387729525566101], [-0.66185462474823], [0.18898239731788635], [-0.03071705251932144], [0.38654112815856934], [0.26376375555992126], [0.07633909583091736], [0.05565250292420387], [-0.34358158707618713], [0.17055608332157135], [0.061067599803209305], [-0.14721889793872833], [-0.06684544682502747], [-0.05479837581515312], [-0.28160539269447327], [-0.20071876049041748], [-0.0018751731840893626], [0.013117942959070206], [-0.30531299114227295]], "result_max_similarities": 13.110857009887695, "full_text_display": "An assay on the flow analysis of pg mL -1 level kaempferol with chemiluminescence detection was presented in this paper. It was found that the chemiluminescence intensity from the oxidation reaction between luminol and", "K": 1}, {"id": "result_11", "sample_idx": 671, "score": 9.365423202514648, "highlight_inds": [7], "matched_tokens_str": " reviewed", "original_pos": 7, "full_sequence_tokens": ["L", "ak", "eland", " Nursing", " &amp;", " Rehabilitation", " was", " reviewed", " by", " Medicare", " to", " have", " a", " rating", " of", " 3", " out", " of", " 5", " stars", ".", "\n", "Med", "ic", "are", " determines", " the", " expected", " staff", "ing", " time", " per", " resident", " per", " day", " depending", " on", " level", " of", " care", " the", " residents", " of", " Lak"], "sequence_similarities": [[-5.475026607513428], [-4.549896240234375], [-0.7873708009719849], [-6.107034206390381], [-2.8702688217163086], [-6.532890319824219], [2.0344438552856445], [9.365423202514648], [-0.07826876640319824], [-5.589793682098389], [-2.459123134613037], [2.321014404296875], [0.26106393337249756], [-3.9445862770080566], [-0.4389617443084717], [-0.15516585111618042], [-0.17275702953338623], [-3.9188356399536133], [-4.111455917358398], [1.6404746770858765], [-9.554352760314941], [3.179922342300415], [-0.5483040809631348], [2.366093158721924], [0.5405056476593018], [0.6187717914581299], [-1.7083137035369873], [-2.744734764099121], [-0.39728444814682007], [-1.7829890251159668], [-1.197387933731079], [-0.8134133219718933], [-0.6522713899612427], [-2.3514366149902344], [-2.707789897918701], [-0.5077292919158936], [0.9288761615753174], [0.8715964555740356], [0.29388153553009033], [-1.7730848789215088], [-2.5974085330963135], [-0.6712298393249512], [-2.6720824241638184], [-2.65020489692688]], "normalized_similarities": [[-0.41759487986564636], [-0.34703269600868225], [-0.06005486845970154], [-0.4657997786998749], [-0.21892304718494415], [-0.49828094244003296], [0.1551724523305893], [0.7143257856369019], [-0.0059697674587368965], [-0.4263484477996826], [-0.18756388127803802], [0.17702995240688324], [0.01991204172372818], [-0.3008641004562378], [-0.03348078206181526], [-0.011834912933409214], [-0.013176638633012772], [-0.2989000380039215], [-0.31359168887138367], [0.12512338161468506], [-0.7287359237670898], [0.2425411492586136], [-0.04182061180472374], [0.18046823143959045], [0.04122580587863922], [0.047195374965667725], [-0.13029763102531433], [-0.20934823155403137], [-0.03030194342136383], [-0.13599331676959991], [-0.091327965259552], [-0.06204120069742203], [-0.04975047707557678], [-0.1793503314256668], [-0.2065303474664688], [-0.03872586786746979], [0.07084786146879196], [0.06647898256778717], [0.022415127605199814], [-0.1352379024028778], [-0.19811126589775085], [-0.05119648948311806], [-0.20380684733390808], [-0.20213818550109863]], "result_max_similarities": 13.110857009887695, "full_text_display": "Lakeland Nursing &amp; Rehabilitation was reviewed by Medicare to have a rating of 3 out of 5 stars.\nMedicare determines the expected staffing time per resident per day depending on level of care the residents of Lak", "K": 1}, {"id": "result_12", "sample_idx": 18745, "score": 9.260108947753906, "highlight_inds": [20], "matched_tokens_str": " charged", "original_pos": 20, "full_sequence_tokens": ["Have", " you", " been", " arrested", " for", " Domestic", " Battery", " in", " Jacksonville", " or", " another", " town", " or", " city", " in", " Florida", "?", " Have", " you", " been", " charged", " with", " Domestic", " Battery", " in", " Du", "val", ",", " Clay", ",", " St", ".", " Johns", ",", " or", " Nass", "au", " County", "?", " Any", " Jacksonville", " Domestic", " Battery", " Law"], "sequence_similarities": [[-0.32466602325439453], [0.7524925470352173], [-1.879501223564148], [2.432650089263916], [1.8241055011749268], [-2.365177631378174], [-3.6647701263427734], [-2.041574239730835], [-0.15309202671051025], [0.7029856443405151], [-1.7333476543426514], [1.3463528156280518], [2.670391798019409], [2.9509236812591553], [0.46567559242248535], [4.112372398376465], [-0.16388463973999023], [0.20184564590454102], [1.579431414604187], [0.7960872650146484], [9.260108947753906], [2.6181976795196533], [-2.5158960819244385], [-2.9172191619873047], [-0.2612924575805664], [0.22604131698608398], [-5.358565807342529], [1.6665024757385254], [-1.657006025314331], [-0.5546823143959045], [-1.294543743133545], [-6.366667747497559], [0.5078557729721069], [-1.0347987413406372], [0.7235575914382935], [-0.3220186233520508], [-0.9493903517723083], [1.332002878189087], [0.5873605012893677], [1.053078293800354], [2.853869676589966], [-2.1120522022247314], [-2.8663272857666016], [2.3550198078155518]], "normalized_similarities": [[-0.024763142690062523], [0.057394612580537796], [-0.14335456490516663], [0.1855446994304657], [0.1391293853521347], [-0.18039840459823608], [-0.27952179312705994], [-0.15571630001068115], [-0.011676737107336521], [0.05361858755350113], [-0.13220705091953278], [0.10268991440534592], [0.20367789268493652], [0.22507481276988983], [0.03551831841468811], [0.3136616051197052], [-0.012499918229877949], [0.01539530511945486], [0.12046743929386139], [0.060719698667526245], [0.7062931656837463], [0.19969691336154938], [-0.19189409911632538], [-0.22250407934188843], [-0.019929472357034683], [0.017240773886442184], [-0.40871208906173706], [0.1271085888147354], [-0.12638425827026367], [-0.04230709746479988], [-0.09873829782009125], [-0.4856027066707611], [0.038735512644052505], [-0.07892685383558273], [0.055187664926052094], [-0.024561218917369843], [-0.07241253554821014], [0.10159540921449661], [0.044799551367759705], [0.08032108843326569], [0.21767224371433258], [-0.1610918492078781], [-0.21862241625785828], [0.17962363362312317]], "result_max_similarities": 13.110857009887695, "full_text_display": "Have you been arrested for Domestic Battery in Jacksonville or another town or city in Florida? Have you been charged with Domestic Battery in Duval, Clay, St. Johns, or Nassau County? Any Jacksonville Domestic Battery Law", "K": 1}, {"id": "result_13", "sample_idx": 5051, "score": 9.225635528564453, "highlight_inds": [28], "matched_tokens_str": " 2003", "original_pos": 28, "full_sequence_tokens": ["Past", "or", "-", "S", "ator", "ras", " R", ",", " Smith", " ED", ",", " Sol", "\u00e9", " RV", ".", " Ev", "olving", " protein", " interaction", " networks", " through", " gene", " duplication", ".", " J", " The", "or", " Biol", " 2003", ";", " 222", ":", " 199", "-", "210", "."], "sequence_similarities": [[-6.102567672729492], [0.7561405897140503], [-2.821654796600342], [0.8950974941253662], [-4.102334022521973], [-1.1298565864562988], [-0.22836875915527344], [1.6988115310668945], [-1.1318166255950928], [-0.4397139549255371], [1.2528252601623535], [-2.3976147174835205], [-1.4804149866104126], [-1.5649101734161377], [-10.507355690002441], [0.8310959339141846], [-0.7081127166748047], [0.44965821504592896], [-0.9168217778205872], [-0.24399268627166748], [-1.9564212560653687], [0.8695670962333679], [-1.7599393129348755], [2.36551570892334], [2.5324249267578125], [0.6776182651519775], [-5.251649856567383], [0.16776704788208008], [9.225635528564453], [3.052793025970459], [5.4590229988098145], [4.012040615081787], [4.995863914489746], [3.5491483211517334], [0.9658843874931335], [3.3371472358703613]], "normalized_similarities": [[-0.46545910835266113], [0.057672858238220215], [-0.21521513164043427], [0.06827147305011749], [-0.3128959536552429], [-0.08617717027664185], [-0.01741829328238964], [0.12957288324832916], [-0.08632667362689972], [-0.033538155257701874], [0.09555631875991821], [-0.1828724592924118], [-0.11291519552469254], [-0.11935986578464508], [-0.8014240264892578], [0.06338990479707718], [-0.05400964245200157], [0.034296631813049316], [-0.06992843747138977], [-0.018609972670674324], [-0.14922146499156952], [0.06632419675588608], [-0.13423526287078857], [0.18042418360710144], [0.19315479695796967], [0.05168375000357628], [-0.40055733919143677], [0.012796039693057537], [0.7036638259887695], [0.23284466564655304], [0.41637423634529114], [0.3060090243816376], [0.3810478448867798], [0.270702987909317], [0.07367057353258133], [0.2545331120491028]], "result_max_similarities": 13.110857009887695, "full_text_display": "Pastor-Satorras R, Smith ED, Sol\u00e9 RV. Evolving protein interaction networks through gene duplication. J Theor Biol 2003; 222: 199-210.", "K": 1}, {"id": "result_14", "sample_idx": 5706, "score": 9.222909927368164, "highlight_inds": [26], "matched_tokens_str": " investigated", "original_pos": 26, "full_sequence_tokens": ["The", " effect", " of", " inoculation", " dose", " of", " S", "arc", "ocyst", "is", " neur", "ona", " spor", "ocy", "sts", " on", " the", " development", " of", " clinical", " neurolog", "ic", " disease", " in", " horses", " was", " investigated", ".", " Twenty", "-", "four", " ser", "one", "g", "ative", " we", "an", "ling", " horses", " were", " subjected", " to", " the", " natural"], "sequence_similarities": [[-5.08426570892334], [-0.05773758888244629], [-3.7558541297912598], [-0.04107034206390381], [-0.8242652416229248], [0.48501038551330566], [1.1168718338012695], [4.666120529174805], [-1.4814202785491943], [0.7180570363998413], [0.3053317070007324], [-1.2820886373519897], [1.1383068561553955], [2.0686919689178467], [1.9313249588012695], [-1.0961984395980835], [-3.632826805114746], [-1.3208060264587402], [-2.9029784202575684], [-0.1002545952796936], [2.724402904510498], [2.193683385848999], [1.2639292478561401], [0.8826556205749512], [0.23880630731582642], [3.445669174194336], [9.222909927368164], [-7.015763759613037], [3.343325138092041], [9.182589530944824], [6.011255741119385], [3.6665802001953125], [-3.6259002685546875], [-0.8591222167015076], [1.5471336841583252], [0.880363941192627], [-1.0311740636825562], [-3.588186740875244], [2.5477142333984375], [3.479624032974243], [7.547228813171387], [-1.9839568138122559], [0.1273576319217682], [-3.2585225105285645]], "normalized_similarities": [[-0.3877905011177063], [-0.004403799772262573], [-0.2864690124988556], [-0.003132544457912445], [-0.06286890804767609], [0.036993034183979034], [0.08518679440021515], [0.355897456407547], [-0.11299186944961548], [0.05476812273263931], [0.023288462311029434], [-0.09778831899166107], [0.08682169765233994], [0.15778465569019318], [0.14730730652809143], [-0.08360997587442398], [-0.27708539366722107], [-0.10074139386415482], [-0.22141790390014648], [-0.007646685000509024], [0.20779746770858765], [0.16731807589530945], [0.09640324860811234], [0.0673224925994873], [0.0182143934071064], [0.2628103792667389], [0.703455924987793], [-0.5351110100746155], [0.25500431656837463], [0.7003805637359619], [0.45849448442459106], [0.27965983748435974], [-0.2765570878982544], [-0.06552754342556], [0.11800400912761688], [0.06714770197868347], [-0.07865039259195328], [-0.27368056774139404], [0.194320946931839], [0.2654002010822296], [0.575647234916687], [-0.151321679353714], [0.009713905863463879], [-0.24853619933128357]], "result_max_similarities": 13.110857009887695, "full_text_display": "The effect of inoculation dose of Sarcocystis neurona sporocysts on the development of clinical neurologic disease in horses was investigated. Twenty-four seronegative weanling horses were subjected to the natural", "K": 1}, {"id": "result_15", "sample_idx": 9864, "score": 9.181941986083984, "highlight_inds": [42], "matched_tokens_str": " 2008", "original_pos": 42, "full_sequence_tokens": ["How", " Much", " Does", " Meat", ",", " Fish", ",", " and", " P", "oultry", " Ra", "ise", " Breast", " Cancer", " Risk", "?", "\n", "How", " Much", " Do", " Meat", ",", " Fish", ",", " and", " P", "oultry", " Ra", "ise", " Breast", " Cancer", " Risk", "?", "\n", "Source", ":", " European", " Journal", " of", " Cancer", " Prevention", ",", " 2008", "."], "sequence_similarities": [[-0.17050790786743164], [3.4831995964050293], [-5.102705955505371], [-0.18387210369110107], [1.5592334270477295], [-3.6469407081604004], [-1.8358176946640015], [-2.633012056350708], [-3.5648651123046875], [-0.14179635047912598], [-1.0770721435546875], [-1.6635342836380005], [-2.898733615875244], [-3.1170074939727783], [1.5365281105041504], [2.736893653869629], [-4.233030319213867], [0.7298448085784912], [0.9816728830337524], [-1.5894368886947632], [0.488122820854187], [1.086348533630371], [-2.2645058631896973], [-0.6404758095741272], [-1.2798292636871338], [-1.5066478252410889], [0.8305013179779053], [0.5200467109680176], [-0.6088420152664185], [-1.1020524501800537], [-0.9519758224487305], [2.9337353706359863], [1.549095869064331], [3.127504825592041], [1.2837684154510498], [3.3184876441955566], [4.699950695037842], [6.281672954559326], [-0.902226448059082], [0.8249199986457825], [2.0366692543029785], [3.0480971336364746], [9.181941986083984], [3.1249101161956787]], "normalized_similarities": [[-0.013005092740058899], [0.2656729221343994], [-0.3891969919204712], [-0.01402441505342722], [0.11892689019441605], [-0.278161883354187], [-0.14002270996570587], [-0.20082683861255646], [-0.2719017565250397], [-0.010815185494720936], [-0.08215115964412689], [-0.12688219547271729], [-0.22109413146972656], [-0.23774246871471405], [0.11719509214162827], [0.2087501734495163], [-0.32286450266838074], [0.0556672066450119], [0.07487480342388153], [-0.1212305873632431], [0.03723042830824852], [0.08285869657993317], [-0.17271989583969116], [-0.04885079711675644], [-0.09761598706245422], [-0.11491604149341583], [0.0633445456624031], [0.0396653488278389], [-0.04643800109624863], [-0.08405647426843643], [-0.07260973006486893], [0.22376380860805511], [0.11815366894006729], [0.23854312300682068], [0.09791643917560577], [0.2531099021434784], [0.35847777128219604], [0.4791199266910553], [-0.068815216422081], [0.06291884928941727], [0.1553421914577484], [0.23248648643493652], [0.7003312110900879], [0.2383452206850052]], "result_max_similarities": 13.110857009887695, "full_text_display": "How Much Does Meat, Fish, and Poultry Raise Breast Cancer Risk?\nHow Much Do Meat, Fish, and Poultry Raise Breast Cancer Risk?\nSource: European Journal of Cancer Prevention, 2008.", "K": 1}, {"id": "result_16", "sample_idx": 4030, "score": 9.121626853942871, "highlight_inds": [40], "matched_tokens_str": " PDF", "original_pos": 40, "full_sequence_tokens": ["Download", " Book", " Z", "oned", " Out", " Regulation", " Markets", " And", " Cho", "ices", " In", " Transportation", " And", " Metropolitan", " Land", " Use", " in", " PDF", " format", ".", " You", " can", " Read", " Online", " Z", "oned", " Out", " Regulation", " Markets", " And", " Cho", "ices", " In", " Transportation", " And", " Metropolitan", " Land", " Use", " here", " in", " PDF", ",", " E", "PU"], "sequence_similarities": [[-5.598266124725342], [-8.386735916137695], [-2.094691753387451], [-3.7058982849121094], [-6.507136344909668], [-5.183009624481201], [-7.530782699584961], [-2.4227123260498047], [-6.100270748138428], [-1.2222092151641846], [-0.7973297834396362], [-3.8240225315093994], [-1.8568387031555176], [-5.459321975708008], [-2.656914710998535], [-1.5068081617355347], [4.132851600646973], [6.276127338409424], [5.495038032531738], [-9.194808959960938], [2.94244647026062], [0.7675453424453735], [6.595432758331299], [3.3705005645751953], [1.8711683750152588], [-2.6164889335632324], [-1.2442841529846191], [1.9058022499084473], [-0.8629999160766602], [3.081822633743286], [-1.897209882736206], [1.8110182285308838], [2.2656733989715576], [-0.8915380835533142], [1.3012914657592773], [-1.6293230056762695], [-2.3154349327087402], [0.13405799865722656], [6.792379379272461], [1.873741626739502], [9.121626853942871], [4.329342842102051], [1.9429759979248047], [1.4210920333862305]], "normalized_similarities": [[-0.4269946813583374], [-0.6396787166595459], [-0.15976771712303162], [-0.28265872597694397], [-0.4963166415691376], [-0.39532196521759033], [-0.5743928551673889], [-0.18478672206401825], [-0.46528390049934387], [-0.09322115033864975], [-0.06081446632742882], [-0.2916683852672577], [-0.1416260302066803], [-0.4163970351219177], [-0.20264996588230133], [-0.11492827534675598], [0.3152236044406891], [0.47869694232940674], [0.4191212058067322], [-0.7013126015663147], [0.2244282364845276], [0.058542728424072266], [0.503051221370697], [0.25707706809043884], [0.14271900057792664], [-0.19956658780574799], [-0.09490486979484558], [0.14536061882972717], [-0.06582330167293549], [0.23505882918834686], [-0.14470525085926056], [0.13813118636608124], [0.1728089451789856], [-0.06799998879432678], [0.09925296902656555], [-0.12427280843257904], [-0.17660439014434814], [0.010224960744380951], [0.5180729031562805], [0.1429152637720108], [0.6957308053970337], [0.33021050691604614], [0.14819595217704773], [0.10839047282934189]], "result_max_similarities": 13.110857009887695, "full_text_display": "Download Book Zoned Out Regulation Markets And Choices In Transportation And Metropolitan Land Use in PDF format. You can Read Online Zoned Out Regulation Markets And Choices In Transportation And Metropolitan Land Use here in PDF, EPU", "K": 1}, {"id": "result_17", "sample_idx": 6144, "score": 9.121057510375977, "highlight_inds": [31], "matched_tokens_str": " 2011", "original_pos": 31, "full_sequence_tokens": ["6", "\ufffd", "\ufffd", " Sim", "ulation", " of", " the", " impact", " of", " seats", " on", " interior", " noise", " field", " in", " passenger", " compartment", " cavity", ".", " 2011", " International", " Conference", " on", " Electric", " Information", " and", " Control", " Engineering", ",", " ICE", "ICE", " 2011", "-", " Proceedings", ",", " v", " 6", ",", " p", "53", "14", "-", "53", "17"], "sequence_similarities": [[-15.79178237915039], [-6.298984527587891], [-0.8678450584411621], [-1.0546979904174805], [-1.93300199508667], [0.15251362323760986], [-1.3144559860229492], [-0.2093353569507599], [-3.2171921730041504], [-1.001421570777893], [-4.118495464324951], [-1.9339262247085571], [-0.19644218683242798], [-2.063889503479004], [-0.4363986551761627], [-3.3357999324798584], [-3.0390102863311768], [-0.37538576126098633], [-11.064153671264648], [6.32606840133667], [3.35693359375], [6.184391975402832], [1.594005823135376], [0.6067522764205933], [3.72691011428833], [0.369473934173584], [-0.9493317604064941], [4.403042793273926], [6.268563747406006], [1.0110282897949219], [2.062300682067871], [9.121057510375977], [2.770610809326172], [6.155815124511719], [6.813083648681641], [1.3682225942611694], [0.9144346714019775], [0.3686983585357666], [0.8742074370384216], [0.6931288242340088], [-0.11336255073547363], [0.334197998046875], [-2.061337471008301], [-5.38878059387207]], "normalized_similarities": [[-1.2044813632965088], [-0.4804403483867645], [-0.0661928579211235], [-0.08044462651014328], [-0.14743521809577942], [0.011632620356976986], [-0.10025706142187119], [-0.015966566279530525], [-0.24538381397724152], [-0.07638109475374222], [-0.3141286373138428], [-0.14750570058822632], [-0.014983168803155422], [-0.157418355345726], [-0.033285290002822876], [-0.25443035364151], [-0.23179341852664948], [-0.028631672263145447], [-0.8438924551010132], [0.4825060963630676], [0.2560422718524933], [0.4717000424861908], [0.12157907336950302], [0.046278614550828934], [0.2842613756656647], [0.028180761262774467], [-0.07240806519985199], [0.33583182096481323], [0.4781200587749481], [0.07711382210254669], [0.15729716420173645], [0.6956873536109924], [0.2113218754529953], [0.4695204198360443], [0.5196520686149597], [0.10435798019170761], [0.06974636763334274], [0.02812160551548004], [0.06667812913656235], [0.05286678299307823], [-0.008646463975310326], [0.0254901722073555], [-0.15722370147705078], [-0.41101664304733276]], "result_max_similarities": 13.110857009887695, "full_text_display": "6\uff0e Simulation of the impact of seats on interior noise field in passenger compartment cavity. 2011 International Conference on Electric Information and Control Engineering, ICEICE 2011- Proceedings, v 6, p5314-5317", "K": 1}, {"id": "result_18", "sample_idx": 15780, "score": 9.084662437438965, "highlight_inds": [5], "matched_tokens_str": " of", "original_pos": 5, "full_sequence_tokens": ["Rose", " quartz", " pendant", " is", " made", " of", " polished", " ster", "ling", " silver", ".", " Item", " size", ":", " 3", "/", "4", "in", " tall", " by", " 5", "/", "8", "in", " wide", ".", " This", " item", " is", " the", " size", " of", " a", " penny", ".", " Weight", ":", " 3", ".", "5", " grams", ".", " Import", "."], "sequence_similarities": [[-4.839902877807617], [-6.836986541748047], [-4.481497287750244], [2.055788278579712], [8.44580078125], [9.084662437438965], [0.0577397346496582], [-5.019830703735352], [-0.778601884841919], [-1.2021783590316772], [-9.140279769897461], [1.320862054824829], [4.227731704711914], [3.5075182914733887], [3.8827919960021973], [1.0975136756896973], [0.26140785217285156], [-2.726850986480713], [-1.7719013690948486], [-0.43209391832351685], [-0.7315137386322021], [-2.1145143508911133], [-0.8117119073867798], [-3.276210308074951], [-0.4668543338775635], [2.202169418334961], [1.2143688201904297], [1.4921547174453735], [0.4697084426879883], [-2.878199815750122], [0.8120941519737244], [1.3837127685546875], [1.2047621011734009], [-1.9646456241607666], [1.8569583892822266], [3.772958278656006], [3.579101085662842], [3.6441731452941895], [1.1692428588867188], [2.1077165603637695], [0.8650587797164917], [0.7688925266265869], [-3.523434638977051], [-0.3030973970890045]], "normalized_similarities": [[-0.3691522777080536], [-0.5214751958847046], [-0.3418157398700714], [0.15680044889450073], [0.6441837549209595], [0.6929113864898682], [0.004403963219374418], [-0.38287585973739624], [-0.05938604101538658], [-0.09169334918260574], [-0.6971535086631775], [0.10074567049741745], [0.3224603533744812], [0.2675277590751648], [0.29615089297294617], [0.08371029049158096], [0.0199382733553648], [-0.20798419415950775], [-0.13514764606952667], [-0.03295695409178734], [-0.055794503539800644], [-0.16127964854240417], [-0.06191143020987511], [-0.24988529086112976], [-0.03560822457075119], [0.16796532273292542], [0.09262314438819885], [0.11381061375141144], [0.03582591563463211], [-0.2195279747247696], [0.06194058433175087], [0.1055394634604454], [0.09189041703939438], [-0.14984875917434692], [0.14163516461849213], [0.28777357935905457], [0.27298757433891296], [0.27795079350471497], [0.08918126672506332], [0.16076116263866425], [0.06598033756017685], [0.05864548310637474], [-0.26874175667762756], [-0.023118047043681145]], "result_max_similarities": 13.110857009887695, "full_text_display": "Rose quartz pendant is made of polished sterling silver. Item size: 3/4in tall by 5/8in wide. This item is the size of a penny. Weight: 3.5 grams. Import.", "K": 1}, {"id": "result_19", "sample_idx": 11121, "score": 9.07316780090332, "highlight_inds": [26], "matched_tokens_str": " recorded", "original_pos": 18, "full_sequence_tokens": ["Abstract", ":", " A", " taxonomic", " study", " on", " the", " genus", " Sc", "el", "iph", "ron", " Kl", "ug", " in", " northern", " Vietnam", " is", " presented", ".", " A", " total", " of", " 3", " species", " are", " recorded", ":", " S", ".", " deform", "e", " deform", "e", " (", "F", ".", " Smith", ",", " 18", "56", ");", " S", "."], "sequence_similarities": [[-1.623222827911377], [-0.5269027948379517], [-0.839612603187561], [1.1574177742004395], [0.9499003291130066], [-0.441307932138443], [-2.7463173866271973], [2.0323610305786133], [1.463991403579712], [-2.652648687362671], [0.5318549871444702], [0.475616455078125], [1.6246998310089111], [-4.019097328186035], [-1.0205615758895874], [1.3452855348587036], [6.203935146331787], [3.3857343196868896], [7.027102470397949], [-8.249247550964355], [3.265669345855713], [1.6144373416900635], [4.105386734008789], [2.669670820236206], [5.306826114654541], [4.608600616455078], [9.07316780090332], [3.0832595825195312], [4.508440017700195], [6.921571731567383], [0.17843687534332275], [3.1383776664733887], [-1.1253036260604858], [2.602796792984009], [2.7864432334899902], [2.6732308864593506], [4.301783561706543], [0.856868326663971], [2.7809031009674072], [2.2562732696533203], [2.7194886207580566], [1.7187414169311523], [2.286374092102051], [4.2776408195495605]], "normalized_similarities": [[-0.12380752712488174], [-0.04018827900290489], [-0.06403949111700058], [0.08827933669090271], [0.07245142757892609], [-0.03365973010659218], [-0.20946894586086273], [0.15501359105110168], [0.11166252195835114], [-0.20232458412647247], [0.04056599736213684], [0.03627653419971466], [0.12392018735408783], [-0.30654725432395935], [-0.07784095406532288], [0.10260850936174393], [0.47319066524505615], [0.2582389712333679], [0.5359758138656616], [-0.6291921138763428], [0.2490812987089157], [0.12313743680715561], [0.313128799200058], [0.20362290740013123], [0.4047657549381256], [0.35151025652885437], [0.6920346617698669], [0.2351684272289276], [0.34387072920799255], [0.5279267430305481], [0.013609856367111206], [0.23937243223190308], [-0.08582990616559982], [0.19852223992347717], [0.21252945065498352], [0.20389443635940552], [0.3281084895133972], [0.06535562872886658], [0.2121068835258484], [0.17209197580814362], [0.2074226438999176], [0.13109298050403595], [0.1743878424167633], [0.3262670636177063]], "result_max_similarities": 13.110857009887695, "full_text_display": "Abstract: A taxonomic study on the genus Sceliphron Klug in northern Vietnam is presented. A total of 3 species are recorded: S. deforme deforme (F. Smith, 1856); S.", "K": 1}];
+    const globalMaxSequenceSimilarity = [13.110857009887695];
+    const tooltip = document.getElementById('tooltip');
+    let isNormalized = true;
+    let currentThreshold = 0.0;
+
+    function htmlDecode(input) {
+        const doc = new DOMParser().parseFromString(input, "text/html");
+        return doc.documentElement.textContent;
+    }
+
+    function getColorForSimilarity(sim, maxSim, isNormalizedMode = false, threshold = 0.0) {
+        if (sim === -Infinity || maxSim <= 0) {
+            return { backgroundColor: '#f8f9fa', color: '#6c757d' };
+        }
+
+        // Apply threshold cutoff - if below threshold, return transparent/no color
+        if (sim <= threshold) {
+            return { backgroundColor: 'transparent', color: '#6c757d' };
+        }
+
+        let t;
+        if (isNormalizedMode) {
+            // In normalized mode, use a more sensitive scale since values are 0-1
+            // Apply a power function to make smaller differences more visible
+            const normalizedT = Math.max(0, Math.min(1, sim / maxSim));
+            t = Math.pow(normalizedT, 0.7); // Makes mid-range values more visible
+        } else {
+            // In raw mode, use linear scaling
+            t = Math.max(0, Math.min(1, sim / maxSim));
+        }
+
+        let r, g, b;
+        if (isNormalizedMode) {
+            // Use white to red gradient for normalized mode (same as raw mode)
+            r = 255;
+            g = b = Math.round(255 * (1 - t));
+        } else {
+            // Original red gradient for raw mode
+            r = 255;
+            g = b = Math.round(255 * (1 - t));
+        }
+
+        const textColor = (r + g + b) / 3 > 127 ? '#000000' : '#FFFFFF';
+        return { backgroundColor: `rgb(${r},${g},${b})`, color: textColor };
+    }
+
+    function renderResult(resultData) {
+        const displayDiv = document.getElementById(`sequence_display_${resultData.id}`);
+        const fullTextDiv = document.getElementById(`full_text_display_${resultData.id}`);
+        if (!displayDiv) return;
+
+        // Choose which similarities to use based on toggle state
+        const currentSimilarities = isNormalized ? resultData.normalized_similarities : resultData.sequence_similarities;
+        const currentMaxSimilarities = isNormalized ? Array(resultData.K).fill(1) : globalMaxSequenceSimilarity; // Normalized max is always 1
+
+        displayDiv.innerHTML = '';
+        resultData.full_sequence_tokens.forEach((tokenHtml, i) => {
+            const span = document.createElement('span');
+            span.className = 'token';
+            span.innerHTML = tokenHtml;
+
+            const seqSim = currentSimilarities[i];
+            const rawSeqSim = resultData.sequence_similarities[i];
+            let maxIdx = 0
+            let K = resultData.K;
+            let maxSim = Number.NEGATIVE_INFINITY;
+            for (let j = 0; j < K; j++) {
+                if (currentSimilarities[i] && currentSimilarities[i][j] > maxSim) {
+                    maxIdx = j;
+                    maxSim = currentSimilarities[i][j];
+                }
+            }
+
+            try{
+                const colors = getColorForSimilarity(seqSim[maxIdx], currentMaxSimilarities[maxIdx], isNormalized, currentThreshold);
+                span.style.backgroundColor = colors.backgroundColor;
+                span.style.color = colors.color;
+            } catch { console.log("Get color for sim doesn't work") }
+
+            if (resultData.highlight_inds.includes(i)) {
+                span.classList.add('highlight-window');
+            }
+
+            span.onmousemove = e => {
+                tooltip.style.visibility = 'visible';
+                let rawTokenSimsText = resultData.sequence_similarities[i].map((s, j) => `Q${j+1}: ${s.toFixed(4)}`).join(', ');
+                let normalizedTokenSimsText = resultData.normalized_similarities[i].map((s, j) => `Q${j+1}: ${s.toFixed(4)}`).join(', ');
+
+                let tooltipContent = `<b>${htmlDecode(tokenHtml)}</b> (Index: ${i})<br>`;
+                if (isNormalized) {
+                    tooltipContent += `Normalized Sim: ${seqSim[maxIdx].toFixed(4)}<br>`;
+                    tooltipContent += `Raw Sim: ${rawSeqSim[maxIdx].toFixed(4)}<br>`;
+                    tooltipContent += `Normalized Token Sims: ${normalizedTokenSimsText}<br>`;
+                } else {
+                    tooltipContent += `Raw Sim: ${seqSim[maxIdx].toFixed(4)}<br>`;
+                    tooltipContent += `Raw Token Sims: ${rawTokenSimsText}<br>`;
+                }
+                tooltipContent += `Vector index match: ${maxIdx + 1}`;
+
+                tooltip.innerHTML = tooltipContent;
+                tooltip.style.left = `${e.pageX + 15}px`;
+                tooltip.style.top = `${e.pageY + 15}px`;
+            };
+            span.onmouseout = () => { tooltip.style.visibility = 'hidden'; };
+            displayDiv.appendChild(span);
+        });
+
+        if (fullTextDiv && resultData.full_text_display) {
+            fullTextDiv.innerHTML = `<p><strong>Full Text:</strong></p><p>${resultData.full_text_display}</p>`;
+        }
+    }
+
+    function toggleNormalization() {
+        isNormalized = !isNormalized;
+        const statusSpan = document.getElementById('normalizationStatus');
+        if (isNormalized) {
+            statusSpan.innerHTML = 'Showing normalized values (max = 1.0 per result) | <span style="background: linear-gradient(90deg, white, pink, red); padding: 2px 8px; border-radius: 3px; color: black; font-size: 0.8em;">White→Red colors</span>';
+            statusSpan.style.color = '#28a745';
+        } else {
+            statusSpan.innerHTML = 'Showing raw values (global scale) | <span style="background: linear-gradient(90deg, white, pink, red); padding: 2px 8px; border-radius: 3px; color: black; font-size: 0.8em;">White→Red colors</span>';
+            statusSpan.style.color = '#666';
+        }
+
+        // Re-render all results with new normalization setting
+        allResultsData.forEach(renderResult);
+    }
+
+    function updateThreshold() {
+        const slider = document.getElementById('thresholdSlider');
+        const valueDisplay = document.getElementById('thresholdValue');
+        currentThreshold = parseFloat(slider.value);
+        valueDisplay.textContent = currentThreshold.toFixed(3);
+
+        // Re-render all results with new threshold setting
+        allResultsData.forEach(renderResult);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        // Initialize normalization status (start with normalized mode)
+        const statusSpan = document.getElementById('normalizationStatus');
+        statusSpan.innerHTML = 'Showing normalized values (max = 1.0 per result) | <span style="background: linear-gradient(90deg, white, pink, red); padding: 2px 8px; border-radius: 3px; color: black; font-size: 0.8em;">White→Red colors</span>';
+        statusSpan.style.color = '#28a745';
+
+        // Set up toggle event listener
+        const toggleCheckbox = document.getElementById('normalizeToggle');
+        toggleCheckbox.addEventListener('change', toggleNormalization);
+
+        // Set up threshold slider event listener
+        const thresholdSlider = document.getElementById('thresholdSlider');
+        thresholdSlider.addEventListener('input', updateThreshold);
+
+        // Render initial results
+        allResultsData.forEach(renderResult);
+    });
+</script>
+</body></html>

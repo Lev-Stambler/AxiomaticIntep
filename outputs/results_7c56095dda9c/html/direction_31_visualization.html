@@ -1,0 +1,403 @@
+
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">
+<title>Token Activation Similarity Report</title><style>
+body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; padding: 20px; background-color: #f8f9fa; color: #212529; }
+.container { background-color: #ffffff; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.07); }
+h1 { color: #0056b3; text-align: center; margin-bottom: 25px; font-weight: 300;}
+h2 { color: #0056b3; border-bottom: 1px solid #dee2e6; padding-bottom: 10px; margin-top:0; font-size: 1.5em; font-weight: 400; }
+.token { padding: 3px 5px; margin: 2px 1px; border-radius: 4px; display: inline-block; border: 1px solid #ced4da; cursor: default; transition: transform 0.1s ease-out, box-shadow 0.1s ease-out; font-size: 0.9em; line-height: 1.5; }
+.token:hover { transform: translateY(-1px); box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+.token.highlight-window { border: 2px solid #c82333; font-weight: 600; background-color: #f8d7da !important; color: #721c24; }
+.sequence-display { margin-top: 12px; padding: 12px; border: 1px solid #e9ecef; background-color: #f8f9fa; border-radius: 6px; white-space: pre-wrap; word-wrap: break-word; line-height: 1.7; }
+.full-text-display { margin-top: 15px; padding: 10px; border: 1px solid #dfe6e9; background-color: #f9f9f9; border-radius: 6px; white-space: pre-wrap; word-wrap: break-word; line-height: 1.6; font-size: 0.95em; color: #333; }
+.tooltip { position: absolute; background-color: rgba(33,37,41,0.9); color: white; padding: 8px 12px; border-radius: 5px; visibility: hidden; z-index: 1000; pointer-events: none; font-size: 0.85em; max-width: 400px; }
+.details p { margin: 5px 0; font-size: 0.9em; color: #495057; } .details strong { color: #0056b3; }
+.footer-note { font-size: 0.8em; color: #6c757d; text-align: center; margin-top: 30px; }
+.global-max-info { background-color: #e3f2fd; padding: 10px; border-radius: 5px; margin-bottom: 20px; text-align: center; font-size: 0.9em; color: #1565c0; }
+.threshold-control { margin-top: 15px; padding: 10px; background-color: rgba(255,255,255,0.3); border-radius: 6px; }
+.threshold-slider { width: 200px; margin: 0 10px; }
+.threshold-value { font-weight: bold; color: #0056b3; }
+</style></head><body>
+<div class="explanation-section" style="background-color: #f0f8ff; padding: 15px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #0056b3;"><h3 style="color: #0056b3; margin-top: 0;">Feature Explanation</h3><div style="line-height: 1.6; color: #333;">It’s a feature that “lights up” when the text is in a technical‐or design–detail mode—identifying subword parts of compound names (like model numbers, inflected adjectives, or brand-specific morphemes) that push the model toward a specification‐ or attribute–rich continuation instead of a more generic alternative.</div></div><div class="global-max-info">
+    <strong>Query Type:</strong> 1-token sequences<br>
+    <strong>Query Vector Norms:</strong> ['10.0513']<br>
+    <strong>Global Max Sequence Similarities:</strong> [26.793376922607422]<br>
+    <div style="margin-top: 10px;">
+        <label style="font-weight: normal; cursor: pointer;">
+            <input type="checkbox" id="normalizeToggle" checked style="margin-right: 8px;">
+            Show Normalized Activations (divide by max per result)
+        </label>
+        <span id="normalizationStatus" style="margin-left: 15px; font-style: italic; color: #666;"></span>
+    </div>
+    <div class="threshold-control">
+        <label style="font-weight: normal;">
+            Activation Cutoff Threshold: <span class="threshold-value" id="thresholdValue">0.000</span>
+        </label><br>
+        <input type="range" id="thresholdSlider" class="threshold-slider"
+               min="0" max="1" step="0.001"
+               value="0.0">
+        <div style="margin-top: 5px; font-size: 0.8em; color: #666;">
+            No faithfulness data available - adjust manually
+        </div>
+    </div>
+</div>
+<div id="tooltip" class="tooltip"></div>
+
+<div class="container" id="container_result_0">
+    <h2>Result 1 (Sample Ref: 19324)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 26.7934</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">"5000"</span></p>
+        <p><strong>Window Start Position:</strong> 23</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_0"></div>
+    <div class="full-text-display" id="full_text_display_result_0"></div>
+</div>
+<div class="container" id="container_result_1">
+    <h2>Result 2 (Sample Ref: 8942)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 26.6233</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">"ped"</span></p>
+        <p><strong>Window Start Position:</strong> 41</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_1"></div>
+    <div class="full-text-display" id="full_text_display_result_1"></div>
+</div>
+<div class="container" id="container_result_2">
+    <h2>Result 3 (Sample Ref: 2222)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 26.4449</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">"ining"</span></p>
+        <p><strong>Window Start Position:</strong> 28</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_2"></div>
+    <div class="full-text-display" id="full_text_display_result_2"></div>
+</div>
+<div class="container" id="container_result_3">
+    <h2>Result 4 (Sample Ref: 602)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 26.4218</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">" and"</span></p>
+        <p><strong>Window Start Position:</strong> 43</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_3"></div>
+    <div class="full-text-display" id="full_text_display_result_3"></div>
+</div>
+<div class="container" id="container_result_4">
+    <h2>Result 5 (Sample Ref: 4664)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 25.8789</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">"ifying"</span></p>
+        <p><strong>Window Start Position:</strong> 16</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_4"></div>
+    <div class="full-text-display" id="full_text_display_result_4"></div>
+</div>
+<div class="container" id="container_result_5">
+    <h2>Result 6 (Sample Ref: 4332)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 25.7916</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">"ental"</span></p>
+        <p><strong>Window Start Position:</strong> 17</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_5"></div>
+    <div class="full-text-display" id="full_text_display_result_5"></div>
+</div>
+<div class="container" id="container_result_6">
+    <h2>Result 7 (Sample Ref: 13128)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 25.4062</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">" explicitly"</span></p>
+        <p><strong>Window Start Position:</strong> 37</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_6"></div>
+    <div class="full-text-display" id="full_text_display_result_6"></div>
+</div>
+<div class="container" id="container_result_7">
+    <h2>Result 8 (Sample Ref: 5560)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 24.9460</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">" her"</span></p>
+        <p><strong>Window Start Position:</strong> 31</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_7"></div>
+    <div class="full-text-display" id="full_text_display_result_7"></div>
+</div>
+<div class="container" id="container_result_8">
+    <h2>Result 9 (Sample Ref: 17154)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 24.4680</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">"kur"</span></p>
+        <p><strong>Window Start Position:</strong> 38</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_8"></div>
+    <div class="full-text-display" id="full_text_display_result_8"></div>
+</div>
+<div class="container" id="container_result_9">
+    <h2>Result 10 (Sample Ref: 4440)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 24.4348</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">" Minimum"</span></p>
+        <p><strong>Window Start Position:</strong> 25</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_9"></div>
+    <div class="full-text-display" id="full_text_display_result_9"></div>
+</div>
+<div class="container" id="container_result_10">
+    <h2>Result 11 (Sample Ref: 14287)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 24.0316</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">" and"</span></p>
+        <p><strong>Window Start Position:</strong> 39</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_10"></div>
+    <div class="full-text-display" id="full_text_display_result_10"></div>
+</div>
+<div class="container" id="container_result_11">
+    <h2>Result 12 (Sample Ref: 10124)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 23.6107</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">"2019"</span></p>
+        <p><strong>Window Start Position:</strong> 17</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_11"></div>
+    <div class="full-text-display" id="full_text_display_result_11"></div>
+</div>
+<div class="container" id="container_result_12">
+    <h2>Result 13 (Sample Ref: 16171)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 23.3122</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">" vu"</span></p>
+        <p><strong>Window Start Position:</strong> 37</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_12"></div>
+    <div class="full-text-display" id="full_text_display_result_12"></div>
+</div>
+<div class="container" id="container_result_13">
+    <h2>Result 14 (Sample Ref: 1134)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 23.0846</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">" teach"</span></p>
+        <p><strong>Window Start Position:</strong> 20</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_13"></div>
+    <div class="full-text-display" id="full_text_display_result_13"></div>
+</div>
+<div class="container" id="container_result_14">
+    <h2>Result 15 (Sample Ref: 601)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 22.9951</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">"nut"</span></p>
+        <p><strong>Window Start Position:</strong> 26</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_14"></div>
+    <div class="full-text-display" id="full_text_display_result_14"></div>
+</div>
+<div class="container" id="container_result_15">
+    <h2>Result 16 (Sample Ref: 11403)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 22.8968</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">"let"</span></p>
+        <p><strong>Window Start Position:</strong> 24</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_15"></div>
+    <div class="full-text-display" id="full_text_display_result_15"></div>
+</div>
+<div class="container" id="container_result_16">
+    <h2>Result 17 (Sample Ref: 5784)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 22.6112</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">" LED"</span></p>
+        <p><strong>Window Start Position:</strong> 38</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_16"></div>
+    <div class="full-text-display" id="full_text_display_result_16"></div>
+</div>
+<div class="container" id="container_result_17">
+    <h2>Result 18 (Sample Ref: 16391)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 22.5162</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">"oval"</span></p>
+        <p><strong>Window Start Position:</strong> 7</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_17"></div>
+    <div class="full-text-display" id="full_text_display_result_17"></div>
+</div>
+<div class="container" id="container_result_18">
+    <h2>Result 19 (Sample Ref: 8635)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 22.5037</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">"2019"</span></p>
+        <p><strong>Window Start Position:</strong> 17</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_18"></div>
+    <div class="full-text-display" id="full_text_display_result_18"></div>
+</div>
+<div class="container" id="container_result_19">
+    <h2>Result 20 (Sample Ref: 18778)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 22.4822</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">" and"</span></p>
+        <p><strong>Window Start Position:</strong> 40</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_19"></div>
+    <div class="full-text-display" id="full_text_display_result_19"></div>
+</div>
+<script>
+    const allResultsData = [{"id": "result_0", "sample_idx": 19324, "score": 26.793376922607422, "highlight_inds": [23], "matched_tokens_str": "5000", "original_pos": 23, "full_sequence_tokens": ["The", " SL", "5000", " features", " crystal", " clear", " 4", "G", "communications", ",", " bl", "azing", " fast", " downloads", ",", " streaming", " videos", ",", " and", " music", ".", " The", " SL", "5000", " is", " powered", " by", " a", " 1", ".", "2", "GHz", " Quad", "-", "Core", " Qual", "comm", " Snap", "dr", "agon", " 400", " CPU", ".", "\n"], "sequence_similarities": [[4.359022617340088], [-3.6450908184051514], [4.879831314086914], [3.5880532264709473], [6.423193454742432], [8.192037582397461], [6.311245918273926], [1.567406177520752], [-1.2865058183670044], [6.9596266746521], [3.342308759689331], [12.828120231628418], [4.152721405029297], [0.00019025802612304688], [11.748361587524414], [7.927307605743408], [1.3846379518508911], [14.125417709350586], [11.31808090209961], [6.906572341918945], [3.956981658935547], [7.130372524261475], [4.63214111328125], [26.793376922607422], [9.957864761352539], [-0.06930577754974365], [2.5134286880493164], [10.639313697814941], [9.361403465270996], [3.529691457748413], [7.996240615844727], [8.161529541015625], [7.130980014801025], [7.951299667358398], [10.975895881652832], [1.8950042724609375], [8.445557594299316], [1.32993483543396], [3.0482282638549805], [3.1135730743408203], [6.380893707275391], [2.381042003631592], [-5.0234456062316895], [-5.7110700607299805]], "normalized_similarities": [[0.16269029676914215], [-0.1360444724559784], [0.18212826550006866], [0.13391567766666412], [0.23973064124584198], [0.3057486116886139], [0.23555245995521545], [0.058499760925769806], [-0.048015814274549484], [0.2597517669200897], [0.12474384158849716], [0.47877952456474304], [0.15499059855937958], [7.1009349085215945e-06], [0.43848004937171936], [0.2958681881427765], [0.051678366959095], [0.5271981358528137], [0.42242082953453064], [0.25777164101600647], [0.14768506586551666], [0.2661244571208954], [0.1728838086128235], [1.0], [0.3716539740562439], [-0.0025866758078336716], [0.09380783885717392], [0.3970874547958374], [0.34939244389533997], [0.13173745572566986], [0.29844093322753906], [0.3046099543571472], [0.26614710688591003], [0.2967636287212372], [0.4096495807170868], [0.07072659581899643], [0.31521064043045044], [0.04963669925928116], [0.11376797407865524], [0.1162068173289299], [0.2381519079208374], [0.08886681497097015], [-0.18748833239078522], [-0.21315230429172516]], "result_max_similarities": 26.793376922607422, "full_text_display": "The SL5000 features crystal clear 4Gcommunications, blazing fast downloads, streaming videos, and music. The SL5000 is powered by a 1.2GHz Quad-Core Qualcomm Snapdragon 400 CPU.\n", "K": 1}, {"id": "result_1", "sample_idx": 8942, "score": 26.62329864501953, "highlight_inds": [41], "matched_tokens_str": "ped", "original_pos": 41, "full_sequence_tokens": ["A", " perfect", " choice", " for", " both", " day", " and", " evening", ".", " Craft", "ed", " in", " Italy", " this", " black", " purse", " is", " testament", " to", " fine", " leather", " craft", "manship", ".", " It", " combines", " refined", " details", ",", " including", " wrist", "let", " black", " and", " white", " stripe", " strap", " and", " white", " and", " stri", "ped", " details", " on"], "sequence_similarities": [[4.980182647705078], [1.9443628787994385], [2.403870105743408], [0.5266939401626587], [-4.7798590660095215], [-0.8858685493469238], [-2.2805309295654297], [-6.628802299499512], [4.0669169425964355], [-2.37776255607605], [-1.1004559993743896], [4.588600158691406], [-3.1465797424316406], [9.080157279968262], [7.9954729080200195], [11.495780944824219], [9.003049850463867], [-6.511336803436279], [3.9838919639587402], [3.5836493968963623], [6.865640640258789], [3.95697021484375], [-6.354988098144531], [3.6730947494506836], [6.072129726409912], [9.06652545928955], [9.211383819580078], [3.682652473449707], [8.619765281677246], [4.879429817199707], [7.59166145324707], [5.6096601486206055], [12.390730857849121], [13.341136932373047], [12.54615306854248], [9.220266342163086], [13.326045036315918], [14.247913360595703], [17.62482452392578], [12.739960670471191], [6.748163223266602], [26.62329864501953], [13.528642654418945], [11.179047584533691]], "normalized_similarities": [[0.18587364256381989], [0.07256878912448883], [0.08971881866455078], [0.019657617434859276], [-0.1783970445394516], [-0.03306296840310097], [-0.0851154699921608], [-0.24740451574325562], [0.1517881453037262], [-0.08874441683292389], [-0.04107194021344185], [0.17125874757766724], [-0.11743871122598648], [0.3388955891132355], [0.2984122931957245], [0.42905306816101074], [0.3360177278518677], [-0.24302038550376892], [0.14868943393230438], [0.13375131785869598], [0.2562439441680908], [0.14768463373184204], [-0.2371850311756134], [0.13708965480327606], [0.22662800550460815], [0.33838680386543274], [0.3437933027744293], [0.13744637370109558], [0.32171252369880676], [0.18211327493190765], [0.2833409607410431], [0.20936742424964905], [0.46245500445365906], [0.4979266822338104], [0.46825575828552246], [0.34412482380867004], [0.4973633885383606], [0.5317699909210205], [0.6578052639961243], [0.47548916935920715], [0.2518593668937683], [0.9936522245407104], [0.5049248933792114], [0.4172317385673523]], "result_max_similarities": 26.793376922607422, "full_text_display": "A perfect choice for both day and evening. Crafted in Italy this black purse is testament to fine leather craftmanship. It combines refined details, including wristlet black and white stripe strap and white and striped details on", "K": 1}, {"id": "result_2", "sample_idx": 2222, "score": 26.44491958618164, "highlight_inds": [28], "matched_tokens_str": "ining", "original_pos": 28, "full_sequence_tokens": ["Image", " Title", ":", " E", "aton", " Oak", " French", " Style", " D", "ining", " Chair", " La", " Res", "idence", " Inter", "iors", " Inside", " Ch", "airs", " Ideas", " 5", ".", " Post", " Title", ":", " French", " Style", " D", "ining", " Ch", "airs", ".", " Fil", "ename", ":", " eat", "on", "-", "o", "ak", "-", "f", "rench", "-"], "sequence_similarities": [[7.058061599731445], [6.4545722007751465], [4.728363513946533], [3.0582022666931152], [8.057744979858398], [3.4840383529663086], [10.3792142868042], [9.9779052734375], [3.867225408554077], [10.714420318603516], [14.459362983703613], [0.18142032623291016], [9.13704776763916], [9.549498558044434], [0.5657868385314941], [8.633397102355957], [4.491947174072266], [-0.9957454204559326], [0.5269900560379028], [0.8742945194244385], [0.21216261386871338], [4.474544525146484], [1.2381081581115723], [3.152768611907959], [10.985969543457031], [8.984458923339844], [11.069847106933594], [2.929929256439209], [26.44491958618164], [10.829048156738281], [12.759018898010254], [6.323082447052002], [1.924407958984375], [11.480388641357422], [11.301780700683594], [2.1761984825134277], [6.786566734313965], [2.921335220336914], [3.5426025390625], [7.696445941925049], [5.948238372802734], [2.701566696166992], [3.1606547832489014], [3.247325897216797]], "normalized_similarities": [[0.2634256184101105], [0.24090178310871124], [0.17647509276866913], [0.11414023488759995], [0.3007364571094513], [0.13003356754779816], [0.38737985491752625], [0.3724019229412079], [0.14433512091636658], [0.39989063143730164], [0.5396618247032166], [0.00677108857780695], [0.3410188853740692], [0.3564126491546631], [0.021116668358445168], [0.3222213089466095], [0.16765139997005463], [-0.0371638648211956], [0.019668668508529663], [0.03263099491596222], [0.007918472401797771], [0.1670018881559372], [0.046209484338760376], [0.11766970157623291], [0.41002556681632996], [0.33532387018203735], [0.41315609216690063], [0.10935274511575699], [0.9869946241378784], [0.40416884422302246], [0.47620049118995667], [0.23599423468112946], [0.07182401418685913], [0.4284785985946655], [0.4218124747276306], [0.08122150599956512], [0.2532927095890045], [0.10903199017047882], [0.1322193443775177], [0.2872518002986908], [0.22200405597686768], [0.10082964599132538], [0.11796402931213379], [0.12119882553815842]], "result_max_similarities": 26.793376922607422, "full_text_display": "Image Title: Eaton Oak French Style Dining Chair La Residence Interiors Inside Chairs Ideas 5. Post Title: French Style Dining Chairs. Filename: eaton-oak-french-", "K": 1}, {"id": "result_3", "sample_idx": 602, "score": 26.42184829711914, "highlight_inds": [43], "matched_tokens_str": " and", "original_pos": 43, "full_sequence_tokens": ["Take", "ka", " is", " a", " Cant", "ones", "e", " cuisine", " restaurant", " located", " on", " Shin", "b", "ashi", " Street", " in", " G", "ion", ",", " where", " ma", "iko", " and", " ge", "iko", " still", " live", " and", " work", ".", " Their", " dishes", " use", " less", " garlic", " and", " spices", " than", " usual", " so", " as", " ma", "iko", " and"], "sequence_similarities": [[5.912672519683838], [5.110769748687744], [2.709463596343994], [4.627590179443359], [1.141132116317749], [1.346700668334961], [10.071077346801758], [6.106103897094727], [5.444173336029053], [0.27532076835632324], [9.546703338623047], [6.044897079467773], [6.787327289581299], [7.312760353088379], [11.127124786376953], [8.350285530090332], [4.737091064453125], [6.562853813171387], [9.975032806396484], [5.7068071365356445], [3.988837242126465], [10.91079044342041], [16.721023559570312], [8.127259254455566], [5.8611063957214355], [12.595464706420898], [6.808143615722656], [11.482473373413086], [10.68655776977539], [4.693105697631836], [14.457901954650879], [3.932962417602539], [10.703189849853516], [4.377016544342041], [0.3184792995452881], [9.75169563293457], [4.038039684295654], [11.296932220458984], [3.9765937328338623], [3.7681832313537598], [2.8885340690612793], [4.789892673492432], [5.6291093826293945], [26.42184829711914]], "normalized_similarities": [[0.22067664563655853], [0.19074749946594238], [0.10112437605857849], [0.172713965177536], [0.04259008169174194], [0.0502624474465847], [0.37587934732437134], [0.22789601981639862], [0.20319101214408875], [0.010275701992213726], [0.35630834102630615], [0.225611612200737], [0.2533210813999176], [0.27293163537979126], [0.4152938425540924], [0.31165483593940735], [0.17680081725120544], [0.24494314193725586], [0.37229472398757935], [0.21299320459365845], [0.14887399971485138], [0.40721967816352844], [0.6240730285644531], [0.3033308982849121], [0.21875205636024475], [0.4700962007045746], [0.25409799814224243], [0.4285564124584198], [0.3988507091999054], [0.17515917122364044], [0.5396072864532471], [0.1467886120080948], [0.3994714915752411], [0.16336187720298767], [0.011886493302881718], [0.3639591932296753], [0.15071037411689758], [0.42163151502609253], [0.14841704070568085], [0.14063860476016998], [0.10780776292085648], [0.17877152562141418], [0.21009331941604614], [0.9861335754394531]], "result_max_similarities": 26.793376922607422, "full_text_display": "Takeka is a Cantonese cuisine restaurant located on Shinbashi Street in Gion, where maiko and geiko still live and work. Their dishes use less garlic and spices than usual so as maiko and", "K": 1}, {"id": "result_4", "sample_idx": 4664, "score": 25.87894058227539, "highlight_inds": [16], "matched_tokens_str": "ifying", "original_pos": 16, "full_sequence_tokens": ["wall", " mounted", " magn", "ifying", " mirror", " 15", "x", " magn", "ifying", " wall", " mounted", " light", "ed", " 15", "x", " magn", "ifying", " mirror", ".", "\n", "wall", " mounted", " magn", "ifying", " mirror", " 15", "x", " best", " home", " glam", "orous", " magn", "ifying", " mirror", " of", " makeup", " brightness", " adjustable", " from", " magn", "ifying", " wall", " mounted", " light"], "sequence_similarities": [[3.3099231719970703], [3.5700225830078125], [8.464849472045898], [15.689542770385742], [5.764261722564697], [8.135034561157227], [4.795458793640137], [12.378215789794922], [20.357635498046875], [10.95583724975586], [4.729040622711182], [5.142534255981445], [14.370521545410156], [11.012046813964844], [14.984573364257812], [15.090248107910156], [25.87894058227539], [13.739538192749023], [4.170473098754883], [-1.0223172903060913], [2.3086633682250977], [10.51990795135498], [10.150579452514648], [18.081050872802734], [12.569670677185059], [7.171369552612305], [14.662130355834961], [4.048407554626465], [3.306539297103882], [1.8253812789916992], [10.513765335083008], [10.715047836303711], [17.493249893188477], [14.796567916870117], [8.075614929199219], [0.7470617890357971], [0.39078545570373535], [11.859870910644531], [12.874544143676758], [7.29958438873291], [19.95058250427246], [13.98056411743164], [12.242864608764648], [10.061758041381836]], "normalized_similarities": [[0.12353512644767761], [0.13324272632598877], [0.31593066453933716], [0.5855754017829895], [0.2151375561952591], [0.3036211133003235], [0.17897926270961761], [0.4619878828525543], [0.7598010301589966], [0.4089009463787079], [0.1765003651380539], [0.1919330358505249], [0.5363460183143616], [0.4109988510608673], [0.559264063835144], [0.5632081627845764], [0.9658707976341248], [0.5127960443496704], [0.15565313398838043], [-0.03815559670329094], [0.08616545051336288], [0.3926309049129486], [0.37884658575057983], [0.674832820892334], [0.46913349628448486], [0.26765456795692444], [0.5472296476364136], [0.15109732747077942], [0.12340883165597916], [0.0681280791759491], [0.39240166544914246], [0.39991405606269836], [0.6528945565223694], [0.5522472262382507], [0.3014034032821655], [0.027882330119609833], [0.014585151337087154], [0.44264188408851624], [0.48051220178604126], [0.2724398672580719], [0.7446087598800659], [0.5217918157577515], [0.456936240196228], [0.37553152441978455]], "result_max_similarities": 26.793376922607422, "full_text_display": "wall mounted magnifying mirror 15x magnifying wall mounted lighted 15x magnifying mirror.\nwall mounted magnifying mirror 15x best home glamorous magnifying mirror of makeup brightness adjustable from magnifying wall mounted light", "K": 1}, {"id": "result_5", "sample_idx": 4332, "score": 25.791643142700195, "highlight_inds": [17], "matched_tokens_str": "ental", "original_pos": 17, "full_sequence_tokens": ["Mo", "&#x27;s", " lovely", " ori", "ental", " knot", " wedding", " invitation", " card", " was", " inspired", " by", " J", "asmine", "&#x27;s", " pocket", " ori", "ental", " knot", " card", ",", " with", " a", " few", " twe", "aks", ".", " He", " wanted", " to", " jazz", " up", " the", " front", " a", " little", ",", " so", " we", " added", " two", " love", "birds", " sm"], "sequence_similarities": [[6.502519607543945], [8.114618301391602], [6.823065757751465], [4.4524149894714355], [10.476922035217285], [5.656106948852539], [12.639118194580078], [2.2048182487487793], [2.863842248916626], [2.6984901428222656], [-3.837437391281128], [4.787106037139893], [-0.5451595783233643], [10.27885627746582], [13.778615951538086], [4.597261428833008], [3.950624465942383], [25.791643142700195], [12.282358169555664], [3.9353127479553223], [6.6928791999816895], [7.188972473144531], [9.783296585083008], [4.00164794921875], [-3.2633116245269775], [0.6871352195739746], [4.362618446350098], [1.9700567722320557], [2.834242820739746], [4.886388778686523], [-3.173274040222168], [1.0620228052139282], [10.739782333374023], [9.37364387512207], [3.084092855453491], [8.757923126220703], [6.235430717468262], [4.220931053161621], [6.1763014793396], [1.951333999633789], [6.499577045440674], [1.254834771156311], [2.3921217918395996], [-5.370068550109863]], "normalized_similarities": [[0.242691308259964], [0.3028590977191925], [0.2546549439430237], [0.1661759614944458], [0.3910265564918518], [0.21110093593597412], [0.4717254638671875], [0.0822896733880043], [0.10688620060682297], [0.10071481764316559], [-0.1432233601808548], [0.17866751551628113], [-0.020346803590655327], [0.38363420963287354], [0.5142545700073242], [0.17158201336860657], [0.14744779467582703], [0.9626126289367676], [0.45841023325920105], [0.14687632024288177], [0.2497960329055786], [0.2683115601539612], [0.36513862013816833], [0.14935213327407837], [-0.12179546058177948], [0.02564571239054203], [0.16282451152801514], [0.0735277533531189], [0.10578147321939468], [0.18237300217151642], [-0.11843501776456833], [0.03963751345872879], [0.4008372128009796], [0.34984928369522095], [0.11510653793811798], [0.3268689513206482], [0.23272283375263214], [0.1575363576412201], [0.2305159717798233], [0.07282897084951401], [0.24258148670196533], [0.046833768486976624], [0.08928033709526062], [-0.20042522251605988]], "result_max_similarities": 26.793376922607422, "full_text_display": "Mo&#x27;s lovely oriental knot wedding invitation card was inspired by Jasmine&#x27;s pocket oriental knot card, with a few tweaks. He wanted to jazz up the front a little, so we added two lovebirds sm", "K": 1}, {"id": "result_6", "sample_idx": 13128, "score": 25.406204223632812, "highlight_inds": [37], "matched_tokens_str": " explicitly", "original_pos": 37, "full_sequence_tokens": ["Tw", "ilight", " Spark", "le", "(", "TM", "),", " R", "arity", "(", "TM", "),", " Princess", " Cel", "est", "ia", "(", "TM", "),", " Princess", " Luna", "(", "TM", ")", " [", "not", " explicitly", " named", "],", " Pink", "ie", " Pie", "(", "TM", ")", " [", "not", " explicitly", " named", "],", " P", "ony", "ville", "("], "sequence_similarities": [[4.864798545837402], [0.3350977897644043], [1.196331262588501], [2.8856453895568848], [3.218175172805786], [3.414923906326294], [6.943683624267578], [5.256120681762695], [5.57487154006958], [5.236018180847168], [-2.6201071739196777], [7.909833908081055], [5.342349052429199], [1.849071979522705], [4.290905952453613], [1.7027208805084229], [0.13223028182983398], [-7.217335224151611], [11.039223670959473], [7.782527923583984], [-1.681993007659912], [2.9195756912231445], [-9.424905776977539], [6.1659393310546875], [4.564913749694824], [7.327785491943359], [14.18879508972168], [11.414112091064453], [8.607787132263184], [5.502692699432373], [10.259856224060059], [9.093027114868164], [6.83527946472168], [-5.787256717681885], [2.138967752456665], [6.549333572387695], [17.06100845336914], [25.406204223632812], [-0.534635066986084], [16.332120895385742], [4.733258247375488], [3.2702901363372803], [-1.6338578462600708], [-2.940664052963257]], "normalized_similarities": [[0.1815672069787979], [0.012506739236414433], [0.04465026035904884], [0.10769995301961899], [0.12011084705591202], [0.1274540275335312], [0.2591567039489746], [0.19617238640785217], [0.20806901156902313], [0.19542211294174194], [-0.09778936207294464], [0.29521602392196655], [0.19939066469669342], [0.06901227682828903], [0.1601480096578598], [0.06355006992816925], [0.0049351854249835014], [-0.26937010884284973], [0.41201314330101013], [0.2904646098613739], [-0.06277644634246826], [0.10896632075309753], [-0.3517625331878662], [0.23012924194335938], [0.17037470638751984], [0.2734924256801605], [0.5295635461807251], [0.42600497603416443], [0.32126548886299133], [0.20537510514259338], [0.3829250931739807], [0.33937591314315796], [0.25511080026626587], [-0.21599578857421875], [0.07983195781707764], [0.2444385290145874], [0.6367621421813965], [0.948227047920227], [-0.019954001531004906], [0.6095581650733948], [0.1766577661037445], [0.12205591797828674], [-0.06097991392016411], [-0.10975339263677597]], "result_max_similarities": 26.793376922607422, "full_text_display": "Twilight Sparkle(TM), Rarity(TM), Princess Celestia(TM), Princess Luna(TM) [not explicitly named], Pinkie Pie(TM) [not explicitly named], Ponyville(", "K": 1}, {"id": "result_7", "sample_idx": 5560, "score": 24.946029663085938, "highlight_inds": [31], "matched_tokens_str": " her", "original_pos": 31, "full_sequence_tokens": ["D", "h", "anni", " Shen", "oy", " received", " her", " undergraduate", " degree", " in", " fine", " arts", " painting", " at", " Ch", "amar", "aj", "endra", " Academy", " of", " Visual", " Arts", ",", " Mys", "ore", ",", " India", ".", " She", " also", " received", " her", " graduate", " degree", " in", " \u201c", "M", "use", "ology", "\u201d", " in", " V", "ad", "od"], "sequence_similarities": [[5.73986291885376], [6.09322452545166], [7.016821384429932], [7.596000671386719], [9.20654296875], [3.233200788497925], [5.006653785705566], [7.21652364730835], [-1.0906736850738525], [4.759939670562744], [2.2558770179748535], [1.4662728309631348], [-0.13969719409942627], [8.340330123901367], [3.2404556274414062], [5.9047040939331055], [10.875617980957031], [10.047122955322266], [9.573990821838379], [7.709595203399658], [-0.05942058563232422], [8.399613380432129], [12.749917984008789], [5.468798637390137], [7.386700630187988], [10.916059494018555], [4.584893226623535], [4.560380935668945], [9.768416404724121], [16.431930541992188], [8.83171558380127], [24.946029663085938], [17.792430877685547], [2.035186290740967], [17.62360954284668], [4.602651596069336], [0.23704040050506592], [4.77003288269043], [3.2269067764282227], [1.5465258359909058], [15.925334930419922], [5.6382598876953125], [8.679155349731445], [5.100142955780029]], "normalized_similarities": [[0.21422693133354187], [0.2274153232574463], [0.2618864178657532], [0.2835029363632202], [0.3436126410961151], [0.12067164480686188], [0.18686161935329437], [0.26933982968330383], [-0.04070683941245079], [0.17765359580516815], [0.0841953232884407], [0.054725196212530136], [-0.0052138702012598515], [0.31128326058387756], [0.12094241380691528], [0.22037924826145172], [0.40590694546699524], [0.37498530745506287], [0.35732677578926086], [0.28774258494377136], [-0.0022177339997142553], [0.3134958744049072], [0.4758608043193817], [0.20411008596420288], [0.27569130063056946], [0.40741634368896484], [0.17112039029598236], [0.17020553350448608], [0.36458325386047363], [0.6132832765579224], [0.3296230733394623], [0.9310520887374878], [0.6640607714653015], [0.07595855742692947], [0.6577599048614502], [0.1717831790447235], [0.008846977725625038], [0.17803029716014862], [0.12043673545122147], [0.057720452547073364], [0.5943757891654968], [0.21043483912944794], [0.3239291310310364], [0.19035089015960693]], "result_max_similarities": 26.793376922607422, "full_text_display": "Dhanni Shenoy received her undergraduate degree in fine arts painting at Chamarajendra Academy of Visual Arts, Mysore, India. She also received her graduate degree in \u201cMuseology\u201d in Vadod", "K": 1}, {"id": "result_8", "sample_idx": 17154, "score": 24.467998504638672, "highlight_inds": [38], "matched_tokens_str": "kur", "original_pos": 38, "full_sequence_tokens": ["Why", " choose", " a", " seamless", " backs", "pl", "ash", " for", " your", " ch", "ic", "ag", "ol", "and", ".", " Kitchen", "s", " bra", "kur", " custom", " cabin", "etry", " :", " bra", "kur", " custom", " cabin", "etry", ".", " Kitchen", "s", " bra", "kur", " custom", " cabin", "etry", " :", " bra", "kur", " custom", " cabin", "etry", ".", " Tips"], "sequence_similarities": [[5.977933883666992], [-1.4657697677612305], [2.4711012840270996], [2.5762999057769775], [3.789252281188965], [0.8330070972442627], [6.365893840789795], [7.17039155960083], [2.646541118621826], [-3.2278730869293213], [-4.908629417419434], [-4.771234512329102], [0.7132291793823242], [10.372750282287598], [4.444547653198242], [2.440033197402954], [-3.8576371669769287], [-3.6056249141693115], [8.325054168701172], [11.639986038208008], [4.963902473449707], [1.6270465850830078], [0.7236565947532654], [1.0105050802230835], [22.51067352294922], [21.703163146972656], [8.801910400390625], [3.567959785461426], [0.8283646106719971], [3.5036025047302246], [3.990118980407715], [-0.45256853103637695], [23.866024017333984], [20.896240234375], [7.055207252502441], [-1.4419546127319336], [9.262629508972168], [-1.099104642868042], [24.467998504638672], [21.769351959228516], [8.5332670211792], [-2.376105308532715], [3.888200521469116], [-2.696471691131592]], "normalized_similarities": [[0.22311237454414368], [-0.05470642074942589], [0.09222806245088577], [0.0961543545126915], [0.14142495393753052], [0.031090037897229195], [0.23759207129478455], [0.2676180601119995], [0.0987759456038475], [-0.12047279626131058], [-0.1832030862569809], [-0.1780751496553421], [0.02661960758268833], [0.38713860511779785], [0.16588231921195984], [0.09106852114200592], [-0.14397726953029633], [-0.13457149267196655], [0.31071314215660095], [0.4344351887702942], [0.18526603281497955], [0.06072570011019707], [0.0270087867975235], [0.03771473467350006], [0.8401581048965454], [0.8100196719169617], [0.32851067185401917], [0.13316573202610016], [0.030916767194867134], [0.13076375424861908], [0.14892183244228363], [-0.016891060397028923], [0.8907434344291687], [0.7799031734466553], [0.26331907510757446], [-0.05381757766008377], [0.34570592641830444], [-0.04102150350809097], [0.9132106900215149], [0.8124900460243225], [0.31848418712615967], [-0.08868256211280823], [0.14511796832084656], [-0.10063948482275009]], "result_max_similarities": 26.793376922607422, "full_text_display": "Why choose a seamless backsplash for your chicagoland. Kitchens brakur custom cabinetry : brakur custom cabinetry. Kitchens brakur custom cabinetry : brakur custom cabinetry. Tips", "K": 1}, {"id": "result_9", "sample_idx": 4440, "score": 24.434797286987305, "highlight_inds": [25], "matched_tokens_str": " Minimum", "original_pos": 25, "full_sequence_tokens": ["Hand", "ic", "ap", ",", " Minimum", " Weight", " 56", "kg", ",", " App", "rent", "ices", " can", " claim", ".", "\n", "B", "ench", "Mark", " 65", ",", " Hand", "ic", "ap", ",", " Minimum", " Weight", " 56", "kg", ",", " App", "rent", "ices", " can", " claim", ".", "\n", "B", "ench", "Mark", " 60", ",", " Hand", "ic"], "sequence_similarities": [[5.374363422393799], [0.9357303380966187], [5.414710521697998], [8.88038444519043], [10.635782241821289], [7.305057525634766], [3.426987648010254], [2.575744152069092], [5.480944633483887], [5.898514270782471], [-5.053614616394043], [5.198878765106201], [3.445517063140869], [0.09931635856628418], [4.28115177154541], [-1.0390830039978027], [0.04958617687225342], [1.3670110702514648], [-2.887643814086914], [2.166844129562378], [-2.5482397079467773], [8.428482055664062], [0.39979565143585205], [-1.868789792060852], [4.172327518463135], [24.434797286987305], [8.926020622253418], [5.537774085998535], [-3.089226722717285], [-0.2481381893157959], [1.3043055534362793], [-5.224078178405762], [4.263265609741211], [13.775186538696289], [8.159740447998047], [1.9590944051742554], [0.12281873822212219], [-0.8594411611557007], [10.688251495361328], [-0.016644001007080078], [-7.053073883056641], [0.5199906826019287], [2.262545585632324], [-7.997601509094238]], "normalized_similarities": [[0.2005855143070221], [0.034923940896987915], [0.20209138095378876], [0.3314395248889923], [0.3969556391239166], [0.27264416217803955], [0.1279042810201645], [0.09613361209630966], [0.20456340909004211], [0.2201482206583023], [-0.18861432373523712], [0.19403596222400665], [0.12859584391117096], [0.0037067502271384], [0.1597839593887329], [-0.038781337440013885], [0.001850687782280147], [0.051020484417676926], [-0.10777454078197479], [0.08087237924337387], [-0.0951070785522461], [0.31457334756851196], [0.014921436086297035], [-0.06974820047616959], [0.15572234988212585], [0.9119715690612793], [0.33314278721809387], [0.2066844403743744], [-0.11529814451932907], [-0.009261175990104675], [0.048680149018764496], [-0.19497647881507874], [0.15911640226840973], [0.5141265392303467], [0.3045431971549988], [0.07311860471963882], [0.0045839217491447926], [-0.032076627016067505], [0.3989139497280121], [-0.000621198327280581], [-0.26323944330215454], [0.01940743438899517], [0.08444420993328094], [-0.2984917461872101]], "result_max_similarities": 26.793376922607422, "full_text_display": "Handicap, Minimum Weight 56kg, Apprentices can claim.\nBenchMark 65, Handicap, Minimum Weight 56kg, Apprentices can claim.\nBenchMark 60, Handic", "K": 1}, {"id": "result_10", "sample_idx": 14287, "score": 24.031646728515625, "highlight_inds": [39], "matched_tokens_str": " and", "original_pos": 39, "full_sequence_tokens": ["The", " classical", " silhou", "ette", " and", " flowing", " details", " on", " this", " design", " will", " remind", " you", " of", " the", " Atlantic", " Ocean", "!", "\n", "The", " Shield", " is", " a", " vibrant", " coloured", " side", " table", " with", " a", " unique", " and", " contemporary", " style", ".", " Made", " from", " mah", "og", "any", " and", " covered", " entirely", " with", " silver"], "sequence_similarities": [[4.359022617340088], [-5.167544364929199], [2.490783214569092], [11.47362232208252], [10.539268493652344], [8.023176193237305], [7.821531295776367], [7.359094619750977], [8.05705451965332], [4.411510467529297], [-2.9786314964294434], [-10.481180191040039], [-0.48420464992523193], [-0.2686845064163208], [1.400291085243225], [2.866776943206787], [2.566560745239258], [2.311556816101074], [3.6750001907348633], [4.1226935386657715], [4.718849182128906], [5.923151969909668], [3.4849085807800293], [2.930065155029297], [9.842872619628906], [13.841668128967285], [4.619739532470703], [5.074457168579102], [11.744711875915527], [11.722892761230469], [6.013341426849365], [7.483203887939453], [0.20862579345703125], [-2.9949913024902344], [-1.8707406520843506], [9.33354663848877], [1.914266586303711], [7.024711608886719], [11.275161743164062], [24.031646728515625], [22.360591888427734], [10.083694458007812], [15.173213958740234], [11.829832077026367]], "normalized_similarities": [[0.16269029676914215], [-0.1928664892911911], [0.09296264499425888], [0.4282260537147522], [0.39335349202156067], [0.2994462549686432], [0.29192033410072327], [0.27466094493865967], [0.30071067810058594], [0.16464929282665253], [-0.1111704409122467], [-0.3911854922771454], [-0.01807180419564247], [-0.010028019547462463], [0.05226258188486099], [0.10699573159217834], [0.09579086303710938], [0.0862734392285347], [0.1371607631444931], [0.1538698673248291], [0.17611998319625854], [0.22106777131557465], [0.13006605207920074], [0.1093578115105629], [0.3673621416091919], [0.5166078209877014], [0.1724209487438202], [0.18939222395420074], [0.4383438527584076], [0.4375295042991638], [0.22443386912345886], [0.2792930603027344], [0.007786468602716923], [-0.1117810308933258], [-0.06982100754976273], [0.3483527600765228], [0.0714455172419548], [0.262180894613266], [0.4208189845085144], [0.8969249129295349], [0.8345566987991333], [0.3763502538204193], [0.566304624080658], [0.4415207505226135]], "result_max_similarities": 26.793376922607422, "full_text_display": "The classical silhouette and flowing details on this design will remind you of the Atlantic Ocean!\nThe Shield is a vibrant coloured side table with a unique and contemporary style. Made from mahogany and covered entirely with silver", "K": 1}, {"id": "result_11", "sample_idx": 10124, "score": 23.6107177734375, "highlight_inds": [17], "matched_tokens_str": "2019", "original_pos": 17, "full_sequence_tokens": ["Published", " 04", "/", "19", "/", "2019", " 12", ":", "19", ":", "21", " pm", " at", " 04", "/", "19", "/", "2019", " 12", ":", "19", ":", "21", " pm", " in", " Table", " For", " Train", " Set", ".", "\n", "table", " for", " train", " set", " imag", "inar", "ium", " train", " table", " train", " table", " set", " up"], "sequence_similarities": [[6.779770851135254], [6.24497127532959], [3.321262836456299], [4.7198591232299805], [2.1872081756591797], [7.657713890075684], [2.3956613540649414], [6.78270149230957], [8.362969398498535], [6.47297477722168], [9.123180389404297], [7.683897495269775], [9.542071342468262], [7.89573860168457], [6.2080979347229], [16.04117202758789], [11.902921676635742], [23.6107177734375], [3.011695146560669], [7.939589500427246], [8.422733306884766], [9.146955490112305], [13.933674812316895], [0.010221004486083984], [8.702286720275879], [5.838594436645508], [0.3140101432800293], [-1.1110566854476929], [0.9237098693847656], [4.835271835327148], [0.401577353477478], [0.9912229776382446], [0.698372483253479], [0.9119734764099121], [2.0226566791534424], [0.5340520143508911], [-2.0470709800720215], [1.1163349151611328], [8.198196411132812], [3.0392589569091797], [4.255939483642578], [1.8711010217666626], [5.76132869720459], [1.9000909328460693]], "normalized_similarities": [[0.25303906202316284], [0.23307891190052032], [0.12395834922790527], [0.17615768313407898], [0.08163242042064667], [0.28580623865127563], [0.08941244333982468], [0.2531484365463257], [0.3121282458305359], [0.24158860743045807], [0.3405013382434845], [0.28678345680236816], [0.35613545775413513], [0.29468995332717896], [0.23170270025730133], [0.598699152469635], [0.44424864649772644], [0.8812146782875061], [0.112404465675354], [0.29632657766342163], [0.31435877084732056], [0.34138867259025574], [0.5200417637825012], [0.0003814750525634736], [0.32479244470596313], [0.21791185438632965], [0.01171969249844551], [-0.041467588394880295], [0.03447530418634415], [0.1804651916027069], [0.014987933449447155], [0.03699507564306259], [0.026065116748213768], [0.0340372733771801], [0.07549092173576355], [0.01993224024772644], [-0.07640212774276733], [0.04166458547115326], [0.3059784770011902], [0.11343321949243546], [0.15884296596050262], [0.06983446329832077], [0.2150280922651291], [0.07091644406318665]], "result_max_similarities": 26.793376922607422, "full_text_display": "Published 04/19/2019 12:19:21 pm at 04/19/2019 12:19:21 pm in Table For Train Set.\ntable for train set imaginarium train table train table set up", "K": 1}, {"id": "result_12", "sample_idx": 16171, "score": 23.312179565429688, "highlight_inds": [37], "matched_tokens_str": " vu", "original_pos": 37, "full_sequence_tokens": ["From", " now", " on", " this", " topic", " will", " be", " known", " to", " all", " mankind", " as", " the", " BIG", " D", "\u00ef", "\u00bf", "\u00bd", "j", "\u00ef", "\u00bf", "\u00bd", " Vu", " topic", "!", " Please", " post", " all", " your", " d", "\u00ef", "\u00bf", "\u00bd", "j", "\u00ef", "\u00bf", "\u00bd", " vu", " related", " things", ",", " questions", " and", " stories"], "sequence_similarities": [[5.246890068054199], [2.5541582107543945], [-1.0498969554901123], [1.3154078722000122], [-3.7450530529022217], [-4.091236114501953], [-3.32403564453125], [-7.579911231994629], [-2.8036913871765137], [1.168269157409668], [0.3455355167388916], [-0.7661374807357788], [-0.345453679561615], [0.2409973442554474], [2.0440542697906494], [6.306057929992676], [-0.6988462209701538], [8.443318367004395], [4.378744602203369], [3.9534857273101807], [-3.438772201538086], [10.065414428710938], [10.795951843261719], [1.7170038223266602], [-6.2773847579956055], [-3.387514352798462], [-4.32039737701416], [-2.609966516494751], [3.059053421020508], [-6.240029811859131], [-10.346100807189941], [-11.760045051574707], [-3.8960702419281006], [-4.052271366119385], [-8.604333877563477], [-6.334770202636719], [8.836953163146973], [23.312179565429688], [4.411243915557861], [3.1768412590026855], [-3.152205467224121], [-0.9812880754470825], [0.00287020206451416], [-2.3032240867614746]], "normalized_similarities": [[0.19582787156105042], [0.0953279659152031], [-0.039184942841529846], [0.04909451678395271], [-0.1397753208875656], [-0.15269580483436584], [-0.12406183779239655], [-0.28290241956710815], [-0.10464120656251907], [0.04360290989279747], [0.012896303087472916], [-0.028594285249710083], [-0.012893249280750751], [0.008994661271572113], [0.07628953456878662], [0.2353588342666626], [-0.026082796975970268], [0.31512707471847534], [0.16342638432979584], [0.14755459129810333], [-0.1283441185951233], [0.3756679892539978], [0.40293359756469727], [0.06408314406871796], [-0.23428867757320404], [-0.12643103301525116], [-0.16124871373176575], [-0.09741088002920151], [0.11417199671268463], [-0.23289449512958527], [-0.3861439526081085], [-0.4389161169528961], [-0.1454116851091385], [-0.15124152600765228], [-0.32113659381866455], [-0.23643045127391815], [0.32981857657432556], [0.8700724840164185], [0.16463933885097504], [0.11856815218925476], [-0.11764868348836899], [-0.036624278873205185], [0.00010712356743169948], [-0.0859624445438385]], "result_max_similarities": 26.793376922607422, "full_text_display": "From now on this topic will be known to all mankind as the BIG D\u00ef\u00bf\u00bdj\u00ef\u00bf\u00bd Vu topic! Please post all your d\u00ef\u00bf\u00bdj\u00ef\u00bf\u00bd vu related things, questions and stories", "K": 1}, {"id": "result_13", "sample_idx": 1134, "score": 23.084596633911133, "highlight_inds": [20], "matched_tokens_str": " teach", "original_pos": 20, "full_sequence_tokens": ["Results", " for", " -", " Should", " schools", " no", " longer", " teach", " curs", "ive", " wr", "itting", "?", "\n", "1", ".", " Should", " schools", " no", " longer", " teach", " curs", "ive", " wr", "itting", "?"], "sequence_similarities": [[5.080949306488037], [2.8396220207214355], [0.9871237277984619], [0.3788785934448242], [1.9358742237091064], [0.7334995269775391], [4.769689083099365], [4.275981903076172], [1.5775123834609985], [7.236983776092529], [-3.973618745803833], [7.017919540405273], [1.4823731184005737], [4.187098026275635], [-2.519138813018799], [3.2206826210021973], [6.73476505279541], [6.0730881690979], [2.5450448989868164], [19.783000946044922], [23.084596633911133], [8.624015808105469], [16.400150299072266], [2.0560455322265625], [8.730545043945312], [2.3227758407592773]], "normalized_similarities": [[0.1896345317363739], [0.1059822365641594], [0.03684207797050476], [0.014140755869448185], [0.07225196808576584], [0.027376150712370872], [0.17801746726036072], [0.15959100425243378], [0.05887695401906967], [0.27010345458984375], [-0.1483060121536255], [0.26192739605903625], [0.055326104164123535], [0.15627361834049225], [-0.09402095526456833], [0.12020443379878998], [0.25135931372642517], [0.22666378319263458], [0.09498783946037292], [0.7383541464805603], [0.8615784645080566], [0.32187119126319885], [0.6120972037315369], [0.07673708349466324], [0.3258471190929413], [0.08669216185808182]], "result_max_similarities": 26.793376922607422, "full_text_display": "Results for - Should schools no longer teach cursive writting?\n1. Should schools no longer teach cursive writting?", "K": 1}, {"id": "result_14", "sample_idx": 601, "score": 22.99514389038086, "highlight_inds": [26], "matched_tokens_str": "nut", "original_pos": 26, "full_sequence_tokens": ["L", "ot", " #", "108", " -", " Circ", "a", " 18", "75", " B", "url", " Wal", "nut", " Renaissance", " Rev", "ival", " Ch", "airs", " -", " G", "ents", " &amp;", " Ladies", " B", "url", " Wal", "nut", " Ch", "airs", " with", " like", " new", " up", "hol", "stery", ".", " Very", " good", " condition", ".", " Arm", " chair", " H", " 42"], "sequence_similarities": [[5.106996059417725], [3.997204303741455], [2.3798043727874756], [-1.1833715438842773], [-1.594928503036499], [3.800377368927002], [3.7695460319519043], [-0.3203752040863037], [2.8099541664123535], [-0.7411208152770996], [4.700084209442139], [8.364730834960938], [11.502553939819336], [8.469073295593262], [-2.4792847633361816], [9.829794883728027], [3.541452407836914], [6.732158660888672], [2.9281575679779053], [0.5185177326202393], [4.280349254608154], [3.2284767627716064], [5.877718925476074], [1.6699846982955933], [7.585329055786133], [9.813953399658203], [22.99514389038086], [10.039666175842285], [5.651466369628906], [5.410215377807617], [-5.959151268005371], [4.624513626098633], [2.142064094543457], [-2.48386549949646], [7.034944534301758], [4.338993072509766], [-1.131035327911377], [4.042686462402344], [-2.8797829151153564], [-1.7123185396194458], [-3.6696293354034424], [3.140322685241699], [-2.5781784057617188], [2.8704986572265625]], "normalized_similarities": [[0.19060665369033813], [0.14918628334999084], [0.08882062137126923], [-0.04416656866669655], [-0.059526968747377396], [0.14184017479419708], [0.14068947732448578], [-0.011957253329455853], [0.10487495362758636], [-0.02766059711575508], [0.1754196286201477], [0.31219395995140076], [0.42930588126182556], [0.31608831882476807], [-0.09253349155187607], [0.3668740689754486], [0.13217641413211823], [0.25126203894615173], [0.10928662121295929], [0.01935245841741562], [0.15975400805473328], [0.12049532681703568], [0.21937207877635956], [0.062328264117240906], [0.28310462832450867], [0.3662828207015991], [0.8582398295402527], [0.37470701336860657], [0.21092773973941803], [0.20192360877990723], [-0.2224113494157791], [0.17259913682937622], [0.07994752377271652], [-0.09270446002483368], [0.2625628113746643], [0.1619427502155304], [-0.04221324250102043], [0.15088379383087158], [-0.10748115181922913], [-0.06390827894210815], [-0.13696031272411346], [0.1172051876783371], [-0.09622446447610855], [0.1071346327662468]], "result_max_similarities": 26.793376922607422, "full_text_display": "Lot #108 - Circa 1875 Burl Walnut Renaissance Revival Chairs - Gents &amp; Ladies Burl Walnut Chairs with like new upholstery. Very good condition. Arm chair H 42", "K": 1}, {"id": "result_15", "sample_idx": 11403, "score": 22.896751403808594, "highlight_inds": [26], "matched_tokens_str": "let", "original_pos": 24, "full_sequence_tokens": ["pel", "let", " mill", " us", "a", ",", "B", "usk", "irk", " Engineering", " |", " American", " Made", " Pel", "let", " Mills", "B", "usk", "irk", " Engineering", " manufact", "ures", " American", "-", "made", " Pel", "let", " Mills", " for", " pellet", "izing", " many", " types", " of", " eco", "-", "friendly", ",", " biomass", " materials", ".", "pel", "let", " mill"], "sequence_similarities": [[5.141653060913086], [5.648074150085449], [2.150921583175659], [-2.461212635040283], [-2.191194534301758], [-0.3064038157463074], [5.545205116271973], [2.26164174079895], [4.57862663269043], [5.334542274475098], [1.3178555965423584], [2.5733156204223633], [8.494142532348633], [6.973401069641113], [18.71773910522461], [5.775496482849121], [5.487728118896484], [6.609985828399658], [6.1925249099731445], [0.5214500427246094], [6.2738423347473145], [10.98564624786377], [6.023104667663574], [-2.907322645187378], [17.936511993408203], [7.2401933670043945], [22.896751403808594], [5.749129295349121], [7.79819393157959], [3.9200167655944824], [8.253948211669922], [6.80204963684082], [-0.36746323108673096], [13.497573852539062], [2.6201374530792236], [-5.627562999725342], [7.728859901428223], [7.7356061935424805], [4.482020378112793], [4.423901557922363], [4.608329772949219], [8.564441680908203], [17.552242279052734], [0.7755956649780273]], "normalized_similarities": [[0.19190014898777008], [0.2108011245727539], [0.08027810603380203], [-0.09185899049043655], [-0.08178120106458664], [-0.011435803957283497], [0.20696178078651428], [0.08441048115491867], [0.17088650166988373], [0.19909928739070892], [0.049185872077941895], [0.09604297578334808], [0.31702396273612976], [0.26026585698127747], [0.6985957622528076], [0.21555687487125397], [0.20481659471988678], [0.24670222401618958], [0.2311214804649353], [0.019461899995803833], [0.23415645956993103], [0.41001349687576294], [0.2247982621192932], [-0.10850900411605835], [0.6694383025169373], [0.2702232599258423], [0.8545675873756409], [0.21457277238368988], [0.2910493016242981], [0.14630544185638428], [0.3080592751502991], [0.25387054681777954], [-0.013714703731238842], [0.5037652850151062], [0.09779048711061478], [-0.21003560721874237], [0.2884615957736969], [0.28871336579322815], [0.167280912399292], [0.1651117503643036], [0.1719951033592224], [0.3196476995944977], [0.6550962924957275], [0.028947290033102036]], "result_max_similarities": 26.793376922607422, "full_text_display": "pellet mill usa,Buskirk Engineering | American Made Pellet MillsBuskirk Engineering manufactures American-made Pellet Mills for pelletizing many types of eco-friendly, biomass materials.pellet mill", "K": 1}, {"id": "result_16", "sample_idx": 5784, "score": 22.611236572265625, "highlight_inds": [37], "matched_tokens_str": " LED", "original_pos": 38, "full_sequence_tokens": ["This", " Red", " LED", " tail", " light", " for", " bike", " and", " bicycle", " will", " signal", " your", " position", " on", " the", " road", ",", " at", " day", " and", " at", " night", ".", "\n", "Three", " lighting", " modes", ".", " Red", " light", ".", " Battery", " operated", ".", "\n", "This", " Red", " LED", " bicycle", " tail", " light", " is", " ideal", " to"], "sequence_similarities": [[4.701288223266602], [0.4942784309387207], [7.091336250305176], [2.791447401046753], [5.389705657958984], [2.337944507598877], [-3.310241222381592], [-0.7590519785881042], [5.566113471984863], [-1.2470839023590088], [-2.479128360748291], [7.338240146636963], [3.2279744148254395], [-0.18948912620544434], [9.534958839416504], [4.068173408508301], [2.838007926940918], [-0.7947632670402527], [0.0901484489440918], [-0.843370795249939], [-0.7916377782821655], [-5.078752517700195], [4.194882392883301], [-2.071155309677124], [1.8068352937698364], [6.945463180541992], [-0.38646817207336426], [-0.23905253410339355], [0.9967297315597534], [12.970108032226562], [5.5453643798828125], [1.4222607612609863], [0.08086061477661133], [4.464254856109619], [4.499202728271484], [10.63039779663086], [6.141335487365723], [22.611236572265625], [15.232454299926758], [5.997657775878906], [7.450970649719238], [11.36146354675293], [-6.80677604675293], [5.829247951507568]], "normalized_similarities": [[0.17546457052230835], [0.018447784706950188], [0.2646675109863281], [0.10418423265218735], [0.20115813612937927], [0.08725830167531967], [-0.12354699522256851], [-0.028329836204648018], [0.2077421396970749], [-0.04654448479413986], [-0.09252765774726868], [0.2738826274871826], [0.12047658115625381], [-0.007072237320244312], [0.35586997866630554], [0.15183503925800323], [0.10592199116945267], [-0.02966267615556717], [0.0033645795192569494], [-0.031476836651563644], [-0.029546024277806282], [-0.18955253064632416], [0.1565641611814499], [-0.0773010179400444], [0.06743589043617249], [0.2592231333255768], [-0.014424018561840057], [-0.008922075852751732], [0.037200599908828735], [0.48407888412475586], [0.20696772634983063], [0.05308254808187485], [0.0030179328750818968], [0.16661785542964935], [0.16792219877243042], [0.3967546820640564], [0.2292109578847885], [0.8439114093780518], [0.5685156583786011], [0.22384852170944214], [0.2780900299549103], [0.4240399897098541], [-0.2540469765663147], [0.21756301820278168]], "result_max_similarities": 26.793376922607422, "full_text_display": "This Red LED tail light for bike and bicycle will signal your position on the road, at day and at night.\nThree lighting modes. Red light. Battery operated.\nThis Red LED bicycle tail light is ideal to", "K": 1}, {"id": "result_17", "sample_idx": 16391, "score": 22.51618194580078, "highlight_inds": [24], "matched_tokens_str": "oval", "original_pos": 7, "full_sequence_tokens": ["M", "old", " Rem", "oval", " Squad", " Mold", " Rem", "oval", " Company", " in", " Mc", " Donald", ",", " OH", " is", " made", " up", " of", " a", " team", " of", " trained", " Mold", " Rem", "oval", " experts", " and", " water", " restoration", " experts", ".", " Before", " hiring", " our", " experts", ",", " we", " take", " them", " through", " rigorous", " training", " so", " as"], "sequence_similarities": [[6.000614166259766], [5.356253623962402], [7.80517053604126], [14.147589683532715], [8.55595874786377], [3.523022413253784], [6.145313739776611], [20.336557388305664], [8.562167167663574], [-2.7511510848999023], [-3.2703120708465576], [0.7893507480621338], [4.332381248474121], [-0.3139011263847351], [8.81973648071289], [3.557180881500244], [5.606791019439697], [7.833915710449219], [5.328421592712402], [0.6274346113204956], [4.451120376586914], [2.4055538177490234], [7.130558490753174], [12.913704872131348], [22.51618194580078], [6.719108581542969], [6.637836456298828], [0.9195955991744995], [13.151208877563477], [2.190502882003784], [4.537441730499268], [0.854461133480072], [-3.3784735202789307], [8.546378135681152], [-1.2782484292984009], [2.603865623474121], [-0.3675626516342163], [3.118448495864868], [3.39486026763916], [3.217372417449951], [-1.4449479579925537], [-5.596373558044434], [-5.457499980926514], [-4.673822402954102]], "normalized_similarities": [[0.22395886480808258], [0.19990961253643036], [0.2913096845149994], [0.5280256271362305], [0.3193311095237732], [0.13148856163024902], [0.229359433054924], [0.759014368057251], [0.3195628225803375], [-0.1026802659034729], [-0.12205673009157181], [0.029460666701197624], [0.16169597208499908], [-0.011715623550117016], [0.32917600870132446], [0.13276344537734985], [0.20926032960414886], [0.29238253831863403], [0.19887085258960724], [0.023417526856064796], [0.16612763702869415], [0.08978165686130524], [0.26613137125968933], [0.4819737672805786], [0.8403637409210205], [0.25077497959136963], [0.2477416843175888], [0.034321751445531845], [0.49083805084228516], [0.0817553848028183], [0.16934937238693237], [0.031890761107206345], [-0.12609361112117767], [0.3189735412597656], [-0.04770762845873833], [0.09718318283557892], [-0.01371841412037611], [0.11638878285884857], [0.12670519948005676], [0.12008088827133179], [-0.053929295390844345], [-0.208871528506279], [-0.20368839800357819], [-0.1744394749403]], "result_max_similarities": 26.793376922607422, "full_text_display": "Mold Removal Squad Mold Removal Company in Mc Donald, OH is made up of a team of trained Mold Removal experts and water restoration experts. Before hiring our experts, we take them through rigorous training so as", "K": 1}, {"id": "result_18", "sample_idx": 8635, "score": 22.503726959228516, "highlight_inds": [17], "matched_tokens_str": "2019", "original_pos": 17, "full_sequence_tokens": ["Published", " 04", "/", "21", "/", "2019", " 12", ":", "13", ":", "20", " pm", " at", " 04", "/", "21", "/", "2019", " 12", ":", "13", ":", "20", " pm", " in", " Cl", "os", "et", " Organ", "izers", " Di", "y", ".", "\n", "clos", "et", " organizers", " di", "y", " coc", "o", " premier", " walk", " in"], "sequence_similarities": [[6.779770851135254], [6.24497127532959], [3.321262836456299], [4.629804611206055], [0.6906790733337402], [6.2262163162231445], [2.0466198921203613], [6.737446308135986], [6.059775352478027], [2.9717137813568115], [7.803322792053223], [6.933597087860107], [9.158589363098145], [8.20785140991211], [6.8706769943237305], [13.349796295166016], [9.97707748413086], [22.503726959228516], [2.271144390106201], [9.412556648254395], [8.400321006774902], [5.154519557952881], [12.547246932983398], [-0.8463835716247559], [8.368035316467285], [2.407317638397217], [3.232804775238037], [8.96357536315918], [6.521772861480713], [1.7218685150146484], [-3.243709087371826], [-2.3990321159362793], [4.734204292297363], [0.7527170181274414], [0.2644157409667969], [10.373376846313477], [2.798051357269287], [-2.6641814708709717], [-1.5304365158081055], [0.30943864583969116], [2.548737049102783], [1.9147732257843018], [1.0174797773361206], [2.4054112434387207]], "normalized_similarities": [[0.25303906202316284], [0.23307891190052032], [0.12395834922790527], [0.1727966070175171], [0.02577797695994377], [0.23237892985343933], [0.07638528943061829], [0.25145938992500305], [0.22616691887378693], [0.1109122559428215], [0.29124072194099426], [0.25878027081489563], [0.34182289242744446], [0.3063388168811798], [0.25643190741539], [0.4982498586177826], [0.37237104773521423], [0.8398988842964172], [0.08476514369249344], [0.3513016104698181], [0.3135223090648651], [0.1923803687095642], [0.4682965874671936], [-0.03158928453922272], [0.3123173117637634], [0.08984749019145966], [0.12065686285495758], [0.33454445004463196], [0.2434098869562149], [0.0642647072672844], [-0.12106384336948395], [-0.08953825384378433], [0.17669308185577393], [0.028093399479985237], [0.009868698194622993], [0.3871619701385498], [0.10443071275949478], [-0.09943433105945587], [-0.057119954377412796], [0.011549072340130806], [0.09512563794851303], [0.0714644268155098], [0.037975046783685684], [0.08977633714675903]], "result_max_similarities": 26.793376922607422, "full_text_display": "Published 04/21/2019 12:13:20 pm at 04/21/2019 12:13:20 pm in Closet Organizers Diy.\ncloset organizers diy coco premier walk in", "K": 1}, {"id": "result_19", "sample_idx": 18778, "score": 22.482189178466797, "highlight_inds": [40], "matched_tokens_str": " and", "original_pos": 40, "full_sequence_tokens": ["S", "ug", "arl", "ane", " Design", "s", ":", " Winter", "\u2019", "s", " \u2018", "magic", "\u2019", "-", "al", " coat", ",", " F", "Q", " sw", "aps", " and", " reminis", "cing", ".", "\n", "Winter", "\u2019", "s", " \u2018", "magic", "\u2019", "-", "al", " coat", ",", " F", "Q", " sw", "aps", " and", " reminis", "cing", "."], "sequence_similarities": [[4.742867469787598], [0.6334412097930908], [5.841026306152344], [9.141765594482422], [3.769392490386963], [2.7389369010925293], [-0.6076529026031494], [-0.23000848293304443], [-1.136120319366455], [3.507965564727783], [0.898339569568634], [-4.595648765563965], [0.85089510679245], [-0.32544755935668945], [-0.8334121108055115], [11.293869018554688], [10.367374420166016], [-0.16983944177627563], [0.33157777786254883], [3.371882677078247], [8.859065055847168], [13.343790054321289], [5.110710144042969], [2.180354595184326], [4.129875183105469], [-2.4225924015045166], [-0.6136480569839478], [-2.0514779090881348], [0.28801727294921875], [4.242214202880859], [-11.370430946350098], [-1.3239006996154785], [0.9826169013977051], [17.346961975097656], [14.541955947875977], [13.009699821472168], [-2.8190996646881104], [6.595722198486328], [10.588899612426758], [4.763683319091797], [22.482189178466797], [11.460779190063477], [3.707371234893799], [4.034459114074707]], "normalized_similarities": [[0.17701640725135803], [0.023641709238290787], [0.21800261735916138], [0.3411949872970581], [0.14068374037742615], [0.10222440212965012], [-0.022679220885038376], [-0.008584527298808098], [-0.042403027415275574], [0.13092659413814545], [0.033528417348861694], [-0.17152181267738342], [0.0317576639354229], [-0.01214656699448824], [-0.031105153262615204], [0.42151719331741333], [0.3869379460811615], [-0.006338858976960182], [0.012375363148748875], [0.12584762275218964], [0.33064383268356323], [0.49802568554878235], [0.1907452791929245], [0.08137662708759308], [0.15413790941238403], [-0.09041758626699448], [-0.022902974858880043], [-0.07656660676002502], [0.010749570094048977], [0.15833070874214172], [-0.42437469959259033], [-0.04941149055957794], [0.03667387366294861], [0.6474347114562988], [0.5427443981170654], [0.48555654287338257], [-0.10521628707647324], [0.24616988003253937], [0.39520585536956787], [0.17779330909252167], [0.8390949964523315], [0.4277467131614685], [0.13836894929409027], [0.15057672560214996]], "result_max_similarities": 26.793376922607422, "full_text_display": "Sugarlane Designs: Winter\u2019s \u2018magic\u2019-al coat, FQ swaps and reminiscing.\nWinter\u2019s \u2018magic\u2019-al coat, FQ swaps and reminiscing.", "K": 1}];
+    const globalMaxSequenceSimilarity = [26.793376922607422];
+    const tooltip = document.getElementById('tooltip');
+    let isNormalized = true;
+    let currentThreshold = 0.0;
+
+    function htmlDecode(input) {
+        const doc = new DOMParser().parseFromString(input, "text/html");
+        return doc.documentElement.textContent;
+    }
+
+    function getColorForSimilarity(sim, maxSim, isNormalizedMode = false, threshold = 0.0) {
+        if (sim === -Infinity || maxSim <= 0) {
+            return { backgroundColor: '#f8f9fa', color: '#6c757d' };
+        }
+
+        // Apply threshold cutoff - if below threshold, return transparent/no color
+        if (sim <= threshold) {
+            return { backgroundColor: 'transparent', color: '#6c757d' };
+        }
+
+        let t;
+        if (isNormalizedMode) {
+            // In normalized mode, use a more sensitive scale since values are 0-1
+            // Apply a power function to make smaller differences more visible
+            const normalizedT = Math.max(0, Math.min(1, sim / maxSim));
+            t = Math.pow(normalizedT, 0.7); // Makes mid-range values more visible
+        } else {
+            // In raw mode, use linear scaling
+            t = Math.max(0, Math.min(1, sim / maxSim));
+        }
+
+        let r, g, b;
+        if (isNormalizedMode) {
+            // Use white to red gradient for normalized mode (same as raw mode)
+            r = 255;
+            g = b = Math.round(255 * (1 - t));
+        } else {
+            // Original red gradient for raw mode
+            r = 255;
+            g = b = Math.round(255 * (1 - t));
+        }
+
+        const textColor = (r + g + b) / 3 > 127 ? '#000000' : '#FFFFFF';
+        return { backgroundColor: `rgb(${r},${g},${b})`, color: textColor };
+    }
+
+    function renderResult(resultData) {
+        const displayDiv = document.getElementById(`sequence_display_${resultData.id}`);
+        const fullTextDiv = document.getElementById(`full_text_display_${resultData.id}`);
+        if (!displayDiv) return;
+
+        // Choose which similarities to use based on toggle state
+        const currentSimilarities = isNormalized ? resultData.normalized_similarities : resultData.sequence_similarities;
+        const currentMaxSimilarities = isNormalized ? Array(resultData.K).fill(1) : globalMaxSequenceSimilarity; // Normalized max is always 1
+
+        displayDiv.innerHTML = '';
+        resultData.full_sequence_tokens.forEach((tokenHtml, i) => {
+            const span = document.createElement('span');
+            span.className = 'token';
+            span.innerHTML = tokenHtml;
+
+            const seqSim = currentSimilarities[i];
+            const rawSeqSim = resultData.sequence_similarities[i];
+            let maxIdx = 0
+            let K = resultData.K;
+            let maxSim = Number.NEGATIVE_INFINITY;
+            for (let j = 0; j < K; j++) {
+                if (currentSimilarities[i] && currentSimilarities[i][j] > maxSim) {
+                    maxIdx = j;
+                    maxSim = currentSimilarities[i][j];
+                }
+            }
+
+            try{
+                const colors = getColorForSimilarity(seqSim[maxIdx], currentMaxSimilarities[maxIdx], isNormalized, currentThreshold);
+                span.style.backgroundColor = colors.backgroundColor;
+                span.style.color = colors.color;
+            } catch { console.log("Get color for sim doesn't work") }
+
+            if (resultData.highlight_inds.includes(i)) {
+                span.classList.add('highlight-window');
+            }
+
+            span.onmousemove = e => {
+                tooltip.style.visibility = 'visible';
+                let rawTokenSimsText = resultData.sequence_similarities[i].map((s, j) => `Q${j+1}: ${s.toFixed(4)}`).join(', ');
+                let normalizedTokenSimsText = resultData.normalized_similarities[i].map((s, j) => `Q${j+1}: ${s.toFixed(4)}`).join(', ');
+
+                let tooltipContent = `<b>${htmlDecode(tokenHtml)}</b> (Index: ${i})<br>`;
+                if (isNormalized) {
+                    tooltipContent += `Normalized Sim: ${seqSim[maxIdx].toFixed(4)}<br>`;
+                    tooltipContent += `Raw Sim: ${rawSeqSim[maxIdx].toFixed(4)}<br>`;
+                    tooltipContent += `Normalized Token Sims: ${normalizedTokenSimsText}<br>`;
+                } else {
+                    tooltipContent += `Raw Sim: ${seqSim[maxIdx].toFixed(4)}<br>`;
+                    tooltipContent += `Raw Token Sims: ${rawTokenSimsText}<br>`;
+                }
+                tooltipContent += `Vector index match: ${maxIdx + 1}`;
+
+                tooltip.innerHTML = tooltipContent;
+                tooltip.style.left = `${e.pageX + 15}px`;
+                tooltip.style.top = `${e.pageY + 15}px`;
+            };
+            span.onmouseout = () => { tooltip.style.visibility = 'hidden'; };
+            displayDiv.appendChild(span);
+        });
+
+        if (fullTextDiv && resultData.full_text_display) {
+            fullTextDiv.innerHTML = `<p><strong>Full Text:</strong></p><p>${resultData.full_text_display}</p>`;
+        }
+    }
+
+    function toggleNormalization() {
+        isNormalized = !isNormalized;
+        const statusSpan = document.getElementById('normalizationStatus');
+        if (isNormalized) {
+            statusSpan.innerHTML = 'Showing normalized values (max = 1.0 per result) | <span style="background: linear-gradient(90deg, white, pink, red); padding: 2px 8px; border-radius: 3px; color: black; font-size: 0.8em;">White→Red colors</span>';
+            statusSpan.style.color = '#28a745';
+        } else {
+            statusSpan.innerHTML = 'Showing raw values (global scale) | <span style="background: linear-gradient(90deg, white, pink, red); padding: 2px 8px; border-radius: 3px; color: black; font-size: 0.8em;">White→Red colors</span>';
+            statusSpan.style.color = '#666';
+        }
+
+        // Re-render all results with new normalization setting
+        allResultsData.forEach(renderResult);
+    }
+
+    function updateThreshold() {
+        const slider = document.getElementById('thresholdSlider');
+        const valueDisplay = document.getElementById('thresholdValue');
+        currentThreshold = parseFloat(slider.value);
+        valueDisplay.textContent = currentThreshold.toFixed(3);
+
+        // Re-render all results with new threshold setting
+        allResultsData.forEach(renderResult);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        // Initialize normalization status (start with normalized mode)
+        const statusSpan = document.getElementById('normalizationStatus');
+        statusSpan.innerHTML = 'Showing normalized values (max = 1.0 per result) | <span style="background: linear-gradient(90deg, white, pink, red); padding: 2px 8px; border-radius: 3px; color: black; font-size: 0.8em;">White→Red colors</span>';
+        statusSpan.style.color = '#28a745';
+
+        // Set up toggle event listener
+        const toggleCheckbox = document.getElementById('normalizeToggle');
+        toggleCheckbox.addEventListener('change', toggleNormalization);
+
+        // Set up threshold slider event listener
+        const thresholdSlider = document.getElementById('thresholdSlider');
+        thresholdSlider.addEventListener('input', updateThreshold);
+
+        // Render initial results
+        allResultsData.forEach(renderResult);
+    });
+</script>
+</body></html>

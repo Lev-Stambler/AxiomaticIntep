@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mechanistic Interpretability Results - EleutherAI/pythia-70m-deduped</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            background-color: #f8fafc;
+            color: #1a202c;
+        }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        }
+        .header h1 {
+            margin: 0 0 0.5rem 0;
+            font-size: 2.5rem;
+            font-weight: 600;
+        }
+        .header p {
+            margin: 0;
+            opacity: 0.9;
+            font-size: 1.1rem;
+        }
+        .metadata {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        .metadata h2 {
+            margin: 0 0 1rem 0;
+            color: #2d3748;
+            font-size: 1.3rem;
+        }
+        .metadata-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+        .metadata-item {
+            padding: 0.75rem;
+            background: #f7fafc;
+            border-radius: 6px;
+            border-left: 4px solid #667eea;
+        }
+        .metadata-label {
+            font-weight: 600;
+            color: #4a5568;
+            font-size: 0.9rem;
+            margin-bottom: 0.25rem;
+        }
+        .metadata-value {
+            color: #2d3748;
+            font-family: 'SF Mono', Monaco, monospace;
+            font-size: 0.95rem;
+        }
+        .section {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        .section h2 {
+            margin: 0 0 1rem 0;
+            color: #2d3748;
+            font-size: 1.3rem;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 0.5rem;
+        }
+        .file-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1rem;
+        }
+        .file-card {
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 1rem;
+            transition: all 0.2s ease;
+            background: #fafafa;
+        }
+        .file-card:hover {
+            border-color: #667eea;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .file-card a {
+            text-decoration: none;
+            color: #2d3748;
+            display: block;
+        }
+        .file-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #4a5568;
+        }
+        .file-description {
+            font-size: 0.9rem;
+            color: #718096;
+            line-height: 1.4;
+        }
+        .explanation-preview {
+            font-size: 0.85rem;
+            color: #a0aec0;
+            font-style: italic;
+            margin-top: 0.5rem;
+            line-height: 1.3;
+        }
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            background: #667eea;
+            color: white;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            margin-top: 0.5rem;
+        }
+        .empty-section {
+            text-align: center;
+            color: #a0aec0;
+            font-style: italic;
+            padding: 2rem;
+        }
+        .footer {
+            text-align: center;
+            color: #718096;
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid #e2e8f0;
+        }
+    </style>
+</head>
+<body>
+    <div class="metadata">
+        <h2>📋 Run Information</h2>
+        <div class="metadata-grid">
+            <div class="metadata-item">
+                <div class="metadata-label">Model</div>
+                <div class="metadata-value">EleutherAI/pythia-70m-deduped</div>
+            </div>
+            <div class="metadata-item">
+                <div class="metadata-label">Dataset</div>
+                <div class="metadata-value">EleutherAI/the_pile_deduplicated</div>
+            </div>
+            <div class="metadata-item">
+                <div class="metadata-label">Dictionary Size</div>
+                <div class="metadata-value">50</div>
+            </div>
+            <div class="metadata-item">
+                <div class="metadata-label">Layer</div>
+                <div class="metadata-value">4</div>
+            </div>
+            <div class="metadata-item">
+                <div class="metadata-label">Target Token Offset</div>
+                <div class="metadata-value">0</div>
+            </div>
+            <div class="metadata-item">
+                <div class="metadata-label">Generated</div>
+                <div class="metadata-value">2025-08-05 01:59:21</div>
+            </div>
+        </div>
+    </div>
+    <div class="section">
+        <h2>🎯 Feature Direction Visualizations</h2>
+        <div style="text-align: center; margin-bottom: 15px; color: #718096; font-style: italic;">Directions sorted by faithfulness score (highest first)</div>
+        <div class="file-grid">
+            <div class="file-card">
+                <a href="html/direction_2_visualization.html">
+                    <div class="file-title">#1 - Direction 2</div>
+                    <div class="file-description">
+                         • Faithfulness: 100%
+                        <div class="explanation-preview">It’s a unit that “lights up” whenever the model sees a replacement‐style symbol (that is, the � token) – a marker for nonstandard, out‐of-vocabulary,...</div>
+                    </div>
+                </a>
+            </div>
+            <div class="file-card">
+                <a href="html/direction_0_visualization.html">
+                    <div class="file-title">#2 - Direction 0</div>
+                    <div class="file-description">
+                         • Faithfulness: 100%
+                        <div class="explanation-preview">It’s a feature that flags decorative, non‐alphabetic glyph sequences—like emoji hearts or other ornamental Unicode symbols—that are used to...</div>
+                    </div>
+                </a>
+            </div>
+            <div class="file-card">
+                <a href="html/direction_8_visualization.html">
+                    <div class="file-title">#3 - Direction 8</div>
+                    <div class="file-description">
+                         • Faithfulness: 92%
+                        <div class="explanation-preview">It appears this feature “lights up” when the model is about to complete a predicate or modal phrase—that is, it cues a specific, conventional...</div>
+                    </div>
+                </a>
+            </div>
+            <div class="file-card">
+                <a href="html/direction_16_visualization.html">
+                    <div class="file-title">#4 - Direction 16</div>
+                    <div class="file-description">
+                         • Faithfulness: 91%
+                        <div class="explanation-preview">It signals a “personal narrative” context—a representation of content where the speaker (or subject) is recounting intimate, relationship‐laden...</div>
+                    </div>
+                </a>
+            </div>
+            <div class="file-card">
+                <a href="html/direction_33_visualization.html">
+                    <div class="file-title">#5 - Direction 33</div>
+                    <div class="file-description">
+                         • Faithfulness: 90%
+                        <div class="explanation-preview">It appears that this feature signals when the language is describing a specific, structured time‐ or event–related datum—most notably dates with...</div>
+                    </div>
+                </a>
+            </div>
+            <div class="file-card">
+                <a href="html/direction_26_visualization.html">
+                    <div class="file-title">#6 - Direction 26</div>
+                    <div class="file-description">
+                         • Faithfulness: 90%
+                        <div class="explanation-preview">This feature activates on parts of text that denote dates—especially month names and their accompanying numeric date components in timestamps or...</div>
+                    </div>
+                </a>
+            </div>
+            <div class="file-card">
+                <a href="html/direction_21_visualization.html">
+                    <div class="file-title">#7 - Direction 21</div>
+                    <div class="file-description">
+                         • Faithfulness: 89%
+                        <div class="explanation-preview">It detects an adversative discourse marker—signals like “However,” that cue a shift or contrast in the narrative or argument.</div>
+                    </div>
+                </a>
+            </div>
+            <div class="file-card">
+                <a href="html/direction_38_visualization.html">
+                    <div class="file-title">#8 - Direction 38</div>
+                    <div class="file-description">
+                         • Faithfulness: 88%
+                        <div class="explanation-preview">It appears to be a latent signal for expressing modality and hedging—a mechanism that nudges the model to use modal auxiliaries and intensifiers...</div>
+                    </div>
+                </a>
+            </div>
+            <div class="file-card">
+                <a href="html/direction_41_visualization.html">
+                    <div class="file-title">#9 - Direction 41</div>
+                    <div class="file-description">
+                         • Faithfulness: 84%
+                        <div class="explanation-preview">It turns out that the feature is specialized in “thank‐you” or polite‐acknowledgement constructions—that is, it activates on formulaic phrases where...</div>
+                    </div>
+                </a>
+            </div>
+            <div class="file-card">
+                <a href="html/direction_45_visualization.html">
+                    <div class="file-title">#10 - Direction 45</div>
+                    <div class="file-description">
+                         • Faithfulness: 82%
+                        <div class="explanation-preview">The feature appears to be a specialized signal tracking the formatting and syntactic “slots” of structured metadata—especially dates and times in...</div>
+                    </div>
+                </a>
+            </div>
+            <div class="file-card">
+                <a href="html/direction_7_visualization.html">
+                    <div class="file-title">#11 - Direction 7</div>
+                    <div class="file-description">
+                         • Faithfulness: 80%
+                        <div class="explanation-preview">It appears the feature is attuned to boundary‐marking punctuation—most notably the period—that signals a sentence (or clause/segment) end, thereby...</div>
+                    </div>
+                </a>
+            </div>
+            <div class="file-card">
+                <a href="html/direction_11_visualization.html">
+                    <div class="file-title">#12 - Direction 11</div>
+                    <div class="file-description">
+                         • Faithfulness: 79%
+                        <div class="explanation-preview">It appears that this feature is attuned to word‐ending subword pieces – the final, often irregular or idiosyncratic morphemes (as found in...</div>
+                    </div>
+                </a>
+            </div>
+            <div class="file-card">
+                <a href="html/direction_32_visualization.html">
+                    <div class="file-title">#13 - Direction 32</div>
+                    <div class="file-description">
+                         • Faithfulness: 79%
+                        <div class="explanation-preview">It appears that this feature is signaling the closing or “final‐boundary” phase of a structured, formal or enumerative text span—that is, it cues the...</div>
+                    </div>
+                </a>
+            </div>
+            <div class="file-card">
+                <a href="html/direction_36_visualization.html">
+                    <div class="file-title">#14 - Direction 36</div>
+                    <div class="file-description">
+                         • Faithfulness: 77%
+                        <div class="explanation-preview">It appears that this feature is a punctuation‐boundary signal—in particular, one that fires strongly on terminal punctuation (usually a period) and...</div>
+                    </div>
+                </a>
+            </div>
+            <div class="file-card">
+                <a href="html/direction_37_visualization.html">
+                    <div class="file-title">#15 - Direction 37</div>
+                    <div class="file-description">
+                         • Faithfulness: 77%
+                        <div class="explanation-preview">It appears that the feature is signaling when the text shifts into a direct, interrogative or addressing mode—specifically, when the sentence is...</div>
+                    </div>
+                </a>
+            </div>
+            <div class="file-card">
+                <a href="html/direction_28_visualization.html">
+                    <div class="file-title">#16 - Direction 28</div>
+                    <div class="file-description">
+                         • Faithfulness: 77%
+                        <div class="explanation-preview">It appears to be an internal “boundary‐marker” signal—a feature that fires strongly at the close of a segment (for example at end-of‐sentence...</div>
+                    </div>
+                </a>
+            </div>
+            <div class="file-card">
+                <a href="html/direction_4_visualization.html">
+                    <div class="file-title">#17 - Direction 4</div>
+                    <div class="file-description">
+                         • Faithfulness: 77%
+                        <div class="explanation-preview">It’s a token‐level “boundary” signal that fires on subword pieces where a compound or proper‐name is being split—i.e. the feature detects when a...</div>
+                    </div>
+                </a>
+            </div>
+            <div class="file-card">
+                <a href="html/direction_46_visualization.html">
+                    <div class="file-title">#18 - Direction 46</div>
+                    <div class="file-description">
+                         • Faithfulness: 77%
+                        <div class="explanation-preview">This feature appears to signal a “factual, data‐driven” context—a kind of style marker that nudges the model toward lexical choices (for numbers,...</div>
+                    </div>
+                </a>
+            </div>
+            <div class="file-card">
+                <a href="html/direction_15_visualization.html">
+                    <div class="file-title">#19 - Direction 15</div>
+                    <div class="file-description">
+                         • Faithfulness: 77%
+                        <div class="explanation-preview">This feature “fires” when the model is handling structured numeric or temporal spans—such as year ranges, version numbers, or similar...</div>
+                    </div>
+                </a>
+            </div>
+            <div class="file-card">
+                <a href="html/direction_24_visualization.html">
+                    <div class="file-title">#20 - Direction 24</div>
+                    <div class="file-description">
+                         • Faithfulness: 77%
+                        <div class="explanation-preview">The feature activates strongly at sentence‐terminating punctuation—it signals when a sentence (or clause) has ended, marking a boundary between...</div>
+                    </div>
+                </a>
+            </div>
+            <div class="file-card">
+                <a href="html/direction_44_visualization.html">
+                    <div class="file-title">#21 - Direction 44</div>
+                    <div class="file-description">
+                         • Faithfulness: 75%
+                        <div class="explanation-preview">It appears that the feature is “marking” a kind of announcement‐oriented, fact‐reporting sentence opening – one in which a proper name or event...</div>
+                    </div>
+                </a>
+            </div>
+            <div class="file-card">
+                <a href="html/direction_29_visualization.html">
+                    <div class="file-title">#22 - Direction 29</div>
+                    <div class="file-description">
+                         • Faithfulness: 75%
+                        <div class="explanation-preview">It appears this feature is responsible for “marking” a specific kind of noun‐phrase continuation—typically one that expresses a habitual, quantified,...</div>
+                    </div>
+                </a>
+            </div>
+            <div class="file-card">
+                <a href="html/direction_25_visualization.html">
+                    <div class="file-title">#23 - Direction 25</div>
+                    <div class="file-description">
+                         • Faithfulness: 74%
+                        <div class="explanation-preview">The feature appears to signal strongly evaluative or extreme modifiers—words that denote superlative, total, or high-quality judgments (and sometimes...</div>
+                    </div>
+                </a>
+            </div>
+            <div class="file-card">
+                <a href="html/direction_35_visualization.html">
+                    <div class="file-title">#24 - Direction 35</div>
+                    <div class="file-description">
+                         • Faithfulness: 74%
+                        <div class="explanation-preview">It’s a feature that “lights up” at the beginnings of distinct, often capitalized entity names or brand‐like terms—signaling that the upcoming word is...</div>
+                    </div>
+                </a>
+            </div>
+            <div class="file-card">
+                <a href="html/direction_22_visualization.html">
+                    <div class="file-title">#25 - Direction 22</div>
+                    <div class="file-description">
+                         • Faithfulness: 73%
+                        <div class="explanation-preview">It signals the presence of a sentence‐ or clause–boundary marker—in short, it’s a boundary feature that strongly activates on terminal punctuation...</div>
+                    </div>
+                </a>
+            </div>
+            <div class="file-card">
+                <a href="html/direction_27_visualization.html">
+                    <div class="file-title">#26 - Direction 27</div>
+                    <div class="file-description">
+                         • Faithfulness: 73%
+                        <div class="explanation-preview">This feature appears to signal phrases that mark a finite, bounded situation—whether it’s a quantity running out (like “tickets left”), a time window...</div>
+                    </div>
+                </a>
+            </div>
+            <div class="file-card">
+                <a href="html/direction_5_visualization.html">
+                    <div class="file-title">#27 - Direction 5</div>
+                    <div class="file-description">
+                         • Faithfulness: 71%
+                        <div class="explanation-preview">It appears to be a feature that flags a “slot‐marker” for upcoming descriptive or referential noun phrases—in other words, it biases the model toward...</div>
+                    </div>
+                </a>
+            </div>
+            <div class="file-card">
+                <a href="html/direction_3_visualization.html">
+                    <div class="file-title">#28 - Direction 3</div>
+                    <div class="file-description">
+                         • Faithfulness: 71%
+                        <div class="explanation-preview">It appears this feature is responsible for “gluing together” split or segmented proper‐name parts. In contexts where a name (or a specialized term)...</div>
+                    </div>
+                </a>
+            </div>
+            <div class="file-card">
+                <a href="html/direction_42_visualization.html">
+                    <div class="file-title">#29 - Direction 42</div>
+                    <div class="file-description">
+                         • Faithfulness: 71%
+                        <div class="explanation-preview">It’s a feature that fires on the “tail‐end” subword pieces found in proper names (often geographic or branded entities). In other words, the model...</div>
+                    </div>
+                </a>
+            </div>
+            <div class="file-card">
+                <a href="html/direction_1_visualization.html">
+                    <div class="file-title">#30 - Direction 1</div>
+                    <div class="file-description">
+                         • Faithfulness: 69%
+                        <div class="explanation-preview">It detects and “completes” dash‐ or punctuation–separated numeral sequences—i.e. it signals when a number is being abbreviated as part of a range (or...</div>
+                    </div>
+                </a>
+            </div>
+            <div class="file-card">
+                <a href="html/direction_49_visualization.html">
+                    <div class="file-title">#31 - Direction 49</div>
+                    <div class="file-description">
+                         • Faithfulness: 69%
+                        <div class="explanation-preview">It appears that this feature “lights up” when the model is in a transition‐or “connector” context—that is, when the surroundings call for a...</div>
+                    </div>
+                </a>
+            </div>
+            <div class="file-card">
+                <a href="html/direction_47_visualization.html">
+                    <div class="file-title">#32 - Direction 47</div>
+                    <div class="file-description">
+                         • Faithfulness: 68%
+                        <div class="explanation-preview">It appears that this feature is “marking” sub‐word splits—that is, it signals when a word (often a proper name, compound word, or common multi‐word...</div>
+                    </div>
+                </a>
+            </div>
+            <div class="file-card">
+                <a href="html/direction_31_visualization.html">
+                    <div class="file-title">#33 - Direction 31</div>
+                    <div class="file-description">
+                         • Faithfulness: 67%
+                        <div class="explanation-preview">It appears to be a “comparative/quantification trigger” – a latent signal that activates when the text is setting up a comparative or enumerative...</div>
+                    </div>
+                </a>
+            </div>
+            <div class="file-card">
+                <a href="html/direction_10_visualization.html">
+                    <div class="file-title">#34 - Direction 10</div>
+                    <div class="file-description">
+                         • Faithfulness: 66%
+                        <div class="explanation-preview">This feature appears to detect tokens that serve as connective or transitional markers—words and small phrases that signal the introduction or...</div>
+                    </div>
+                </a>
+            </div>
+            <div class="file-card">
+                <a href="html/direction_40_visualization.html">
+                    <div class="file-title">#35 - Direction 40</div>
+                    <div class="file-description">
+                         • Faithfulness: 65%
+                        <div class="explanation-preview">It appears that the feature flags situations where the model is “bridging” or linking parts of a structured, technical or formal...</div>
+                    </div>
+                </a>
+            </div>
+            <div class="file-card">
+                <a href="html/direction_17_visualization.html">
+                    <div class="file-title">#36 - Direction 17</div>
+                    <div class="file-description">
+                         • Faithfulness: 65%
+                        <div class="explanation-preview">It appears to be a signal for contexts that promise or assert sufficient, welcoming, and “just‐right” qualities—marking phrases where the language...</div>
+                    </div>
+                </a>
+            </div>
+            <div class="file-card">
+                <a href="html/direction_39_visualization.html">
+                    <div class="file-title">#37 - Direction 39</div>
+                    <div class="file-description">
+                         • Faithfulness: 63%
+                        <div class="explanation-preview">It appears that this feature is activated when the model is processing structured numeric or alphanumeric data—such as model numbers, dates, times,...</div>
+                    </div>
+                </a>
+            </div>
+            <div class="file-card">
+                <a href="html/direction_30_visualization.html">
+                    <div class="file-title">#38 - Direction 30</div>
+                    <div class="file-description">
+                         • Faithfulness: 63%
+                        <div class="explanation-preview">It appears to be a feature that “tags” certain trigger words as signaling a fixed, idiomatic continuation—in other words, it helps the model choose...</div>
+                    </div>
+                </a>
+            </div>
+            <div class="file-card">
+                <a href="html/direction_48_visualization.html">
+                    <div class="file-title">#39 - Direction 48</div>
+                    <div class="file-description">
+                         • Faithfulness: 63%
+                        <div class="explanation-preview">It’s a signal that a word is acting as the key “head” or identifier within a compound, branded, or domain‐specific name—a pivot token that marks the...</div>
+                    </div>
+                </a>
+            </div>
+            <div class="file-card">
+                <a href="html/direction_14_visualization.html">
+                    <div class="file-title">#40 - Direction 14</div>
+                    <div class="file-description">
+                         • Faithfulness: 62%
+                        <div class="explanation-preview">The feature appears to signal evaluative modifiers—words that intensify or qualify descriptions by conveying extremes (minimal, complete, optimal,...</div>
+                    </div>
+                </a>
+            </div>
+            <div class="file-card">
+                <a href="html/direction_9_visualization.html">
+                    <div class="file-title">#41 - Direction 9</div>
+                    <div class="file-description">
+                         • Faithfulness: 62%
+                        <div class="explanation-preview">It detects text that’s formatted as event or announcement metadata—sections filled with structured details like dates, times, numbers, locations, and...</div>
+                    </div>
+                </a>
+            </div>
+            <div class="file-card">
+                <a href="html/direction_12_visualization.html">
+                    <div class="file-title">#42 - Direction 12</div>
+                    <div class="file-description">
+                         • Faithfulness: 62%
+                        <div class="explanation-preview">It detects when a sentence uses the “have‐” construction—as an auxiliary marking the perfect aspect or possession/rights—which signals that a clause...</div>
+                    </div>
+                </a>
+            </div>
+            <div class="file-card">
+                <a href="html/direction_34_visualization.html">
+                    <div class="file-title">#43 - Direction 34</div>
+                    <div class="file-description">
+                         • Faithfulness: 61%
+                        <div class="explanation-preview">It’s a signal that “fires” on word‐end fragments—that is, on subword pieces (often used as suffixes or final syllables) whose presence cues the model...</div>
+                    </div>
+                </a>
+            </div>
+            <div class="file-card">
+                <a href="html/direction_18_visualization.html">
+                    <div class="file-title">#44 - Direction 18</div>
+                    <div class="file-description">
+                         • Faithfulness: 55%
+                        <div class="explanation-preview">It’s a control signal that fires at sentence‐ or segment–ending punctuation, marking a transition point where the model switches context (i.e....</div>
+                    </div>
+                </a>
+            </div>
+            <div class="file-card">
+                <a href="html/direction_43_visualization.html">
+                    <div class="file-title">#45 - Direction 43</div>
+                    <div class="file-description">
+                         • Faithfulness: 55%
+                        <div class="explanation-preview">This feature activates a “procedural, transactional language” mode—it signals when the model should produce detailed, action‐oriented, formal...</div>
+                    </div>
+                </a>
+            </div>
+            <div class="file-card">
+                <a href="html/direction_13_visualization.html">
+                    <div class="file-title">#46 - Direction 13</div>
+                    <div class="file-description">
+                         • Faithfulness: 53%
+                        <div class="explanation-preview">It picks out subword pieces that occur in proper‐noun or branded names – fragments (often beginning with a capital letter) that signal a multi‐token...</div>
+                    </div>
+                </a>
+            </div>
+            <div class="file-card">
+                <a href="html/direction_19_visualization.html">
+                    <div class="file-title">#47 - Direction 19</div>
+                    <div class="file-description">
+                         • Faithfulness: 53%
+                        <div class="explanation-preview">It signals an informal, exclamatory interjection—a brief, self-aware, surprise or emphasis marker (e.g. “oh” or “well”) that cues a shift in tone or...</div>
+                    </div>
+                </a>
+            </div>
+            <div class="file-card">
+                <a href="html/direction_6_visualization.html">
+                    <div class="file-title">#48 - Direction 6</div>
+                    <div class="file-description">
+                         • Faithfulness: 52%
+                        <div class="explanation-preview">It appears to be a control signal for “structured” or “formatted” text—a feature that detects when the text is in a specialized register (such as...</div>
+                    </div>
+                </a>
+            </div>
+            <div class="file-card">
+                <a href="html/direction_23_visualization.html">
+                    <div class="file-title">#49 - Direction 23</div>
+                    <div class="file-description">
+                         • Faithfulness: 51%
+                        <div class="explanation-preview">It appears that this feature “lights‐up” in contexts where the model is about to produce a particular, context–sensitive functional or referential...</div>
+                    </div>
+                </a>
+            </div>
+            <div class="file-card">
+                <a href="html/direction_20_visualization.html">
+                    <div class="file-title">#50 - Direction 20</div>
+                    <div class="file-description">
+                         • Faithfulness: 50%
+                        <div class="explanation-preview">It’s a feature that flags when text is presented in a structured, “data‐like” format—such as numbers, codes, dates, times, or technical identifiers...</div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="section">
+        <h2>📊 Summary Reports</h2>
+        <div class="file-grid">
+            <div class="file-card">
+                <a href="html/faithfulness_aggregated.html">
+                    <div class="file-title">Aggregated Analysis</div>
+                    <div class="file-description">Statistical aggregation of multiple validation trials with confidence intervals.</div>
+                    <span class="badge">Summary</span>
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="footer">
+    </div>
+</body>
+</html>

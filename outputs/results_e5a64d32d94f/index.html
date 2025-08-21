@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mechanistic Interpretability Results - EleutherAI/pythia-70m-deduped</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            background-color: #f8fafc;
+            color: #1a202c;
+        }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        }
+        .header h1 {
+            margin: 0 0 0.5rem 0;
+            font-size: 2.5rem;
+            font-weight: 600;
+        }
+        .header p {
+            margin: 0;
+            opacity: 0.9;
+            font-size: 1.1rem;
+        }
+        .metadata {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        .metadata h2 {
+            margin: 0 0 1rem 0;
+            color: #2d3748;
+            font-size: 1.3rem;
+        }
+        .metadata-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+        .metadata-item {
+            padding: 0.75rem;
+            background: #f7fafc;
+            border-radius: 6px;
+            border-left: 4px solid #667eea;
+        }
+        .metadata-label {
+            font-weight: 600;
+            color: #4a5568;
+            font-size: 0.9rem;
+            margin-bottom: 0.25rem;
+        }
+        .metadata-value {
+            color: #2d3748;
+            font-family: 'SF Mono', Monaco, monospace;
+            font-size: 0.95rem;
+        }
+        .section {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        .section h2 {
+            margin: 0 0 1rem 0;
+            color: #2d3748;
+            font-size: 1.3rem;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 0.5rem;
+        }
+        .file-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1rem;
+        }
+        .file-card {
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 1rem;
+            transition: all 0.2s ease;
+            background: #fafafa;
+        }
+        .file-card:hover {
+            border-color: #667eea;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .file-card a {
+            text-decoration: none;
+            color: #2d3748;
+            display: block;
+        }
+        .file-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #4a5568;
+        }
+        .file-description {
+            font-size: 0.9rem;
+            color: #718096;
+            line-height: 1.4;
+        }
+        .explanation-preview {
+            font-size: 0.85rem;
+            color: #a0aec0;
+            font-style: italic;
+            margin-top: 0.5rem;
+            line-height: 1.3;
+        }
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            background: #667eea;
+            color: white;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            margin-top: 0.5rem;
+        }
+        .empty-section {
+            text-align: center;
+            color: #a0aec0;
+            font-style: italic;
+            padding: 2rem;
+        }
+        .footer {
+            text-align: center;
+            color: #718096;
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid #e2e8f0;
+        }
+    </style>
+</head>
+<body>
+    <div class="metadata">
+        <h2>📋 Run Information</h2>
+        <div class="metadata-grid">
+            <div class="metadata-item">
+                <div class="metadata-label">Model</div>
+                <div class="metadata-value">EleutherAI/pythia-70m-deduped</div>
+            </div>
+            <div class="metadata-item">
+                <div class="metadata-label">Dataset</div>
+                <div class="metadata-value">allenai/c4</div>
+            </div>
+            <div class="metadata-item">
+                <div class="metadata-label">Dictionary Size</div>
+                <div class="metadata-value">20</div>
+            </div>
+            <div class="metadata-item">
+                <div class="metadata-label">Layer</div>
+                <div class="metadata-value">4</div>
+            </div>
+            <div class="metadata-item">
+                <div class="metadata-label">Target Token Offset</div>
+                <div class="metadata-value">0</div>
+            </div>
+            <div class="metadata-item">
+                <div class="metadata-label">Generated</div>
+                <div class="metadata-value">2025-08-07 08:36:51</div>
+            </div>
+        </div>
+    </div>
+    <div class="section">
+        <h2>🎯 Feature Direction Visualizations</h2>
+        <div style="text-align: center; margin-bottom: 15px; color: #718096; font-style: italic;">Directions sorted by faithfulness score (highest first)</div>
+        <div class="file-grid">
+            <div class="file-card">
+                <a href="html/direction_4_visualization.html">
+                    <div class="file-title">#1 - Direction 4</div>
+                    <div class="file-description">
+                        Interactive visualization showing activation similarities and token-level analysis
+                         • Faithfulness: 100%
+                        <div class="explanation-preview">This head appears to be a generic “script-switch” detector: it fires strongly on the tokens that mark the onset (and often the closing) of a span of...</div>
+                    </div>
+                </a>
+            </div>
+            <div class="file-card">
+                <a href="html/direction_10_visualization.html">
+                    <div class="file-title">#2 - Direction 10</div>
+                    <div class="file-description">
+                        Interactive visualization showing activation similarities and token-level analysis
+                         • Faithfulness: 100%
+                        <div class="explanation-preview">This feature fires on the “dot” in abbreviations and initialisms (e.g. month-abbrev “Oct.”, name initials “D.”, org-suffix “Inc.”, “U.S.”, “N.J.”,...</div>
+                    </div>
+                </a>
+            </div>
+            <div class="file-card">
+                <a href="html/direction_14_visualization.html">
+                    <div class="file-title">#3 - Direction 14</div>
+                    <div class="file-description">
+                        Interactive visualization showing activation similarities and token-level analysis
+                         • Faithfulness: 98%
+                        <div class="explanation-preview">This head is a “list/coordination” detector: it lights up on the small function words (and, or, of, etc.) that glue together items or phrases in...</div>
+                    </div>
+                </a>
+            </div>
+            <div class="file-card">
+                <a href="html/direction_7_visualization.html">
+                    <div class="file-title">#4 - Direction 7</div>
+                    <div class="file-description">
+                        Interactive visualization showing activation similarities and token-level analysis
+                         • Faithfulness: 95%
+                        <div class="explanation-preview">This feature fires on title‐ or heading‐style phrases (title‐case word sequences at the start of a block), marking the end of a section header or...</div>
+                    </div>
+                </a>
+            </div>
+            <div class="file-card">
+                <a href="html/direction_15_visualization.html">
+                    <div class="file-title">#5 - Direction 15</div>
+                    <div class="file-description">
+                        Interactive visualization showing activation similarities and token-level analysis
+                         • Faithfulness: 90%
+                        <div class="explanation-preview">This neuron fires on the little bracket-style markers that surround inline reference numbers or dates (e.g. the “[” and “]” around a year or citation...</div>
+                    </div>
+                </a>
+            </div>
+            <div class="file-card">
+                <a href="html/direction_12_visualization.html">
+                    <div class="file-title">#6 - Direction 12</div>
+                    <div class="file-description">
+                        Interactive visualization showing activation similarities and token-level analysis
+                         • Faithfulness: 85%
+                        <div class="explanation-preview">This feature fires whenever the model encounters spans of non‐Latin, non‐ASCII script characters (e.g. Hangul, CJK ideographs, Arabic, Devanagari,...</div>
+                    </div>
+                </a>
+            </div>
+            <div class="file-card">
+                <a href="html/direction_1_visualization.html">
+                    <div class="file-title">#7 - Direction 1</div>
+                    <div class="file-description">
+                        Interactive visualization showing activation similarities and token-level analysis
+                         • Faithfulness: 84%
+                        <div class="explanation-preview">This neuron is a “script‐switch” detector that spikes whenever the model sees non-Latin‐alphabet tokens (Hangul, Chinese characters, Arabic,...</div>
+                    </div>
+                </a>
+            </div>
+            <div class="file-card">
+                <a href="html/direction_13_visualization.html">
+                    <div class="file-title">#8 - Direction 13</div>
+                    <div class="file-description">
+                        Interactive visualization showing activation similarities and token-level analysis
+                         • Faithfulness: 83%
+                        <div class="explanation-preview">This neuron fires on the “.” token when it’s being used as an abbreviation/initialism marker (e.g. “D.” in a name, “Inc.” in a company,...</div>
+                    </div>
+                </a>
+            </div>
+            <div class="file-card">
+                <a href="html/direction_17_visualization.html">
+                    <div class="file-title">#9 - Direction 17</div>
+                    <div class="file-description">
+                        Interactive visualization showing activation similarities and token-level analysis
+                         • Faithfulness: 81%
+                        <div class="explanation-preview">1. Recognizes the “Show posts in this category” footer on Japanese category pages.
+2. Marks the “Labels:” header followed by a list of taxonomy or...</div>
+                    </div>
+                </a>
+            </div>
+            <div class="file-card">
+                <a href="html/direction_16_visualization.html">
+                    <div class="file-title">#10 - Direction 16</div>
+                    <div class="file-description">
+                        Interactive visualization showing activation similarities and token-level analysis
+                         • Faithfulness: 80%
+                        <div class="explanation-preview">This neuron fires on the “dot” punctuation when it serves as an internal separator—e.g. in decimal numbers (2.5, 5.7), abbreviations or initials...</div>
+                    </div>
+                </a>
+            </div>
+            <div class="file-card">
+                <a href="html/direction_2_visualization.html">
+                    <div class="file-title">#11 - Direction 2</div>
+                    <div class="file-description">
+                        Interactive visualization showing activation similarities and token-level analysis
+                         • Faithfulness: 77%
+                        <div class="explanation-preview">This feature fires on the “boilerplate” metadata tokens you see in sidebars, bylines and tables—date‐time stamps, author or “Published by…” lines,...</div>
+                    </div>
+                </a>
+            </div>
+            <div class="file-card">
+                <a href="html/direction_19_visualization.html">
+                    <div class="file-title">#12 - Direction 19</div>
+                    <div class="file-description">
+                        Interactive visualization showing activation similarities and token-level analysis
+                         • Faithfulness: 77%
+                        <div class="explanation-preview">This neuron fires on the hallmarks of marketing‐style copy – the “you/we” calls to action, modal verbs (“can/may/should”), to-infinitives,...</div>
+                    </div>
+                </a>
+            </div>
+            <div class="file-card">
+                <a href="html/direction_3_visualization.html">
+                    <div class="file-title">#13 - Direction 3</div>
+                    <div class="file-description">
+                        Interactive visualization showing activation similarities and token-level analysis
+                         • Faithfulness: 73%
+                        <div class="explanation-preview">This feature fires on “.” tokens whenever they serve as full-stop or abbreviation dots (e.g. sentence-final periods and the “.” in date or name...</div>
+                    </div>
+                </a>
+            </div>
+            <div class="file-card">
+                <a href="html/direction_8_visualization.html">
+                    <div class="file-title">#14 - Direction 8</div>
+                    <div class="file-description">
+                        Interactive visualization showing activation similarities and token-level analysis
+                         • Faithfulness: 73%
+                        <div class="explanation-preview">This neuron flags small, highly emphasized “labels” or headings that kick off a new section or list item—often rendered in bold or as a stray...</div>
+                    </div>
+                </a>
+            </div>
+            <div class="file-card">
+                <a href="html/direction_18_visualization.html">
+                    <div class="file-title">#15 - Direction 18</div>
+                    <div class="file-description">
+                        Interactive visualization showing activation similarities and token-level analysis
+                         • Faithfulness: 72%
+                        <div class="explanation-preview">This neuron lights up on subword pieces that begin multi-piece capitalized strings—i.e. the initial token of a proper name, brand, acronym or...</div>
+                    </div>
+                </a>
+            </div>
+            <div class="file-card">
+                <a href="html/direction_5_visualization.html">
+                    <div class="file-title">#16 - Direction 5</div>
+                    <div class="file-description">
+                        Interactive visualization showing activation similarities and token-level analysis
+                         • Faithfulness: 66%
+                        <div class="explanation-preview">The feature is a “trailing‐dot” detector—it lights up on the period that ends an uppercase or title-case abbreviation/initialism in headlines, names,...</div>
+                    </div>
+                </a>
+            </div>
+            <div class="file-card">
+                <a href="html/direction_11_visualization.html">
+                    <div class="file-title">#17 - Direction 11</div>
+                    <div class="file-description">
+                        Interactive visualization showing activation similarities and token-level analysis
+                         • Faithfulness: 66%
+                        <div class="explanation-preview">This feature fires on the final full‐stop of standalone, all‐caps headings or titles (e.g. press-release headlines, legal or terms-of-service...</div>
+                    </div>
+                </a>
+            </div>
+            <div class="file-card">
+                <a href="html/direction_9_visualization.html">
+                    <div class="file-title">#18 - Direction 9</div>
+                    <div class="file-description">
+                        Interactive visualization showing activation similarities and token-level analysis
+                         • Faithfulness: 65%
+                        <div class="explanation-preview">This neuron flags tokens that include an internal period—i.e. abbreviations, initials, date or version markers, and decimal numbers (e.g. “U.S.C.”,...</div>
+                    </div>
+                </a>
+            </div>
+            <div class="file-card">
+                <a href="html/direction_0_visualization.html">
+                    <div class="file-title">#19 - Direction 0</div>
+                    <div class="file-description">
+                        Interactive visualization showing activation similarities and token-level analysis
+                         • Faithfulness: 63%
+                        <div class="explanation-preview">This neuron is essentially a “garbage‐character” detector: it spikes on stray replacement glyphs and garbled/HTML-entity residues (the “�” tokens and...</div>
+                    </div>
+                </a>
+            </div>
+            <div class="file-card">
+                <a href="html/direction_6_visualization.html">
+                    <div class="file-title">#20 - Direction 6</div>
+                    <div class="file-description">
+                        Interactive visualization showing activation similarities and token-level analysis
+                         • Faithfulness: 58%
+                        <div class="explanation-preview">This neuron is a detector for the cardinal “one” used as a singular quantifier—especially in “one of…” or “one”-as-an-instance constructions that...</div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="footer">
+    </div>
+</body>
+</html>

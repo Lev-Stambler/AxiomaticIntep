@@ -1,0 +1,2077 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aggregated Faithfulness Testing Results</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f8f9fa;
+            color: #212529;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+        }
+        h1 {
+            color: #0056b3;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5rem;
+        }
+        .overall-summary {
+            background-color: #e3f2fd;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            border-left: 4px solid #2196f3;
+        }
+        .overall-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .stat-card {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 6px;
+            text-align: center;
+            border-left: 4px solid #0056b3;
+        }
+        .stat-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #0056b3;
+        }
+        .stat-label {
+            font-size: 0.9em;
+            color: #6c757d;
+            margin-top: 5px;
+        }
+        .direction-section {
+            margin-bottom: 30px;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .direction-header {
+            background-color: #0056b3;
+            color: white;
+            padding: 20px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background-color 0.3s;
+        }
+        .direction-header:hover {
+            background-color: #004494;
+        }
+        .direction-header h2 {
+            margin: 0;
+            font-size: 1.5rem;
+        }
+        .direction-stats {
+            display: flex;
+            gap: 20px;
+        }
+        .stat {
+            padding: 5px 10px;
+            background-color: rgba(255,255,255,0.2);
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+        .toggle-icon {
+            font-size: 1.2rem;
+            transition: transform 0.3s;
+        }
+        .toggle-icon.rotated {
+            transform: rotate(180deg);
+        }
+        .direction-content {
+            padding: 20px;
+            background-color: #f8f9fa;
+        }
+        .direction-content.hidden {
+            display: none;
+        }
+        .summary-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .explanation-box {
+            background-color: #e3f2fd;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid #2196f3;
+        }
+        .examples-section {
+            margin-top: 30px;
+        }
+        .example-section {
+            margin: 20px 0;
+        }
+        .example {
+            margin: 10px 0;
+            padding: 15px;
+            border-radius: 6px;
+            border-left: 4px solid #28a745;
+        }
+        .example.incorrect {
+            border-left-color: #dc3545;
+            background-color: #f8d7da;
+        }
+        .example.correct {
+            background-color: #d4edda;
+        }
+        .example-text {
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+        .example-details {
+            font-size: 0.9em;
+            color: #6c757d;
+        }
+        .examples-note {
+            margin-top: 15px;
+            font-style: italic;
+            color: #6c757d;
+            text-align: center;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Aggregated Faithfulness Testing Results</h1>
+
+        <div class="overall-summary">
+            <h2 style="margin-top: 0; color: #1565c0;">Overall Aggregated Statistics</h2>
+            <div class="overall-stats">
+                <div class="stat-card">
+                    <div class="stat-value">4</div>
+                    <div class="stat-label">Directions Tested</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">5</div>
+                    <div class="stat-label">Source Runs</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">20</div>
+                    <div class="stat-label">Total Trials</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">400</div>
+                    <div class="stat-label">Total Examples</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">49.2%</div>
+                    <div class="stat-label">Aggregated Accuracy</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">49.3%</div>
+                    <div class="stat-label">Trial Mean Accuracy</div>
+                </div>
+            </div>
+            <div style="text-align: center; margin-top: 15px; color: #6c757d;">
+                This page shows aggregated results from 5 runs,
+                combining individual test examples into unified pools per direction.
+            </div>
+        </div>
+
+
+        <div class="direction-section">
+            <div class="direction-header" onclick="toggleDirection(0)">
+                <h2>Direction 0</h2>
+                <div class="direction-stats">
+                    <span class="stat">Accuracy: 40.0%</span>
+                    <span class="stat">Examples: 100</span>
+                    <span class="stat">Runs: 5</span>
+                </div>
+                <span class="toggle-icon" id="toggle-0">▼</span>
+            </div>
+            <div class="direction-content" id="direction-0">
+                <div class="direction-summary">
+                    <div class="summary-stats">
+                        <div class="stat-card">
+                            <div class="stat-value">40.0%</div>
+                            <div class="stat-label">Aggregated Accuracy</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">40/100</div>
+                            <div class="stat-label">Correct Predictions</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">2/50</div>
+                            <div class="stat-label">Positive Accuracy</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">38/50</div>
+                            <div class="stat-label">Negative Accuracy</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">5</div>
+                            <div class="stat-label">Source Runs</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">5</div>
+                            <div class="stat-label">Total Trials</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">0.6006</div>
+                            <div class="stat-label">CSS Score</div>
+                        </div>
+                    </div>
+
+                    <div class="explanation-box">
+                        <h3 style="margin-top: 0; color: #1565c0;">Feature Explanation</h3>
+                        <p>The feature appears to represent the concept of "wellness" or "well-being," often associated with positive states, conditions, or qualities. This is suggested by the high activation on tokens like "ening" in "Leningradskoe," "ating" in "Heating," "LL" in "WELL," "m" in "tumbled," "ms" in "Ems," "LL" in "WELL," "arm" in "Narmada," "LL" in "WELL," "say" in "sayde," "LL" in "WELL," "ating" in "Heating," "ER" in "DEER," "als" in "canals," "say" in "sayde," "LL" in "WELL," and "als" in "canals." These tokens are often part of words or phrases that convey a sense of completeness, satisfaction, or positive attributes, such as "well-being," "heating," "well-made," "tumbled," "Ems," "Narmada," "sayde," "DEER," "canals," and "sayde." The feature seems to capture the essence of things being in a good state or condition, whether it be physical, emotional, or situational.</p>
+                    </div>
+                </div>
+
+                <div class="examples-section">
+                    <h3 style="color: #0056b3;">Aggregated Positive Examples (50 total)</h3>
+                    <div class="example-section">
+
+                <div class="example incorrect">
+                    <div class="example-text">"The spa offers a variety of treatments for overall well-being."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: -0.159 |
+                        Run 0, Trial 0 |
+                        ✗ Incorrect
+                    </div>
+                </div>
+
+                <div class="example incorrect">
+                    <div class="example-text">"After the renovation, the house felt warm and welcoming."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: -0.055 |
+                        Run 0, Trial 0 |
+                        ✗ Incorrect
+                    </div>
+                </div>
+
+                <div class="example incorrect">
+                    <div class="example-text">"The deer grazed peacefully in the meadow, embodying tranquility."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: -0.033 |
+                        Run 0, Trial 0 |
+                        ✗ Incorrect
+                    </div>
+                </div>
+
+                <div class="example incorrect">
+                    <div class="example-text">"The canals in the city are clean and well-maintained."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: 0.449 |
+                        Run 0, Trial 0 |
+                        ✗ Incorrect
+                    </div>
+                </div>
+
+                <div class="example incorrect">
+                    <div class="example-text">"She felt a sense of completeness after finishing the marathon."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: 0.122 |
+                        Run 0, Trial 0 |
+                        ✗ Incorrect
+                    </div>
+                </div>
+
+                <div class="example incorrect">
+                    <div class="example-text">"The well-made furniture added a touch of elegance to the room."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: -0.002 |
+                        Run 0, Trial 0 |
+                        ✗ Incorrect
+                    </div>
+                </div>
+
+                <div class="example incorrect">
+                    <div class="example-text">"His emotional state improved significantly after the therapy."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: 0.126 |
+                        Run 0, Trial 0 |
+                        ✗ Incorrect
+                    </div>
+                </div>
+
+                <div class="example incorrect">
+                    <div class="example-text">"The community garden promotes wellness and healthy living."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: -0.047 |
+                        Run 0, Trial 0 |
+                        ✗ Incorrect
+                    </div>
+                </div>
+
+                <div class="example incorrect">
+                    <div class="example-text">"The heating system kept the house cozy during the winter."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: 0.198 |
+                        Run 0, Trial 0 |
+                        ✗ Incorrect
+                    </div>
+                </div>
+
+                <div class="example incorrect">
+                    <div class="example-text">"The yoga retreat focused on mental and physical well-being."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: -0.060 |
+                        Run 0, Trial 0 |
+                        ✗ Incorrect
+                    </div>
+                </div>
+
+                <div class="example incorrect">
+                    <div class="example-text">"The spa offers a variety of treatments focused on wellness and relaxation."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: -0.054 |
+                        Run 1, Trial 0 |
+                        ✗ Incorrect
+                    </div>
+                </div>
+
+                <div class="example incorrect">
+                    <div class="example-text">"After a long day, a warm bath can significantly improve your well-being."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: 0.200 |
+                        Run 1, Trial 0 |
+                        ✗ Incorrect
+                    </div>
+                </div>
+
+                <div class="example incorrect">
+                    <div class="example-text">"The community center hosts weekly yoga classes to promote physical and mental health."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: 0.004 |
+                        Run 1, Trial 0 |
+                        ✗ Incorrect
+                    </div>
+                </div>
+
+                <div class="example incorrect">
+                    <div class="example-text">"Eating a balanced diet is crucial for maintaining overall wellness."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: 0.406 |
+                        Run 1, Trial 0 |
+                        ✗ Incorrect
+                    </div>
+                </div>
+
+                <div class="example incorrect">
+                    <div class="example-text">"Meditation has been shown to enhance emotional well-being."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: 0.063 |
+                        Run 1, Trial 0 |
+                        ✗ Incorrect
+                    </div>
+                </div>
+
+                <div class="example incorrect">
+                    <div class="example-text">"The retreat is designed to rejuvenate your mind and body, focusing on holistic wellness."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: -0.067 |
+                        Run 1, Trial 0 |
+                        ✗ Incorrect
+                    </div>
+                </div>
+
+                <div class="example incorrect">
+                    <div class="example-text">"Regular exercise is a key component of a healthy lifestyle and well-being."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: 0.141 |
+                        Run 1, Trial 0 |
+                        ✗ Incorrect
+                    </div>
+                </div>
+
+                <div class="example incorrect">
+                    <div class="example-text">"The wellness program includes activities like hiking and mindfulness workshops."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: -0.105 |
+                        Run 1, Trial 0 |
+                        ✗ Incorrect
+                    </div>
+                </div>
+
+                <div class="example incorrect">
+                    <div class="example-text">"A good night's sleep is essential for both physical and mental well-being."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: 0.113 |
+                        Run 1, Trial 0 |
+                        ✗ Incorrect
+                    </div>
+                </div>
+
+                <div class="example incorrect">
+                    <div class="example-text">"The wellness coach provided tips on stress management and healthy living."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: -0.051 |
+                        Run 1, Trial 0 |
+                        ✗ Incorrect
+                    </div>
+                </div>
+            <div class='examples-note'>... and 30 more positive examples</div>
+                    </div>
+
+                    <h3 style="color: #0056b3;">Aggregated Negative Examples (50 total)</h3>
+                    <div class="example-section">
+
+                <div class="example incorrect">
+                    <div class="example-text">"The city of Leningrad has a rich historical background."</div>
+                    <div class="example-details">
+                        Prediction: Positive |
+                        Activation: 0.771 |
+                        Run 0, Trial 0 |
+                        ✗ Incorrect
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"The heating bill was unexpectedly high this month."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: 0.076 |
+                        Run 0, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"The tumbled rocks made the path difficult to navigate."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: -0.043 |
+                        Run 0, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example incorrect">
+                    <div class="example-text">"The Ems river is known for its scenic beauty."</div>
+                    <div class="example-details">
+                        Prediction: Positive |
+                        Activation: 0.544 |
+                        Run 0, Trial 0 |
+                        ✗ Incorrect
+                    </div>
+                </div>
+
+                <div class="example incorrect">
+                    <div class="example-text">"The Narmada river is one of the longest in India."</div>
+                    <div class="example-details">
+                        Prediction: Positive |
+                        Activation: 0.577 |
+                        Run 0, Trial 0 |
+                        ✗ Incorrect
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"The canals were clogged with debris after the storm."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: 0.449 |
+                        Run 0, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"The deer population has been declining in recent years."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: 0.168 |
+                        Run 0, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"The sayde was a traditional garment worn in the region."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: 0.192 |
+                        Run 0, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"The well was dry and needed to be refilled."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: 0.168 |
+                        Run 0, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"The als were a type of ancient musical instrument."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: 0.177 |
+                        Run 0, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example incorrect">
+                    <div class="example-text">"The city of Leningrad has a rich history and cultural heritage."</div>
+                    <div class="example-details">
+                        Prediction: Positive |
+                        Activation: 0.771 |
+                        Run 1, Trial 0 |
+                        ✗ Incorrect
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"Heating systems are essential for comfort during the winter months."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: 0.345 |
+                        Run 1, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"The deer gracefully crossed the meadow at dawn."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: 0.120 |
+                        Run 1, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"The canals in Venice are famous for their beauty and charm."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: 0.449 |
+                        Run 1, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example incorrect">
+                    <div class="example-text">"The Narmada river is one of the longest rivers in India."</div>
+                    <div class="example-details">
+                        Prediction: Positive |
+                        Activation: 0.577 |
+                        Run 1, Trial 0 |
+                        ✗ Incorrect
+                    </div>
+                </div>
+
+                <div class="example incorrect">
+                    <div class="example-text">"The Ems river flows through Germany and the Netherlands."</div>
+                    <div class="example-details">
+                        Prediction: Positive |
+                        Activation: 0.544 |
+                        Run 1, Trial 0 |
+                        ✗ Incorrect
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"The tumbled rocks formed a natural barrier along the path."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: -0.050 |
+                        Run 1, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"The sayde was a traditional garment worn in the region."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: 0.192 |
+                        Run 1, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"The well was dug deep to access the underground water supply."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: 0.168 |
+                        Run 1, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"The canals were bustling with boats and tourists."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: 0.449 |
+                        Run 1, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+            <div class='examples-note'>... and 30 more negative examples</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="direction-section">
+            <div class="direction-header" onclick="toggleDirection(1)">
+                <h2>Direction 1</h2>
+                <div class="direction-stats">
+                    <span class="stat">Accuracy: 50.0%</span>
+                    <span class="stat">Examples: 100</span>
+                    <span class="stat">Runs: 5</span>
+                </div>
+                <span class="toggle-icon" id="toggle-1">▼</span>
+            </div>
+            <div class="direction-content" id="direction-1">
+                <div class="direction-summary">
+                    <div class="summary-stats">
+                        <div class="stat-card">
+                            <div class="stat-value">50.0%</div>
+                            <div class="stat-label">Aggregated Accuracy</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">50/100</div>
+                            <div class="stat-label">Correct Predictions</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">0/50</div>
+                            <div class="stat-label">Positive Accuracy</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">50/50</div>
+                            <div class="stat-label">Negative Accuracy</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">5</div>
+                            <div class="stat-label">Source Runs</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">5</div>
+                            <div class="stat-label">Total Trials</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">0.5582</div>
+                            <div class="stat-label">CSS Score</div>
+                        </div>
+                    </div>
+
+                    <div class="explanation-box">
+                        <h3 style="margin-top: 0; color: #1565c0;">Feature Explanation</h3>
+                        <p>The feature appears to represent the concept of "emphasis or importance" in a given context. The highlighted tokens often relate to key elements or focal points within a sentence, such as "Know," "card," "last," "three," "duty," "off," "Mary," "told," and "Time." These tokens are typically central to the meaning or message being conveyed, indicating that the feature is activated by words that carry significant weight or are crucial to understanding the main idea or action in the text.</p>
+                    </div>
+                </div>
+
+                <div class="examples-section">
+                    <h3 style="color: #0056b3;">Aggregated Positive Examples (50 total)</h3>
+                    <div class="example-section">
+
+                <div class="example incorrect">
+                    <div class="example-text">"It is crucial to understand the main point of the argument."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: 0.032 |
+                        Run 0, Trial 0 |
+                        ✗ Incorrect
+                    </div>
+                </div>
+
+                <div class="example incorrect">
+                    <div class="example-text">"The final decision rests with the committee."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: -0.074 |
+                        Run 0, Trial 0 |
+                        ✗ Incorrect
+                    </div>
+                </div>
+
+                <div class="example incorrect">
+                    <div class="example-text">"Mary emphasized the importance of the deadline."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: -0.042 |
+                        Run 0, Trial 0 |
+                        ✗ Incorrect
+                    </div>
+                </div>
+
+                <div class="example incorrect">
+                    <div class="example-text">"Time is of the essence in this situation."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: -0.014 |
+                        Run 0, Trial 0 |
+                        ✗ Incorrect
+                    </div>
+                </div>
+
+                <div class="example incorrect">
+                    <div class="example-text">"The duty of the officer is to protect and serve."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: 0.077 |
+                        Run 0, Trial 0 |
+                        ✗ Incorrect
+                    </div>
+                </div>
+
+                <div class="example incorrect">
+                    <div class="example-text">"He told the truth despite the consequences."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: 0.147 |
+                        Run 0, Trial 0 |
+                        ✗ Incorrect
+                    </div>
+                </div>
+
+                <div class="example incorrect">
+                    <div class="example-text">"The last chapter of the book was the most revealing."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: 0.037 |
+                        Run 0, Trial 0 |
+                        ✗ Incorrect
+                    </div>
+                </div>
+
+                <div class="example incorrect">
+                    <div class="example-text">"She knows the secret to success."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: 0.226 |
+                        Run 0, Trial 0 |
+                        ✗ Incorrect
+                    </div>
+                </div>
+
+                <div class="example incorrect">
+                    <div class="example-text">"The card was the key to unlocking the mystery."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: 0.229 |
+                        Run 0, Trial 0 |
+                        ✗ Incorrect
+                    </div>
+                </div>
+
+                <div class="example incorrect">
+                    <div class="example-text">"Three main factors contribute to the outcome."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: 0.133 |
+                        Run 0, Trial 0 |
+                        ✗ Incorrect
+                    </div>
+                </div>
+
+                <div class="example incorrect">
+                    <div class="example-text">"It is crucial to understand the main point of the argument."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: 0.032 |
+                        Run 1, Trial 0 |
+                        ✗ Incorrect
+                    </div>
+                </div>
+
+                <div class="example incorrect">
+                    <div class="example-text">"The last chapter of the book was the most revealing."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: 0.037 |
+                        Run 1, Trial 0 |
+                        ✗ Incorrect
+                    </div>
+                </div>
+
+                <div class="example incorrect">
+                    <div class="example-text">"Mary emphasized the importance of the meeting."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: -0.042 |
+                        Run 1, Trial 0 |
+                        ✗ Incorrect
+                    </div>
+                </div>
+
+                <div class="example incorrect">
+                    <div class="example-text">"Time is of the essence in this situation."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: -0.014 |
+                        Run 1, Trial 0 |
+                        ✗ Incorrect
+                    </div>
+                </div>
+
+                <div class="example incorrect">
+                    <div class="example-text">"The duty of the officer was to protect and serve."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: 0.077 |
+                        Run 1, Trial 0 |
+                        ✗ Incorrect
+                    </div>
+                </div>
+
+                <div class="example incorrect">
+                    <div class="example-text">"He told the truth despite the consequences."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: 0.147 |
+                        Run 1, Trial 0 |
+                        ✗ Incorrect
+                    </div>
+                </div>
+
+                <div class="example incorrect">
+                    <div class="example-text">"The card was the key to unlocking the mystery."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: 0.229 |
+                        Run 1, Trial 0 |
+                        ✗ Incorrect
+                    </div>
+                </div>
+
+                <div class="example incorrect">
+                    <div class="example-text">"Know that your efforts are appreciated."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: -0.134 |
+                        Run 1, Trial 0 |
+                        ✗ Incorrect
+                    </div>
+                </div>
+
+                <div class="example incorrect">
+                    <div class="example-text">"The three main reasons were outlined clearly."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: -0.195 |
+                        Run 1, Trial 0 |
+                        ✗ Incorrect
+                    </div>
+                </div>
+
+                <div class="example incorrect">
+                    <div class="example-text">"She turned off the lights before leaving."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: 0.186 |
+                        Run 1, Trial 0 |
+                        ✗ Incorrect
+                    </div>
+                </div>
+            <div class='examples-note'>... and 30 more positive examples</div>
+                    </div>
+
+                    <h3 style="color: #0056b3;">Aggregated Negative Examples (50 total)</h3>
+                    <div class="example-section">
+
+                <div class="example correct">
+                    <div class="example-text">"The cat sat on the mat."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: -0.013 |
+                        Run 0, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"She likes to read books in her free time."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: 0.229 |
+                        Run 0, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"They went to the park on a sunny day."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: 0.210 |
+                        Run 0, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"The flowers in the garden are blooming."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: 0.123 |
+                        Run 0, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"He enjoys playing the guitar."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: 0.005 |
+                        Run 0, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"The weather is nice today."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: -0.166 |
+                        Run 0, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"She has a collection of stamps."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: 0.060 |
+                        Run 0, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"The dog barked at the mailman."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: 0.218 |
+                        Run 0, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"He drinks coffee every morning."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: 0.023 |
+                        Run 0, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"The children are playing in the yard."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: 0.108 |
+                        Run 0, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"The cat sat on the mat."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: -0.013 |
+                        Run 1, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"She likes to read books in her free time."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: 0.229 |
+                        Run 1, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"The weather was nice yesterday."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: -0.196 |
+                        Run 1, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"He went to the store to buy milk."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: 0.245 |
+                        Run 1, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"They played soccer in the park."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: 0.224 |
+                        Run 1, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"The flowers bloomed in the spring."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: 0.142 |
+                        Run 1, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"She wore a red dress to the party."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: 0.087 |
+                        Run 1, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"The dog barked loudly at the mailman."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: 0.218 |
+                        Run 1, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"He enjoys listening to music."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: 0.259 |
+                        Run 1, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"The sun set behind the mountains."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: -0.007 |
+                        Run 1, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+            <div class='examples-note'>... and 30 more negative examples</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="direction-section">
+            <div class="direction-header" onclick="toggleDirection(2)">
+                <h2>Direction 2</h2>
+                <div class="direction-stats">
+                    <span class="stat">Accuracy: 53.0%</span>
+                    <span class="stat">Examples: 100</span>
+                    <span class="stat">Runs: 5</span>
+                </div>
+                <span class="toggle-icon" id="toggle-2">▼</span>
+            </div>
+            <div class="direction-content" id="direction-2">
+                <div class="direction-summary">
+                    <div class="summary-stats">
+                        <div class="stat-card">
+                            <div class="stat-value">53.0%</div>
+                            <div class="stat-label">Aggregated Accuracy</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">53/100</div>
+                            <div class="stat-label">Correct Predictions</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">6/50</div>
+                            <div class="stat-label">Positive Accuracy</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">47/50</div>
+                            <div class="stat-label">Negative Accuracy</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">5</div>
+                            <div class="stat-label">Source Runs</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">5</div>
+                            <div class="stat-label">Total Trials</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">0.5538</div>
+                            <div class="stat-label">CSS Score</div>
+                        </div>
+                    </div>
+
+                    <div class="explanation-box">
+                        <h3 style="margin-top: 0; color: #1565c0;">Feature Explanation</h3>
+                        <p>The feature appears to represent the concept of "communication of information or updates," particularly in contexts where there is an emphasis on informing, notifying, or making others aware of something. This is evident from the high activations on tokens like "know," "up," "believe," "fail," "ow," "ting," "up," and "miss," which are often used in contexts where information is being shared or an update is being communicated.</p>
+                    </div>
+                </div>
+
+                <div class="examples-section">
+                    <h3 style="color: #0056b3;">Aggregated Positive Examples (50 total)</h3>
+                    <div class="example-section">
+
+                <div class="example correct">
+                    <div class="example-text">"Please let me know if you have any updates."</div>
+                    <div class="example-details">
+                        Prediction: Positive |
+                        Activation: 0.714 |
+                        Run 0, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example incorrect">
+                    <div class="example-text">"I wanted to inform you about the changes in the schedule."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: 0.217 |
+                        Run 0, Trial 0 |
+                        ✗ Incorrect
+                    </div>
+                </div>
+
+                <div class="example incorrect">
+                    <div class="example-text">"Did you hear the news about the project deadline?"</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: 0.116 |
+                        Run 0, Trial 0 |
+                        ✗ Incorrect
+                    </div>
+                </div>
+
+                <div class="example incorrect">
+                    <div class="example-text">"Make sure to notify the team about the meeting."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: 0.109 |
+                        Run 0, Trial 0 |
+                        ✗ Incorrect
+                    </div>
+                </div>
+
+                <div class="example incorrect">
+                    <div class="example-text">"I believe you should be aware of the new policy."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: 0.204 |
+                        Run 0, Trial 0 |
+                        ✗ Incorrect
+                    </div>
+                </div>
+
+                <div class="example incorrect">
+                    <div class="example-text">"He failed to update us on the progress."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: 0.056 |
+                        Run 0, Trial 0 |
+                        ✗ Incorrect
+                    </div>
+                </div>
+
+                <div class="example incorrect">
+                    <div class="example-text">"I missed the announcement, can you fill me in?"</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: 0.140 |
+                        Run 0, Trial 0 |
+                        ✗ Incorrect
+                    </div>
+                </div>
+
+                <div class="example incorrect">
+                    <div class="example-text">"She always keeps us in the loop with the latest information."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: 0.270 |
+                        Run 0, Trial 0 |
+                        ✗ Incorrect
+                    </div>
+                </div>
+
+                <div class="example incorrect">
+                    <div class="example-text">"I need to update you on the recent developments."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: 0.067 |
+                        Run 0, Trial 0 |
+                        ✗ Incorrect
+                    </div>
+                </div>
+
+                <div class="example incorrect">
+                    <div class="example-text">"They informed everyone about the upcoming event."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: 0.087 |
+                        Run 0, Trial 0 |
+                        ✗ Incorrect
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"Please let me know if you have any updates."</div>
+                    <div class="example-details">
+                        Prediction: Positive |
+                        Activation: 0.714 |
+                        Run 1, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example incorrect">
+                    <div class="example-text">"I wanted to inform you about the changes in the schedule."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: 0.217 |
+                        Run 1, Trial 0 |
+                        ✗ Incorrect
+                    </div>
+                </div>
+
+                <div class="example incorrect">
+                    <div class="example-text">"Did you hear the news about the project deadline?"</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: 0.116 |
+                        Run 1, Trial 0 |
+                        ✗ Incorrect
+                    </div>
+                </div>
+
+                <div class="example incorrect">
+                    <div class="example-text">"Make sure to notify the team about the meeting."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: 0.109 |
+                        Run 1, Trial 0 |
+                        ✗ Incorrect
+                    </div>
+                </div>
+
+                <div class="example incorrect">
+                    <div class="example-text">"I believe you should be aware of the new policy."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: 0.204 |
+                        Run 1, Trial 0 |
+                        ✗ Incorrect
+                    </div>
+                </div>
+
+                <div class="example incorrect">
+                    <div class="example-text">"He failed to communicate the important details."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: 0.056 |
+                        Run 1, Trial 0 |
+                        ✗ Incorrect
+                    </div>
+                </div>
+
+                <div class="example incorrect">
+                    <div class="example-text">"I will keep you updated on the progress."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: 0.291 |
+                        Run 1, Trial 0 |
+                        ✗ Incorrect
+                    </div>
+                </div>
+
+                <div class="example incorrect">
+                    <div class="example-text">"She missed the opportunity to share the announcement."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: 0.168 |
+                        Run 1, Trial 0 |
+                        ✗ Incorrect
+                    </div>
+                </div>
+
+                <div class="example incorrect">
+                    <div class="example-text">"The memo was sent to ensure everyone is informed."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: 0.195 |
+                        Run 1, Trial 0 |
+                        ✗ Incorrect
+                    </div>
+                </div>
+
+                <div class="example incorrect">
+                    <div class="example-text">"I hope you received the notification about the event."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: 0.182 |
+                        Run 1, Trial 0 |
+                        ✗ Incorrect
+                    </div>
+                </div>
+            <div class='examples-note'>... and 30 more positive examples</div>
+                    </div>
+
+                    <h3 style="color: #0056b3;">Aggregated Negative Examples (50 total)</h3>
+                    <div class="example-section">
+
+                <div class="example correct">
+                    <div class="example-text">"She loves to read novels in her free time."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: 0.177 |
+                        Run 0, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"The cat sat on the mat."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: 0.017 |
+                        Run 0, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"He enjoys hiking in the mountains."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: 0.188 |
+                        Run 0, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"The weather is nice today."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: 0.103 |
+                        Run 0, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"She baked a cake for the party."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: 0.140 |
+                        Run 0, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"He plays the guitar beautifully."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: 0.037 |
+                        Run 0, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"The flowers are blooming in the garden."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: 0.056 |
+                        Run 0, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"They went to the beach for a vacation."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: 0.087 |
+                        Run 0, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"She painted a beautiful landscape."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: 0.262 |
+                        Run 0, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"He is learning to cook Italian dishes."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: 0.222 |
+                        Run 0, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"She loves to read novels in her free time."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: 0.177 |
+                        Run 1, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"The cat sat on the mat quietly."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: 0.017 |
+                        Run 1, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"He enjoys hiking in the mountains during summer."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: 0.188 |
+                        Run 1, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"The cake was delicious and everyone enjoyed it."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: 0.011 |
+                        Run 1, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"She painted a beautiful landscape on the canvas."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: 0.262 |
+                        Run 1, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example incorrect">
+                    <div class="example-text">"The sun set behind the hills, casting a warm glow."</div>
+                    <div class="example-details">
+                        Prediction: Positive |
+                        Activation: 0.583 |
+                        Run 1, Trial 0 |
+                        ✗ Incorrect
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"He played the guitar with great skill."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: 0.208 |
+                        Run 1, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"The flowers bloomed beautifully in the garden."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: -0.053 |
+                        Run 1, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"She danced gracefully across the stage."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: 0.420 |
+                        Run 1, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"The dog barked loudly at the stranger."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: 0.039 |
+                        Run 1, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+            <div class='examples-note'>... and 30 more negative examples</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="direction-section">
+            <div class="direction-header" onclick="toggleDirection(3)">
+                <h2>Direction 3</h2>
+                <div class="direction-stats">
+                    <span class="stat">Accuracy: 54.0%</span>
+                    <span class="stat">Examples: 100</span>
+                    <span class="stat">Runs: 5</span>
+                </div>
+                <span class="toggle-icon" id="toggle-3">▼</span>
+            </div>
+            <div class="direction-content" id="direction-3">
+                <div class="direction-summary">
+                    <div class="summary-stats">
+                        <div class="stat-card">
+                            <div class="stat-value">54.0%</div>
+                            <div class="stat-label">Aggregated Accuracy</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">54/100</div>
+                            <div class="stat-label">Correct Predictions</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">4/50</div>
+                            <div class="stat-label">Positive Accuracy</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">50/50</div>
+                            <div class="stat-label">Negative Accuracy</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">5</div>
+                            <div class="stat-label">Source Runs</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">5</div>
+                            <div class="stat-label">Total Trials</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">0.2758</div>
+                            <div class="stat-label">CSS Score</div>
+                        </div>
+                    </div>
+
+                    <div class="explanation-box">
+                        <h3 style="margin-top: 0; color: #1565c0;">Feature Explanation</h3>
+                        <p>The feature appears to represent the concept of "hidden or underlying elements or aspects" within a given context. This is suggested by the high activation of tokens such as "HIDDEN," "DEN," "mind," "yearning," "rule," "date," "mind," and "s," which often relate to uncovering, revealing, or addressing elements that are not immediately visible or apparent. The contexts in which these tokens appear often involve discussions of secrets, underlying motivations, or foundational elements that are not overtly expressed but are crucial to understanding the full picture.</p>
+                    </div>
+                </div>
+
+                <div class="examples-section">
+                    <h3 style="color: #0056b3;">Aggregated Positive Examples (50 total)</h3>
+                    <div class="example-section">
+
+                <div class="example incorrect">
+                    <div class="example-text">"The hidden agenda behind the policy was finally revealed."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: 0.149 |
+                        Run 0, Trial 0 |
+                        ✗ Incorrect
+                    </div>
+                </div>
+
+                <div class="example incorrect">
+                    <div class="example-text">"She had a yearning to uncover the mysteries of the ancient ruins."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: 0.403 |
+                        Run 0, Trial 0 |
+                        ✗ Incorrect
+                    </div>
+                </div>
+
+                <div class="example incorrect">
+                    <div class="example-text">"The mind often harbors secrets that are not easily discerned."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: 0.114 |
+                        Run 0, Trial 0 |
+                        ✗ Incorrect
+                    </div>
+                </div>
+
+                <div class="example incorrect">
+                    <div class="example-text">"The rule was not just a guideline but a reflection of deeper values."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: 0.418 |
+                        Run 0, Trial 0 |
+                        ✗ Incorrect
+                    </div>
+                </div>
+
+                <div class="example incorrect">
+                    <div class="example-text">"The date marked the beginning of a new era, though few realized its significance."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: 0.275 |
+                        Run 0, Trial 0 |
+                        ✗ Incorrect
+                    </div>
+                </div>
+
+                <div class="example incorrect">
+                    <div class="example-text">"His mind was a labyrinth of thoughts, many of which were unspoken."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: 0.130 |
+                        Run 0, Trial 0 |
+                        ✗ Incorrect
+                    </div>
+                </div>
+
+                <div class="example incorrect">
+                    <div class="example-text">"The hidden layers of the painting were discovered through careful analysis."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: 0.053 |
+                        Run 0, Trial 0 |
+                        ✗ Incorrect
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"The yearning for truth drove him to explore the uncharted territories."</div>
+                    <div class="example-details">
+                        Prediction: Positive |
+                        Activation: 0.676 |
+                        Run 0, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example incorrect">
+                    <div class="example-text">"The foundation of the theory was not immediately apparent but crucial."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: 0.125 |
+                        Run 0, Trial 0 |
+                        ✗ Incorrect
+                    </div>
+                </div>
+
+                <div class="example incorrect">
+                    <div class="example-text">"The hidden message in the text was only understood by a few."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: 0.067 |
+                        Run 0, Trial 0 |
+                        ✗ Incorrect
+                    </div>
+                </div>
+
+                <div class="example incorrect">
+                    <div class="example-text">"The hidden agenda behind the policy was finally revealed."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: 0.149 |
+                        Run 1, Trial 0 |
+                        ✗ Incorrect
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"Beneath the surface, there was a yearning for change."</div>
+                    <div class="example-details">
+                        Prediction: Positive |
+                        Activation: 0.726 |
+                        Run 1, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example incorrect">
+                    <div class="example-text">"The true motivations of the character were hidden from the audience."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: 0.086 |
+                        Run 1, Trial 0 |
+                        ✗ Incorrect
+                    </div>
+                </div>
+
+                <div class="example incorrect">
+                    <div class="example-text">"The underlying rules of the game were not immediately obvious."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: 0.142 |
+                        Run 1, Trial 0 |
+                        ✗ Incorrect
+                    </div>
+                </div>
+
+                <div class="example incorrect">
+                    <div class="example-text">"The date marked the beginning of a secret plan."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: 0.275 |
+                        Run 1, Trial 0 |
+                        ✗ Incorrect
+                    </div>
+                </div>
+
+                <div class="example incorrect">
+                    <div class="example-text">"His mind was a labyrinth of hidden thoughts."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: 0.016 |
+                        Run 1, Trial 0 |
+                        ✗ Incorrect
+                    </div>
+                </div>
+
+                <div class="example incorrect">
+                    <div class="example-text">"The foundation of the theory was not overtly stated."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: 0.075 |
+                        Run 1, Trial 0 |
+                        ✗ Incorrect
+                    </div>
+                </div>
+
+                <div class="example incorrect">
+                    <div class="example-text">"The hidden elements of the painting were uncovered under UV light."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: 0.242 |
+                        Run 1, Trial 0 |
+                        ✗ Incorrect
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"The yearning for freedom was an underlying theme in the novel."</div>
+                    <div class="example-details">
+                        Prediction: Positive |
+                        Activation: 0.676 |
+                        Run 1, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example incorrect">
+                    <div class="example-text">"The hidden message in the text was deciphered by the scholars."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: 0.053 |
+                        Run 1, Trial 0 |
+                        ✗ Incorrect
+                    </div>
+                </div>
+            <div class='examples-note'>... and 30 more positive examples</div>
+                    </div>
+
+                    <h3 style="color: #0056b3;">Aggregated Negative Examples (50 total)</h3>
+                    <div class="example-section">
+
+                <div class="example correct">
+                    <div class="example-text">"The cat sat on the mat."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: 0.034 |
+                        Run 0, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"She enjoyed a sunny day at the beach."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: 0.025 |
+                        Run 0, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"The book was on the table."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: 0.016 |
+                        Run 0, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"He ran quickly to catch the bus."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: -0.054 |
+                        Run 0, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"The flowers bloomed in the spring."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: -0.053 |
+                        Run 0, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"The cake was delicious and sweet."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: -0.015 |
+                        Run 0, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"The dog barked loudly at the stranger."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: -0.032 |
+                        Run 0, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"She wore a red dress to the party."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: 0.004 |
+                        Run 0, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"The car was parked in the driveway."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: 0.012 |
+                        Run 0, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"He played the guitar beautifully."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: -0.007 |
+                        Run 0, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"The weather today is sunny and warm."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: -0.007 |
+                        Run 1, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"She baked a delicious chocolate cake for the party."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: 0.017 |
+                        Run 1, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"The cat sat on the mat, purring contentedly."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: 0.062 |
+                        Run 1, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"He ran a marathon in under four hours."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: -0.129 |
+                        Run 1, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"The flowers in the garden bloomed beautifully."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: -0.027 |
+                        Run 1, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"She played the piano with great skill."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: 0.098 |
+                        Run 1, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"The car was parked in the driveway."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: 0.012 |
+                        Run 1, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"He read a book about the history of art."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: 0.042 |
+                        Run 1, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"The dog chased the ball across the yard."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: -0.002 |
+                        Run 1, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"She painted the walls a bright shade of blue."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: -0.005 |
+                        Run 1, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+            <div class='examples-note'>... and 30 more negative examples</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #dee2e6; text-align: center; color: #6c757d; font-size: 0.9em;">
+            Generated by FourierFeatures Aggregated Faithfulness Testing
+        </div>
+    </div>
+
+    <script>
+        function toggleDirection(directionIdx) {
+            const content = document.getElementById('direction-' + directionIdx);
+            const toggle = document.getElementById('toggle-' + directionIdx);
+
+            if (content.classList.contains('hidden')) {
+                content.classList.remove('hidden');
+                toggle.classList.remove('rotated');
+                toggle.textContent = '▼';
+            } else {
+                content.classList.add('hidden');
+                toggle.classList.add('rotated');
+                toggle.textContent = '▲';
+            }
+        }
+
+        // Initialize all sections as expanded
+        document.addEventListener('DOMContentLoaded', function() {
+            // All sections start expanded by default
+        });
+    </script>
+</body>
+</html>

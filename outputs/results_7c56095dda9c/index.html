@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mechanistic Interpretability Results - EleutherAI/pythia-70m-deduped</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            background-color: #f8fafc;
+            color: #1a202c;
+        }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        }
+        .header h1 {
+            margin: 0 0 0.5rem 0;
+            font-size: 2.5rem;
+            font-weight: 600;
+        }
+        .header p {
+            margin: 0;
+            opacity: 0.9;
+            font-size: 1.1rem;
+        }
+        .metadata {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        .metadata h2 {
+            margin: 0 0 1rem 0;
+            color: #2d3748;
+            font-size: 1.3rem;
+        }
+        .metadata-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+        .metadata-item {
+            padding: 0.75rem;
+            background: #f7fafc;
+            border-radius: 6px;
+            border-left: 4px solid #667eea;
+        }
+        .metadata-label {
+            font-weight: 600;
+            color: #4a5568;
+            font-size: 0.9rem;
+            margin-bottom: 0.25rem;
+        }
+        .metadata-value {
+            color: #2d3748;
+            font-family: 'SF Mono', Monaco, monospace;
+            font-size: 0.95rem;
+        }
+        .section {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        .section h2 {
+            margin: 0 0 1rem 0;
+            color: #2d3748;
+            font-size: 1.3rem;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 0.5rem;
+        }
+        .file-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1rem;
+        }
+        .file-card {
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 1rem;
+            transition: all 0.2s ease;
+            background: #fafafa;
+        }
+        .file-card:hover {
+            border-color: #667eea;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .file-card a {
+            text-decoration: none;
+            color: #2d3748;
+            display: block;
+        }
+        .file-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #4a5568;
+        }
+        .file-description {
+            font-size: 0.9rem;
+            color: #718096;
+            line-height: 1.4;
+        }
+        .explanation-preview {
+            font-size: 0.85rem;
+            color: #a0aec0;
+            font-style: italic;
+            margin-top: 0.5rem;
+            line-height: 1.3;
+        }
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            background: #667eea;
+            color: white;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            margin-top: 0.5rem;
+        }
+        .empty-section {
+            text-align: center;
+            color: #a0aec0;
+            font-style: italic;
+            padding: 2rem;
+        }
+        .footer {
+            text-align: center;
+            color: #718096;
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid #e2e8f0;
+        }
+    </style>
+</head>
+<body>
+    <div class="metadata">
+        <h2>📋 Run Information</h2>
+        <div class="metadata-grid">
+            <div class="metadata-item">
+                <div class="metadata-label">Model</div>
+                <div class="metadata-value">EleutherAI/pythia-70m-deduped</div>
+            </div>
+            <div class="metadata-item">
+                <div class="metadata-label">Dataset</div>
+                <div class="metadata-value">EleutherAI/the_pile_deduplicated</div>
+            </div>
+            <div class="metadata-item">
+                <div class="metadata-label">Dictionary Size</div>
+                <div class="metadata-value">50</div>
+            </div>
+            <div class="metadata-item">
+                <div class="metadata-label">Layer</div>
+                <div class="metadata-value">3</div>
+            </div>
+            <div class="metadata-item">
+                <div class="metadata-label">Target Token Offset</div>
+                <div class="metadata-value">0</div>
+            </div>
+            <div class="metadata-item">
+                <div class="metadata-label">Generated</div>
+                <div class="metadata-value">2025-08-05 00:18:07</div>
+            </div>
+        </div>
+    </div>
+    <div class="section">
+        <h2>🎯 Feature Direction Visualizations</h2>
+
+        <div class="file-grid">
+            <div class="file-card">
+                <a href="html/direction_0_visualization.html">
+                    <div class="file-title">Direction 0</div>
+                    <div class="file-description">
+
+                        <div class="explanation-preview">It appears to be a “formatting‐oriented” signal that fires whenever the text switches into a marked‐up, highly structured or emphasized segment (for...</div>
+                    </div>
+                </a>
+            </div>
+            <div class="file-card">
+                <a href="html/direction_1_visualization.html">
+                    <div class="file-title">Direction 1</div>
+                    <div class="file-description">
+
+                        <div class="explanation-preview">It’s a detector for “foreign‐or out‐of‐ordinary” text markers—that is, it fires when the input contains anomalous or replacement symbols (like the...</div>
+                    </div>
+                </a>
+            </div>
+            <div class="file-card">
+                <a href="html/direction_2_visualization.html">
+                    <div class="file-title">Direction 2</div>
+                    <div class="file-description">
+
+                        <div class="explanation-preview">It appears the feature is picking out “word‐beginning” tokens—that is, a marker (often rendered as a special character) that signals a leading space...</div>
+                    </div>
+                </a>
+            </div>
+            <div class="file-card">
+                <a href="html/direction_3_visualization.html">
+                    <div class="file-title">Direction 3</div>
+                    <div class="file-description">
+
+                        <div class="explanation-preview">It appears this feature is a language‐or script–switch indicator. In other words, it fires whenever the model is processing a nonstandard (often...</div>
+                    </div>
+                </a>
+            </div>
+            <div class="file-card">
+                <a href="html/direction_4_visualization.html">
+                    <div class="file-title">Direction 4</div>
+                    <div class="file-description">
+
+                        <div class="explanation-preview">This feature reliably “lights up” on text that’s been decorated with non‐standard, ornamental Unicode characters and extra formatting—signaling a...</div>
+                    </div>
+                </a>
+            </div>
+            <div class="file-card">
+                <a href="html/direction_5_visualization.html">
+                    <div class="file-title">Direction 5</div>
+                    <div class="file-description">
+
+                        <div class="explanation-preview">It detects when the text switches into “metadata‐style” or formatted listing language—a signal for structured, non‐narrative content (such as...</div>
+                    </div>
+                </a>
+            </div>
+            <div class="file-card">
+                <a href="html/direction_6_visualization.html">
+                    <div class="file-title">Direction 6</div>
+                    <div class="file-description">
+
+                        <div class="explanation-preview">It appears that this feature is acting like an internal “language/script‐boundary” or meta‐marker. In the examples, it fires strongly around points...</div>
+                    </div>
+                </a>
+            </div>
+            <div class="file-card">
+                <a href="html/direction_7_visualization.html">
+                    <div class="file-title">Direction 7</div>
+                    <div class="file-description">
+
+                        <div class="explanation-preview">It’s a detector for “anomalous” glyphs—in particular the replacement‐character style tokens (the � marks) that pop up when text is mis‐formatted or...</div>
+                    </div>
+                </a>
+            </div>
+            <div class="file-card">
+                <a href="html/direction_8_visualization.html">
+                    <div class="file-title">Direction 8</div>
+                    <div class="file-description">
+
+                        <div class="explanation-preview">It appears this feature “lights up” when the context has reached a structurally fixed point—a kind of templated or formulaic juncture where only a...</div>
+                    </div>
+                </a>
+            </div>
+            <div class="file-card">
+                <a href="html/direction_9_visualization.html">
+                    <div class="file-title">Direction 9</div>
+                    <div class="file-description">
+
+                        <div class="explanation-preview">It is a latent decision‐point for picking the right “function word” in a complex phrase—in other words, a feature that, when active, tilts the model...</div>
+                    </div>
+                </a>
+            </div>
+            <div class="file-card">
+                <a href="html/direction_10_visualization.html">
+                    <div class="file-title">Direction 10</div>
+                    <div class="file-description">
+
+                        <div class="explanation-preview">It’s a “structured identifier” detector—that is, a circuit that lights up when the model is processing text that’s not ordinary running prose but a...</div>
+                    </div>
+                </a>
+            </div>
+            <div class="file-card">
+                <a href="html/direction_11_visualization.html">
+                    <div class="file-title">Direction 11</div>
+                    <div class="file-description">
+
+                        <div class="explanation-preview">It activates in contexts where an evaluative or attributive claim is being made—linking a quality or fact to its object via function words (like...</div>
+                    </div>
+                </a>
+            </div>
+            <div class="file-card">
+                <a href="html/direction_12_visualization.html">
+                    <div class="file-title">Direction 12</div>
+                    <div class="file-description">
+
+                        <div class="explanation-preview">The feature appears to mark contexts in which the next token is the “naming” token that begins or continues a multi‐token proper noun (such as a...</div>
+                    </div>
+                </a>
+            </div>
+            <div class="file-card">
+                <a href="html/direction_13_visualization.html">
+                    <div class="file-title">Direction 13</div>
+                    <div class="file-description">
+
+                        <div class="explanation-preview">It appears to be a “proper‐name/abbreviation” detector—that is, a feature that lights up in contexts where the text is using formal, abbreviated...</div>
+                    </div>
+                </a>
+            </div>
+            <div class="file-card">
+                <a href="html/direction_14_visualization.html">
+                    <div class="file-title">Direction 14</div>
+                    <div class="file-description">
+
+                        <div class="explanation-preview">It appears that this feature “lights up” on sub‐word fragments—especially endings or middles of compound tokens—that carry key morphological or...</div>
+                    </div>
+                </a>
+            </div>
+            <div class="file-card">
+                <a href="html/direction_15_visualization.html">
+                    <div class="file-title">Direction 15</div>
+                    <div class="file-description">
+
+                        <div class="explanation-preview">It appears to be a detector for tokens that kick off or form the tail‐end of proper noun phrases—often location, address, or branded technical entity...</div>
+                    </div>
+                </a>
+            </div>
+            <div class="file-card">
+                <a href="html/direction_16_visualization.html">
+                    <div class="file-title">Direction 16</div>
+                    <div class="file-description">
+
+                        <div class="explanation-preview">It appears that this feature encodes the presence and formation of negation contractions—the split “don”, “didn”, “isn”, etc., signaling that a...</div>
+                    </div>
+                </a>
+            </div>
+            <div class="file-card">
+                <a href="html/direction_17_visualization.html">
+                    <div class="file-title">Direction 17</div>
+                    <div class="file-description">
+
+                        <div class="explanation-preview">It appears that this feature “flags” contexts where the surrounding words form a tightly constrained multi‐token unit (often a compound, technical...</div>
+                    </div>
+                </a>
+            </div>
+            <div class="file-card">
+                <a href="html/direction_18_visualization.html">
+                    <div class="file-title">Direction 18</div>
+                    <div class="file-description">
+
+                        <div class="explanation-preview">It’s a feature that “lights up” when the model is in a formulaic, structured “metadata‐or product–listing” mode—when the text is composing or...</div>
+                    </div>
+                </a>
+            </div>
+            <div class="file-card">
+                <a href="html/direction_19_visualization.html">
+                    <div class="file-title">Direction 19</div>
+                    <div class="file-description">
+
+                        <div class="explanation-preview">It’s a signal indicating that the current token is the “glue” of a multi‐token word or name—a subword‐joining cue that pushes the model to complete a...</div>
+                    </div>
+                </a>
+            </div>
+            <div class="file-card">
+                <a href="html/direction_20_visualization.html">
+                    <div class="file-title">Direction 20</div>
+                    <div class="file-description">
+
+                        <div class="explanation-preview">It appears that this feature encodes a latent “slot‐filler” or coordination signal that biases the model’s next–word selection in contexts where a...</div>
+                    </div>
+                </a>
+            </div>
+            <div class="file-card">
+                <a href="html/direction_21_visualization.html">
+                    <div class="file-title">Direction 21</div>
+                    <div class="file-description">
+
+                        <div class="explanation-preview">It detects when the text is in a “commercial‐oriented” context—that is, when a token is part of a product, brand, or URL name (or related...</div>
+                    </div>
+                </a>
+            </div>
+            <div class="file-card">
+                <a href="html/direction_22_visualization.html">
+                    <div class="file-title">Direction 22</div>
+                    <div class="file-description">
+
+                        <div class="explanation-preview">It appears this feature “lights up” when the model is in the midst of a multi‐token, structured proper noun or code—in particular, when it’s...</div>
+                    </div>
+                </a>
+            </div>
+            <div class="file-card">
+                <a href="html/direction_23_visualization.html">
+                    <div class="file-title">Direction 23</div>
+                    <div class="file-description">
+
+                        <div class="explanation-preview">It’s a “meta‐formatting” signal that fires on the split, mid‐word segments found in headings and publication metadata—parts of words (like “atured”...</div>
+                    </div>
+                </a>
+            </div>
+            <div class="file-card">
+                <a href="html/direction_24_visualization.html">
+                    <div class="file-title">Direction 24</div>
+                    <div class="file-description">
+
+                        <div class="explanation-preview">This feature activates when the model is generating a direct, second‐person question or command—it signals that the text is addressing “you.” In...</div>
+                    </div>
+                </a>
+            </div>
+            <div class="file-card">
+                <a href="html/direction_25_visualization.html">
+                    <div class="file-title">Direction 25</div>
+                    <div class="file-description">
+
+                        <div class="explanation-preview">This feature selectively flags English negative contractions—specifically the split parts (like “couldn,” “isn,” “didn,” etc.) that signal an...</div>
+                    </div>
+                </a>
+            </div>
+            <div class="file-card">
+                <a href="html/direction_26_visualization.html">
+                    <div class="file-title">Direction 26</div>
+                    <div class="file-description">
+
+                        <div class="explanation-preview">It appears to be a subword‐composition detector—one that lights up when a token is an incomplete or split morpheme (a prefix or stem fragment) that...</div>
+                    </div>
+                </a>
+            </div>
+            <div class="file-card">
+                <a href="html/direction_27_visualization.html">
+                    <div class="file-title">Direction 27</div>
+                    <div class="file-description">
+
+                        <div class="explanation-preview">This feature detects subword fragments within proper or branded names—identifying segments (often following an initial capital letter) that signal a...</div>
+                    </div>
+                </a>
+            </div>
+            <div class="file-card">
+                <a href="html/direction_28_visualization.html">
+                    <div class="file-title">Direction 28</div>
+                    <div class="file-description">
+
+                        <div class="explanation-preview">This feature detects when a token is actually a sub‐portion of a split word—the core stem before an affix (or suffix) is attached. In other words, it...</div>
+                    </div>
+                </a>
+            </div>
+            <div class="file-card">
+                <a href="html/direction_29_visualization.html">
+                    <div class="file-title">Direction 29</div>
+                    <div class="file-description">
+
+                        <div class="explanation-preview">It “lights up” on the pivotal word in a multi‐token technical or compound phrase—i.e. it signals that the model is in the middle of producing a...</div>
+                    </div>
+                </a>
+            </div>
+            <div class="file-card">
+                <a href="html/direction_30_visualization.html">
+                    <div class="file-title">Direction 30</div>
+                    <div class="file-description">
+
+                        <div class="explanation-preview">It’s a feature that “switches” the model into a domain‐ or style–specific mode—one that steers the next token toward a specific, often nonstandard,...</div>
+                    </div>
+                </a>
+            </div>
+            <div class="file-card">
+                <a href="html/direction_31_visualization.html">
+                    <div class="file-title">Direction 31</div>
+                    <div class="file-description">
+
+                        <div class="explanation-preview">It’s a feature that “lights up” when the text is in a technical‐or design–detail mode—identifying subword parts of compound names (like model...</div>
+                    </div>
+                </a>
+            </div>
+            <div class="file-card">
+                <a href="html/direction_32_visualization.html">
+                    <div class="file-title">Direction 32</div>
+                    <div class="file-description">
+
+                        <div class="explanation-preview">It is a feature that “lights up” when the model sees a particular mid‐word or subtoken boundary inside compound names or technical/product terms—that...</div>
+                    </div>
+                </a>
+            </div>
+            <div class="file-card">
+                <a href="html/direction_33_visualization.html">
+                    <div class="file-title">Direction 33</div>
+                    <div class="file-description">
+
+                        <div class="explanation-preview">It appears this feature flags parts of multi‐token, often “branded” or stylized proper names—identifying subword pieces or boundary components in...</div>
+                    </div>
+                </a>
+            </div>
+            <div class="file-card">
+                <a href="html/direction_34_visualization.html">
+                    <div class="file-title">Direction 34</div>
+                    <div class="file-description">
+
+                        <div class="explanation-preview">It’s a feature that “lights up” when the model sees a structured, title‐ or label–like string—often a proper‐name, product code, or advert/catalog...</div>
+                    </div>
+                </a>
+            </div>
+            <div class="file-card">
+                <a href="html/direction_35_visualization.html">
+                    <div class="file-title">Direction 35</div>
+                    <div class="file-description">
+
+                        <div class="explanation-preview">It appears that this feature is detecting the “tail‐piece” of a compound or branded term—that is, the final morpheme or substring (like “net,” “box,”...</div>
+                    </div>
+                </a>
+            </div>
+            <div class="file-card">
+                <a href="html/direction_36_visualization.html">
+                    <div class="file-title">Direction 36</div>
+                    <div class="file-description">
+
+                        <div class="explanation-preview">It appears that this feature is “noticing” when the model is in the middle of a compound or foreign‐style proper name (or similarly structured,...</div>
+                    </div>
+                </a>
+            </div>
+            <div class="file-card">
+                <a href="html/direction_37_visualization.html">
+                    <div class="file-title">Direction 37</div>
+                    <div class="file-description">
+
+                        <div class="explanation-preview">This feature signals when the text is written in a stylized, informal “online‐voice” – the kind of register you see in social media posts, personal...</div>
+                    </div>
+                </a>
+            </div>
+            <div class="file-card">
+                <a href="html/direction_38_visualization.html">
+                    <div class="file-title">Direction 38</div>
+                    <div class="file-description">
+
+                        <div class="explanation-preview">It appears that the feature is sensitive to the contraction/possessive marker “’s” – the token that signals a syntactic boundary where a noun or...</div>
+                    </div>
+                </a>
+            </div>
+            <div class="file-card">
+                <a href="html/direction_39_visualization.html">
+                    <div class="file-title">Direction 39</div>
+                    <div class="file-description">
+
+                        <div class="explanation-preview">It appears that this feature “lights‐up” when the model is in the middle of a multi‐token, name‐ or entity–style span. In other words, the feature...</div>
+                    </div>
+                </a>
+            </div>
+            <div class="file-card">
+                <a href="html/direction_40_visualization.html">
+                    <div class="file-title">Direction 40</div>
+                    <div class="file-description">
+
+                        <div class="explanation-preview">It appears this feature “lights‐up” on words and fragments that serve as structural or formatting markers – for example prefixes in split words, list...</div>
+                    </div>
+                </a>
+            </div>
+            <div class="file-card">
+                <a href="html/direction_41_visualization.html">
+                    <div class="file-title">Direction 41</div>
+                    <div class="file-description">
+
+                        <div class="explanation-preview">It appears that this feature signals the beginning of an explicit, procedural or “how‐to” question—activating strongly on constructions (often...</div>
+                    </div>
+                </a>
+            </div>
+            <div class="file-card">
+                <a href="html/direction_42_visualization.html">
+                    <div class="file-title">Direction 42</div>
+                    <div class="file-description">
+
+                        <div class="explanation-preview">It is a circuit that “lights up” when the model sees words presented in a stylized, segmented (often title‐ or UI–style) form – in other words, it...</div>
+                    </div>
+                </a>
+            </div>
+            <div class="file-card">
+                <a href="html/direction_43_visualization.html">
+                    <div class="file-title">Direction 43</div>
+                    <div class="file-description">
+
+                        <div class="explanation-preview">This feature represents the model’s recognition of contracted negations – that is, the expectation and handling of the contracted “not” form (like...</div>
+                    </div>
+                </a>
+            </div>
+            <div class="file-card">
+                <a href="html/direction_44_visualization.html">
+                    <div class="file-title">Direction 44</div>
+                    <div class="file-description">
+
+                        <div class="explanation-preview">It appears that this feature “lights up” when the model is in the middle of setting up or “expecting” a specific syntactic slot to be filled—one that...</div>
+                    </div>
+                </a>
+            </div>
+            <div class="file-card">
+                <a href="html/direction_45_visualization.html">
+                    <div class="file-title">Direction 45</div>
+                    <div class="file-description">
+
+                        <div class="explanation-preview">It appears that this feature is “flagging” portions of fixed or memorized multi‐token expressions—often proper names, branded titles, or formulaic...</div>
+                    </div>
+                </a>
+            </div>
+            <div class="file-card">
+                <a href="html/direction_46_visualization.html">
+                    <div class="file-title">Direction 46</div>
+                    <div class="file-description">
+
+                        <div class="explanation-preview">It appears this feature “lights up” on contractions—that is, it reliably activates on the tokens (or parts of tokens) that indicate informal,...</div>
+                    </div>
+                </a>
+            </div>
+            <div class="file-card">
+                <a href="html/direction_47_visualization.html">
+                    <div class="file-title">Direction 47</div>
+                    <div class="file-description">
+
+                        <div class="explanation-preview">It appears that this feature is signaling a “token‐continuation” or sub‐word boundary marker—that is, it flags parts of multi–token words or phrases...</div>
+                    </div>
+                </a>
+            </div>
+            <div class="file-card">
+                <a href="html/direction_48_visualization.html">
+                    <div class="file-title">Direction 48</div>
+                    <div class="file-description">
+
+                        <div class="explanation-preview">It appears that this feature “lights up” when the model is about to complete a well‐established multi‐word phrase—a key noun or head that, often...</div>
+                    </div>
+                </a>
+            </div>
+            <div class="file-card">
+                <a href="html/direction_49_visualization.html">
+                    <div class="file-title">Direction 49</div>
+                    <div class="file-description">
+
+                        <div class="explanation-preview">It appears this feature “lights up” when the model is in the middle of a multi‐token, domain‐ or entity‐specific phrase. In other words, it signals...</div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="footer">
+    </div>
+</body>
+</html>

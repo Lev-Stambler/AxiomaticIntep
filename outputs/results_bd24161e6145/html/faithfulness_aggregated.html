@@ -1,0 +1,1193 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aggregated Faithfulness Testing Results</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f8f9fa;
+            color: #212529;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+        }
+        h1 {
+            color: #0056b3;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5rem;
+        }
+        .overall-summary {
+            background-color: #e3f2fd;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            border-left: 4px solid #2196f3;
+        }
+        .overall-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .stat-card {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 6px;
+            text-align: center;
+            border-left: 4px solid #0056b3;
+        }
+        .stat-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #0056b3;
+        }
+        .stat-label {
+            font-size: 0.9em;
+            color: #6c757d;
+            margin-top: 5px;
+        }
+        .direction-section {
+            margin-bottom: 30px;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .direction-header {
+            background-color: #0056b3;
+            color: white;
+            padding: 20px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background-color 0.3s;
+        }
+        .direction-header:hover {
+            background-color: #004494;
+        }
+        .direction-header h2 {
+            margin: 0;
+            font-size: 1.5rem;
+        }
+        .direction-stats {
+            display: flex;
+            gap: 20px;
+        }
+        .stat {
+            padding: 5px 10px;
+            background-color: rgba(255,255,255,0.2);
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+        .toggle-icon {
+            font-size: 1.2rem;
+            transition: transform 0.3s;
+        }
+        .toggle-icon.rotated {
+            transform: rotate(180deg);
+        }
+        .direction-content {
+            padding: 20px;
+            background-color: #f8f9fa;
+        }
+        .direction-content.hidden {
+            display: none;
+        }
+        .summary-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .explanation-box {
+            background-color: #e3f2fd;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid #2196f3;
+        }
+        .examples-section {
+            margin-top: 30px;
+        }
+        .example-section {
+            margin: 20px 0;
+        }
+        .example {
+            margin: 10px 0;
+            padding: 15px;
+            border-radius: 6px;
+            border-left: 4px solid #28a745;
+        }
+        .example.incorrect {
+            border-left-color: #dc3545;
+            background-color: #f8d7da;
+        }
+        .example.correct {
+            background-color: #d4edda;
+        }
+        .example-text {
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+        .example-details {
+            font-size: 0.9em;
+            color: #6c757d;
+        }
+        .examples-note {
+            margin-top: 15px;
+            font-style: italic;
+            color: #6c757d;
+            text-align: center;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+        }
+        .header-left {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 8px;
+        }
+        .faithfulness-badge {
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .faithfulness-badge.high {
+            background-color: #28a745;
+            color: white;
+        }
+        .faithfulness-badge.medium {
+            background-color: #ffc107;
+            color: #212529;
+        }
+        .faithfulness-badge.low {
+            background-color: #dc3545;
+            color: white;
+        }
+        .direction-section.high-faithfulness .direction-header {
+            border-left: 6px solid #28a745;
+        }
+        .direction-section.medium-faithfulness .direction-header {
+            border-left: 6px solid #ffc107;
+        }
+        .direction-section.low-faithfulness .direction-header {
+            border-left: 6px solid #dc3545;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Aggregated Faithfulness Testing Results</h1>
+
+        <div class="overall-summary">
+            <h2 style="margin-top: 0; color: #1565c0;">Overall Aggregated Statistics</h2>
+            <div class="overall-stats">
+                <div class="stat-card">
+                    <div class="stat-value">2</div>
+                    <div class="stat-label">Directions Tested</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">5</div>
+                    <div class="stat-label">Source Runs</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">10</div>
+                    <div class="stat-label">Total Trials</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">200</div>
+                    <div class="stat-label">Total Examples</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">64.5%</div>
+                    <div class="stat-label">Aggregated Accuracy</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">64.5%</div>
+                    <div class="stat-label">Trial Mean Accuracy</div>
+                </div>
+            </div>
+            <div style="text-align: center; margin-top: 15px; color: #6c757d;">
+                This page shows aggregated results from 5 runs,
+                combining individual test examples into unified pools per direction.<br>
+                <strong>Directions are sorted by css score (highest first)</strong>
+            </div>
+        </div>
+
+
+        <div class="direction-section low-faithfulness">
+            <div class="direction-header" onclick="toggleDirection(0)">
+                <div class="header-left">
+                    <h2>#1 - Direction 0</h2>
+                    <span class="faithfulness-badge low">Low Faithfulness (59%)</span>
+                </div>
+                <div class="direction-stats">
+                    <span class="stat">Accuracy: 59.0%</span>
+                    <span class="stat">Examples: 100</span>
+                    <span class="stat">Runs: 5</span>
+                </div>
+                <span class="toggle-icon" id="toggle-0">▼</span>
+            </div>
+            <div class="direction-content" id="direction-0">
+                <div class="direction-summary">
+                    <div class="summary-stats">
+                        <div class="stat-card">
+                            <div class="stat-value">59.0%</div>
+                            <div class="stat-label">Aggregated Accuracy</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">59/100</div>
+                            <div class="stat-label">Correct Predictions</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">33/50</div>
+                            <div class="stat-label">Positive Accuracy</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">26/50</div>
+                            <div class="stat-label">Negative Accuracy</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">5</div>
+                            <div class="stat-label">Source Runs</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">5</div>
+                            <div class="stat-label">Total Trials</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">0.0997</div>
+                            <div class="stat-label">CSS Score</div>
+                        </div>
+                    </div>
+
+                    <div class="explanation-box">
+                        <h3 style="margin-top: 0; color: #1565c0;">Feature Explanation</h3>
+                        <p>This neuron is basically a “common‐subword” detector.  It lights up on very short, high-frequency BPE pieces or punctuation (e.g. “hopes”, “too”, “as”, “ur”, left/right quotes, etc.) and is strongly negative on longer, rarer tokens (proper names, long words, uncommon subwords).</p>
+                    </div>
+                </div>
+
+                <div class="examples-section">
+                    <h3 style="color: #0056b3;">Aggregated Positive Examples (50 total)</h3>
+                    <div class="example-section">
+
+                <div class="example correct">
+                    <div class="example-text">"as"</div>
+                    <div class="example-details">
+                        Prediction: Positive |
+                        Activation: -0.155 |
+                        Run 0, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"to"</div>
+                    <div class="example-details">
+                        Prediction: Positive |
+                        Activation: -0.059 |
+                        Run 0, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"the"</div>
+                    <div class="example-details">
+                        Prediction: Positive |
+                        Activation: -0.061 |
+                        Run 0, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example incorrect">
+                    <div class="example-text">"and"</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: -0.664 |
+                        Run 0, Trial 0 |
+                        ✗ Incorrect
+                    </div>
+                </div>
+
+                <div class="example incorrect">
+                    <div class="example-text">"is"</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: -0.886 |
+                        Run 0, Trial 0 |
+                        ✗ Incorrect
+                    </div>
+                </div>
+
+                <div class="example incorrect">
+                    <div class="example-text">"too"</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: -0.965 |
+                        Run 0, Trial 0 |
+                        ✗ Incorrect
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"hopes"</div>
+                    <div class="example-details">
+                        Prediction: Positive |
+                        Activation: -0.019 |
+                        Run 0, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example incorrect">
+                    <div class="example-text">"ur"</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: -0.647 |
+                        Run 0, Trial 0 |
+                        ✗ Incorrect
+                    </div>
+                </div>
+
+                <div class="example incorrect">
+                    <div class="example-text">"."</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: -1.856 |
+                        Run 0, Trial 0 |
+                        ✗ Incorrect
+                    </div>
+                </div>
+
+                <div class="example incorrect">
+                    <div class="example-text">","</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: -1.135 |
+                        Run 0, Trial 0 |
+                        ✗ Incorrect
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"hopes"</div>
+                    <div class="example-details">
+                        Prediction: Positive |
+                        Activation: -0.019 |
+                        Run 1, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"too"</div>
+                    <div class="example-details">
+                        Prediction: Positive |
+                        Activation: -0.965 |
+                        Run 1, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"as"</div>
+                    <div class="example-details">
+                        Prediction: Positive |
+                        Activation: -0.155 |
+                        Run 1, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"ur"</div>
+                    <div class="example-details">
+                        Prediction: Positive |
+                        Activation: -0.647 |
+                        Run 1, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"n't"</div>
+                    <div class="example-details">
+                        Prediction: Positive |
+                        Activation: -0.278 |
+                        Run 1, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"."</div>
+                    <div class="example-details">
+                        Prediction: Positive |
+                        Activation: -1.856 |
+                        Run 1, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">","</div>
+                    <div class="example-details">
+                        Prediction: Positive |
+                        Activation: -1.135 |
+                        Run 1, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"?"</div>
+                    <div class="example-details">
+                        Prediction: Positive |
+                        Activation: -1.037 |
+                        Run 1, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"“"</div>
+                    <div class="example-details">
+                        Prediction: Positive |
+                        Activation: -0.195 |
+                        Run 1, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"”"</div>
+                    <div class="example-details">
+                        Prediction: Positive |
+                        Activation: -0.986 |
+                        Run 1, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+            <div class='examples-note'>... and 30 more positive examples</div>
+                    </div>
+
+                    <h3 style="color: #0056b3;">Aggregated Negative Examples (50 total)</h3>
+                    <div class="example-section">
+
+                <div class="example incorrect">
+                    <div class="example-text">"hippopotamus"</div>
+                    <div class="example-details">
+                        Prediction: Positive |
+                        Activation: 0.111 |
+                        Run 0, Trial 0 |
+                        ✗ Incorrect
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"internationalization"</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: -1.026 |
+                        Run 0, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"neoclassicism"</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: -0.492 |
+                        Run 0, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"photosynthesis"</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: -1.070 |
+                        Run 0, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"Schwarzenegger"</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: -0.381 |
+                        Run 0, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"microarchitecture"</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: -0.750 |
+                        Run 0, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"transubstantiation"</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: -0.516 |
+                        Run 0, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"cryptojacking"</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: -1.240 |
+                        Run 0, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"xylophone"</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: -0.301 |
+                        Run 0, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"supercalifragilisticexpialidocious"</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: -0.290 |
+                        Run 0, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example incorrect">
+                    <div class="example-text">"anthropology"</div>
+                    <div class="example-details">
+                        Prediction: Positive |
+                        Activation: -0.718 |
+                        Run 1, Trial 0 |
+                        ✗ Incorrect
+                    </div>
+                </div>
+
+                <div class="example incorrect">
+                    <div class="example-text">"Zalghurath"</div>
+                    <div class="example-details">
+                        Prediction: Positive |
+                        Activation: 0.060 |
+                        Run 1, Trial 0 |
+                        ✗ Incorrect
+                    </div>
+                </div>
+
+                <div class="example incorrect">
+                    <div class="example-text">"supercalifragilisticexpialidocious"</div>
+                    <div class="example-details">
+                        Prediction: Positive |
+                        Activation: -0.290 |
+                        Run 1, Trial 0 |
+                        ✗ Incorrect
+                    </div>
+                </div>
+
+                <div class="example incorrect">
+                    <div class="example-text">"bioengineering"</div>
+                    <div class="example-details">
+                        Prediction: Positive |
+                        Activation: -1.021 |
+                        Run 1, Trial 0 |
+                        ✗ Incorrect
+                    </div>
+                </div>
+
+                <div class="example incorrect">
+                    <div class="example-text">"Catherine"</div>
+                    <div class="example-details">
+                        Prediction: Positive |
+                        Activation: 0.027 |
+                        Run 1, Trial 0 |
+                        ✗ Incorrect
+                    </div>
+                </div>
+
+                <div class="example incorrect">
+                    <div class="example-text">"xylophone"</div>
+                    <div class="example-details">
+                        Prediction: Positive |
+                        Activation: -0.301 |
+                        Run 1, Trial 0 |
+                        ✗ Incorrect
+                    </div>
+                </div>
+
+                <div class="example incorrect">
+                    <div class="example-text">"neurophysiology"</div>
+                    <div class="example-details">
+                        Prediction: Positive |
+                        Activation: -0.531 |
+                        Run 1, Trial 0 |
+                        ✗ Incorrect
+                    </div>
+                </div>
+
+                <div class="example incorrect">
+                    <div class="example-text">"constitutionalism"</div>
+                    <div class="example-details">
+                        Prediction: Positive |
+                        Activation: -0.805 |
+                        Run 1, Trial 0 |
+                        ✗ Incorrect
+                    </div>
+                </div>
+
+                <div class="example incorrect">
+                    <div class="example-text">"Quetzalcoatl"</div>
+                    <div class="example-details">
+                        Prediction: Positive |
+                        Activation: 0.059 |
+                        Run 1, Trial 0 |
+                        ✗ Incorrect
+                    </div>
+                </div>
+
+                <div class="example incorrect">
+                    <div class="example-text">"hippopotamus"</div>
+                    <div class="example-details">
+                        Prediction: Positive |
+                        Activation: 0.111 |
+                        Run 1, Trial 0 |
+                        ✗ Incorrect
+                    </div>
+                </div>
+            <div class='examples-note'>... and 30 more negative examples</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="direction-section medium-faithfulness">
+            <div class="direction-header" onclick="toggleDirection(1)">
+                <div class="header-left">
+                    <h2>#2 - Direction 1</h2>
+                    <span class="faithfulness-badge medium">Medium Faithfulness (70%)</span>
+                </div>
+                <div class="direction-stats">
+                    <span class="stat">Accuracy: 70.0%</span>
+                    <span class="stat">Examples: 100</span>
+                    <span class="stat">Runs: 5</span>
+                </div>
+                <span class="toggle-icon" id="toggle-1">▼</span>
+            </div>
+            <div class="direction-content" id="direction-1">
+                <div class="direction-summary">
+                    <div class="summary-stats">
+                        <div class="stat-card">
+                            <div class="stat-value">70.0%</div>
+                            <div class="stat-label">Aggregated Accuracy</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">70/100</div>
+                            <div class="stat-label">Correct Predictions</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">33/50</div>
+                            <div class="stat-label">Positive Accuracy</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">37/50</div>
+                            <div class="stat-label">Negative Accuracy</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">5</div>
+                            <div class="stat-label">Source Runs</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">5</div>
+                            <div class="stat-label">Total Trials</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">0.0740</div>
+                            <div class="stat-label">CSS Score</div>
+                        </div>
+                    </div>
+
+                    <div class="explanation-box">
+                        <h3 style="margin-top: 0; color: #1565c0;">Feature Explanation</h3>
+                        <p>This neuron detects orthographic markers of proper-name subwords—foreign diacritics (ú, ñ, etc.), uppercase onsets after hyphens or ampersands (e.g. S & P, B & B, Mosi-oa-Tunya), and other non-ASCII or special‐character cues that typically signal parts of names, brands, places or indices.</p>
+                    </div>
+                </div>
+
+                <div class="examples-section">
+                    <h3 style="color: #0056b3;">Aggregated Positive Examples (50 total)</h3>
+                    <div class="example-section">
+
+                <div class="example incorrect">
+                    <div class="example-text">"El Niño"</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: -0.361 |
+                        Run 0, Trial 0 |
+                        ✗ Incorrect
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"Mosi-oa-Tunya"</div>
+                    <div class="example-details">
+                        Prediction: Positive |
+                        Activation: 0.612 |
+                        Run 0, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"S & P"</div>
+                    <div class="example-details">
+                        Prediction: Positive |
+                        Activation: 0.199 |
+                        Run 0, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"B & B"</div>
+                    <div class="example-details">
+                        Prediction: Positive |
+                        Activation: 0.275 |
+                        Run 0, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"José-López"</div>
+                    <div class="example-details">
+                        Prediction: Positive |
+                        Activation: 0.523 |
+                        Run 0, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example incorrect">
+                    <div class="example-text">"piñata"</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: -0.151 |
+                        Run 0, Trial 0 |
+                        ✗ Incorrect
+                    </div>
+                </div>
+
+                <div class="example incorrect">
+                    <div class="example-text">"Zoë"</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: 0.109 |
+                        Run 0, Trial 0 |
+                        ✗ Incorrect
+                    </div>
+                </div>
+
+                <div class="example incorrect">
+                    <div class="example-text">"Crème brûlée"</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: -0.109 |
+                        Run 0, Trial 0 |
+                        ✗ Incorrect
+                    </div>
+                </div>
+
+                <div class="example incorrect">
+                    <div class="example-text">"São Paulo"</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: -0.073 |
+                        Run 0, Trial 0 |
+                        ✗ Incorrect
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"Île-de-France"</div>
+                    <div class="example-details">
+                        Prediction: Positive |
+                        Activation: 0.436 |
+                        Run 0, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example incorrect">
+                    <div class="example-text">"São Paulo"</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: -0.073 |
+                        Run 1, Trial 0 |
+                        ✗ Incorrect
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"Björk"</div>
+                    <div class="example-details">
+                        Prediction: Positive |
+                        Activation: 0.196 |
+                        Run 1, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"Mosi-oa-Tunya"</div>
+                    <div class="example-details">
+                        Prediction: Positive |
+                        Activation: 0.612 |
+                        Run 1, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example incorrect">
+                    <div class="example-text">"Crème brûlée"</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: -0.109 |
+                        Run 1, Trial 0 |
+                        ✗ Incorrect
+                    </div>
+                </div>
+
+                <div class="example incorrect">
+                    <div class="example-text">"façade"</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: 0.035 |
+                        Run 1, Trial 0 |
+                        ✗ Incorrect
+                    </div>
+                </div>
+
+                <div class="example incorrect">
+                    <div class="example-text">"niño"</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: -0.676 |
+                        Run 1, Trial 0 |
+                        ✗ Incorrect
+                    </div>
+                </div>
+
+                <div class="example incorrect">
+                    <div class="example-text">"résumé"</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: -0.236 |
+                        Run 1, Trial 0 |
+                        ✗ Incorrect
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"S & P"</div>
+                    <div class="example-details">
+                        Prediction: Positive |
+                        Activation: 0.199 |
+                        Run 1, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"Spider-Man"</div>
+                    <div class="example-details">
+                        Prediction: Positive |
+                        Activation: 0.223 |
+                        Run 1, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"Café del Mar"</div>
+                    <div class="example-details">
+                        Prediction: Positive |
+                        Activation: 0.203 |
+                        Run 1, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+            <div class='examples-note'>... and 30 more positive examples</div>
+                    </div>
+
+                    <h3 style="color: #0056b3;">Aggregated Negative Examples (50 total)</h3>
+                    <div class="example-section">
+
+                <div class="example correct">
+                    <div class="example-text">"john smith"</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: -0.006 |
+                        Run 0, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"high-speed train"</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: -0.259 |
+                        Run 0, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"rock-and-roll"</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: -0.113 |
+                        Run 0, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"email address"</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: -0.699 |
+                        Run 0, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example incorrect">
+                    <div class="example-text">"self-esteem"</div>
+                    <div class="example-details">
+                        Prediction: Positive |
+                        Activation: 0.683 |
+                        Run 0, Trial 0 |
+                        ✗ Incorrect
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"state-of-the-art"</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: 0.130 |
+                        Run 0, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"apple pie"</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: -0.198 |
+                        Run 0, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example incorrect">
+                    <div class="example-text">"jack-of-all-trades"</div>
+                    <div class="example-details">
+                        Prediction: Positive |
+                        Activation: 0.391 |
+                        Run 0, Trial 0 |
+                        ✗ Incorrect
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"international & domestic"</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: -0.085 |
+                        Run 0, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"co-op"</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: 0.187 |
+                        Run 0, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example incorrect">
+                    <div class="example-text">"self-esteem"</div>
+                    <div class="example-details">
+                        Prediction: Positive |
+                        Activation: 0.683 |
+                        Run 1, Trial 0 |
+                        ✗ Incorrect
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"e-mail"</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: 0.052 |
+                        Run 1, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"long-term"</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: -0.187 |
+                        Run 1, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"re-entry"</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: 0.054 |
+                        Run 1, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"mother-in-law"</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: 0.164 |
+                        Run 1, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"high-tech"</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: -0.457 |
+                        Run 1, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"follow-up"</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: -0.057 |
+                        Run 1, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example incorrect">
+                    <div class="example-text">"t-shirt"</div>
+                    <div class="example-details">
+                        Prediction: Positive |
+                        Activation: 0.260 |
+                        Run 1, Trial 0 |
+                        ✗ Incorrect
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"anti-inflammatory"</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: 0.048 |
+                        Run 1, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+
+                <div class="example correct">
+                    <div class="example-text">"co-operate"</div>
+                    <div class="example-details">
+                        Prediction: Negative |
+                        Activation: 0.187 |
+                        Run 1, Trial 0 |
+                        ✓ Correct
+                    </div>
+                </div>
+            <div class='examples-note'>... and 30 more negative examples</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #dee2e6; text-align: center; color: #6c757d; font-size: 0.9em;">
+            Generated by FourierFeatures Aggregated Faithfulness Testing
+        </div>
+    </div>
+
+    <script>
+        function toggleDirection(directionIdx) {
+            const content = document.getElementById('direction-' + directionIdx);
+            const toggle = document.getElementById('toggle-' + directionIdx);
+
+            if (content.classList.contains('hidden')) {
+                content.classList.remove('hidden');
+                toggle.classList.remove('rotated');
+                toggle.textContent = '▼';
+            } else {
+                content.classList.add('hidden');
+                toggle.classList.add('rotated');
+                toggle.textContent = '▲';
+            }
+        }
+
+        // Initialize all sections as expanded
+        document.addEventListener('DOMContentLoaded', function() {
+            // All sections start expanded by default
+        });
+    </script>
+</body>
+</html>

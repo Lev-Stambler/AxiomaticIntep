@@ -1,0 +1,403 @@
+
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">
+<title>Token Activation Similarity Report</title><style>
+body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; padding: 20px; background-color: #f8f9fa; color: #212529; }
+.container { background-color: #ffffff; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.07); }
+h1 { color: #0056b3; text-align: center; margin-bottom: 25px; font-weight: 300;}
+h2 { color: #0056b3; border-bottom: 1px solid #dee2e6; padding-bottom: 10px; margin-top:0; font-size: 1.5em; font-weight: 400; }
+.token { padding: 3px 5px; margin: 2px 1px; border-radius: 4px; display: inline-block; border: 1px solid #ced4da; cursor: default; transition: transform 0.1s ease-out, box-shadow 0.1s ease-out; font-size: 0.9em; line-height: 1.5; }
+.token:hover { transform: translateY(-1px); box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+.token.highlight-window { border: 2px solid #c82333; font-weight: 600; background-color: #f8d7da !important; color: #721c24; }
+.sequence-display { margin-top: 12px; padding: 12px; border: 1px solid #e9ecef; background-color: #f8f9fa; border-radius: 6px; white-space: pre-wrap; word-wrap: break-word; line-height: 1.7; }
+.full-text-display { margin-top: 15px; padding: 10px; border: 1px solid #dfe6e9; background-color: #f9f9f9; border-radius: 6px; white-space: pre-wrap; word-wrap: break-word; line-height: 1.6; font-size: 0.95em; color: #333; }
+.tooltip { position: absolute; background-color: rgba(33,37,41,0.9); color: white; padding: 8px 12px; border-radius: 5px; visibility: hidden; z-index: 1000; pointer-events: none; font-size: 0.85em; max-width: 400px; }
+.details p { margin: 5px 0; font-size: 0.9em; color: #495057; } .details strong { color: #0056b3; }
+.footer-note { font-size: 0.8em; color: #6c757d; text-align: center; margin-top: 30px; }
+.global-max-info { background-color: #e3f2fd; padding: 10px; border-radius: 5px; margin-bottom: 20px; text-align: center; font-size: 0.9em; color: #1565c0; }
+.threshold-control { margin-top: 15px; padding: 10px; background-color: rgba(255,255,255,0.3); border-radius: 6px; }
+.threshold-slider { width: 200px; margin: 0 10px; }
+.threshold-value { font-weight: bold; color: #0056b3; }
+</style></head><body>
+<div class="explanation-section" style="background-color: #f0f8ff; padding: 15px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #0056b3;"><h3 style="color: #0056b3; margin-top: 0;">Feature Explanation</h3><div style="line-height: 1.6; color: #333;">It’s a signal that a word is acting as the key “head” or identifier within a compound, branded, or domain‐specific name—a pivot token that marks the semantic core (e.g. the product, service, or entity type) in structured or technical phrases. </div></div><div class="global-max-info">
+    <strong>Query Type:</strong> 1-token sequences<br>
+    <strong>Query Vector Norms:</strong> ['10.0514']<br>
+    <strong>Global Max Sequence Similarities:</strong> [20.64864730834961]<br>
+    <div style="margin-top: 10px;">
+        <label style="font-weight: normal; cursor: pointer;">
+            <input type="checkbox" id="normalizeToggle" checked style="margin-right: 8px;">
+            Show Normalized Activations (divide by max per result)
+        </label>
+        <span id="normalizationStatus" style="margin-left: 15px; font-style: italic; color: #666;"></span>
+    </div>
+    <div class="threshold-control">
+        <label style="font-weight: normal;">
+            Activation Cutoff Threshold: <span class="threshold-value" id="thresholdValue">0.000</span>
+        </label><br>
+        <input type="range" id="thresholdSlider" class="threshold-slider"
+               min="0" max="1" step="0.001"
+               value="0.0">
+        <div style="margin-top: 5px; font-size: 0.8em; color: #666;">
+            No faithfulness data available - adjust manually
+        </div>
+    </div>
+</div>
+<div id="tooltip" class="tooltip"></div>
+
+<div class="container" id="container_result_0">
+    <h2>Result 1 (Sample Ref: 12636)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 20.6486</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">"wick"</span></p>
+        <p><strong>Window Start Position:</strong> 25</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_0"></div>
+    <div class="full-text-display" id="full_text_display_result_0"></div>
+</div>
+<div class="container" id="container_result_1">
+    <h2>Result 2 (Sample Ref: 11566)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 20.4807</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">" is"</span></p>
+        <p><strong>Window Start Position:</strong> 29</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_1"></div>
+    <div class="full-text-display" id="full_text_display_result_1"></div>
+</div>
+<div class="container" id="container_result_2">
+    <h2>Result 3 (Sample Ref: 3111)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 20.3606</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">" Your"</span></p>
+        <p><strong>Window Start Position:</strong> 29</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_2"></div>
+    <div class="full-text-display" id="full_text_display_result_2"></div>
+</div>
+<div class="container" id="container_result_3">
+    <h2>Result 4 (Sample Ref: 474)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 20.1635</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">" LA"</span></p>
+        <p><strong>Window Start Position:</strong> 43</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_3"></div>
+    <div class="full-text-display" id="full_text_display_result_3"></div>
+</div>
+<div class="container" id="container_result_4">
+    <h2>Result 5 (Sample Ref: 15935)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 19.6158</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">"a"</span></p>
+        <p><strong>Window Start Position:</strong> 38</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_4"></div>
+    <div class="full-text-display" id="full_text_display_result_4"></div>
+</div>
+<div class="container" id="container_result_5">
+    <h2>Result 6 (Sample Ref: 2598)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 19.5302</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">"ENSE"</span></p>
+        <p><strong>Window Start Position:</strong> 27</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_5"></div>
+    <div class="full-text-display" id="full_text_display_result_5"></div>
+</div>
+<div class="container" id="container_result_6">
+    <h2>Result 7 (Sample Ref: 15674)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 19.3574</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">" Sale"</span></p>
+        <p><strong>Window Start Position:</strong> 39</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_6"></div>
+    <div class="full-text-display" id="full_text_display_result_6"></div>
+</div>
+<div class="container" id="container_result_7">
+    <h2>Result 8 (Sample Ref: 16142)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 18.9988</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">"cer"</span></p>
+        <p><strong>Window Start Position:</strong> 38</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_7"></div>
+    <div class="full-text-display" id="full_text_display_result_7"></div>
+</div>
+<div class="container" id="container_result_8">
+    <h2>Result 9 (Sample Ref: 14245)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 18.9557</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">" of"</span></p>
+        <p><strong>Window Start Position:</strong> 28</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_8"></div>
+    <div class="full-text-display" id="full_text_display_result_8"></div>
+</div>
+<div class="container" id="container_result_9">
+    <h2>Result 10 (Sample Ref: 13190)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 18.4765</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">"ini"</span></p>
+        <p><strong>Window Start Position:</strong> 42</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_9"></div>
+    <div class="full-text-display" id="full_text_display_result_9"></div>
+</div>
+<div class="container" id="container_result_10">
+    <h2>Result 11 (Sample Ref: 7053)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 18.4401</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">"endor"</span></p>
+        <p><strong>Window Start Position:</strong> 30</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_10"></div>
+    <div class="full-text-display" id="full_text_display_result_10"></div>
+</div>
+<div class="container" id="container_result_11">
+    <h2>Result 12 (Sample Ref: 4555)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 17.8631</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">"stra"</span></p>
+        <p><strong>Window Start Position:</strong> 42</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_11"></div>
+    <div class="full-text-display" id="full_text_display_result_11"></div>
+</div>
+<div class="container" id="container_result_12">
+    <h2>Result 13 (Sample Ref: 12956)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 17.7980</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">" Your"</span></p>
+        <p><strong>Window Start Position:</strong> 28</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_12"></div>
+    <div class="full-text-display" id="full_text_display_result_12"></div>
+</div>
+<div class="container" id="container_result_13">
+    <h2>Result 14 (Sample Ref: 8434)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 17.7658</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">"Percent"</span></p>
+        <p><strong>Window Start Position:</strong> 35</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_13"></div>
+    <div class="full-text-display" id="full_text_display_result_13"></div>
+</div>
+<div class="container" id="container_result_14">
+    <h2>Result 15 (Sample Ref: 11194)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 17.7115</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">"held"</span></p>
+        <p><strong>Window Start Position:</strong> 38</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_14"></div>
+    <div class="full-text-display" id="full_text_display_result_14"></div>
+</div>
+<div class="container" id="container_result_15">
+    <h2>Result 16 (Sample Ref: 9864)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 17.3779</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">" Cancer"</span></p>
+        <p><strong>Window Start Position:</strong> 26</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_15"></div>
+    <div class="full-text-display" id="full_text_display_result_15"></div>
+</div>
+<div class="container" id="container_result_16">
+    <h2>Result 17 (Sample Ref: 2949)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 17.2597</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">" Girl"</span></p>
+        <p><strong>Window Start Position:</strong> 36</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_16"></div>
+    <div class="full-text-display" id="full_text_display_result_16"></div>
+</div>
+<div class="container" id="container_result_17">
+    <h2>Result 18 (Sample Ref: 15456)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 17.1846</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">"inguished"</span></p>
+        <p><strong>Window Start Position:</strong> 42</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_17"></div>
+    <div class="full-text-display" id="full_text_display_result_17"></div>
+</div>
+<div class="container" id="container_result_18">
+    <h2>Result 19 (Sample Ref: 12102)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 17.0536</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">"our"</span></p>
+        <p><strong>Window Start Position:</strong> 25</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_18"></div>
+    <div class="full-text-display" id="full_text_display_result_18"></div>
+</div>
+<div class="container" id="container_result_19">
+    <h2>Result 20 (Sample Ref: 15028)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 16.9976</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">" This"</span></p>
+        <p><strong>Window Start Position:</strong> 36</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_19"></div>
+    <div class="full-text-display" id="full_text_display_result_19"></div>
+</div>
+<script>
+    const allResultsData = [{"id": "result_0", "sample_idx": 12636, "score": 20.64864730834961, "highlight_inds": [25], "matched_tokens_str": "wick", "original_pos": 25, "full_sequence_tokens": ["Use", " this", " form", " to", " contact", " the", " K", "FH", " Ch", "is", "wick", " Sales", " team", ".", "\n", "Use", " this", " form", " to", " contact", " the", " K", "FH", " Ch", "is", "wick", " Lett", "ings", " team", ".", "\n", "Set", " above", " a", " loop", "ing", " section", " of", " the", " Thames", ",", " Ch", "is", "wick"], "sequence_similarities": [[-56.67012023925781], [1.120080590248108], [-9.09103012084961], [2.7179245948791504], [0.7233128547668457], [3.6389381885528564], [-4.456305503845215], [0.6913375854492188], [-4.0084028244018555], [6.840911865234375], [6.695096015930176], [2.6085286140441895], [-3.1423473358154297], [-61.90011215209961], [-0.4329953193664551], [-8.237222671508789], [0.7089093923568726], [-8.02364730834961], [-1.880615234375], [0.7727289199829102], [9.259260177612305], [9.361927032470703], [11.916106224060059], [3.9555015563964844], [7.491199493408203], [20.64864730834961], [-1.6242749691009521], [9.808719635009766], [-2.7166860103607178], [-3.0287110805511475], [8.512487411499023], [-3.6089649200439453], [-5.041191577911377], [-1.1370503902435303], [-6.963359832763672], [-5.183736801147461], [-4.604573726654053], [1.540636658668518], [3.741769790649414], [-1.558691143989563], [-4.714200973510742], [5.0368194580078125], [6.415055274963379], [13.880279541015625]], "normalized_similarities": [[-2.7444956302642822], [0.0542447455227375], [-0.44027242064476013], [0.13162724673748016], [0.03502955287694931], [0.17623130977153778], [-0.21581585705280304], [0.03348100930452347], [-0.194124236702919], [0.3313007354736328], [0.32423895597457886], [0.12632927298545837], [-0.15218175947666168], [-2.9977805614471436], [-0.02096967026591301], [-0.3989230990409851], [0.03433200344443321], [-0.3885798156261444], [-0.09107692539691925], [0.03742273896932602], [0.4484196901321411], [0.45339179039001465], [0.5770889520645142], [0.19156226515769958], [0.3627937138080597], [1.0], [-0.07866253703832626], [0.4750296473503113], [-0.13156726956367493], [-0.14667843282222748], [0.4122540056705475], [-0.1747797280550003], [-0.24414148926734924], [-0.055066581815481186], [-0.3372308015823364], [-0.2510448694229126], [-0.22299638390541077], [0.07461199164390564], [0.18121138215065002], [-0.07548635452985764], [-0.22830556333065033], [0.24392975866794586], [0.31067678332328796], [0.672212541103363]], "result_max_similarities": 20.64864730834961, "full_text_display": "Use this form to contact the KFH Chiswick Sales team.\nUse this form to contact the KFH Chiswick Lettings team.\nSet above a looping section of the Thames, Chiswick", "K": 1}, {"id": "result_1", "sample_idx": 11566, "score": 20.480712890625, "highlight_inds": [29], "matched_tokens_str": " is", "original_pos": 29, "full_sequence_tokens": ["Do", " You", " Know", " Why", " Glass", " is", " Trans", "parent", "?", " |", " Wo", "oster", " Glass", " Co", ".", "\n", "You", " are", " here", ":", " Home", " /", " News", " /", " Do", " You", " Know", " Why", " Glass", " is", " Trans", "parent", "?", "\n", "Did", " you", " ever", " ask", " yourself", ":", " If", " glass", " is", " made"], "sequence_similarities": [[-56.09130859375], [-22.485145568847656], [-2.628378391265869], [-0.9906882047653198], [-5.822311878204346], [5.716266632080078], [-7.373527526855469], [0.01483607292175293], [2.479086399078369], [-4.263576507568359], [-10.404916763305664], [-8.223234176635742], [-2.926882743835449], [-2.425128221511841], [-65.0713119506836], [-2.486809730529785], [1.681012511253357], [-5.665164947509766], [-2.193146228790283], [-4.719949245452881], [2.5686159133911133], [2.37424373626709], [0.331467866897583], [6.01309061050415], [-9.59245491027832], [6.628231048583984], [-2.1950671672821045], [9.935916900634766], [5.335641384124756], [20.480712890625], [7.335546493530273], [5.264042377471924], [-3.9145987033843994], [-4.344161033630371], [-8.64409351348877], [-0.4149225354194641], [-0.48020726442337036], [-10.293275833129883], [-9.378815650939941], [-0.8722481727600098], [-7.17094612121582], [-4.630341529846191], [4.86253547668457], [-3.906392812728882]], "normalized_similarities": [[-2.716464042663574], [-1.0889403820037842], [-0.12729059159755707], [-0.04797836020588875], [-0.2819706201553345], [0.2768349349498749], [-0.357094943523407], [0.000718500989023596], [0.12006047368049622], [-0.20648212730884552], [-0.5039030909538269], [-0.3982456624507904], [-0.14174695312976837], [-0.11744731664657593], [-3.1513595581054688], [-0.12043450772762299], [0.08141029626131058], [-0.2743600904941559], [-0.10621258616447449], [-0.2285839468240738], [0.12439633160829544], [0.11498301476240158], [0.016052763909101486], [0.2912099063396454], [-0.46455609798431396], [0.32100072503089905], [-0.10630561411380768], [0.4811897277832031], [0.258401483297348], [0.9918670654296875], [0.3552555441856384], [0.25493401288986206], [-0.18958136439323425], [-0.2103847712278366], [-0.4186275899410248], [-0.02009441703557968], [-0.02325611189007759], [-0.4984963834285736], [-0.45420968532562256], [-0.0422423891723156], [-0.3472840487957001], [-0.22424429655075073], [0.23548929393291473], [-0.18918395042419434]], "result_max_similarities": 20.64864730834961, "full_text_display": "Do You Know Why Glass is Transparent? | Wooster Glass Co.\nYou are here: Home / News / Do You Know Why Glass is Transparent?\nDid you ever ask yourself: If glass is made", "K": 1}, {"id": "result_2", "sample_idx": 3111, "score": 20.36060333251953, "highlight_inds": [29], "matched_tokens_str": " Your", "original_pos": 29, "full_sequence_tokens": ["DE", "CA", " Direct", " Think", " You", "\u2019", "re", " Ready", " to", " Sub", "mit", " Your", " Pass", "port", " Program", "?", " Check", " Here", " First", "!", "\n", "Think", " You", "\u2019", "re", " Ready", " to", " Sub", "mit", " Your", " Pass", "port", " Program", "?", " Check", " Here", " First", "!", "\n", "The", " 2018", " Colleg", "iate", " DE"], "sequence_similarities": [[-50.94873809814453], [-20.06586456298828], [-32.623085021972656], [-12.709711074829102], [3.770249366760254], [-4.076815128326416], [2.2750749588012695], [0.4771699905395508], [3.8593006134033203], [-8.601276397705078], [-1.1278877258300781], [6.786759376525879], [-11.034866333007812], [-3.7465832233428955], [-7.399676322937012], [-1.6552287340164185], [-5.230584621429443], [-4.033694744110107], [4.985213756561279], [6.524294376373291], [-61.846763610839844], [-13.986689567565918], [0.40997838973999023], [-9.158699989318848], [9.421184539794922], [-5.662917137145996], [18.66440200805664], [1.5572290420532227], [3.6149954795837402], [20.36060333251953], [-1.6111230850219727], [8.177770614624023], [-2.093686580657959], [8.37990951538086], [-2.1811094284057617], [1.7149633169174194], [-1.2750039100646973], [11.172016143798828], [8.543190956115723], [8.005627632141113], [1.0905848741531372], [-1.4958040714263916], [4.466574668884277], [-3.8859453201293945]], "normalized_similarities": [[-2.4674129486083984], [-0.9717762470245361], [-1.579913854598999], [-0.6155226826667786], [0.18259061872959137], [-0.19743739068508148], [0.1101803407073021], [0.023109018802642822], [0.18690331280231476], [-0.41655397415161133], [-0.0546228401362896], [0.328678160905838], [-0.5344110727310181], [-0.18144448101520538], [-0.35836130380630493], [-0.08016160875558853], [-0.25331366062164307], [-0.1953490972518921], [0.24143052101135254], [0.3159671425819397], [-2.99519681930542], [-0.6773658990859985], [0.01985497586429119], [-0.44354963302612305], [0.4562615752220154], [-0.274251252412796], [0.9039043188095093], [0.07541554421186447], [0.17507177591323853], [0.9860502481460571], [-0.07802560180425644], [0.39604389667510986], [-0.10139582306146622], [0.40583333373069763], [-0.10562965273857117], [0.08305451273918152], [-0.06174757704138756], [0.5410531759262085], [0.41374096274375916], [0.3877071142196655], [0.05281628668308258], [-0.07244078069925308], [0.2163131833076477], [-0.1881936937570572]], "result_max_similarities": 20.64864730834961, "full_text_display": "DECA Direct Think You\u2019re Ready to Submit Your Passport Program? Check Here First!\nThink You\u2019re Ready to Submit Your Passport Program? Check Here First!\nThe 2018 Collegiate DE", "K": 1}, {"id": "result_3", "sample_idx": 474, "score": 20.16345977783203, "highlight_inds": [43], "matched_tokens_str": " LA", "original_pos": 43, "full_sequence_tokens": ["Ch", "oud", "rant", ",", " LA", " Home", " Ins", "ulation", " Contract", "ors", " for", " all", " your", " Ins", "ulation", " needs", ".", "\n", "Find", " a", " Home", " Ins", "ulation", " Contract", "or", " in", " Ch", "oud", "rant", ",", " Louisiana", " Now", "!", "\n", "Get", " affordable", " home", " insurance", " in", " Ch", "oud", "rant", ",", " LA"], "sequence_similarities": [[-54.11027145385742], [-4.239810466766357], [-0.929888129234314], [-0.7066296339035034], [0.4569514989852905], [1.6817225217819214], [-3.735201358795166], [-3.156954288482666], [-4.283807754516602], [0.2612382173538208], [-0.18864977359771729], [-1.9579449892044067], [0.24827861785888672], [-1.433779001235962], [4.412796974182129], [-2.126434803009033], [-60.74359130859375], [-1.3681931495666504], [-8.060504913330078], [-0.8550556898117065], [0.5892533659934998], [6.519098281860352], [5.501175880432129], [-0.7979013919830322], [2.2121195793151855], [-1.7768402099609375], [-1.3077278137207031], [-2.8038270473480225], [2.1511294841766357], [1.3254845142364502], [3.7213714122772217], [4.788420677185059], [0.07226777076721191], [6.030994415283203], [-5.728705406188965], [0.33231067657470703], [1.9006773233413696], [-1.8096592426300049], [-4.9140849113464355], [5.686278820037842], [3.010437488555908], [6.062596321105957], [4.528188228607178], [20.16345977783203]], "normalized_similarities": [[-2.620523691177368], [-0.20533114671707153], [-0.04503385350108147], [-0.0342215932905674], [0.022129852324724197], [0.08144468069076538], [-0.18089327216148376], [-0.1528891623020172], [-0.2074619084596634], [0.012651589699089527], [-0.009136180393397808], [-0.09482195228338242], [0.012023964896798134], [-0.0694369450211525], [0.2137087732553482], [-0.102981798350811], [-2.9417710304260254], [-0.06626066565513611], [-0.39036479592323303], [-0.04140976816415787], [0.028537141159176826], [0.3157155215740204], [0.2664182186126709], [-0.03864182531833649], [0.10713145136833191], [-0.08605116605758667], [-0.06333237141370773], [-0.13578744232654572], [0.10417774319648743], [0.06419231742620468], [0.1802234947681427], [0.23189997673034668], [0.0034998792689293623], [0.292076975107193], [-0.27743732929229736], [0.016093580052256584], [0.0920485183596611], [-0.08764056861400604], [-0.23798580467700958], [0.2753826379776001], [0.14579345285892487], [0.2936074435710907], [0.21929708123207092], [0.9765027165412903]], "result_max_similarities": 20.64864730834961, "full_text_display": "Choudrant, LA Home Insulation Contractors for all your Insulation needs.\nFind a Home Insulation Contractor in Choudrant, Louisiana Now!\nGet affordable home insurance in Choudrant, LA", "K": 1}, {"id": "result_4", "sample_idx": 15935, "score": 19.615833282470703, "highlight_inds": [38], "matched_tokens_str": "a", "original_pos": 38, "full_sequence_tokens": ["Ann", "ounced", " this", " morning", " in", " a", " tweet", ",", " the", " Ch", "ub", "by", " Chick", "pe", "a", " Truck", " that", " serves", " the", " Boston", " area", " will", " no", " longer", " be", " kos", "her", " certified", " effective", " immediately", ".", "\n", "Big", " changes", " at", " The", " Chick", "pe", "a", "-", " effective", " immediately", " our", " truck"], "sequence_similarities": [[-52.787818908691406], [-0.7434485554695129], [-4.460922718048096], [-2.0862174034118652], [-4.266434192657471], [-0.42250967025756836], [-12.639604568481445], [-7.050877571105957], [-1.0373876094818115], [-0.8618369102478027], [-1.5205624103546143], [2.0843505859375], [-3.6395726203918457], [-5.287757873535156], [3.0890634059906006], [-3.46838641166687], [3.9596967697143555], [-6.7275190353393555], [1.8163337707519531], [0.7816648483276367], [-0.8206897974014282], [-4.170119285583496], [-5.255475044250488], [-1.0073151588439941], [3.3240647315979004], [-7.4790191650390625], [-2.1966874599456787], [-1.0629138946533203], [-2.6056034564971924], [-1.5726314783096313], [-62.02621078491211], [-1.4737811088562012], [-4.986623764038086], [-7.754735946655273], [-5.778695106506348], [4.708028793334961], [-2.4557487964630127], [2.766993522644043], [19.615833282470703], [6.575629711151123], [2.532505512237549], [1.8557026386260986], [1.8347089290618896], [-4.040510177612305]], "normalized_similarities": [[-2.556478261947632], [-0.03600471094250679], [-0.21603946387767792], [-0.10103409737348557], [-0.20662051439285278], [-0.020461857318878174], [-0.6121274828910828], [-0.3414692282676697], [-0.05023998022079468], [-0.041738178580999374], [-0.07363981008529663], [0.1009436845779419], [-0.1762620359659195], [-0.25608253479003906], [0.14960125088691711], [-0.16797161102294922], [0.1917654275894165], [-0.32580918073654175], [0.08796381205320358], [0.03785549849271774], [-0.039745450019836426], [-0.20195604860782623], [-0.25451910495758057], [-0.04878358915448189], [0.16098220646381378], [-0.36220383644104004], [-0.10638408362865448], [-0.05147619917988777], [-0.12618760764598846], [-0.0761614739894867], [-3.003887414932251], [-0.07137422263622284], [-0.24149881303310394], [-0.375556617975235], [-0.2798582911491394], [0.22800664603710175], [-0.11893025040626526], [0.1340036243200302], [0.9499815106391907], [0.31845328211784363], [0.12264752388000488], [0.08987042307853699], [0.08885370939970016], [-0.195679172873497]], "result_max_similarities": 20.64864730834961, "full_text_display": "Announced this morning in a tweet, the Chubby Chickpea Truck that serves the Boston area will no longer be kosher certified effective immediately.\nBig changes at The Chickpea- effective immediately our truck", "K": 1}, {"id": "result_5", "sample_idx": 2598, "score": 19.530189514160156, "highlight_inds": [27], "matched_tokens_str": "ENSE", "original_pos": 27, "full_sequence_tokens": ["Up", "coming", " C", "ourses", ":", " to", " help", " you", " find", " courses", " within", " and", " outside", " the", " S", "ENSE", " network", " that", " are", " already", " planned", ".", "\n", "Rec", "ur", "ring", " S", "ENSE", " C", "ourses", ":", " to", " help", " you", " find", " courses", " that", " most", " likely", " will", " be", " given", " sometime", " during"], "sequence_similarities": [[-49.57745361328125], [5.098306655883789], [-2.9182820320129395], [0.73050856590271], [3.6772513389587402], [-0.20653629302978516], [-4.549574851989746], [3.0161190032958984], [-2.915803909301758], [-3.972973346710205], [-0.851036787033081], [1.2533278465270996], [-0.9003400802612305], [4.042057514190674], [-0.9795745611190796], [-1.7893757820129395], [-4.24814510345459], [0.5265054702758789], [-1.8162212371826172], [2.468423843383789], [-5.427472114562988], [-61.938575744628906], [0.022958993911743164], [-8.270627975463867], [-10.394533157348633], [-0.12648296356201172], [5.2405877113342285], [19.530189514160156], [-0.9626312255859375], [4.151800632476807], [0.029422760009765625], [3.067070960998535], [-9.452707290649414], [1.0910353660583496], [4.916881561279297], [-3.4333534240722656], [-1.807134747505188], [-1.7560014724731445], [-1.8815052509307861], [-5.924412727355957], [0.2891225814819336], [-8.82866382598877], [-6.629349708557129], [-5.191837787628174]], "normalized_similarities": [[-2.4010024070739746], [0.2469075322151184], [-0.14133042097091675], [0.03537803515791893], [0.1780867874622345], [-0.01000241283327341], [-0.22033283114433289], [0.14606860280036926], [-0.1412104070186615], [-0.19240841269493103], [-0.041215136647224426], [0.06069782003760338], [-0.04360286146402359], [0.19575411081314087], [-0.04744013398885727], [-0.08665825426578522], [-0.20573478937149048], [0.025498302653431892], [-0.08795836567878723], [0.11954409629106522], [-0.26284879446029663], [-2.999643325805664], [0.0011118885595351458], [-0.40054091811180115], [-0.5034002065658569], [-0.006125484127551317], [0.25379812717437744], [0.9458338618278503], [-0.04661957919597626], [0.20106889307498932], [0.001424924354068935], [0.14853617548942566], [-0.4577881991863251], [0.052838101983070374], [0.23812124133110046], [-0.16627497971057892], [-0.08751831203699112], [-0.08504196256399155], [-0.09112002700567245], [-0.28691530227661133], [0.01400201115757227], [-0.42756620049476624], [-0.3210549056529999], [-0.2514371871948242]], "result_max_similarities": 20.64864730834961, "full_text_display": "Upcoming Courses: to help you find courses within and outside the SENSE network that are already planned.\nRecurring SENSE Courses: to help you find courses that most likely will be given sometime during", "K": 1}, {"id": "result_6", "sample_idx": 15674, "score": 19.35742950439453, "highlight_inds": [39], "matched_tokens_str": " Sale", "original_pos": 39, "full_sequence_tokens": ["Autom", "obile", " Bill", " Of", " Sale", " Template", " Maine", " And", " Vehicle", " Bill", " Of", " Sale", " Template", " Word", " U", "pload", "ed", " by", " Betty", " Spencer", " on", " Sunday", ",", " February", " 3", "rd", ",", " 2019", " in", " category", " Bill", ".", "\n", "See", " also", " Autom", "obile", " Bill", " Of", " Sale", " Template", " Manit", "oba", " And"], "sequence_similarities": [[-46.46049118041992], [0.41468286514282227], [-4.513885974884033], [1.8731586933135986], [2.2266180515289307], [-0.5381728410720825], [1.2148042917251587], [4.376338958740234], [1.1162747144699097], [-8.13882827758789], [4.088190078735352], [9.993572235107422], [4.871025562286377], [-2.3718655109405518], [-10.586771011352539], [2.367865562438965], [1.1892454624176025], [-0.8614733219146729], [-1.142782211303711], [2.0597634315490723], [-3.0506465435028076], [-2.68379545211792], [-2.6818466186523438], [-0.4412156343460083], [-5.328336715698242], [-1.7957184314727783], [4.564702033996582], [5.131709098815918], [-1.4476022720336914], [-3.458420753479004], [-6.445802211761475], [-62.85005569458008], [1.4861583709716797], [2.9338786602020264], [8.556793212890625], [1.9333298206329346], [8.758739471435547], [-8.48577880859375], [8.920762062072754], [19.35742950439453], [8.934113502502441], [-1.5103793144226074], [-2.020164966583252], [10.758440017700195]], "normalized_similarities": [[-2.2500500679016113], [0.020082810893654823], [-0.2186044454574585], [0.09071580320596695], [0.10783360153436661], [-0.02606334537267685], [0.05883214995265007], [0.2119431346654892], [0.0540604293346405], [-0.39415794610977173], [0.19798827171325684], [0.4839819371700287], [0.23590046167373657], [-0.11486783623695374], [-0.5127101540565491], [0.11467412859201431], [0.05759435147047043], [-0.041720569133758545], [-0.05534416809678078], [0.09975294768810272], [-0.14774075150489807], [-0.1299743950366974], [-0.12988001108169556], [-0.021367773413658142], [-0.2580477297306061], [-0.08696542680263519], [0.2210654318332672], [0.2485252022743225], [-0.0701063945889473], [-0.1674889773130417], [-0.3121658265590668], [-3.043785572052002], [0.07197364419698715], [0.14208576083183289], [0.4143996834754944], [0.093629851937294], [0.4241798222064972], [-0.41096052527427673], [0.4320264756679535], [0.9374672174453735], [0.43267306685447693], [-0.07314664870500565], [-0.09783522039651871], [0.5210239887237549]], "result_max_similarities": 20.64864730834961, "full_text_display": "Automobile Bill Of Sale Template Maine And Vehicle Bill Of Sale Template Word Uploaded by Betty Spencer on Sunday, February 3rd, 2019 in category Bill.\nSee also Automobile Bill Of Sale Template Manitoba And", "K": 1}, {"id": "result_7", "sample_idx": 16142, "score": 18.99880599975586, "highlight_inds": [38], "matched_tokens_str": "cer", "original_pos": 38, "full_sequence_tokens": ["Settings", " for", " mobile", " internet", " can", " not", " be", " sent", " to", " your", " A", "cer", " Liquid", " E", "3", " via", " SMS", ".", "\n", "If", " this", " screen", " appears", ",", " tick", " default", ",", " tick", " su", "pl", ",", " and", " choose", " OK", ".", "\n", "The", " A", "cer", " Liquid", " E", "3", " has", " been"], "sequence_similarities": [[-40.04600524902344], [-0.4268559217453003], [-3.460110664367676], [0.4697866439819336], [-0.8250415325164795], [-1.665926456451416], [5.29576301574707], [-5.700892448425293], [-1.177222490310669], [3.974435329437256], [-3.198983669281006], [1.51692533493042], [1.7917454242706299], [-7.114573955535889], [-1.5800414085388184], [0.39833080768585205], [-6.528672218322754], [-61.81903076171875], [0.789521336555481], [-8.29306697845459], [-4.877598285675049], [-6.5793609619140625], [-2.30759334564209], [-2.3922157287597656], [-4.465677261352539], [-2.502077102661133], [1.1769399642944336], [-0.2890409231185913], [-6.008238792419434], [-2.211057186126709], [1.5901856422424316], [2.734570026397705], [-5.536489486694336], [-1.9867357015609741], [-5.143452167510986], [1.6902095079421997], [-1.4279248714447021], [8.356890678405762], [18.99880599975586], [1.8859578371047974], [0.41190052032470703], [2.8093926906585693], [-8.356010437011719], [-2.405576705932617]], "normalized_similarities": [[-1.9394009113311768], [-0.02067234367132187], [-0.1675708144903183], [0.022751448675990105], [-0.03995620086789131], [-0.08067969232797623], [0.2564702033996582], [-0.2760903537273407], [-0.05701208859682083], [0.192479208111763], [-0.15492461621761322], [0.07346366345882416], [0.08677301555871964], [-0.34455400705337524], [-0.07652033865451813], [0.01929089054465294], [-0.31617918610572815], [-2.993853807449341], [0.03823598474264145], [-0.40162762999534607], [-0.23621878027915955], [-0.3186340034008026], [-0.11175518482923508], [-0.11585338413715363], [-0.21626973152160645], [-0.12117389589548111], [0.05699840560555458], [-0.013998055830597878], [-0.2909749448299408], [-0.10708000510931015], [0.07701161503791809], [0.13243336975574493], [-0.2681284248828888], [-0.09621626138687134], [-0.2490939050912857], [0.08185569941997528], [-0.06915343552827835], [0.4047185480594635], [0.9200993180274963], [0.09133566170930862], [0.019948063418269157], [0.13605698943138123], [-0.4046759307384491], [-0.11650045216083527]], "result_max_similarities": 20.64864730834961, "full_text_display": "Settings for mobile internet can not be sent to your Acer Liquid E3 via SMS.\nIf this screen appears, tick default, tick supl, and choose OK.\nThe Acer Liquid E3 has been", "K": 1}, {"id": "result_8", "sample_idx": 14245, "score": 18.9556884765625, "highlight_inds": [27], "matched_tokens_str": " of", "original_pos": 28, "full_sequence_tokens": ["The", " Association", " of", " Play", " Industries", " (", "API", "),", " why", " Creative", " Play", " are", " proud", " members", " and", " why", " you", " should", " insist", " your", " playground", " provider", " is", "!", "\n", "The", " Association", " of", " Play", " Industries", " (", "API", ")", " are", " the", " lead", " trade", " organisation", " within", " the", " Play", " Industry", ",", " actively"], "sequence_similarities": [[-53.69658660888672], [-6.05705451965332], [5.185685157775879], [-3.158703327178955], [1.7935515642166138], [-8.21463680267334], [-8.256272315979004], [-2.0050787925720215], [-2.730733871459961], [-6.502777099609375], [-2.0522689819335938], [1.0531492233276367], [1.4178800582885742], [-8.172449111938477], [2.120769500732422], [2.8305559158325195], [3.299628496170044], [6.901029586791992], [0.5218974351882935], [-0.6299400329589844], [-0.9472347497940063], [-3.290127754211426], [5.46985387802124], [-1.633894681930542], [-60.415863037109375], [1.1279668807983398], [-1.2398526668548584], [18.9556884765625], [9.402899742126465], [5.29807710647583], [-2.09904408454895], [-9.332576751708984], [4.501521110534668], [-0.3521139621734619], [8.294187545776367], [0.3013579845428467], [-3.37890625], [-5.7407684326171875], [-4.489936828613281], [-0.4993412494659424], [3.3611748218536377], [-0.5491743087768555], [-9.791455268859863], [6.965832233428955]], "normalized_similarities": [[-2.600489377975464], [-0.2933390438556671], [0.25113922357559204], [-0.15297386050224304], [0.08686048537492752], [-0.3978292942047119], [-0.399845689535141], [-0.09710460901260376], [-0.13224759697914124], [-0.31492507457733154], [-0.09939000010490417], [0.05100330337882042], [0.068666972219944], [-0.3957861661911011], [0.10270743072032928], [0.13708190619945526], [0.1597987711429596], [0.33421218395233154], [0.02527513913810253], [-0.030507568269968033], [-0.045873936265707016], [-0.15933865308761597], [0.2649013102054596], [-0.07912841439247131], [-2.9258992671966553], [0.054626673460006714], [-0.06004522368311882], [0.9180111289024353], [0.4553760588169098], [0.2565822899341583], [-0.10165528208017349], [-0.4519703686237335], [0.21800561249256134], [-0.01705264113843441], [0.4016818702220917], [0.014594563283026218], [-0.1636381447315216], [-0.27802151441574097], [-0.21744459867477417], [-0.0241827592253685], [0.16277942061424255], [-0.02659614011645317], [-0.4741935431957245], [0.3373505473136902]], "result_max_similarities": 20.64864730834961, "full_text_display": "The Association of Play Industries (API), why Creative Play are proud members and why you should insist your playground provider is!\nThe Association of Play Industries (API) are the lead trade organisation within the Play Industry, actively", "K": 1}, {"id": "result_9", "sample_idx": 13190, "score": 18.476505279541016, "highlight_inds": [42], "matched_tokens_str": "ini", "original_pos": 42, "full_sequence_tokens": ["Integr", "ating", " external", " identities", " into", " your", " registration", " process", " can", " greatly", " improve", " your", " onboard", "ing", " conversion", ".", " One", "g", "ini", " Connect", " offers", " seamless", " integration", " of", " public", " and", " social", " IDs", ".", " Need", " to", " use", " a", " national", " e", "ID", " for", " your", " service", "?", " One", "g", "ini", " Connect"], "sequence_similarities": [[-57.095603942871094], [-0.4341040849685669], [1.312577486038208], [-3.1550283432006836], [1.649413824081421], [0.31528449058532715], [1.416446566581726], [3.4211838245391846], [-2.1048800945281982], [0.7480432987213135], [-4.154157638549805], [0.8272326588630676], [0.7667458057403564], [3.9629130363464355], [2.7238409519195557], [-61.15213394165039], [-5.367452621459961], [-5.624539375305176], [0.21781492233276367], [-2.3453245162963867], [-4.000059127807617], [3.6859397888183594], [-3.9491970539093018], [1.8495371341705322], [6.010289192199707], [4.143820762634277], [7.199145793914795], [-3.5227484703063965], [-2.9288783073425293], [-7.568830490112305], [0.4907461404800415], [-5.39840030670166], [-0.5820107460021973], [3.178067684173584], [-10.046154975891113], [-3.698690414428711], [-1.9182969331741333], [2.416091203689575], [-2.0130198001861572], [0.1540534496307373], [-1.0470020771026611], [-2.8900160789489746], [18.476505279541016], [9.236367225646973]], "normalized_similarities": [[-2.765101432800293], [-0.02102336660027504], [0.06356723606586456], [-0.15279588103294373], [0.079879991710186], [0.015269014053046703], [0.06859754770994186], [0.16568560898303986], [-0.1019379198551178], [0.03622722998261452], [-0.2011830359697342], [0.040062315762043], [0.037132978439331055], [0.1919211894273758], [0.13191376626491547], [-2.9615564346313477], [-0.25994208455085754], [-0.2723926305770874], [0.010548628866672516], [-0.11358247697353363], [-0.19372014701366425], [0.17850756645202637], [-0.19125694036483765], [0.08957183361053467], [0.2910742461681366], [0.20068243145942688], [0.3486497402191162], [-0.17060431838035583], [-0.14184358716011047], [-0.36655333638191223], [0.023766502737998962], [-0.26144087314605713], [-0.028186386451125145], [0.15391166508197784], [-0.4865284860134125], [-0.17912507057189941], [-0.0929018184542656], [0.11700966209173203], [-0.09748918563127518], [0.007460704073309898], [-0.050705600529909134], [-0.13996152579784393], [0.8948046565055847], [0.44731101393699646]], "result_max_similarities": 20.64864730834961, "full_text_display": "Integrating external identities into your registration process can greatly improve your onboarding conversion. Onegini Connect offers seamless integration of public and social IDs. Need to use a national eID for your service? Onegini Connect", "K": 1}, {"id": "result_10", "sample_idx": 7053, "score": 18.44011688232422, "highlight_inds": [30], "matched_tokens_str": "endor", "original_pos": 30, "full_sequence_tokens": ["Earlier", " this", " year", ",", " Cal", "iforn", "ian", " punk", " band", " Pl", "ague", " V", "endor", " released", " its", " gr", "itty", " sophomore", " album", " \u201c", "BL", "O", "OD", "S", "WE", "AT", ".\u201d", " Pl", "ague", " V", "endor", "\u2019", "s", " music", " is", " contag", "ious", " and", " violent", ",", " perhaps", " the", " reasoning", " behind"], "sequence_similarities": [[-55.01602554321289], [1.8369617462158203], [-3.092186212539673], [-7.564888954162598], [2.2272539138793945], [-0.21538138389587402], [-0.6177457571029663], [-7.011053085327148], [-5.771177291870117], [-15.4790678024292], [2.2454776763916016], [-3.6684069633483887], [7.186859607696533], [-5.392037868499756], [4.004012107849121], [-8.907456398010254], [2.866642475128174], [0.9983479976654053], [-5.835099697113037], [-3.7800776958465576], [-12.856708526611328], [-4.51435661315918], [-4.646140098571777], [-8.045884132385254], [-6.038780212402344], [-3.661379337310791], [-11.595691680908203], [-3.2695841789245605], [-0.7760716676712036], [9.626482009887695], [18.44011688232422], [-11.216318130493164], [2.4620018005371094], [-2.079838991165161], [-2.375936985015869], [-3.695045232772827], [1.3812451362609863], [4.741312026977539], [1.3466212749481201], [-3.863785743713379], [2.825247049331665], [1.561253547668457], [-9.673504829406738], [-1.9568837881088257]], "normalized_similarities": [[-2.66438889503479], [0.08896281570196152], [-0.14975248277187347], [-0.36636245250701904], [0.1078643947839737], [-0.0104307746514678], [-0.02991700917482376], [-0.3395405411720276], [-0.27949419617652893], [-0.7496407628059387], [0.1087469607591629], [-0.17765846848487854], [0.3480547368526459], [-0.26113274693489075], [0.1939115971326828], [-0.43138208985328674], [0.1388295590877533], [0.04834931716322899], [-0.2825899124145508], [-0.18306660652160645], [-0.6226416826248169], [-0.2186272293329239], [-0.22500941157341003], [-0.3896567225456238], [-0.2924540340900421], [-0.17731812596321106], [-0.561571478843689], [-0.15834374725818634], [-0.03758462518453598], [0.4662039875984192], [0.8930423855781555], [-0.5431987047195435], [0.11923307925462723], [-0.1007251963019371], [-0.11506501585245132], [-0.1789485365152359], [0.06689276546239853], [0.22961853444576263], [0.06521595269441605], [-0.18712052702903748], [0.1368248015642166], [0.07561045140028], [-0.46848127245903015], [-0.09477055817842484]], "result_max_similarities": 20.64864730834961, "full_text_display": "Earlier this year, Californian punk band Plague Vendor released its gritty sophomore album \u201cBLOODSWEAT.\u201d Plague Vendor\u2019s music is contagious and violent, perhaps the reasoning behind", "K": 1}, {"id": "result_11", "sample_idx": 4555, "score": 17.863079071044922, "highlight_inds": [42], "matched_tokens_str": "stra", "original_pos": 42, "full_sequence_tokens": ["Dan", " received", " his", " law", " degree", " from", " the", " Maurice", " A", ".", " De", "ane", " School", " of", " Law", " at", " Hof", "stra", " University", ",", " where", " he", " served", " as", " the", " Articles", " Editor", " of", " the", " Hof", "stra", " Labor", " &amp;", " Employment", " Law", " Journal", " and", " competed", " in", " both", " the", " Hof", "stra", " M"], "sequence_similarities": [[-49.27762985229492], [-27.43795394897461], [-3.1999950408935547], [-9.550521850585938], [-4.247330665588379], [-5.800914287567139], [0.13842177391052246], [-7.802860260009766], [3.928845167160034], [-64.27272033691406], [-8.244155883789062], [-8.042612075805664], [-5.183917045593262], [-0.6389529705047607], [-3.2993886470794678], [-11.257596969604492], [-7.003384590148926], [-1.492368459701538], [-3.847543478012085], [-5.120281219482422], [-4.914218425750732], [1.124653697013855], [-8.845290184020996], [-11.679671287536621], [-6.743053436279297], [-9.946329116821289], [-10.114038467407227], [4.020865440368652], [6.327156066894531], [-3.061857223510742], [10.51064682006836], [-2.3344273567199707], [1.176636815071106], [3.639768600463867], [0.27886962890625], [-6.648026943206787], [-6.186800956726074], [-5.672155380249023], [-0.45012569427490234], [-4.098997116088867], [1.6044907569885254], [0.14603662490844727], [17.863079071044922], [-1.6613737344741821]], "normalized_similarities": [[-2.3864822387695312], [-1.3288015127182007], [-0.1549735963344574], [-0.46252530813217163], [-0.20569534599781036], [-0.2809343636035919], [0.006703672930598259], [-0.3778872489929199], [0.1902713030576706], [-3.1126842498779297], [-0.39925888180732727], [-0.3894982635974884], [-0.2510536015033722], [-0.030944058671593666], [-0.1597871631383896], [-0.5451977849006653], [-0.3391691744327545], [-0.07227439433336258], [-0.18633392453193665], [-0.24797174334526062], [-0.2379922717809677], [0.05446621775627136], [-0.428371399641037], [-0.565638542175293], [-0.32656151056289673], [-0.48169398307800293], [-0.4898160398006439], [0.1947277933359146], [0.30641987919807434], [-0.1482836753129959], [0.5090234875679016], [-0.11305473744869232], [0.05698372423648834], [0.17627152800559998], [0.013505467213690281], [-0.3219594359397888], [-0.2996225655078888], [-0.2746986448764801], [-0.021799283102154732], [-0.19851166009902954], [0.07770439982414246], [0.007072454784065485], [0.8650968074798584], [-0.08045920729637146]], "result_max_similarities": 20.64864730834961, "full_text_display": "Dan received his law degree from the Maurice A. Deane School of Law at Hofstra University, where he served as the Articles Editor of the Hofstra Labor &amp; Employment Law Journal and competed in both the Hofstra M", "K": 1}, {"id": "result_12", "sample_idx": 12956, "score": 17.797988891601562, "highlight_inds": [33], "matched_tokens_str": " Your", "original_pos": 28, "full_sequence_tokens": ["Home", "Blog", "S", "ump", " Pump", " Q", "&amp;", "A", " -", " Tips", " to", " Keep", " Water", " Out", " of", " Your", " Bas", "ement", "!", "\n", "S", "ump", " Pump", " Q", "&amp;", "A", " -", " Tips", " to", " Keep", " Water", " Out", " of", " Your", " Bas", "ement", "!", "\n", "Water", " in", " the", " basement", " is", " always"], "sequence_similarities": [[-44.6737174987793], [-33.71075439453125], [-0.955185055732727], [-6.614501476287842], [6.111691474914551], [-2.284400224685669], [-0.3966176509857178], [0.2964348793029785], [-0.11988019943237305], [-8.960044860839844], [6.555864334106445], [2.007652521133423], [-6.312458515167236], [-5.743725299835205], [5.18099308013916], [9.384140968322754], [-9.694007873535156], [0.5073651075363159], [4.284793853759766], [-61.55547332763672], [1.209883689880371], [-0.3001289963722229], [-2.606342077255249], [-10.051498413085938], [-5.765782833099365], [-6.236011028289795], [6.562297821044922], [-12.693236351013184], [10.931520462036133], [11.244686126708984], [7.169389724731445], [-11.866052627563477], [0.742720365524292], [17.797988891601562], [6.088809490203857], [7.510867118835449], [3.9016904830932617], [10.416244506835938], [0.34042608737945557], [-3.117553234100342], [3.8135929107666016], [-5.9975266456604], [-3.2257418632507324], [1.0776939392089844]], "normalized_similarities": [[-2.163517951965332], [-1.6325889825820923], [-0.04625896364450455], [-0.32033583521842957], [0.29598507285118103], [-0.11063195765018463], [-0.019207924604415894], [0.014356140047311783], [-0.005805716849863529], [-0.433928906917572], [0.31749606132507324], [0.0972292497754097], [-0.3057080805301666], [-0.27816471457481384], [0.25091198086738586], [0.4544675946235657], [-0.4694742262363434], [0.02457134798169136], [0.20750966668128967], [-2.9810898303985596], [0.05859384685754776], [-0.014535044319927692], [-0.1262233853340149], [-0.48678725957870483], [-0.2792329490184784], [-0.302005797624588], [0.3178076446056366], [-0.6147248148918152], [0.5294061303138733], [0.5445725321769714], [0.3472086787223816], [-0.5746648907661438], [0.03596944361925125], [0.8619445562362671], [0.29487693309783936], [0.36374619603157043], [0.18895623087882996], [0.5044516921043396], [0.016486605629324913], [-0.15098099410533905], [0.1846897155046463], [-0.2904561460018158], [-0.15622049570083618], [0.05219198763370514]], "result_max_similarities": 20.64864730834961, "full_text_display": "HomeBlogSump Pump Q&amp;A - Tips to Keep Water Out of Your Basement!\nSump Pump Q&amp;A - Tips to Keep Water Out of Your Basement!\nWater in the basement is always", "K": 1}, {"id": "result_13", "sample_idx": 8434, "score": 17.765811920166016, "highlight_inds": [35], "matched_tokens_str": "Percent", "original_pos": 35, "full_sequence_tokens": ["In", " bar", " charts", " with", " multiple", " series", " Bar", "Over", "L", "ap", "Percent", " governs", " to", " what", " degree", " the", " bars", " will", " overlap", " the", " preceding", " bar", " series", ".", " If", " you", " enter", " a", " negative", " value", " for", " Bar", "Over", "L", "ap", "Percent", ",", " a", " gap", " appears", " between", " the", " bars", " of"], "sequence_similarities": [[-56.766021728515625], [-3.782224655151367], [0.09069585800170898], [0.18426024913787842], [2.6920530796051025], [-6.259726524353027], [2.659735679626465], [-0.2670466899871826], [-6.215240478515625], [-3.3259787559509277], [3.033653736114502], [-3.2330679893493652], [2.1816201210021973], [-0.9688639640808105], [-5.947659969329834], [-3.558561086654663], [0.0013918876647949219], [-3.585394859313965], [-1.1082749366760254], [1.1424040794372559], [2.6608824729919434], [-0.1538233757019043], [-2.786853551864624], [-62.23091125488281], [-7.5553741455078125], [-2.5248863697052], [-8.221086502075195], [-0.5068635940551758], [2.7295563220977783], [-6.055078029632568], [-4.060515880584717], [-4.486048221588135], [-0.9332625269889832], [-0.6644713878631592], [6.398960113525391], [17.765811920166016], [-4.640682220458984], [-0.5973114967346191], [-1.9429529905319214], [-2.679774522781372], [3.163766860961914], [6.530479907989502], [3.0667452812194824], [3.3834452629089355]], "normalized_similarities": [[-2.7491400241851807], [-0.18317057192325592], [0.004392338916659355], [0.008923599496483803], [0.13037431240081787], [-0.303154319524765], [0.12880919873714447], [-0.012932890094816685], [-0.30099987983703613], [-0.16107489168643951], [0.14691779017448425], [-0.1565752923488617], [0.10565438121557236], [-0.04692142456769943], [-0.2880411446094513], [-0.17233870923519135], [6.740817480022088e-05], [-0.1736382395029068], [-0.05367300286889076], [0.05532585456967354], [0.12886473536491394], [-0.007449561730027199], [-0.1349654346704483], [-3.013800859451294], [-0.3659016489982605], [-0.12227853387594223], [-0.39814165234565735], [-0.024547060951590538], [0.13219057023525238], [-0.29324331879615784], [-0.1966480314731598], [-0.21725627779960632], [-0.045197270810604095], [-0.032179899513721466], [0.3098973035812378], [0.8603862524032593], [-0.22474509477615356], [-0.0289273913949728], [-0.09409590065479279], [-0.1297796666622162], [0.1532190889120102], [0.3162667155265808], [0.14852039515972137], [0.16385796666145325]], "result_max_similarities": 20.64864730834961, "full_text_display": "In bar charts with multiple series BarOverLapPercent governs to what degree the bars will overlap the preceding bar series. If you enter a negative value for BarOverLapPercent, a gap appears between the bars of", "K": 1}, {"id": "result_14", "sample_idx": 11194, "score": 17.711483001708984, "highlight_inds": [40], "matched_tokens_str": "held", "original_pos": 38, "full_sequence_tokens": ["extend", "able", "-", "self", "ie", "-", "stick", " Y", "T", "-", "12", "88", " Self", "ie", " Mon", "op", "od", " Ext", "end", "able", " Hand", "held", " Pole", " w", "/", " Sh", "utter", " for", " iPhone", " Buy", " Online", " Self", "ie", " Mon", "op", "od", " Ext", "end", "able", " Hand", "held", " Pole", " w", "/"], "sequence_similarities": [[-52.881195068359375], [0.30890583992004395], [1.0440088510513306], [-4.134982109069824], [-3.0175118446350098], [-0.4276062250137329], [-6.161285400390625], [-5.280965805053711], [-4.084840774536133], [-0.5253084897994995], [-4.243081092834473], [-1.6034296751022339], [3.2869021892547607], [1.1444417238235474], [-2.8255984783172607], [-5.789233207702637], [-1.3279998302459717], [-0.5655196905136108], [-0.6782001256942749], [-2.505772113800049], [0.29847705364227295], [7.960032939910889], [0.9078755974769592], [-3.111490488052368], [4.398730278015137], [-1.1395165920257568], [-0.6256235837936401], [2.7478559017181396], [-3.236307382583618], [-6.200836181640625], [0.7733995914459229], [6.125060081481934], [6.284783363342285], [-1.540102481842041], [-10.548007011413574], [8.436856269836426], [1.4568519592285156], [6.516718864440918], [12.067305564880371], [3.7298922538757324], [17.711483001708984], [4.777933120727539], [-5.643958568572998], [9.329137802124023]], "normalized_similarities": [[-2.561000347137451], [0.014960100874304771], [0.050560642033815384], [-0.2002543807029724], [-0.1461360603570938], [-0.020708680152893066], [-0.2983868718147278], [-0.25575360655784607], [-0.1978260725736618], [-0.025440333411097527], [-0.20548954606056213], [-0.07765301316976547], [0.15918244421482086], [0.055424537509679794], [-0.1368418186903], [-0.2803686559200287], [-0.06431413441896439], [-0.02738773636519909], [-0.032844774425029755], [-0.12135284394025803], [0.014455041848123074], [0.3854990005493164], [0.043967798352241516], [-0.15068738162517548], [0.21302752196788788], [-0.05518601834774017], [-0.030298525467514992], [0.13307680189609528], [-0.15673217177391052], [-0.30030229687690735], [0.03745521977543831], [0.2966324985027313], [0.3043678104877472], [-0.07458612322807312], [-0.5108328461647034], [0.40859124064445496], [0.07055435329675674], [0.31560027599334717], [0.5844114422798157], [0.18063615262508392], [0.8577551245689392], [0.23139207065105438], [-0.2733331024646759], [0.4518038332462311]], "result_max_similarities": 20.64864730834961, "full_text_display": "extendable-selfie-stick YT-1288 Selfie Monopod Extendable Handheld Pole w/ Shutter for iPhone Buy Online Selfie Monopod Extendable Handheld Pole w/", "K": 1}, {"id": "result_15", "sample_idx": 9864, "score": 17.3779296875, "highlight_inds": [30], "matched_tokens_str": " Cancer", "original_pos": 26, "full_sequence_tokens": ["How", " Much", " Does", " Meat", ",", " Fish", ",", " and", " P", "oultry", " Ra", "ise", " Breast", " Cancer", " Risk", "?", "\n", "How", " Much", " Do", " Meat", ",", " Fish", ",", " and", " P", "oultry", " Ra", "ise", " Breast", " Cancer", " Risk", "?", "\n", "Source", ":", " European", " Journal", " of", " Cancer", " Prevention", ",", " 2008", "."], "sequence_similarities": [[-43.00120544433594], [-3.4970946311950684], [-4.420498847961426], [-5.803120136260986], [0.5229489207267761], [-2.785843849182129], [4.010442733764648], [5.133711814880371], [-6.27429723739624], [2.0783939361572266], [-0.3716297149658203], [4.5136871337890625], [-5.414979934692383], [3.838428497314453], [3.926461696624756], [5.058836936950684], [-59.73506164550781], [-10.640356063842773], [8.433905601501465], [-3.145350456237793], [-0.6259293556213379], [5.223401069641113], [2.815927028656006], [-1.2850005626678467], [5.509962558746338], [7.010581016540527], [14.811089515686035], [10.511409759521484], [15.118412017822266], [9.482755661010742], [17.3779296875], [10.676587104797363], [4.7757368087768555], [3.974179983139038], [0.1707592010498047], [1.6923091411590576], [3.1127169132232666], [-4.483671188354492], [1.7482995986938477], [3.7145678997039795], [-0.31511402130126953], [1.7249630689620972], [8.822120666503906], [0.05102372169494629]], "normalized_similarities": [[-2.082519292831421], [-0.1693619191646576], [-0.2140817642211914], [-0.2810411751270294], [0.025326061993837357], [-0.1349165290594101], [0.19422303140163422], [0.24862217903137207], [-0.30385997891426086], [0.1006552129983902], [-0.017997775226831436], [0.21859480440616608], [-0.2622438073158264], [0.1858924925327301], [0.19015587866306305], [0.24499604105949402], [-2.8929286003112793], [-0.51530522108078], [0.40844833850860596], [-0.15232719480991364], [-0.030313335359096527], [0.2529657781124115], [0.13637344539165497], [-0.06223170831799507], [0.2668437659740448], [0.3395176827907562], [0.7172910571098328], [0.5090604424476624], [0.7321744561195374], [0.45924344658851624], [0.8416013717651367], [0.517059862613678], [0.2312856912612915], [0.1924668401479721], [0.008269752375781536], [0.0819573849439621], [0.15074677765369415], [-0.21714115142822266], [0.08466896414756775], [0.17989400029182434], [-0.015260758809745312], [0.08353879302740097], [0.42724931240081787], [0.0024710441939532757]], "result_max_similarities": 20.64864730834961, "full_text_display": "How Much Does Meat, Fish, and Poultry Raise Breast Cancer Risk?\nHow Much Do Meat, Fish, and Poultry Raise Breast Cancer Risk?\nSource: European Journal of Cancer Prevention, 2008.", "K": 1}, {"id": "result_16", "sample_idx": 2949, "score": 17.259695053100586, "highlight_inds": [42], "matched_tokens_str": " Girl", "original_pos": 36, "full_sequence_tokens": ["22", "&#x27;&#x27;", "Hand", "made", " Lif", "elike", " Baby", " Girl", " Doll", " Sil", "ic", "one", " V", "inyl", " Re", "born", " New", "born", " Doll", "s", "+", "Cl", "othes", ".", " 22", "&#x27;&#x27;", " New", " Hand", "made", " V", "inyl", " Soft", " Sil", "ic", "one", " Re", "born", " Baby", " Doll", "s", " Lif", "elike", " Girl", " +"], "sequence_similarities": [[-52.961082458496094], [-4.967011451721191], [-1.2875534296035767], [-1.544175624847412], [-1.427674651145935], [-0.8423488140106201], [3.2010955810546875], [1.650588035583496], [-5.0616655349731445], [-9.294092178344727], [-3.553271770477295], [-0.019897818565368652], [-5.91996431350708], [0.027635812759399414], [-3.1222846508026123], [-4.341506481170654], [2.99346923828125], [-0.33097314834594727], [-0.836088240146637], [3.0259833335876465], [0.7485642433166504], [-4.185845375061035], [2.959300994873047], [-62.76171112060547], [-2.3817672729492188], [-0.6568670272827148], [6.4585723876953125], [1.505655288696289], [8.203872680664062], [-2.241485118865967], [3.192835569381714], [2.087386131286621], [-7.911262512207031], [-0.5797572135925293], [3.6856491565704346], [3.6706886291503906], [8.831451416015625], [2.078681468963623], [-2.5025227069854736], [-0.6296905875205994], [7.93352746963501], [13.161773681640625], [17.259695053100586], [4.807510852813721]], "normalized_similarities": [[-2.5648694038391113], [-0.2405489981174469], [-0.06235533952713013], [-0.07478337734937668], [-0.06914131343364716], [-0.040794383734464645], [0.1550268828868866], [0.07993686199188232], [-0.24513302743434906], [-0.45010659098625183], [-0.1720825433731079], [-0.000963637896347791], [-0.2866998612880707], [0.00133838364854455], [-0.15121012926101685], [-0.21025621891021729], [0.14497168362140656], [-0.01602880470454693], [-0.04049118608236313], [0.14654631912708282], [0.0362524576485157], [-0.20271766185760498], [0.14331693947315216], [-3.0395071506500244], [-0.11534737795591354], [-0.03181162476539612], [0.3127842843532562], [0.0729178637266159], [0.39730799198150635], [-0.10855360329151154], [0.15462686121463776], [0.1010906994342804], [-0.3831370770931244], [-0.028077248483896255], [0.17849348485469818], [0.17776896059513092], [0.4277012050151825], [0.10066913813352585], [-0.1211954802274704], [-0.03049548901617527], [0.3842153549194336], [0.6374157667160034], [0.8358753323554993], [0.23282448947429657]], "result_max_similarities": 20.64864730834961, "full_text_display": "22&#x27;&#x27;Handmade Lifelike Baby Girl Doll Silicone Vinyl Reborn Newborn Dolls+Clothes. 22&#x27;&#x27; New Handmade Vinyl Soft Silicone Reborn Baby Dolls Lifelike Girl +", "K": 1}, {"id": "result_17", "sample_idx": 15456, "score": 17.184612274169922, "highlight_inds": [42], "matched_tokens_str": "inguished", "original_pos": 42, "full_sequence_tokens": ["Mr", ".", " Hoffman", " is", " presented", " with", " the", " &quot;", "G", "erald", " R", ".", " Ford", " Prize", " for", " Dist", "inguished", " Reporting", " on", " the", " Pres", "idency", "&quot;", " and", " Mr", ".", " Hall", "or", "an", " is", " presented", " with", " the", " &quot;", "G", "erald", " R", ".", " Ford", " Prize", " for", " Dist", "inguished", " Reporting"], "sequence_similarities": [[-40.134971618652344], [-64.1244125366211], [-5.697739601135254], [-6.220020294189453], [-11.493814468383789], [-6.378560543060303], [-2.311192750930786], [-2.1356101036071777], [-8.591171264648438], [-4.8932108879089355], [2.715001344680786], [4.1402788162231445], [-5.933903694152832], [-4.923344135284424], [-0.056719064712524414], [-1.697007179260254], [2.0105700492858887], [-7.141204833984375], [1.243492841720581], [4.379481315612793], [-12.527078628540039], [-10.48244571685791], [-12.603536605834961], [-11.196454048156738], [-8.014436721801758], [-4.147228717803955], [-4.395547389984131], [-5.018207550048828], [-8.620174407958984], [-8.134156227111816], [-11.746711730957031], [-6.147601127624512], [-0.1820666790008545], [-0.9561896324157715], [1.1782770156860352], [-0.5091445446014404], [7.262638092041016], [6.268665313720703], [6.449975967407227], [-3.478580951690674], [9.695235252380371], [8.311574935913086], [17.184612274169922], [-6.750774383544922]], "normalized_similarities": [[-1.9437094926834106], [-3.105501890182495], [-0.27593767642974854], [-0.30123135447502136], [-0.5566376447677612], [-0.3089093565940857], [-0.1119294986128807], [-0.10342615097761154], [-0.416064590215683], [-0.23697489500045776], [0.13148567080497742], [0.2005109041929245], [-0.28737494349479675], [-0.23843422532081604], [-0.002746865851804614], [-0.08218491077423096], [0.09737054258584976], [-0.34584370255470276], [0.06022151559591293], [0.21209532022476196], [-0.6066779494285583], [-0.5076577663421631], [-0.6103807687759399], [-0.5422366857528687], [-0.3881337344646454], [-0.20084747672080994], [-0.21287338435649872], [-0.24302838742733002], [-0.41746920347213745], [-0.39393168687820435], [-0.5688852667808533], [-0.2977241575717926], [-0.008817366324365139], [-0.04630761593580246], [0.057063158601522446], [-0.02465752512216568], [0.35172465443611145], [0.3035872280597687], [0.3123679757118225], [-0.16846531629562378], [0.46953368186950684], [0.402523934841156], [0.8322391510009766], [-0.32693544030189514]], "result_max_similarities": 20.64864730834961, "full_text_display": "Mr. Hoffman is presented with the &quot;Gerald R. Ford Prize for Distinguished Reporting on the Presidency&quot; and Mr. Halloran is presented with the &quot;Gerald R. Ford Prize for Distinguished Reporting", "K": 1}, {"id": "result_18", "sample_idx": 12102, "score": 17.053585052490234, "highlight_inds": [36], "matched_tokens_str": "our", "original_pos": 25, "full_sequence_tokens": ["Ult", "ra", "-", "End", "urance", " Cycl", "ing", " Bib", " for", " Women", " -", " The", " 12", "-", "H", "our", " Bib", "\u2122", " -", " P", "act", "imo", " Ultra", "-", "End", "urance", " Cycl", "ing", " Bib", " for", " Women", " -", " The", " 12", "-", "H", "our", " Bib", "\u2122", " -", " P", "act", "imo", " &quot;"], "sequence_similarities": [[-55.892738342285156], [-0.4274473190307617], [0.2264256477355957], [-3.6998133659362793], [-0.4053680896759033], [-2.8938698768615723], [5.951937198638916], [-7.526638031005859], [1.373824954032898], [-1.318023681640625], [-0.34467434883117676], [8.556405067443848], [1.776705026626587], [6.504910469055176], [-6.5125508308410645], [6.530847549438477], [-7.656317234039307], [-6.673319339752197], [-1.969527006149292], [-8.204017639160156], [-2.5923523902893066], [-4.029102325439453], [-2.34208345413208], [3.5447607040405273], [5.865453720092773], [15.772274017333984], [5.222600936889648], [10.345120429992676], [-6.21308708190918], [9.603001594543457], [-2.6099753379821777], [-1.545003890991211], [10.723727226257324], [-1.8815431594848633], [11.441283226013184], [3.368788719177246], [17.053585052490234], [0.7927334308624268], [-8.57129192352295], [0.19747436046600342], [1.8297040462493896], [-1.050466775894165], [7.099442481994629], [1.6534407138824463]], "normalized_similarities": [[-2.7068474292755127], [-0.020700983703136444], [0.010965640656650066], [-0.17917945981025696], [-0.019631702452898026], [-0.14014816284179688], [0.28824830055236816], [-0.3645099699497223], [0.0665334090590477], [-0.06383099406957626], [-0.016692345961928368], [0.41438090801239014], [0.08604462444782257], [0.3150283992290497], [-0.3153984248638153], [0.31628450751304626], [-0.3707902431488037], [-0.3231843411922455], [-0.09538286179304123], [-0.39731502532958984], [-0.12554587423801422], [-0.1951266974210739], [-0.11342551559209824], [0.1716703623533249], [0.28405994176864624], [0.7638405561447144], [0.2529270350933075], [0.5010071992874146], [-0.3008956015110016], [0.4650668501853943], [-0.12639933824539185], [-0.07482349127531052], [0.519342839717865], [-0.0911218598484993], [0.554093599319458], [0.16314814984798431], [0.8258935809135437], [0.03839154168963432], [-0.4151018559932709], [0.009563549421727657], [0.08861132711172104], [-0.050873395055532455], [0.3438211977481842], [0.08007501065731049]], "result_max_similarities": 20.64864730834961, "full_text_display": "Ultra-Endurance Cycling Bib for Women - The 12-Hour Bib\u2122 - Pactimo Ultra-Endurance Cycling Bib for Women - The 12-Hour Bib\u2122 - Pactimo &quot;", "K": 1}, {"id": "result_19", "sample_idx": 15028, "score": 16.997631072998047, "highlight_inds": [36], "matched_tokens_str": " This", "original_pos": 36, "full_sequence_tokens": ["You", " Are", " Here", ":", " Home", " &gt;", " Learn", " How", " to", " Keep", " Your", " Car", " Healthy", " with", " This", " FREE", " Driver", "\u2019", "s", " Guide", " to", " Autom", "otive", " Maintenance", " e", "Book", "!", "\n", "Learn", " How", " to", " Keep", " Your", " Car", " Healthy", " with", " This", " FREE", " Driver", "\u2019", "s", " Guide", " to", " Autom"], "sequence_similarities": [[-52.361148834228516], [-2.101818084716797], [-2.3462295532226562], [0.8342232704162598], [-0.7219032049179077], [5.0722503662109375], [-5.823410511016846], [-6.54563045501709], [0.5455085039138794], [-1.395533800125122], [3.399756908416748], [-6.588362693786621], [2.9423270225524902], [5.022245407104492], [6.2375054359436035], [9.142489433288574], [-2.9328620433807373], [-6.542501926422119], [5.259500980377197], [0.8882315158843994], [7.166459083557129], [-3.6591296195983887], [1.0958377122879028], [-1.42186439037323], [-8.801616668701172], [-10.598420143127441], [2.883556842803955], [-60.543418884277344], [-3.9954988956451416], [-5.77412223815918], [13.008659362792969], [8.125548362731934], [15.864709854125977], [8.075303077697754], [11.591320037841797], [6.191993713378906], [16.997631072998047], [16.836185455322266], [-3.4135172367095947], [-7.837527751922607], [14.166353225708008], [-4.7060227394104], [13.126102447509766], [6.7577409744262695]], "normalized_similarities": [[-2.5358150005340576], [-0.10178962349891663], [-0.11362630873918533], [0.04040086641907692], [-0.0349612832069397], [0.2456456422805786], [-0.2820238173007965], [-0.31700044870376587], [0.02641860768198967], [-0.06758475303649902], [0.1646479219198227], [-0.3190699517726898], [0.14249490201473236], [0.24322393536567688], [0.30207815766334534], [0.4427645802497864], [-0.1420365273952484], [-0.3168489336967468], [0.25471407175064087], [0.043016452342271805], [0.3470667600631714], [-0.17720916867256165], [0.05307067930698395], [-0.06885992735624313], [-0.42625632882118225], [-0.5132743120193481], [0.1396487057209015], [-2.9320766925811768], [-0.19349931180477142], [-0.27963683009147644], [0.6300005316734314], [0.39351481199264526], [0.7683171629905701], [0.39108145236968994], [0.5613597631454468], [0.29987406730651855], [0.8231837749481201], [0.8153650760650635], [-0.16531433165073395], [-0.37956616282463074], [0.6860668659210205], [-0.22790949046611786], [0.6356882452964783], [0.32727280259132385]], "result_max_similarities": 20.64864730834961, "full_text_display": "You Are Here: Home &gt; Learn How to Keep Your Car Healthy with This FREE Driver\u2019s Guide to Automotive Maintenance eBook!\nLearn How to Keep Your Car Healthy with This FREE Driver\u2019s Guide to Autom", "K": 1}];
+    const globalMaxSequenceSimilarity = [20.64864730834961];
+    const tooltip = document.getElementById('tooltip');
+    let isNormalized = true;
+    let currentThreshold = 0.0;
+
+    function htmlDecode(input) {
+        const doc = new DOMParser().parseFromString(input, "text/html");
+        return doc.documentElement.textContent;
+    }
+
+    function getColorForSimilarity(sim, maxSim, isNormalizedMode = false, threshold = 0.0) {
+        if (sim === -Infinity || maxSim <= 0) {
+            return { backgroundColor: '#f8f9fa', color: '#6c757d' };
+        }
+
+        // Apply threshold cutoff - if below threshold, return transparent/no color
+        if (sim <= threshold) {
+            return { backgroundColor: 'transparent', color: '#6c757d' };
+        }
+
+        let t;
+        if (isNormalizedMode) {
+            // In normalized mode, use a more sensitive scale since values are 0-1
+            // Apply a power function to make smaller differences more visible
+            const normalizedT = Math.max(0, Math.min(1, sim / maxSim));
+            t = Math.pow(normalizedT, 0.7); // Makes mid-range values more visible
+        } else {
+            // In raw mode, use linear scaling
+            t = Math.max(0, Math.min(1, sim / maxSim));
+        }
+
+        let r, g, b;
+        if (isNormalizedMode) {
+            // Use white to red gradient for normalized mode (same as raw mode)
+            r = 255;
+            g = b = Math.round(255 * (1 - t));
+        } else {
+            // Original red gradient for raw mode
+            r = 255;
+            g = b = Math.round(255 * (1 - t));
+        }
+
+        const textColor = (r + g + b) / 3 > 127 ? '#000000' : '#FFFFFF';
+        return { backgroundColor: `rgb(${r},${g},${b})`, color: textColor };
+    }
+
+    function renderResult(resultData) {
+        const displayDiv = document.getElementById(`sequence_display_${resultData.id}`);
+        const fullTextDiv = document.getElementById(`full_text_display_${resultData.id}`);
+        if (!displayDiv) return;
+
+        // Choose which similarities to use based on toggle state
+        const currentSimilarities = isNormalized ? resultData.normalized_similarities : resultData.sequence_similarities;
+        const currentMaxSimilarities = isNormalized ? Array(resultData.K).fill(1) : globalMaxSequenceSimilarity; // Normalized max is always 1
+
+        displayDiv.innerHTML = '';
+        resultData.full_sequence_tokens.forEach((tokenHtml, i) => {
+            const span = document.createElement('span');
+            span.className = 'token';
+            span.innerHTML = tokenHtml;
+
+            const seqSim = currentSimilarities[i];
+            const rawSeqSim = resultData.sequence_similarities[i];
+            let maxIdx = 0
+            let K = resultData.K;
+            let maxSim = Number.NEGATIVE_INFINITY;
+            for (let j = 0; j < K; j++) {
+                if (currentSimilarities[i] && currentSimilarities[i][j] > maxSim) {
+                    maxIdx = j;
+                    maxSim = currentSimilarities[i][j];
+                }
+            }
+
+            try{
+                const colors = getColorForSimilarity(seqSim[maxIdx], currentMaxSimilarities[maxIdx], isNormalized, currentThreshold);
+                span.style.backgroundColor = colors.backgroundColor;
+                span.style.color = colors.color;
+            } catch { console.log("Get color for sim doesn't work") }
+
+            if (resultData.highlight_inds.includes(i)) {
+                span.classList.add('highlight-window');
+            }
+
+            span.onmousemove = e => {
+                tooltip.style.visibility = 'visible';
+                let rawTokenSimsText = resultData.sequence_similarities[i].map((s, j) => `Q${j+1}: ${s.toFixed(4)}`).join(', ');
+                let normalizedTokenSimsText = resultData.normalized_similarities[i].map((s, j) => `Q${j+1}: ${s.toFixed(4)}`).join(', ');
+
+                let tooltipContent = `<b>${htmlDecode(tokenHtml)}</b> (Index: ${i})<br>`;
+                if (isNormalized) {
+                    tooltipContent += `Normalized Sim: ${seqSim[maxIdx].toFixed(4)}<br>`;
+                    tooltipContent += `Raw Sim: ${rawSeqSim[maxIdx].toFixed(4)}<br>`;
+                    tooltipContent += `Normalized Token Sims: ${normalizedTokenSimsText}<br>`;
+                } else {
+                    tooltipContent += `Raw Sim: ${seqSim[maxIdx].toFixed(4)}<br>`;
+                    tooltipContent += `Raw Token Sims: ${rawTokenSimsText}<br>`;
+                }
+                tooltipContent += `Vector index match: ${maxIdx + 1}`;
+
+                tooltip.innerHTML = tooltipContent;
+                tooltip.style.left = `${e.pageX + 15}px`;
+                tooltip.style.top = `${e.pageY + 15}px`;
+            };
+            span.onmouseout = () => { tooltip.style.visibility = 'hidden'; };
+            displayDiv.appendChild(span);
+        });
+
+        if (fullTextDiv && resultData.full_text_display) {
+            fullTextDiv.innerHTML = `<p><strong>Full Text:</strong></p><p>${resultData.full_text_display}</p>`;
+        }
+    }
+
+    function toggleNormalization() {
+        isNormalized = !isNormalized;
+        const statusSpan = document.getElementById('normalizationStatus');
+        if (isNormalized) {
+            statusSpan.innerHTML = 'Showing normalized values (max = 1.0 per result) | <span style="background: linear-gradient(90deg, white, pink, red); padding: 2px 8px; border-radius: 3px; color: black; font-size: 0.8em;">White→Red colors</span>';
+            statusSpan.style.color = '#28a745';
+        } else {
+            statusSpan.innerHTML = 'Showing raw values (global scale) | <span style="background: linear-gradient(90deg, white, pink, red); padding: 2px 8px; border-radius: 3px; color: black; font-size: 0.8em;">White→Red colors</span>';
+            statusSpan.style.color = '#666';
+        }
+
+        // Re-render all results with new normalization setting
+        allResultsData.forEach(renderResult);
+    }
+
+    function updateThreshold() {
+        const slider = document.getElementById('thresholdSlider');
+        const valueDisplay = document.getElementById('thresholdValue');
+        currentThreshold = parseFloat(slider.value);
+        valueDisplay.textContent = currentThreshold.toFixed(3);
+
+        // Re-render all results with new threshold setting
+        allResultsData.forEach(renderResult);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        // Initialize normalization status (start with normalized mode)
+        const statusSpan = document.getElementById('normalizationStatus');
+        statusSpan.innerHTML = 'Showing normalized values (max = 1.0 per result) | <span style="background: linear-gradient(90deg, white, pink, red); padding: 2px 8px; border-radius: 3px; color: black; font-size: 0.8em;">White→Red colors</span>';
+        statusSpan.style.color = '#28a745';
+
+        // Set up toggle event listener
+        const toggleCheckbox = document.getElementById('normalizeToggle');
+        toggleCheckbox.addEventListener('change', toggleNormalization);
+
+        // Set up threshold slider event listener
+        const thresholdSlider = document.getElementById('thresholdSlider');
+        thresholdSlider.addEventListener('input', updateThreshold);
+
+        // Render initial results
+        allResultsData.forEach(renderResult);
+    });
+</script>
+</body></html>

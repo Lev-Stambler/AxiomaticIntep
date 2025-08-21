@@ -1,0 +1,403 @@
+
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">
+<title>Token Activation Similarity Report</title><style>
+body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; padding: 20px; background-color: #f8f9fa; color: #212529; }
+.container { background-color: #ffffff; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.07); }
+h1 { color: #0056b3; text-align: center; margin-bottom: 25px; font-weight: 300;}
+h2 { color: #0056b3; border-bottom: 1px solid #dee2e6; padding-bottom: 10px; margin-top:0; font-size: 1.5em; font-weight: 400; }
+.token { padding: 3px 5px; margin: 2px 1px; border-radius: 4px; display: inline-block; border: 1px solid #ced4da; cursor: default; transition: transform 0.1s ease-out, box-shadow 0.1s ease-out; font-size: 0.9em; line-height: 1.5; }
+.token:hover { transform: translateY(-1px); box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+.token.highlight-window { border: 2px solid #c82333; font-weight: 600; background-color: #f8d7da !important; color: #721c24; }
+.sequence-display { margin-top: 12px; padding: 12px; border: 1px solid #e9ecef; background-color: #f8f9fa; border-radius: 6px; white-space: pre-wrap; word-wrap: break-word; line-height: 1.7; }
+.full-text-display { margin-top: 15px; padding: 10px; border: 1px solid #dfe6e9; background-color: #f9f9f9; border-radius: 6px; white-space: pre-wrap; word-wrap: break-word; line-height: 1.6; font-size: 0.95em; color: #333; }
+.tooltip { position: absolute; background-color: rgba(33,37,41,0.9); color: white; padding: 8px 12px; border-radius: 5px; visibility: hidden; z-index: 1000; pointer-events: none; font-size: 0.85em; max-width: 400px; }
+.details p { margin: 5px 0; font-size: 0.9em; color: #495057; } .details strong { color: #0056b3; }
+.footer-note { font-size: 0.8em; color: #6c757d; text-align: center; margin-top: 30px; }
+.global-max-info { background-color: #e3f2fd; padding: 10px; border-radius: 5px; margin-bottom: 20px; text-align: center; font-size: 0.9em; color: #1565c0; }
+.threshold-control { margin-top: 15px; padding: 10px; background-color: rgba(255,255,255,0.3); border-radius: 6px; }
+.threshold-slider { width: 200px; margin: 0 10px; }
+.threshold-value { font-weight: bold; color: #0056b3; }
+</style></head><body>
+<div class="explanation-section" style="background-color: #f0f8ff; padding: 15px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #0056b3;"><h3 style="color: #0056b3; margin-top: 0;">Feature Explanation</h3><div style="line-height: 1.6; color: #333;">This feature appears to detect the “end‐marker” of a formal or named entity—a punctuation or token fragment that signals a complete, structured label (such as a corporate name, institution, or branded term). Its activation cues the model to continue with entity‐specific completions rather than a generic word continuation.</div></div><div class="global-max-info">
+    <strong>Query Type:</strong> 1-token sequences<br>
+    <strong>Query Vector Norms:</strong> ['39.1963']<br>
+    <strong>Global Max Sequence Similarities:</strong> [85.1645278930664]<br>
+    <div style="margin-top: 10px;">
+        <label style="font-weight: normal; cursor: pointer;">
+            <input type="checkbox" id="normalizeToggle" checked style="margin-right: 8px;">
+            Show Normalized Activations (divide by max per result)
+        </label>
+        <span id="normalizationStatus" style="margin-left: 15px; font-style: italic; color: #666;"></span>
+    </div>
+    <div class="threshold-control">
+        <label style="font-weight: normal;">
+            Activation Cutoff Threshold: <span class="threshold-value" id="thresholdValue">0.000</span>
+        </label><br>
+        <input type="range" id="thresholdSlider" class="threshold-slider"
+               min="0" max="1" step="0.001"
+               value="0.0">
+        <div style="margin-top: 5px; font-size: 0.8em; color: #666;">
+            No faithfulness data available - adjust manually
+        </div>
+    </div>
+</div>
+<div id="tooltip" class="tooltip"></div>
+
+<div class="container" id="container_result_0">
+    <h2>Result 1 (Sample Ref: 11615)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 85.1645</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">"."</span></p>
+        <p><strong>Window Start Position:</strong> 10</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_0"></div>
+    <div class="full-text-display" id="full_text_display_result_0"></div>
+</div>
+<div class="container" id="container_result_1">
+    <h2>Result 2 (Sample Ref: 8209)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 83.5361</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">"Ber"</span></p>
+        <p><strong>Window Start Position:</strong> 0</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_1"></div>
+    <div class="full-text-display" id="full_text_display_result_1"></div>
+</div>
+<div class="container" id="container_result_2">
+    <h2>Result 3 (Sample Ref: 7003)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 83.5361</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">"Ber"</span></p>
+        <p><strong>Window Start Position:</strong> 0</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_2"></div>
+    <div class="full-text-display" id="full_text_display_result_2"></div>
+</div>
+<div class="container" id="container_result_3">
+    <h2>Result 4 (Sample Ref: 17160)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 83.0455</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">"."</span></p>
+        <p><strong>Window Start Position:</strong> 16</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_3"></div>
+    <div class="full-text-display" id="full_text_display_result_3"></div>
+</div>
+<div class="container" id="container_result_4">
+    <h2>Result 5 (Sample Ref: 17827)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 82.7047</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">"."</span></p>
+        <p><strong>Window Start Position:</strong> 8</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_4"></div>
+    <div class="full-text-display" id="full_text_display_result_4"></div>
+</div>
+<div class="container" id="container_result_5">
+    <h2>Result 6 (Sample Ref: 7635)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 82.2754</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">"."</span></p>
+        <p><strong>Window Start Position:</strong> 15</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_5"></div>
+    <div class="full-text-display" id="full_text_display_result_5"></div>
+</div>
+<div class="container" id="container_result_6">
+    <h2>Result 7 (Sample Ref: 13584)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 82.2741</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">"."</span></p>
+        <p><strong>Window Start Position:</strong> 10</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_6"></div>
+    <div class="full-text-display" id="full_text_display_result_6"></div>
+</div>
+<div class="container" id="container_result_7">
+    <h2>Result 8 (Sample Ref: 8618)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 81.1276</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">"rice"</span></p>
+        <p><strong>Window Start Position:</strong> 1</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_7"></div>
+    <div class="full-text-display" id="full_text_display_result_7"></div>
+</div>
+<div class="container" id="container_result_8">
+    <h2>Result 9 (Sample Ref: 1544)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 80.9826</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">"."</span></p>
+        <p><strong>Window Start Position:</strong> 0</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_8"></div>
+    <div class="full-text-display" id="full_text_display_result_8"></div>
+</div>
+<div class="container" id="container_result_9">
+    <h2>Result 10 (Sample Ref: 2563)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 80.7895</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">"Tur"</span></p>
+        <p><strong>Window Start Position:</strong> 0</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_9"></div>
+    <div class="full-text-display" id="full_text_display_result_9"></div>
+</div>
+<div class="container" id="container_result_10">
+    <h2>Result 11 (Sample Ref: 4032)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 80.2516</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">"."</span></p>
+        <p><strong>Window Start Position:</strong> 8</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_10"></div>
+    <div class="full-text-display" id="full_text_display_result_10"></div>
+</div>
+<div class="container" id="container_result_11">
+    <h2>Result 12 (Sample Ref: 12204)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 79.7312</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">"."</span></p>
+        <p><strong>Window Start Position:</strong> 11</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_11"></div>
+    <div class="full-text-display" id="full_text_display_result_11"></div>
+</div>
+<div class="container" id="container_result_12">
+    <h2>Result 13 (Sample Ref: 1022)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 79.4739</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">"."</span></p>
+        <p><strong>Window Start Position:</strong> 8</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_12"></div>
+    <div class="full-text-display" id="full_text_display_result_12"></div>
+</div>
+<div class="container" id="container_result_13">
+    <h2>Result 14 (Sample Ref: 12966)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 78.9681</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">"."</span></p>
+        <p><strong>Window Start Position:</strong> 8</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_13"></div>
+    <div class="full-text-display" id="full_text_display_result_13"></div>
+</div>
+<div class="container" id="container_result_14">
+    <h2>Result 15 (Sample Ref: 6769)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 78.4505</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">"."</span></p>
+        <p><strong>Window Start Position:</strong> 1</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_14"></div>
+    <div class="full-text-display" id="full_text_display_result_14"></div>
+</div>
+<div class="container" id="container_result_15">
+    <h2>Result 16 (Sample Ref: 748)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 78.2434</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">"."</span></p>
+        <p><strong>Window Start Position:</strong> 10</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_15"></div>
+    <div class="full-text-display" id="full_text_display_result_15"></div>
+</div>
+<div class="container" id="container_result_16">
+    <h2>Result 17 (Sample Ref: 2103)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 77.8624</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">"London"</span></p>
+        <p><strong>Window Start Position:</strong> 1</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_16"></div>
+    <div class="full-text-display" id="full_text_display_result_16"></div>
+</div>
+<div class="container" id="container_result_17">
+    <h2>Result 18 (Sample Ref: 334)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 77.5666</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">"."</span></p>
+        <p><strong>Window Start Position:</strong> 20</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_17"></div>
+    <div class="full-text-display" id="full_text_display_result_17"></div>
+</div>
+<div class="container" id="container_result_18">
+    <h2>Result 19 (Sample Ref: 10110)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 77.4493</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">"."</span></p>
+        <p><strong>Window Start Position:</strong> 14</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_18"></div>
+    <div class="full-text-display" id="full_text_display_result_18"></div>
+</div>
+<div class="container" id="container_result_19">
+    <h2>Result 20 (Sample Ref: 3520)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 76.8413</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">"."</span></p>
+        <p><strong>Window Start Position:</strong> 12</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_19"></div>
+    <div class="full-text-display" id="full_text_display_result_19"></div>
+</div>
+<script>
+    const allResultsData = [{"id": "result_0", "sample_idx": 11615, "score": 85.1645278930664, "highlight_inds": [10], "matched_tokens_str": ".", "original_pos": 10, "full_sequence_tokens": ["Thanks", " for", " submitting", " your", " review", " of", " Time", " America", ",", " Inc", ".", " We", "&#x27;ll", " email", " you", " as", " soon", " as", " it", "&#x27;s", " published", ",", " (", "typically", " within", " 48", " hours", ").", " We", " really", " value", " your", " contributions", ",", " and", " so", " does", " our", " community", " of", " business", " professionals", ".", " They"], "sequence_similarities": [[18.53708267211914], [8.683247566223145], [17.91478729248047], [8.404031753540039], [10.89491081237793], [2.7220094203948975], [7.868736743927002], [8.833274841308594], [4.122126579284668], [7.621772766113281], [85.1645278930664], [-3.7819857597351074], [-4.632513999938965], [-9.326385498046875], [2.6769771575927734], [-17.125614166259766], [-21.3126277923584], [11.372001647949219], [5.582258224487305], [1.5214314460754395], [-6.844333171844482], [-11.417621612548828], [-4.969001770019531], [-13.78543472290039], [-7.4958624839782715], [9.702703475952148], [13.174040794372559], [-5.664105415344238], [-8.341574668884277], [-3.8632893562316895], [-14.82071590423584], [-1.9432430267333984], [-8.69549560546875], [-10.716105461120605], [0.9919168949127197], [6.317095756530762], [-16.64920425415039], [-5.073941707611084], [-1.5502605438232422], [-14.762067794799805], [-2.7706775665283203], [1.1402583122253418], [-6.045629501342773], [1.4896150827407837]], "normalized_similarities": [[0.2176620215177536], [0.1019584983587265], [0.2103550285100937], [0.09867995232343674], [0.12792779505252838], [0.031961772590875626], [0.09239453077316284], [0.10372012108564377], [0.04840191826224327], [0.08949469029903412], [1.0], [-0.04440799355506897], [-0.05439487844705582], [-0.10951021313667297], [0.03143300488591194], [-0.2010885775089264], [-0.2502523958683014], [0.13352979719638824], [0.06554675102233887], [0.017864614725112915], [-0.08036600798368454], [-0.13406546413898468], [-0.05834591016173363], [-0.16186827421188354], [-0.08801624923944473], [0.11392892897129059], [0.15468929708003998], [-0.06650780141353607], [-0.09794658422470093], [-0.04536265879869461], [-0.1740245223045349], [-0.022817516699433327], [-0.10210231691598892], [-0.12582826614379883], [0.011647066101431847], [0.07417520135641098], [-0.19549459218978882], [-0.05957810953259468], [-0.018203124403953552], [-0.17333588004112244], [-0.03253323584794998], [0.013388887979090214], [-0.07098764926195145], [0.01749102771282196]], "result_max_similarities": 85.1645278930664, "full_text_display": "Thanks for submitting your review of Time America, Inc. We&#x27;ll email you as soon as it&#x27;s published, (typically within 48 hours). We really value your contributions, and so does our community of business professionals. They", "K": 1}, {"id": "result_1", "sample_idx": 8209, "score": 83.5361328125, "highlight_inds": [0], "matched_tokens_str": "Ber", "original_pos": 0, "full_sequence_tokens": ["Ber", "the", "t", " was", " founded", " by", " Joseph", " Ber", "the", "t", ",", " son", " of", " a", " teacher", ",", " born", " in", " Sav", "o", "ie", ".", " He", " learnt", " watch", "making", " in", " Switzerland", " over", " the", " course", " of", " about", " 12", " years", " before", " returning", " to", " Char", "ma", "uv", "ill", "ers", ","], "sequence_similarities": [[83.5361328125], [17.054946899414062], [-13.344647407531738], [7.786489486694336], [-6.393937110900879], [0.996211051940918], [-3.4702939987182617], [3.854111671447754], [3.142888069152832], [-6.100876808166504], [15.515010833740234], [5.980683326721191], [5.515541076660156], [1.0884759426116943], [12.70357894897461], [3.913947105407715], [0.32535457611083984], [-15.343896865844727], [-1.5749430656433105], [-12.348732948303223], [13.716453552246094], [61.8996696472168], [5.773834228515625], [-15.238973617553711], [-2.4278206825256348], [7.938666343688965], [3.282949686050415], [5.416550159454346], [7.707475662231445], [5.079681873321533], [1.4412410259246826], [12.716153144836426], [1.0167255401611328], [-1.7780051231384277], [2.330732583999634], [15.574283599853516], [0.750319242477417], [-10.666627883911133], [-13.609354972839355], [-15.04488754272461], [-10.052650451660156], [5.990987777709961], [7.8040971755981445], [5.321484565734863]], "normalized_similarities": [[0.9808794260025024], [0.20025880634784698], [-0.15669254958629608], [0.09142878651618958], [-0.07507746666669846], [0.011697487905621529], [-0.04074811562895775], [0.045254893600940704], [0.03690372034907341], [-0.07163636386394501], [0.18217691779136658], [0.0702250525355339], [0.06476335972547531], [0.01278086006641388], [0.14916513860225677], [0.04595747962594032], [0.0038203061558306217], [-0.18016768991947174], [-0.01849294640123844], [-0.14499855041503906], [0.16105829179286957], [0.7268245220184326], [0.06779623031616211], [-0.1789356917142868], [-0.0285074170678854], [0.09321564435958862], [0.03854832425713539], [0.06360100954771042], [0.09050101041793823], [0.05964551120996475], [0.016923019662499428], [0.1493127942085266], [0.011938368901610374], [-0.0208772961050272], [0.02736741118133068], [0.18287289142608643], [0.00881023146212101], [-0.1252473145723343], [-0.15980073809623718], [-0.17665673792362213], [-0.11803799867630005], [0.07034604251384735], [0.09163553267717361], [0.062484752386808395]], "result_max_similarities": 85.1645278930664, "full_text_display": "Berthet was founded by Joseph Berthet, son of a teacher, born in Savoie. He learnt watchmaking in Switzerland over the course of about 12 years before returning to Charmauvillers,", "K": 1}, {"id": "result_2", "sample_idx": 7003, "score": 83.5361328125, "highlight_inds": [0], "matched_tokens_str": "Ber", "original_pos": 0, "full_sequence_tokens": ["Ber", "keley", " Anal", "ytical", " has", " created", " the", " Clear", "Chem", "\u2122", " program", " to", " assist", " companies", " in", " making", " valid", " self", " declarations", " of", " compliance", " of", " their", " products", " to", " the", " CD", "PH", " Standard", " Method", ".", " Clear", "Chem", " declarations", " meet", " all", " of", " the", " requirements", " of", " US", "G", "BC", " LE"], "sequence_similarities": [[83.5361328125], [54.916954040527344], [46.364559173583984], [13.048186302185059], [11.002765655517578], [15.32600212097168], [17.199851989746094], [-12.683730125427246], [5.517977237701416], [14.175362586975098], [9.24062728881836], [-13.217060089111328], [-10.523660659790039], [-12.164514541625977], [-2.080876350402832], [13.029069900512695], [-10.237417221069336], [-1.152970790863037], [2.3267412185668945], [0.34247708320617676], [9.288914680480957], [-1.9632611274719238], [3.471738815307617], [9.063517570495605], [-13.19477653503418], [-10.644684791564941], [10.908564567565918], [-2.1862282752990723], [-8.44847583770752], [-10.445474624633789], [42.26133346557617], [-17.224626541137695], [-3.5856902599334717], [1.0071829557418823], [5.87818717956543], [10.511720657348633], [7.398922443389893], [1.3412973880767822], [1.7832523584365845], [2.388483762741089], [-1.9328107833862305], [7.569476127624512], [12.931328773498535], [3.774587631225586]], "normalized_similarities": [[0.9808794260025024], [0.6448336839675903], [0.5444115996360779], [0.15321151912212372], [0.1291942298412323], [0.1799575835466385], [0.20196028053760529], [-0.148932084441185], [0.0647919699549675], [0.16644679009914398], [0.10850323736667633], [-0.15519443154335022], [-0.1235685870051384], [-0.14283545315265656], [-0.024433603510260582], [0.1529870480298996], [-0.1202075257897377], [-0.013538157567381859], [0.02732054330408573], [0.004021358210593462], [0.10907023400068283], [-0.02305256947875023], [0.040765080600976944], [0.10642362385988235], [-0.15493276715278625], [-0.12498965114355087], [0.128088116645813], [-0.025670643895864487], [-0.09920181334018707], [-0.12265053391456604], [0.49623164534568787], [-0.20225118100643158], [-0.04210309684276581], [0.011826319620013237], [0.0690215453505516], [0.12342838943004608], [0.0868779867887497], [0.015749484300613403], [0.02093891054391861], [0.028045523911714554], [-0.022695021703839302], [0.08888062089681625], [0.15183937549591064], [0.044321123510599136]], "result_max_similarities": 85.1645278930664, "full_text_display": "Berkeley Analytical has created the ClearChem\u2122 program to assist companies in making valid self declarations of compliance of their products to the CDPH Standard Method. ClearChem declarations meet all of the requirements of USGBC LE", "K": 1}, {"id": "result_3", "sample_idx": 17160, "score": 83.04551696777344, "highlight_inds": [16], "matched_tokens_str": ".", "original_pos": 16, "full_sequence_tokens": ["Posted", " by", " jud", "yl", "obo", " in", " Nature", ",", " photography", ",", " Wildlife", ",", " Zoo", ",", " Zo", "ocation", ".", "\n", "Z", "oo", " #", "6", " on", " our", " zo", "ocation", " was", " an", " un", "planned", " visit", ".", " Since", " we", " had", " the", " time", " and", " energy", " we", " crossed", " the", " Canadian", "/"], "sequence_similarities": [[28.896352767944336], [15.48228931427002], [13.291840553283691], [13.809353828430176], [-1.1554946899414062], [13.880748748779297], [7.082507610321045], [11.420845985412598], [16.137548446655273], [12.992380142211914], [8.079705238342285], [8.894190788269043], [13.810453414916992], [6.809598922729492], [3.237410068511963], [17.271709442138672], [83.04551696777344], [-3.667947769165039], [-0.2926318645477295], [-2.3012948036193848], [-2.0120038986206055], [9.994973182678223], [-7.42470645904541], [-6.059240341186523], [-3.9004645347595215], [11.107385635375977], [2.1887331008911133], [-9.103477478027344], [-2.783848762512207], [0.2936429977416992], [7.190478324890137], [-0.40192532539367676], [-2.2850217819213867], [6.751216888427734], [2.6502957344055176], [-2.845076560974121], [8.631610870361328], [-6.965315341949463], [18.508195877075195], [-3.276308059692383], [3.824171781539917], [-3.0580899715423584], [-0.9854099750518799], [-0.3892221450805664]], "normalized_similarities": [[0.33930033445358276], [0.18179269134998322], [0.1560724973678589], [0.16214913129806519], [-0.013567793183028698], [0.16298744082450867], [0.08316265046596527], [0.13410332798957825], [0.18948674201965332], [0.15255624055862427], [0.09487172216176987], [0.10443539172410965], [0.16216203570365906], [0.07995816320180893], [0.03801359608769417], [0.20280402898788452], [0.9751186370849609], [-0.043068960309028625], [-0.003436076920479536], [-0.027021752670407295], [-0.023624904453754425], [0.11736075580120087], [-0.0871807411313057], [-0.07114746421575546], [-0.045799169689416885], [0.1304226815700531], [0.025700055062770844], [-0.10689283162355423], [-0.03268789127469063], [0.003447949653491378], [0.08443043380975723], [-0.004719398450106382], [-0.026830675080418587], [0.07927264273166656], [0.031119713559746742], [-0.033406827598810196], [0.10135218501091003], [-0.08178658038377762], [0.21732282638549805], [-0.03847033530473709], [0.04490334168076515], [-0.03590802475810051], [-0.011570662260055542], [-0.004570237826555967]], "result_max_similarities": 85.1645278930664, "full_text_display": "Posted by judylobo in Nature, photography, Wildlife, Zoo, Zoocation.\nZoo #6 on our zoocation was an unplanned visit. Since we had the time and energy we crossed the Canadian/", "K": 1}, {"id": "result_4", "sample_idx": 17827, "score": 82.70465850830078, "highlight_inds": [8], "matched_tokens_str": ".", "original_pos": 8, "full_sequence_tokens": ["Best", " viewed", " through", " Google", " Chrome", " or", " Mozilla", " Firefox", ".", " Menu", " In", "spir", "tech", " Solid", "works", " Training", " Videos", " and", " H", "SM", "Works", " CAM", " solutions", " are", " fully", " integrated", " into", " Go", " to", " it", "ouch", "blog", ".", "de", "?", "option", "=", "com", "_", "rs", "form", "&amp;", "form", "Id"], "sequence_similarities": [[10.795169830322266], [10.577310562133789], [9.065655708312988], [4.927325248718262], [22.650503158569336], [11.065675735473633], [1.3868024349212646], [15.932181358337402], [82.70465850830078], [14.804754257202148], [10.681941986083984], [5.108123779296875], [19.475568771362305], [5.223792552947998], [9.101327896118164], [25.394086837768555], [27.24832534790039], [3.8283095359802246], [-0.06438112258911133], [9.437514305114746], [13.042028427124023], [9.935235977172852], [30.86614990234375], [11.215278625488281], [-5.6533684730529785], [-7.381584644317627], [-7.415621280670166], [-1.92006254196167], [-18.802597045898438], [-11.105210304260254], [-8.336442947387695], [3.717461585998535], [4.836823463439941], [5.292336940765381], [3.5924737453460693], [8.610433578491211], [10.955778121948242], [-9.986371040344238], [-0.43346405029296875], [5.131690502166748], [-3.4944686889648438], [12.725066184997559], [-17.384052276611328], [6.205330848693848]], "normalized_similarities": [[0.12675663828849792], [0.1241985484957695], [0.10644872486591339], [0.057856544852256775], [0.2659617066383362], [0.1299329251050949], [0.016283802688121796], [0.18707531690597534], [0.9711162447929382], [0.1738370954990387], [0.12542712688446045], [0.059979476034641266], [0.22868169844150543], [0.061337657272815704], [0.10686758905649185], [0.2981767952442169], [0.3199492394924164], [0.04495192691683769], [-0.0007559616933576763], [0.11081508547067642], [0.15313920378684998], [0.11665932089090347], [0.3624296486377716], [0.13168954849243164], [-0.06638173013925552], [-0.08667439967393875], [-0.08707406371831894], [-0.022545332089066505], [-0.2207796722650528], [-0.13039712607860565], [-0.0978863313794136], [0.04365035146474838], [0.05679387226700783], [0.0621425025165081], [0.04218274727463722], [0.1011035218834877], [0.1286424994468689], [-0.11725974828004837], [-0.0050897253677248955], [0.060256198048591614], [-0.04103197529911995], [0.149417445063591], [-0.20412315428256989], [0.07286285609006882]], "result_max_similarities": 85.1645278930664, "full_text_display": "Best viewed through Google Chrome or Mozilla Firefox. Menu Inspirtech Solidworks Training Videos and HSMWorks CAM solutions are fully integrated into Go to itouchblog.de?option=com_rsform&amp;formId", "K": 1}, {"id": "result_5", "sample_idx": 7635, "score": 82.27535247802734, "highlight_inds": [15], "matched_tokens_str": ".", "original_pos": 15, "full_sequence_tokens": ["The", " Academ", "ics", " blog", " recently", " published", " a", " great", " article", " interviewing", " AM", "U", " alumni", ",", " Fr", ".", " Vincent", " Fer", "rer", " B", "agan", " O", ".", "P", "..", " Father", " Vincent", " came", " to", " Ave", " in", " 2006", " to", " pursue", " a", " degree", " in", " pre", "-", "The", "olog", "ate", " studies", " as"], "sequence_similarities": [[31.604656219482422], [-14.801076889038086], [1.1174044609069824], [1.5225112438201904], [-5.246764183044434], [-3.6011366844177246], [8.765711784362793], [3.0894083976745605], [4.801025390625], [3.1385421752929688], [3.8425893783569336], [8.009605407714844], [13.229679107666016], [1.7652297019958496], [11.811789512634277], [82.27535247802734], [12.932628631591797], [8.672674179077148], [28.504117965698242], [20.025175094604492], [7.356019973754883], [18.43765640258789], [5.225243091583252], [2.2361178398132324], [-6.070352554321289], [-11.867557525634766], [4.618937015533447], [6.521474838256836], [-7.424407005310059], [-7.057473182678223], [-8.69441032409668], [15.888275146484375], [-15.640783309936523], [-12.31577205657959], [6.403470993041992], [-4.0682291984558105], [-16.930850982666016], [-11.39082145690918], [-5.512701988220215], [-10.241472244262695], [-8.941534996032715], [12.121077537536621], [-1.8198456764221191], [4.880850791931152]], "normalized_similarities": [[0.37110117077827454], [-0.17379391193389893], [0.013120538555085659], [0.01787729375064373], [-0.06160739064216614], [-0.042284466326236725], [0.10292679071426392], [0.03627576678991318], [0.056373532861471176], [0.03685269132256508], [0.045119598507881165], [0.09404861181974411], [0.15534259378910065], [0.020727287977933884], [0.13869376480579376], [0.9660753607749939], [0.15185463428497314], [0.10183434933423996], [0.3346947133541107], [0.23513516783714294], [0.08637422323226929], [0.21649456024169922], [0.06135468930006027], [0.026256445795297623], [-0.07127794623374939], [-0.1393485963344574], [0.05423545464873314], [0.07657501101493835], [-0.08717722445726395], [-0.08286869525909424], [-0.10208957642316818], [0.1865597814321518], [-0.18365372717380524], [-0.14461152255535126], [0.07518941164016724], [-0.047769058495759964], [-0.1988016813993454], [-0.1337507665157318], [-0.06473002582788467], [-0.12025514245033264], [-0.10499130934476852], [0.14232543110847473], [-0.021368587389588356], [0.05731084197759628]], "result_max_similarities": 85.1645278930664, "full_text_display": "The Academics blog recently published a great article interviewing AMU alumni, Fr. Vincent Ferrer Bagan O.P.. Father Vincent came to Ave in 2006 to pursue a degree in pre-Theologate studies as", "K": 1}, {"id": "result_6", "sample_idx": 13584, "score": 82.27407836914062, "highlight_inds": [10], "matched_tokens_str": ".", "original_pos": 10, "full_sequence_tokens": ["Copyright", " 1996", "-", "2019", " Cer", "ner", " Mult", "um", ",", " Inc", ".", " Version", ":", " 2", ".", "04", ".", " Rev", "ision", " date", ":", " 11", "/", "19", "/", "2013", "."], "sequence_similarities": [[15.383784294128418], [-6.257969379425049], [-15.75389289855957], [-3.088500738143921], [5.41487979888916], [-8.28982162475586], [-4.049610614776611], [-1.0609245300292969], [6.347890377044678], [5.178709030151367], [82.27407836914062], [17.996509552001953], [24.06041717529297], [13.079034805297852], [3.547847270965576], [-2.4926116466522217], [6.642429351806641], [8.364174842834473], [-18.091020584106445], [28.130416870117188], [9.957642555236816], [2.1773765087127686], [-12.166476249694824], [2.1561622619628906], [1.7588260173797607], [5.066924095153809], [-4.241789817810059]], "normalized_similarities": [[0.18063604831695557], [-0.07348094135522842], [-0.18498186767101288], [-0.03626510873436928], [0.06358139961957932], [-0.09733889997005463], [-0.04755043983459473], [-0.012457352131605148], [0.07453678548336029], [0.06080828607082367], [0.9660604000091553], [0.2113146185874939], [0.2825168967247009], [0.15357373654842377], [0.04165874421596527], [-0.029268190264701843], [0.07799525558948517], [0.09821195900440216], [-0.2124243676662445], [0.330306738615036], [0.11692241579294205], [0.02556670643389225], [-0.14285849034786224], [0.025317609310150146], [0.02065209671854973], [0.059495709836483], [-0.049807000905275345]], "result_max_similarities": 85.1645278930664, "full_text_display": "Copyright 1996-2019 Cerner Multum, Inc. Version: 2.04. Revision date: 11/19/2013.", "K": 1}, {"id": "result_7", "sample_idx": 8618, "score": 81.12759399414062, "highlight_inds": [1], "matched_tokens_str": "rice", "original_pos": 1, "full_sequence_tokens": ["Beat", "rice", " is", " a", " student", " at", " the", " University", " of", " Ya", "ound", "\u00e9", ",", " Cam", "ero", "on", " and", " her", " project", " consists", " of", " training", " courses", " in", " computer", " software", " specific", " to", " social", " sciences", ",", " buying", " an", " up", "-", "to", "-", "date", " computer", " equipped", " with", " a", " printer", ","], "sequence_similarities": [[56.719276428222656], [81.12759399414062], [-7.206777572631836], [-21.327030181884766], [11.110807418823242], [-7.0393781661987305], [-3.4284238815307617], [-0.7875211238861084], [-12.42160701751709], [-5.122613906860352], [2.691164493560791], [6.861320972442627], [4.906464099884033], [-3.2530527114868164], [-8.9169340133667], [5.49749755859375], [-1.5284385681152344], [0.4392426013946533], [-2.715900421142578], [-4.61617374420166], [-15.17886734008789], [8.396774291992188], [3.3299429416656494], [-2.119939088821411], [-12.349573135375977], [-3.548612117767334], [-9.500682830810547], [-12.918916702270508], [-20.27157211303711], [2.929823637008667], [-5.499534606933594], [-1.8846442699432373], [3.7286407947540283], [-13.366997718811035], [-36.58934020996094], [-20.917715072631836], [-7.77857780456543], [6.6781907081604], [-11.939457893371582], [-11.130380630493164], [12.274203300476074], [1.0903677940368652], [9.651800155639648], [1.7829513549804688]], "normalized_similarities": [[0.6659964919090271], [0.9525983929634094], [-0.08462182432413101], [-0.25042152404785156], [0.1304628551006317], [-0.08265621960163116], [-0.040256477892398834], [-0.009247055277228355], [-0.14585423469543457], [-0.06014961749315262], [0.03159959241747856], [0.08056548237800598], [0.05761159211397171], [-0.03819727152585983], [-0.10470244288444519], [0.06455149501562119], [-0.017946891486644745], [0.005157576873898506], [-0.03189004212617874], [-0.054203011095523834], [-0.1782299280166626], [0.09859474003314972], [0.03910011798143387], [-0.024892278015613556], [-0.1450084149837494], [-0.04166772589087486], [-0.11155680567026138], [-0.15169362723827362], [-0.23802834749221802], [0.034401923418045044], [-0.06457541137933731], [-0.022129451856017113], [0.04378161579370499], [-0.15695498883724213], [-0.42963123321533203], [-0.24561534821987152], [-0.09133588522672653], [0.0784151703119278], [-0.14019285142421722], [-0.13069267570972443], [0.14412342011928558], [0.012803074903786182], [0.11333122104406357], [0.02093537524342537]], "result_max_similarities": 85.1645278930664, "full_text_display": "Beatrice is a student at the University of Yaound\u00e9, Cameroon and her project consists of training courses in computer software specific to social sciences, buying an up-to-date computer equipped with a printer,", "K": 1}, {"id": "result_8", "sample_idx": 1544, "score": 80.98255157470703, "highlight_inds": [11], "matched_tokens_str": ".", "original_pos": 0, "full_sequence_tokens": ["A", " children", "&#x27;s", " picture", " book", " for", " children", " with", " anxiety", " and", " OCD", ".", " This", " book", " will", " inspire", ",", " guide", ",", " reass", "ure", ",", " educate", " and", " support", " those", " children", " and", " the", " people", " who", " love", " them", ".", "\n", "Will", "ow", " W", "onders", " Why", " do", " I", " worry", "?"], "sequence_similarities": [[33.88512420654297], [-3.111276626586914], [-11.96198844909668], [-7.1175994873046875], [-3.7601284980773926], [2.7467408180236816], [0.3386955261230469], [11.525795936584473], [-2.3069076538085938], [-4.06674861907959], [20.193321228027344], [80.98255157470703], [11.778888702392578], [7.988710403442383], [7.460744380950928], [-0.08893489837646484], [-4.206399917602539], [-1.5235414505004883], [-7.702898979187012], [-13.521424293518066], [-3.3046059608459473], [-9.457477569580078], [-15.755023956298828], [-9.078994750976562], [-1.0670533180236816], [8.706765174865723], [12.657001495361328], [-10.801525115966797], [-0.5416009426116943], [-4.579514026641846], [12.360607147216797], [1.2129344940185547], [10.442281723022461], [-0.957383930683136], [-8.164192199707031], [-5.200835704803467], [12.627792358398438], [4.526394367218018], [9.72161865234375], [-14.729472160339355], [5.678118705749512], [8.215925216674805], [0.8253812789916992], [-6.153816223144531]], "normalized_similarities": [[0.39787837862968445], [-0.03653253987431526], [-0.1404574066400528], [-0.08357469737529755], [-0.04415134713053703], [0.03225217014551163], [0.00397695554420352], [0.13533563911914825], [-0.027087658643722534], [-0.04775167256593704], [0.23710952699184418], [0.9508953094482422], [0.13830745220184326], [0.09380326420068741], [0.08760389685630798], [-0.0010442716302350163], [-0.049391455948352814], [-0.017889389768242836], [-0.09044726938009262], [-0.15876826643943787], [-0.0388026088476181], [-0.11104949563741684], [-0.1849951446056366], [-0.10660535842180252], [-0.012529316358268261], [0.10223464667797089], [0.14861823618412018], [-0.1268312633037567], [-0.006359466351568699], [-0.05377255380153656], [0.1451379805803299], [0.01424224954098463], [0.12261304259300232], [-0.011241581290960312], [-0.09586376696825027], [-0.0610680989921093], [0.1482752561569214], [0.053148820996284485], [0.11415103077888489], [-0.17295312881469727], [0.06667234748601913], [0.09647121280431747], [0.00969160906970501], [-0.07225797325372696]], "result_max_similarities": 85.1645278930664, "full_text_display": "A children&#x27;s picture book for children with anxiety and OCD. This book will inspire, guide, reassure, educate and support those children and the people who love them.\nWillow Wonders Why do I worry?", "K": 1}, {"id": "result_9", "sample_idx": 2563, "score": 80.78952026367188, "highlight_inds": [0], "matched_tokens_str": "Tur", "original_pos": 0, "full_sequence_tokens": ["Tur", "meric", ":", " Can", " It", " Help", " Man", "age", " MS", " Sympt", "oms", "?", "\n", "K", "ale", " has", " been", " cultivated", " for", " more", " than", " 2", ",", "000", " years", ",", " but", " has", " almost", " become", " a", " forgotten", " vegetable", ".", " The", " average", " person", " has", " never", " heard", " about", " it", ",", " and"], "sequence_similarities": [[80.78952026367188], [30.692567825317383], [13.233642578125], [-7.318479537963867], [1.3604230880737305], [-34.034725189208984], [5.054966926574707], [5.030147552490234], [5.372190952301025], [6.164344787597656], [33.159759521484375], [-4.491511344909668], [39.69212341308594], [15.831734657287598], [1.8947830200195312], [18.003559112548828], [13.620535850524902], [14.852694511413574], [0.6712312698364258], [13.343559265136719], [4.997200965881348], [-6.627676963806152], [4.368636131286621], [6.071065425872803], [-3.485841989517212], [2.763500690460205], [0.25267553329467773], [15.393438339233398], [23.274259567260742], [3.5575332641601562], [-8.601114273071289], [17.915611267089844], [18.548131942749023], [6.056316375732422], [12.620347023010254], [17.25262451171875], [24.826574325561523], [19.793787002563477], [15.393231391906738], [5.182673931121826], [15.039361953735352], [7.397857666015625], [-0.8089699745178223], [5.617878437042236]], "normalized_similarities": [[0.9486287832260132], [0.36039143800735474], [0.15538914501667023], [-0.08593342453241348], [0.015974057838320732], [-0.39963498711586], [0.05935531109571457], [0.059063881635665894], [0.06308014690876007], [0.07238160073757172], [0.389361172914505], [-0.0527392253279686], [0.4660640358924866], [0.1858958750963211], [0.02224850095808506], [0.21139739453792572], [0.15993203222751617], [0.17440001666545868], [0.007881582714617252], [0.15667977929115295], [0.05867702141404152], [-0.07782203704118729], [0.051296427845954895], [0.07128631323575974], [-0.04093068093061447], [0.032448962330818176], [0.0029669106006622314], [0.18074941635131836], [0.273285835981369], [0.04177247732877731], [-0.10099409520626068], [0.2103647142648697], [0.21779175102710724], [0.07111313194036484], [0.14818783104419708], [0.20257993042469025], [0.2915130853652954], [0.2324182093143463], [0.18074698746204376], [0.06085484102368355], [0.17659185826778412], [0.08686547726392746], [-0.009498907253146172], [0.06596500426530838]], "result_max_similarities": 85.1645278930664, "full_text_display": "Turmeric: Can It Help Manage MS Symptoms?\nKale has been cultivated for more than 2,000 years, but has almost become a forgotten vegetable. The average person has never heard about it, and", "K": 1}, {"id": "result_10", "sample_idx": 4032, "score": 80.25160217285156, "highlight_inds": [8], "matched_tokens_str": ".", "original_pos": 8, "full_sequence_tokens": ["hus", "band", ",", " Ban", ",", " who", " assisted", " her", ".", "\n", "family", " moved", " to", " Valley", " View", " in", " the", " early", " 1940", "&#x27;s", ".", " K", "VV", "B", " President", ",", " Norman", " L", ".", "Newton", " looking", " on", ".", "\n", "particular", " order", " are", " Austin", " French", ",", " James", " Moore", " and", " Hunter"], "sequence_similarities": [[19.8211669921875], [45.01544189453125], [7.355940341949463], [-17.83469581604004], [-4.274960517883301], [14.025859832763672], [-8.377631187438965], [16.318809509277344], [80.25160217285156], [-8.225842475891113], [12.243221282958984], [2.6181249618530273], [-2.8333921432495117], [-5.377484321594238], [-3.645153045654297], [2.513369560241699], [4.113509178161621], [-2.1208372116088867], [1.0482969284057617], [-12.752676963806152], [1.3963732719421387], [2.0015783309936523], [15.644660949707031], [8.108321189880371], [-2.426894187927246], [-3.3133819103240967], [6.315950393676758], [6.425611972808838], [14.234212875366211], [14.560413360595703], [-2.806711196899414], [11.168006896972656], [0.28737735748291016], [-9.019746780395508], [-14.52624225616455], [-1.2096214294433594], [4.225996494293213], [14.881750106811523], [16.048791885375977], [9.065357208251953], [17.861614227294922], [17.48365592956543], [4.030111312866211], [6.438494682312012]], "normalized_similarities": [[0.23273970186710358], [0.528570294380188], [0.08637329190969467], [-0.20941460132598877], [-0.05019649118185043], [0.16469132900238037], [-0.09836996346712112], [0.19161510467529297], [0.9423125386238098], [-0.0965876579284668], [0.14375963807106018], [0.030741965398192406], [-0.03326962888240814], [-0.06314229965209961], [-0.042801305651664734], [0.02951193042099476], [0.04830073192715645], [-0.0249028243124485], [0.012309079058468342], [-0.14974164962768555], [0.016396183520555496], [0.023502487689256668], [0.18369926512241364], [0.09520772844552994], [-0.02849653735756874], [-0.038905657827854156], [0.07416175305843353], [0.0754493921995163], [0.16713781654834747], [0.17096805572509766], [-0.03295633941888809], [0.131134495139122], [0.00337437866255641], [-0.10590966790914536], [-0.17056681215763092], [-0.014203348197042942], [0.04962155595421791], [0.17474117875099182], [0.18844455480575562], [0.10644522309303284], [0.20973068475723267], [0.2052927017211914], [0.04732147604227066], [0.07560066133737564]], "result_max_similarities": 85.1645278930664, "full_text_display": "husband, Ban, who assisted her.\nfamily moved to Valley View in the early 1940&#x27;s. KVVB President, Norman L.Newton looking on.\nparticular order are Austin French, James Moore and Hunter", "K": 1}, {"id": "result_11", "sample_idx": 12204, "score": 79.731201171875, "highlight_inds": [11], "matched_tokens_str": ".", "original_pos": 11, "full_sequence_tokens": ["Find", " salon", " jobs", " and", " spa", " jobs", " in", " Los", " Angeles", ",", " CA", ".", " Sal", "on", " employers", " hiring", " ha", "irst", "yl", "ists", ",", " est", "hetic", "ians", ",", " color", "ists", ",", " makeup", " artists", ",", " massage", " therapists", ",", " and", " reception", "ist", " positions", ".", "\n", "Sal", "on", " Ass", "ist"], "sequence_similarities": [[42.95401382446289], [29.23979949951172], [19.50770378112793], [22.480579376220703], [14.315631866455078], [3.1328225135803223], [10.335946083068848], [-0.5675263404846191], [9.516891479492188], [13.527973175048828], [17.688026428222656], [79.731201171875], [-6.116404056549072], [13.215055465698242], [6.748745918273926], [1.6751885414123535], [1.8907833099365234], [-2.015608072280884], [11.694031715393066], [13.767634391784668], [8.783946990966797], [4.371147155761719], [18.354652404785156], [25.228303909301758], [0.6482710838317871], [-3.968888282775879], [-1.4912471771240234], [-0.13252878189086914], [-4.174736499786377], [7.191802501678467], [-6.052209854125977], [-10.019926071166992], [10.396398544311523], [-3.5538370609283447], [9.775664329528809], [-1.3939228057861328], [29.995859146118164], [-14.105224609375], [7.944664001464844], [-7.196975231170654], [-5.352238178253174], [2.2284650802612305], [-14.088919639587402], [-29.314260482788086]], "normalized_similarities": [[0.504365086555481], [0.34333306550979614], [0.22905902564525604], [0.26396647095680237], [0.16809383034706116], [0.03678553178906441], [0.12136445194482803], [-0.006663881707936525], [0.1117471307516098], [0.15884515643119812], [0.20769241452217102], [0.9362019896507263], [-0.07181867957115173], [0.15517088770866394], [0.07924362272024155], [0.019670026376843452], [0.02220153622329235], [-0.0236672256141901], [0.13731105625629425], [0.16165925562381744], [0.10314091295003891], [0.05132591351866722], [0.21551991999149323], [0.2962301969528198], [0.0076119848527014256], [-0.04660259932279587], [-0.01751019060611725], [-0.0015561500331386924], [-0.04901966452598572], [0.08444598317146301], [-0.07106491178274155], [-0.1176537498831749], [0.12207428365945816], [-0.04172907769680023], [0.11478563398122787], [-0.016367411240935326], [0.3522107005119324], [-0.1656232327222824], [0.09328606724739075], [-0.08450672030448914], [-0.0628458634018898], [0.026166588068008423], [-0.16543178260326385], [-0.34420740604400635]], "result_max_similarities": 85.1645278930664, "full_text_display": "Find salon jobs and spa jobs in Los Angeles, CA. Salon employers hiring hairstylists, estheticians, colorists, makeup artists, massage therapists, and receptionist positions.\nSalon Assist", "K": 1}, {"id": "result_12", "sample_idx": 1022, "score": 79.47386169433594, "highlight_inds": [8], "matched_tokens_str": ".", "original_pos": 8, "full_sequence_tokens": ["Policy", " Copyright", " -", " DJ", "L", " Training", ",", " Inc", ".", "\n", "No", " part", " training", " materials", " may", " be", " reproduced", ",", " transmitted", ",", " transcribed", ",", " stored", " in", " a", " retrieval", " system", ",", " or", " translated", " into", " any", " language", " or", " computer", " language", ",", " in", " any", " form", " or", " by", " any", " means"], "sequence_similarities": [[45.46288299560547], [40.23970031738281], [5.667154788970947], [-25.825424194335938], [3.232412338256836], [-9.156102180480957], [-1.1128473281860352], [7.787384986877441], [79.47386169433594], [-10.007304191589355], [14.844574928283691], [8.535074234008789], [10.898091316223145], [29.78952407836914], [-3.3828439712524414], [-6.966178894042969], [9.185505867004395], [-4.089872360229492], [4.851346015930176], [-19.25284767150879], [16.719738006591797], [-15.287113189697266], [21.104650497436523], [-13.350232124328613], [2.0865111351013184], [29.70486068725586], [21.980133056640625], [-2.101909637451172], [17.440921783447266], [15.291451454162598], [-10.48489761352539], [-4.472247123718262], [10.239410400390625], [-8.807811737060547], [5.783573150634766], [5.021393775939941], [-8.595818519592285], [-7.536712646484375], [-4.9897918701171875], [-7.151483058929443], [-15.562850952148438], [-7.177696228027344], [-12.520268440246582], [-10.454570770263672]], "normalized_similarities": [[0.5338241457939148], [0.4724936783313751], [0.06654360890388489], [-0.3032415509223938], [0.037954915314912796], [-0.10751074552536011], [-0.013067028485238552], [0.09143929928541183], [0.9331803321838379], [-0.11750554293394089], [0.17430466413497925], [0.10021865367889404], [0.12796515226364136], [0.3497879207134247], [-0.039721280336380005], [-0.08179672062397003], [0.10785600543022156], [-0.04802319034934044], [0.05696439743041992], [-0.22606651484966278], [0.19632279872894287], [-0.17950093746185303], [0.24781033396720886], [-0.1567581295967102], [0.024499768391251564], [0.34879380464553833], [0.25809022784233093], [-0.024680577218532562], [0.20479092001914978], [0.1795518845319748], [-0.12311343848705292], [-0.05251302570104599], [0.12023092806339264], [-0.10342112928628922], [0.0679105892777443], [0.05896109342575073], [-0.10093191266059875], [-0.08849591016769409], [-0.05859002470970154], [-0.08397255837917328], [-0.18273864686489105], [-0.0842803493142128], [-0.14701271057128906], [-0.12275733798742294]], "result_max_similarities": 85.1645278930664, "full_text_display": "Policy Copyright - DJL Training, Inc.\nNo part training materials may be reproduced, transmitted, transcribed, stored in a retrieval system, or translated into any language or computer language, in any form or by any means", "K": 1}, {"id": "result_13", "sample_idx": 12966, "score": 78.96806335449219, "highlight_inds": [8], "matched_tokens_str": ".", "original_pos": 8, "full_sequence_tokens": ["Posted", " by", " BP", " on", " January", " 16", ",", " 2019", ".", " Br", "ought", " to", " you", " by", " health", "grades", ".", "\n", "Dr", ".", " K", "irit", "k", "umar", " Pand", "ya", ",", " MD", " sees", " patients", " in", " B", "rick", ",", " New", " Jersey", ",", " Lake", "wood", ",", " New", " Jersey", ",", " and"], "sequence_similarities": [[28.896352767944336], [15.48228931427002], [3.276451587677002], [4.1946940422058105], [-12.57303237915039], [-13.089752197265625], [10.084003448486328], [-8.553271293640137], [78.96806335449219], [3.852851152420044], [-10.634321212768555], [-0.832778811454773], [5.0252227783203125], [-1.7024335861206055], [-8.673266410827637], [15.261545181274414], [-1.3610914945602417], [-7.221596717834473], [8.439905166625977], [0.453383207321167], [7.621228218078613], [-5.922537326812744], [16.241214752197266], [0.6660590171813965], [10.220710754394531], [22.2115478515625], [14.65914249420166], [20.45684814453125], [14.452255249023438], [16.712562561035156], [7.931224822998047], [-5.906128883361816], [-3.446432113647461], [-1.856731653213501], [-0.9687466621398926], [18.126937866210938], [2.1890878677368164], [5.8513712882995605], [-8.70944595336914], [-5.451831817626953], [-18.08965301513672], [8.429085731506348], [-1.9704933166503906], [9.66528034210205]], "normalized_similarities": [[0.33930033445358276], [0.18179269134998322], [0.038472022861242294], [0.049254003912210464], [-0.14763227105140686], [-0.1536995768547058], [0.11840614676475525], [-0.10043232142925262], [0.9272412657737732], [0.045240093022584915], [-0.12486796081066132], [-0.009778470732271671], [0.05900605395436287], [-0.01998993754386902], [-0.10184130072593689], [0.17920072376728058], [-0.01598190702497959], [-0.08479582518339157], [0.09910117834806442], [0.00532361539080739], [0.08948829025030136], [-0.0695423036813736], [0.19070398807525635], [0.007820850238204002], [0.1200113594532013], [0.26080751419067383], [0.17212732136249542], [0.240203857421875], [0.1696980595588684], [0.19623853266239166], [0.0931282639503479], [-0.06934963166713715], [-0.04046792909502983], [-0.021801702678203583], [-0.01137500163167715], [0.21284610033035278], [0.025704221799969673], [0.06870666891336441], [-0.10226611793041229], [-0.06401529163122177], [-0.21240830421447754], [0.09897413849830627], [-0.023137489333748817], [0.11348950862884521]], "result_max_similarities": 85.1645278930664, "full_text_display": "Posted by BP on January 16, 2019. Brought to you by healthgrades.\nDr. Kiritkumar Pandya, MD sees patients in Brick, New Jersey, Lakewood, New Jersey, and", "K": 1}, {"id": "result_14", "sample_idx": 6769, "score": 78.45054626464844, "highlight_inds": [9], "matched_tokens_str": ".", "original_pos": 1, "full_sequence_tokens": ["Job", " List", "ings", " at", " Hope", " Community", " Resources", ",", " Inc", ".", "\n", "This", " position", " involves", " supporting", " and", " assisting", " individuals", " who", " experience", " developmental", " and", " physical", " disabilities", " with", " daily", " living", " skills", " and", " community", " inclusion", " activities", ".", " Respons", "ibilities", " include", " providing", " direct", " care", ",", " and", " attending", " to", " the"], "sequence_similarities": [[31.45359230041504], [33.691490173339844], [21.650733947753906], [-1.7677016258239746], [-3.16443133354187], [-9.283294677734375], [4.28264045715332], [10.282384872436523], [16.397605895996094], [78.45054626464844], [-3.402233123779297], [6.7817583084106445], [-13.595779418945312], [6.166555881500244], [-1.3849754333496094], [-4.462821006774902], [-11.1015625], [1.2059326171875], [6.0153961181640625], [1.6040172576904297], [-9.875405311584473], [-4.022891998291016], [-5.1646623611450195], [8.600449562072754], [7.696822643280029], [3.633124351501465], [2.9539794921875], [4.9222002029418945], [-4.710697650909424], [-18.17775535583496], [3.76176118850708], [12.724884033203125], [2.4612979888916016], [3.6348657608032227], [-25.024524688720703], [-11.963234901428223], [4.404336929321289], [-20.305198669433594], [-7.134323596954346], [-13.609346389770508], [0.049663662910461426], [1.0618293285369873], [-11.421836853027344], [-7.5051140785217285]], "normalized_similarities": [[0.3693273961544037], [0.3956047296524048], [0.25422245264053345], [-0.02075631357729435], [-0.03715668246150017], [-0.10900423675775528], [0.0502866692841053], [0.1207355335354805], [0.19254031777381897], [0.9211645722389221], [-0.039948947727680206], [0.0796312540769577], [-0.1596413403749466], [0.072407566010952], [-0.016262350603938103], [-0.05240234360098839], [-0.13035430014133453], [0.014160034246742725], [0.07063265144824982], [0.01883433572947979], [-0.11595679074525833], [-0.04723670706152916], [-0.06064335256814957], [0.1009862869977951], [0.09037592262029648], [0.04266006499528885], [0.034685563296079636], [0.05779636651277542], [-0.05531290918588638], [-0.21344280242919922], [0.04417051747441292], [0.1494152992963791], [0.0289005059748888], [0.042680513113737106], [-0.29383742809295654], [-0.14047203958034515], [0.05171562731266022], [-0.2384231984615326], [-0.08377107232809067], [-0.15980064868927002], [0.0005831496091559529], [0.012467976659536362], [-0.13411495089530945], [-0.08812488615512848]], "result_max_similarities": 85.1645278930664, "full_text_display": "Job Listings at Hope Community Resources, Inc.\nThis position involves supporting and assisting individuals who experience developmental and physical disabilities with daily living skills and community inclusion activities. Responsibilities include providing direct care, and attending to the", "K": 1}, {"id": "result_15", "sample_idx": 748, "score": 78.24335479736328, "highlight_inds": [10], "matched_tokens_str": ".", "original_pos": 10, "full_sequence_tokens": ["President", " &amp;", " CEO", " of", " Gle", "w", " Engineering", " Consult", "ing", " Inc", ".", "\n", "Dr", ".", " Alexander", " Gle", "w", " has", " practiced", " engineering", " for", " 30", " years", ".", " He", " founded", " Gle", "w", " Engineering", " Consult", "ing", " 20", " years", " ago", " after", " a", " decade", " at", " Applied", " Materials", ".", " His", " practice", " at"], "sequence_similarities": [[57.94935989379883], [23.513795852661133], [-6.970135688781738], [3.2049169540405273], [20.286590576171875], [6.823945045471191], [22.91973304748535], [12.998937606811523], [-2.4348702430725098], [3.4219512939453125], [78.24335479736328], [-11.519538879394531], [7.564081192016602], [-0.7220954895019531], [10.451557159423828], [9.992047309875488], [14.457648277282715], [12.167043685913086], [-3.679112672805786], [15.792163848876953], [-2.592160224914551], [1.6602888107299805], [-7.163302898406982], [1.07000732421875], [12.304791450500488], [-13.041810035705566], [5.516613960266113], [3.931589126586914], [4.894576072692871], [1.2232770919799805], [-13.430062294006348], [-2.9233713150024414], [-12.085535049438477], [-6.861536026000977], [-7.673755645751953], [-2.979701280593872], [-5.650147438049316], [-7.399440765380859], [-10.038822174072266], [-1.5013338327407837], [-3.0583391189575195], [7.146392345428467], [0.18928861618041992], [-1.0725836753845215]], "normalized_similarities": [[0.6804401278495789], [0.27609845995903015], [-0.08184318244457245], [0.037632063031196594], [0.2382047027349472], [0.08012661337852478], [0.26912298798561096], [0.15263323485851288], [-0.028590193018317223], [0.040180474519729614], [0.9187317490577698], [-0.13526217639446259], [0.08881727606058121], [-0.008478829637169838], [0.12272195518016815], [0.11732640117406845], [0.16976138949394226], [0.1428651511669159], [-0.0432000607252121], [0.18543124198913574], [-0.030437087640166283], [0.019495073705911636], [-0.08411134034395218], [0.01256400253623724], [0.1444825828075409], [-0.15313664078712463], [0.06477595865726471], [0.046164631843566895], [0.05747200548648834], [0.01436369214206934], [-0.1576954871416092], [-0.034326162189245224], [-0.14190807938575745], [-0.08056800067424774], [-0.0901050716638565], [-0.03498758748173714], [-0.06634390354156494], [-0.08688406646251678], [-0.11787562817335129], [-0.017628628760576248], [-0.0359109491109848], [0.08391278237104416], [0.0022226227447390556], [-0.0125942537561059]], "result_max_similarities": 85.1645278930664, "full_text_display": "President &amp; CEO of Glew Engineering Consulting Inc.\nDr. Alexander Glew has practiced engineering for 30 years. He founded Glew Engineering Consulting 20 years ago after a decade at Applied Materials. His practice at", "K": 1}, {"id": "result_16", "sample_idx": 2103, "score": 77.86236572265625, "highlight_inds": [0], "matched_tokens_str": "London", "original_pos": 1, "full_sequence_tokens": ["London", ":", " Bi", "odegrad", "able", " shopping", " bags", " made", " from", " shrimp", " shells", " may", " prove", " to", " be", " a", " &#x27;", "green", "&#x27;", " alternative", " to", " oil", "-", "based", " plastics", ",", " and", " can", " also", " be", " used", " as", " food", " packaging", " material", " to", " extend", " product", " shelf", " life", ",", " scientists", " say", "."], "sequence_similarities": [[77.86236572265625], [39.019142150878906], [20.675167083740234], [-12.705683708190918], [20.354564666748047], [11.356590270996094], [9.381513595581055], [29.32872772216797], [15.664459228515625], [12.86005687713623], [14.234318733215332], [8.587371826171875], [-1.828932285308838], [10.305936813354492], [3.137495994567871], [-13.235588073730469], [-0.7633662223815918], [-9.89763069152832], [14.236841201782227], [6.237868309020996], [1.5154929161071777], [9.979220390319824], [-18.3035888671875], [5.913769721984863], [2.2704925537109375], [4.503487586975098], [4.888792991638184], [-2.2996740341186523], [11.254161834716797], [-6.5363383293151855], [3.9174137115478516], [8.338499069213867], [-10.834770202636719], [9.76765251159668], [12.843585968017578], [-7.3767571449279785], [-3.01572322845459], [12.909942626953125], [-1.4541083574295044], [2.7862281799316406], [-1.3531676530838013], [22.716026306152344], [13.999760627746582], [44.710975646972656]], "normalized_similarities": [[0.9142581820487976], [0.4581618905067444], [0.2427673488855362], [-0.14918985962867737], [0.23900285363197327], [0.13334883749485016], [0.11015752702951431], [0.3443772792816162], [0.18393173813819885], [0.15100249648094177], [0.16713905334472656], [0.1008327305316925], [-0.021475281566381454], [0.12101208418607712], [0.03684040904045105], [-0.1554119884967804], [-0.008963429369032383], [-0.11621776223182678], [0.16716867685317993], [0.07324491441249847], [0.017794884741306305], [0.11717578768730164], [-0.21492034196853638], [0.0694393515586853], [0.026660073548555374], [0.052879851311445236], [0.05740409716963768], [-0.027002722024917603], [0.13214612007141113], [-0.0767495408654213], [0.045998185873031616], [0.09791047126054764], [-0.12722162902355194], [0.11469156295061111], [0.15080910921096802], [-0.08661771565675735], [-0.0354105569422245], [0.15158826112747192], [-0.017074108123779297], [0.03271583095192909], [-0.015888864174485207], [0.2667310833930969], [0.1643848866224289], [0.5249952673912048]], "result_max_similarities": 85.1645278930664, "full_text_display": "London: Biodegradable shopping bags made from shrimp shells may prove to be a &#x27;green&#x27; alternative to oil-based plastics, and can also be used as food packaging material to extend product shelf life, scientists say.", "K": 1}, {"id": "result_17", "sample_idx": 334, "score": 77.56663513183594, "highlight_inds": [20], "matched_tokens_str": ".", "original_pos": 20, "full_sequence_tokens": ["The", " 3", "rd", " Annual", " Cal", "Art", "s", " CAP", " Benef", "it", " to", " support", " youth", " programming", " in", " arts", " education", " throughout", " Southern", " California", ".", "\n", "A", "uction", " works", " by", " Cal", "Art", "s", " Al", "umni", " of", " the", " last", " decade", " and", " CAP", " Participants", ".", " More", " details", " to", " come", "."], "sequence_similarities": [[31.604656219482422], [9.618093490600586], [-19.054065704345703], [-10.983057022094727], [-19.08240509033203], [12.158851623535156], [-9.774003982543945], [-3.846865653991699], [-4.0388078689575195], [-4.824628829956055], [-16.616172790527344], [-17.369548797607422], [-0.2682676315307617], [24.678760528564453], [2.0514109134674072], [1.2294774055480957], [7.66701602935791], [-5.546848297119141], [2.165898323059082], [4.732633113861084], [77.56663513183594], [-9.386049270629883], [17.633960723876953], [4.237781524658203], [-1.3835742473602295], [1.7691950798034668], [-2.072699546813965], [1.7600579261779785], [-0.08061075210571289], [-16.516468048095703], [-0.9661722183227539], [1.5467782020568848], [1.6765317916870117], [6.134622573852539], [-0.45969879627227783], [-3.825134515762329], [5.992706298828125], [2.9070611000061035], [3.8838722705841064], [1.45269775390625], [-11.21438217163086], [-14.228921890258789], [-4.20033073425293], [0.8713274002075195]], "normalized_similarities": [[0.37110117077827454], [0.11293543875217438], [-0.22373241186141968], [-0.12896281480789185], [-0.22406518459320068], [0.1427689641714096], [-0.11476613581180573], [-0.04516981169581413], [-0.0474235936999321], [-0.05665068328380585], [-0.19510672986507416], [-0.2039528638124466], [-0.0031499925535172224], [0.2897774577140808], [0.02408762089908123], [0.014436496421694756], [0.09002593159675598], [-0.06513097137212753], [0.025431931018829346], [0.05557047203183174], [0.9107857346534729], [-0.11021078377962112], [0.20705758035182953], [0.04975993558764458], [-0.016245897859334946], [0.02077384851872921], [-0.024337591603398323], [0.020666562020778656], [-0.0009465296752750874], [-0.19393600523471832], [-0.011344772763550282], [0.018162235617637634], [0.01968579925596714], [0.07203260064125061], [-0.005397772882133722], [-0.044914644211530685], [0.07036622613668442], [0.034134648740291595], [0.045604340732097626], [0.017057545483112335], [-0.13167902827262878], [-0.16707567870616913], [-0.04932019114494324], [0.010231107473373413]], "result_max_similarities": 85.1645278930664, "full_text_display": "The 3rd Annual CalArts CAP Benefit to support youth programming in arts education throughout Southern California.\nAuction works by CalArts Alumni of the last decade and CAP Participants. More details to come.", "K": 1}, {"id": "result_18", "sample_idx": 10110, "score": 77.44929504394531, "highlight_inds": [14], "matched_tokens_str": ".", "original_pos": 14, "full_sequence_tokens": ["The", " Japanese", " PM", " lands", " at", " London", " Airport", " as", " Prince", " Philip", " flies", " out", " to", " Australia", ".", "\n", "Min", "isters", " and", " MP", "&#x27;s", " arriving", " to", " Parliament", ",", " London", ".", "\n", "H", "opes", " for", " the", " Channel", " link", " renewed", " in", " England", " and", " France", ".", "\n", "Har", "old", " Wilson"], "sequence_similarities": [[31.604656219482422], [37.52439880371094], [28.915573120117188], [-4.786376476287842], [2.488076686859131], [34.30786895751953], [3.2833285331726074], [7.4909515380859375], [5.381802082061768], [6.0117034912109375], [11.057652473449707], [-3.960948944091797], [-3.6699252128601074], [14.662261962890625], [77.44929504394531], [-10.756265640258789], [-6.439002513885498], [1.082756519317627], [-6.613858222961426], [16.739253997802734], [11.341794967651367], [-3.705031394958496], [-14.302133560180664], [-11.895929336547852], [-3.134006977081299], [19.67218589782715], [3.717010974884033], [-6.275213718414307], [6.966615200042725], [-0.7402887344360352], [9.52979850769043], [0.40494561195373535], [-4.155538082122803], [7.002923965454102], [3.1801042556762695], [4.183250427246094], [17.184680938720703], [0.5171413421630859], [17.398435592651367], [6.219707012176514], [-0.3842945098876953], [-1.829829454421997], [3.1348094940185547], [19.540477752685547]], "normalized_similarities": [[0.37110117077827454], [0.4406106472015381], [0.3395260274410248], [-0.056201525032520294], [0.02921494096517563], [0.4028422236442566], [0.038552772253751755], [0.08795858919620514], [0.06319300085306168], [0.07058928906917572], [0.1298387050628662], [-0.04650937393307686], [-0.04309218004345894], [0.1721639484167099], [0.909407913684845], [-0.12629982829093933], [-0.07560662180185318], [0.012713703326880932], [-0.07765977829694748], [0.19655194878578186], [0.1331751048564911], [-0.04350439831614494], [-0.1679353415966034], [-0.13968174159526825], [-0.036799442023038864], [0.23099036514759064], [0.04364506155252457], [-0.07368341833353043], [0.08180183917284012], [-0.008692453615367413], [0.11189868301153183], [0.004754862282425165], [-0.04879423603415489], [0.0822281762957573], [0.037340715527534485], [0.04911963269114494], [0.20178213715553284], [0.006072262302041054], [0.20429204404354095], [0.07303166389465332], [-0.0045123775489628315], [-0.021485816687345505], [0.036808863282203674], [0.22944386303424835]], "result_max_similarities": 85.1645278930664, "full_text_display": "The Japanese PM lands at London Airport as Prince Philip flies out to Australia.\nMinisters and MP&#x27;s arriving to Parliament, London.\nHopes for the Channel link renewed in England and France.\nHarold Wilson", "K": 1}, {"id": "result_19", "sample_idx": 3520, "score": 76.84126281738281, "highlight_inds": [12], "matched_tokens_str": ".", "original_pos": 12, "full_sequence_tokens": ["Guide", " Price", ":", " \u00a3", "275", ",", "000", " -", " \u00a3", "300", ",", "000", ".", " This", " well", " proportion", "ed", " two", " bedroom", " ma", "ison", "ette", " is", " offered", " to", " the", " market", " in", " excellent", " decorative", " order", " throughout", ".", " Com", "prising", " Two", " double", " bedrooms", ",", " large", " reception", " room", ",", " fitted"], "sequence_similarities": [[37.11262130737305], [41.541622161865234], [12.40732192993164], [-4.577041149139404], [7.26306676864624], [4.954726696014404], [10.902891159057617], [9.503332138061523], [0.7743995189666748], [-0.3064079284667969], [0.41683006286621094], [0.8250172138214111], [76.84126281738281], [11.37359619140625], [-3.79180908203125], [9.654584884643555], [-0.3882298469543457], [12.253172874450684], [-1.3402700424194336], [3.204981803894043], [-3.720431327819824], [3.411590814590454], [16.6350040435791], [18.151058197021484], [-1.162854790687561], [-0.76287841796875], [8.637049674987793], [-7.750485420227051], [4.035944938659668], [-4.230031967163086], [-2.3048717975616455], [-4.796656131744385], [-0.9986259937286377], [-5.513038158416748], [-14.876673698425293], [-2.840381145477295], [-8.459552764892578], [0.21928560733795166], [-2.4468979835510254], [2.8916244506835938], [5.169933319091797], [13.600303649902344], [-5.712039947509766], [0.2674131393432617]], "normalized_similarities": [[0.4357755780220032], [0.4877808094024658], [0.14568649232387543], [-0.05374351516366005], [0.08528277277946472], [0.058178290724754333], [0.1280215084552765], [0.11158791184425354], [0.009092981927096844], [-0.0035978350788354874], [0.004894409328699112], [0.009687334299087524], [0.9022684097290039], [0.13354851305484772], [-0.044523339718580246], [0.11336392164230347], [-0.004558586049824953], [0.14387647807598114], [-0.015737421810626984], [0.03763282671570778], [-0.043685223907232285], [0.04005882516503334], [0.19532784819602966], [0.21312932670116425], [-0.013654215261340141], [-0.008957701735198498], [0.10141604393720627], [-0.09100602567195892], [0.04738997668027878], [-0.049668941646814346], [-0.027063753455877304], [-0.05632223188877106], [-0.011725843884050846], [-0.06473397463560104], [-0.17468157410621643], [-0.03335169330239296], [-0.09933187812566757], [0.0025748468469828367], [-0.028731422498822212], [0.03395339101552963], [0.060705240815877914], [0.15969446301460266], [-0.06707064807415009], [0.003139959182590246]], "result_max_similarities": 85.1645278930664, "full_text_display": "Guide Price: \u00a3275,000 - \u00a3300,000. This well proportioned two bedroom maisonette is offered to the market in excellent decorative order throughout. Comprising Two double bedrooms, large reception room, fitted", "K": 1}];
+    const globalMaxSequenceSimilarity = [85.1645278930664];
+    const tooltip = document.getElementById('tooltip');
+    let isNormalized = true;
+    let currentThreshold = 0.0;
+
+    function htmlDecode(input) {
+        const doc = new DOMParser().parseFromString(input, "text/html");
+        return doc.documentElement.textContent;
+    }
+
+    function getColorForSimilarity(sim, maxSim, isNormalizedMode = false, threshold = 0.0) {
+        if (sim === -Infinity || maxSim <= 0) {
+            return { backgroundColor: '#f8f9fa', color: '#6c757d' };
+        }
+
+        // Apply threshold cutoff - if below threshold, return transparent/no color
+        if (sim <= threshold) {
+            return { backgroundColor: 'transparent', color: '#6c757d' };
+        }
+
+        let t;
+        if (isNormalizedMode) {
+            // In normalized mode, use a more sensitive scale since values are 0-1
+            // Apply a power function to make smaller differences more visible
+            const normalizedT = Math.max(0, Math.min(1, sim / maxSim));
+            t = Math.pow(normalizedT, 0.7); // Makes mid-range values more visible
+        } else {
+            // In raw mode, use linear scaling
+            t = Math.max(0, Math.min(1, sim / maxSim));
+        }
+
+        let r, g, b;
+        if (isNormalizedMode) {
+            // Use white to red gradient for normalized mode (same as raw mode)
+            r = 255;
+            g = b = Math.round(255 * (1 - t));
+        } else {
+            // Original red gradient for raw mode
+            r = 255;
+            g = b = Math.round(255 * (1 - t));
+        }
+
+        const textColor = (r + g + b) / 3 > 127 ? '#000000' : '#FFFFFF';
+        return { backgroundColor: `rgb(${r},${g},${b})`, color: textColor };
+    }
+
+    function renderResult(resultData) {
+        const displayDiv = document.getElementById(`sequence_display_${resultData.id}`);
+        const fullTextDiv = document.getElementById(`full_text_display_${resultData.id}`);
+        if (!displayDiv) return;
+
+        // Choose which similarities to use based on toggle state
+        const currentSimilarities = isNormalized ? resultData.normalized_similarities : resultData.sequence_similarities;
+        const currentMaxSimilarities = isNormalized ? Array(resultData.K).fill(1) : globalMaxSequenceSimilarity; // Normalized max is always 1
+
+        displayDiv.innerHTML = '';
+        resultData.full_sequence_tokens.forEach((tokenHtml, i) => {
+            const span = document.createElement('span');
+            span.className = 'token';
+            span.innerHTML = tokenHtml;
+
+            const seqSim = currentSimilarities[i];
+            const rawSeqSim = resultData.sequence_similarities[i];
+            let maxIdx = 0
+            let K = resultData.K;
+            let maxSim = Number.NEGATIVE_INFINITY;
+            for (let j = 0; j < K; j++) {
+                if (currentSimilarities[i] && currentSimilarities[i][j] > maxSim) {
+                    maxIdx = j;
+                    maxSim = currentSimilarities[i][j];
+                }
+            }
+
+            try{
+                const colors = getColorForSimilarity(seqSim[maxIdx], currentMaxSimilarities[maxIdx], isNormalized, currentThreshold);
+                span.style.backgroundColor = colors.backgroundColor;
+                span.style.color = colors.color;
+            } catch { console.log("Get color for sim doesn't work") }
+
+            if (resultData.highlight_inds.includes(i)) {
+                span.classList.add('highlight-window');
+            }
+
+            span.onmousemove = e => {
+                tooltip.style.visibility = 'visible';
+                let rawTokenSimsText = resultData.sequence_similarities[i].map((s, j) => `Q${j+1}: ${s.toFixed(4)}`).join(', ');
+                let normalizedTokenSimsText = resultData.normalized_similarities[i].map((s, j) => `Q${j+1}: ${s.toFixed(4)}`).join(', ');
+
+                let tooltipContent = `<b>${htmlDecode(tokenHtml)}</b> (Index: ${i})<br>`;
+                if (isNormalized) {
+                    tooltipContent += `Normalized Sim: ${seqSim[maxIdx].toFixed(4)}<br>`;
+                    tooltipContent += `Raw Sim: ${rawSeqSim[maxIdx].toFixed(4)}<br>`;
+                    tooltipContent += `Normalized Token Sims: ${normalizedTokenSimsText}<br>`;
+                } else {
+                    tooltipContent += `Raw Sim: ${seqSim[maxIdx].toFixed(4)}<br>`;
+                    tooltipContent += `Raw Token Sims: ${rawTokenSimsText}<br>`;
+                }
+                tooltipContent += `Vector index match: ${maxIdx + 1}`;
+
+                tooltip.innerHTML = tooltipContent;
+                tooltip.style.left = `${e.pageX + 15}px`;
+                tooltip.style.top = `${e.pageY + 15}px`;
+            };
+            span.onmouseout = () => { tooltip.style.visibility = 'hidden'; };
+            displayDiv.appendChild(span);
+        });
+
+        if (fullTextDiv && resultData.full_text_display) {
+            fullTextDiv.innerHTML = `<p><strong>Full Text:</strong></p><p>${resultData.full_text_display}</p>`;
+        }
+    }
+
+    function toggleNormalization() {
+        isNormalized = !isNormalized;
+        const statusSpan = document.getElementById('normalizationStatus');
+        if (isNormalized) {
+            statusSpan.innerHTML = 'Showing normalized values (max = 1.0 per result) | <span style="background: linear-gradient(90deg, white, pink, red); padding: 2px 8px; border-radius: 3px; color: black; font-size: 0.8em;">White→Red colors</span>';
+            statusSpan.style.color = '#28a745';
+        } else {
+            statusSpan.innerHTML = 'Showing raw values (global scale) | <span style="background: linear-gradient(90deg, white, pink, red); padding: 2px 8px; border-radius: 3px; color: black; font-size: 0.8em;">White→Red colors</span>';
+            statusSpan.style.color = '#666';
+        }
+
+        // Re-render all results with new normalization setting
+        allResultsData.forEach(renderResult);
+    }
+
+    function updateThreshold() {
+        const slider = document.getElementById('thresholdSlider');
+        const valueDisplay = document.getElementById('thresholdValue');
+        currentThreshold = parseFloat(slider.value);
+        valueDisplay.textContent = currentThreshold.toFixed(3);
+
+        // Re-render all results with new threshold setting
+        allResultsData.forEach(renderResult);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        // Initialize normalization status (start with normalized mode)
+        const statusSpan = document.getElementById('normalizationStatus');
+        statusSpan.innerHTML = 'Showing normalized values (max = 1.0 per result) | <span style="background: linear-gradient(90deg, white, pink, red); padding: 2px 8px; border-radius: 3px; color: black; font-size: 0.8em;">White→Red colors</span>';
+        statusSpan.style.color = '#28a745';
+
+        // Set up toggle event listener
+        const toggleCheckbox = document.getElementById('normalizeToggle');
+        toggleCheckbox.addEventListener('change', toggleNormalization);
+
+        // Set up threshold slider event listener
+        const thresholdSlider = document.getElementById('thresholdSlider');
+        thresholdSlider.addEventListener('input', updateThreshold);
+
+        // Render initial results
+        allResultsData.forEach(renderResult);
+    });
+</script>
+</body></html>

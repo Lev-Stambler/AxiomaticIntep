@@ -1,0 +1,403 @@
+
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">
+<title>Token Activation Similarity Report</title><style>
+body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; padding: 20px; background-color: #f8f9fa; color: #212529; }
+.container { background-color: #ffffff; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.07); }
+h1 { color: #0056b3; text-align: center; margin-bottom: 25px; font-weight: 300;}
+h2 { color: #0056b3; border-bottom: 1px solid #dee2e6; padding-bottom: 10px; margin-top:0; font-size: 1.5em; font-weight: 400; }
+.token { padding: 3px 5px; margin: 2px 1px; border-radius: 4px; display: inline-block; border: 1px solid #ced4da; cursor: default; transition: transform 0.1s ease-out, box-shadow 0.1s ease-out; font-size: 0.9em; line-height: 1.5; }
+.token:hover { transform: translateY(-1px); box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+.token.highlight-window { border: 2px solid #c82333; font-weight: 600; background-color: #f8d7da !important; color: #721c24; }
+.sequence-display { margin-top: 12px; padding: 12px; border: 1px solid #e9ecef; background-color: #f8f9fa; border-radius: 6px; white-space: pre-wrap; word-wrap: break-word; line-height: 1.7; }
+.full-text-display { margin-top: 15px; padding: 10px; border: 1px solid #dfe6e9; background-color: #f9f9f9; border-radius: 6px; white-space: pre-wrap; word-wrap: break-word; line-height: 1.6; font-size: 0.95em; color: #333; }
+.tooltip { position: absolute; background-color: rgba(33,37,41,0.9); color: white; padding: 8px 12px; border-radius: 5px; visibility: hidden; z-index: 1000; pointer-events: none; font-size: 0.85em; max-width: 400px; }
+.details p { margin: 5px 0; font-size: 0.9em; color: #495057; } .details strong { color: #0056b3; }
+.footer-note { font-size: 0.8em; color: #6c757d; text-align: center; margin-top: 30px; }
+.global-max-info { background-color: #e3f2fd; padding: 10px; border-radius: 5px; margin-bottom: 20px; text-align: center; font-size: 0.9em; color: #1565c0; }
+.threshold-control { margin-top: 15px; padding: 10px; background-color: rgba(255,255,255,0.3); border-radius: 6px; }
+.threshold-slider { width: 200px; margin: 0 10px; }
+.threshold-value { font-weight: bold; color: #0056b3; }
+</style></head><body>
+<div class="explanation-section" style="background-color: #f0f8ff; padding: 15px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #0056b3;"><h3 style="color: #0056b3; margin-top: 0;">Feature Explanation</h3><div style="line-height: 1.6; color: #333;">It detects passages of legal boilerplate text—especially open‐source license declarations—where key terms like “redistribute” and “use” signal prescribed permission or restriction language in file headers and copyright notices.</div></div><div class="global-max-info">
+    <strong>Query Type:</strong> 1-token sequences<br>
+    <strong>Query Vector Norms:</strong> ['0.9963']<br>
+    <strong>Global Max Sequence Similarities:</strong> [-0.04808875918388367]<br>
+    <div style="margin-top: 10px;">
+        <label style="font-weight: normal; cursor: pointer;">
+            <input type="checkbox" id="normalizeToggle" checked style="margin-right: 8px;">
+            Show Normalized Activations (divide by max per result)
+        </label>
+        <span id="normalizationStatus" style="margin-left: 15px; font-style: italic; color: #666;"></span>
+    </div>
+    <div class="threshold-control">
+        <label style="font-weight: normal;">
+            Activation Cutoff Threshold: <span class="threshold-value" id="thresholdValue">0.000</span>
+        </label><br>
+        <input type="range" id="thresholdSlider" class="threshold-slider"
+               min="0" max="1" step="0.001"
+               value="0.0">
+        <div style="margin-top: 5px; font-size: 0.8em; color: #666;">
+            No faithfulness data available - adjust manually
+        </div>
+    </div>
+</div>
+<div id="tooltip" class="tooltip"></div>
+
+<div class="container" id="container_result_0">
+    <h2>Result 1 (Sample Ref: 5452)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> -0.0481</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">" redistribute"</span></p>
+        <p><strong>Window Start Position:</strong> 21</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_0"></div>
+    <div class="full-text-display" id="full_text_display_result_0"></div>
+</div>
+<div class="container" id="container_result_1">
+    <h2>Result 2 (Sample Ref: 8775)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> -0.0709</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">" divided"</span></p>
+        <p><strong>Window Start Position:</strong> 43</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_1"></div>
+    <div class="full-text-display" id="full_text_display_result_1"></div>
+</div>
+<div class="container" id="container_result_2">
+    <h2>Result 3 (Sample Ref: 15821)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> -0.0785</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">" -"</span></p>
+        <p><strong>Window Start Position:</strong> 3</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_2"></div>
+    <div class="full-text-display" id="full_text_display_result_2"></div>
+</div>
+<div class="container" id="container_result_3">
+    <h2>Result 4 (Sample Ref: 3519)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> -0.1599</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">" redistribute"</span></p>
+        <p><strong>Window Start Position:</strong> 39</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_3"></div>
+    <div class="full-text-display" id="full_text_display_result_3"></div>
+</div>
+<div class="container" id="container_result_4">
+    <h2>Result 5 (Sample Ref: 7559)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> -0.3191</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">" not"</span></p>
+        <p><strong>Window Start Position:</strong> 33</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_4"></div>
+    <div class="full-text-display" id="full_text_display_result_4"></div>
+</div>
+<div class="container" id="container_result_5">
+    <h2>Result 6 (Sample Ref: 4061)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> -0.3403</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">" not"</span></p>
+        <p><strong>Window Start Position:</strong> 35</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_5"></div>
+    <div class="full-text-display" id="full_text_display_result_5"></div>
+</div>
+<div class="container" id="container_result_6">
+    <h2>Result 7 (Sample Ref: 6396)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> -0.3483</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">" not"</span></p>
+        <p><strong>Window Start Position:</strong> 38</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_6"></div>
+    <div class="full-text-display" id="full_text_display_result_6"></div>
+</div>
+<div class="container" id="container_result_7">
+    <h2>Result 8 (Sample Ref: 9958)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> -0.3593</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">" redistribute"</span></p>
+        <p><strong>Window Start Position:</strong> 41</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_7"></div>
+    <div class="full-text-display" id="full_text_display_result_7"></div>
+</div>
+<div class="container" id="container_result_8">
+    <h2>Result 9 (Sample Ref: 13706)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> -0.3661</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">" not"</span></p>
+        <p><strong>Window Start Position:</strong> 33</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_8"></div>
+    <div class="full-text-display" id="full_text_display_result_8"></div>
+</div>
+<div class="container" id="container_result_9">
+    <h2>Result 10 (Sample Ref: 19722)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> -0.3720</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">" not"</span></p>
+        <p><strong>Window Start Position:</strong> 37</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_9"></div>
+    <div class="full-text-display" id="full_text_display_result_9"></div>
+</div>
+<div class="container" id="container_result_10">
+    <h2>Result 11 (Sample Ref: 11841)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> -0.3724</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">" not"</span></p>
+        <p><strong>Window Start Position:</strong> 39</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_10"></div>
+    <div class="full-text-display" id="full_text_display_result_10"></div>
+</div>
+<div class="container" id="container_result_11">
+    <h2>Result 12 (Sample Ref: 5886)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> -0.3737</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">" not"</span></p>
+        <p><strong>Window Start Position:</strong> 35</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_11"></div>
+    <div class="full-text-display" id="full_text_display_result_11"></div>
+</div>
+<div class="container" id="container_result_12">
+    <h2>Result 13 (Sample Ref: 14102)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> -0.3774</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">" not"</span></p>
+        <p><strong>Window Start Position:</strong> 34</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_12"></div>
+    <div class="full-text-display" id="full_text_display_result_12"></div>
+</div>
+<div class="container" id="container_result_13">
+    <h2>Result 14 (Sample Ref: 3542)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> -0.3777</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">" not"</span></p>
+        <p><strong>Window Start Position:</strong> 31</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_13"></div>
+    <div class="full-text-display" id="full_text_display_result_13"></div>
+</div>
+<div class="container" id="container_result_14">
+    <h2>Result 15 (Sample Ref: 9041)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> -0.3791</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">" not"</span></p>
+        <p><strong>Window Start Position:</strong> 39</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_14"></div>
+    <div class="full-text-display" id="full_text_display_result_14"></div>
+</div>
+<div class="container" id="container_result_15">
+    <h2>Result 16 (Sample Ref: 18842)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> -0.3824</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">" not"</span></p>
+        <p><strong>Window Start Position:</strong> 35</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_15"></div>
+    <div class="full-text-display" id="full_text_display_result_15"></div>
+</div>
+<div class="container" id="container_result_16">
+    <h2>Result 17 (Sample Ref: 3035)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> -0.3824</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">" not"</span></p>
+        <p><strong>Window Start Position:</strong> 35</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_16"></div>
+    <div class="full-text-display" id="full_text_display_result_16"></div>
+</div>
+<div class="container" id="container_result_17">
+    <h2>Result 18 (Sample Ref: 18642)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> -0.3834</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">" not"</span></p>
+        <p><strong>Window Start Position:</strong> 35</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_17"></div>
+    <div class="full-text-display" id="full_text_display_result_17"></div>
+</div>
+<div class="container" id="container_result_18">
+    <h2>Result 19 (Sample Ref: 17935)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> -0.3834</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">" not"</span></p>
+        <p><strong>Window Start Position:</strong> 35</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_18"></div>
+    <div class="full-text-display" id="full_text_display_result_18"></div>
+</div>
+<div class="container" id="container_result_19">
+    <h2>Result 20 (Sample Ref: 2509)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> -0.3846</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">" not"</span></p>
+        <p><strong>Window Start Position:</strong> 43</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_19"></div>
+    <div class="full-text-display" id="full_text_display_result_19"></div>
+</div>
+<script>
+    const allResultsData = [{"id": "result_0", "sample_idx": 5452, "score": -0.04808875918388367, "highlight_inds": [21], "matched_tokens_str": " redistribute", "original_pos": 21, "full_sequence_tokens": ["//", " This", " file", " is", " part", " of", " Background", " Music", ".", "\n", "//", "\n", "//", " Background", " Music", " is", " free", " software", ":", " you", " can", " redistribute", " it", " and", "/", "or", "\n", "//", " modify", " it", " under", " the", " terms", " of", " the", " GNU", " General", " Public", " License", " as", "\n", "//", " published", " by"], "sequence_similarities": [[-3.603781223297119], [-5.323370456695557], [-3.8411104679107666], [-3.441316604614258], [-2.793015241622925], [-2.356006622314453], [-4.338489532470703], [-4.804471492767334], [-10.684966087341309], [-3.5807271003723145], [-3.4312493801116943], [-3.399942398071289], [-3.1634395122528076], [-4.792972564697266], [-4.322310924530029], [-3.5615556240081787], [-3.62446665763855], [-2.6486096382141113], [-2.2564046382904053], [-2.668457508087158], [-2.676161050796509], [-0.04808875918388367], [-2.5298657417297363], [-1.4004873037338257], [-1.0748515129089355], [-0.9972367286682129], [-2.5517125129699707], [-1.7958499193191528], [-2.153836727142334], [-2.6651055812835693], [-1.398032546043396], [-2.2070555686950684], [-1.736606240272522], [-1.321764588356018], [-2.5821259021759033], [-1.9119360446929932], [-2.7678472995758057], [-3.48506498336792], [-1.7349928617477417], [-1.6768571138381958], [-2.5729620456695557], [-2.1551895141601562], [-2.008740186691284], [-1.8218921422958374]], "normalized_similarities": [[-3.603781223297119], [-5.323370456695557], [-3.8411104679107666], [-3.441316604614258], [-2.793015241622925], [-2.356006622314453], [-4.338489532470703], [-4.804471492767334], [-10.684966087341309], [-3.5807271003723145], [-3.4312493801116943], [-3.399942398071289], [-3.1634395122528076], [-4.792972564697266], [-4.322310924530029], [-3.5615556240081787], [-3.62446665763855], [-2.6486096382141113], [-2.2564046382904053], [-2.668457508087158], [-2.676161050796509], [-0.04808875918388367], [-2.5298657417297363], [-1.4004873037338257], [-1.0748515129089355], [-0.9972367286682129], [-2.5517125129699707], [-1.7958499193191528], [-2.153836727142334], [-2.6651055812835693], [-1.398032546043396], [-2.2070555686950684], [-1.736606240272522], [-1.321764588356018], [-2.5821259021759033], [-1.9119360446929932], [-2.7678472995758057], [-3.48506498336792], [-1.7349928617477417], [-1.6768571138381958], [-2.5729620456695557], [-2.1551895141601562], [-2.008740186691284], [-1.8218921422958374]], "result_max_similarities": -0.04808875918388367, "full_text_display": "// This file is part of Background Music.\n//\n// Background Music is free software: you can redistribute it and/or\n// modify it under the terms of the GNU General Public License as\n// published by", "K": 1}, {"id": "result_1", "sample_idx": 8775, "score": -0.07088853418827057, "highlight_inds": [43], "matched_tokens_str": " divided", "original_pos": 43, "full_sequence_tokens": ["e", " 2", "*", "t", " +", " 19", " =", " 2", "*", "q", " +", " 3", "*", "q", ",", " 5", "*", "q", " -", " 3", "*", "t", " =", " 16", ".", " Suppose", " 10", "*", "u", " +", " 36", " =", " 19", "*", "u", ".", " What", " is", " the", " remainder", " when", " q", " is", " divided"], "sequence_similarities": [[-6.212809085845947], [-6.852835655212402], [-3.92802095413208], [-4.764053821563721], [-4.468526840209961], [-5.356202602386475], [-3.8815884590148926], [-3.9265713691711426], [-3.359990119934082], [-4.458730220794678], [-3.973264694213867], [-4.171091079711914], [-3.3393571376800537], [-4.053067207336426], [-4.010079383850098], [-3.854781150817871], [-3.1630465984344482], [-3.531959295272827], [-2.892112970352173], [-3.3719723224639893], [-2.205364465713501], [-3.5859949588775635], [-2.3943939208984375], [-3.6145284175872803], [-10.989794731140137], [-3.465301752090454], [-2.7476115226745605], [-1.9787880182266235], [-3.38022518157959], [-1.7432806491851807], [-3.292356252670288], [-1.725212574005127], [-2.82067608833313], [-1.8569272756576538], [-3.0066092014312744], [-2.153890371322632], [-1.8157308101654053], [-1.6357226371765137], [-1.86747145652771], [-0.45659172534942627], [-0.9367479085922241], [-3.812380313873291], [-1.4584282636642456], [-0.07088853418827057]], "normalized_similarities": [[-6.212809085845947], [-6.852835655212402], [-3.92802095413208], [-4.764053821563721], [-4.468526840209961], [-5.356202602386475], [-3.8815884590148926], [-3.9265713691711426], [-3.359990119934082], [-4.458730220794678], [-3.973264694213867], [-4.171091079711914], [-3.3393571376800537], [-4.053067207336426], [-4.010079383850098], [-3.854781150817871], [-3.1630465984344482], [-3.531959295272827], [-2.892112970352173], [-3.3719723224639893], [-2.205364465713501], [-3.5859949588775635], [-2.3943939208984375], [-3.6145284175872803], [-10.989794731140137], [-3.465301752090454], [-2.7476115226745605], [-1.9787880182266235], [-3.38022518157959], [-1.7432806491851807], [-3.292356252670288], [-1.725212574005127], [-2.82067608833313], [-1.8569272756576538], [-3.0066092014312744], [-2.153890371322632], [-1.8157308101654053], [-1.6357226371765137], [-1.86747145652771], [-0.45659172534942627], [-0.9367479085922241], [-3.812380313873291], [-1.4584282636642456], [-0.07088853418827057]], "result_max_similarities": -0.04808875918388367, "full_text_display": "e 2*t + 19 = 2*q + 3*q, 5*q - 3*t = 16. Suppose 10*u + 36 = 19*u. What is the remainder when q is divided", "K": 1}, {"id": "result_2", "sample_idx": 15821, "score": -0.07849602401256561, "highlight_inds": [3], "matched_tokens_str": " -", "original_pos": 3, "full_sequence_tokens": ["214", "\n", "Suppose", " -", "182", " =", " -", "378", "*", "t", " +", " 13", "30", ".", " Which", " is", " bigger", ":", " -", "0", ".", "12", "38", " or", " t", "?", "\n", "t", "\n", "Suppose", " -", "125", " +", " 134", " =", " -", "15", "*", "j", " -", " 216", ".", " Which", " is"], "sequence_similarities": [[-7.251435279846191], [-8.186246871948242], [-3.4722373485565186], [-0.07849602401256561], [-1.8758814334869385], [-0.9390332698822021], [-0.44166356325149536], [-2.2963614463806152], [-1.5790908336639404], [-3.0942299365997314], [-1.1384286880493164], [-2.2154183387756348], [-2.7725472450256348], [-2.1864476203918457], [-2.0598111152648926], [-1.51595139503479], [-2.4703638553619385], [-1.9237726926803589], [-1.5878114700317383], [-2.4068922996520996], [-2.055692672729492], [-2.5150468349456787], [-2.894469738006592], [-2.468324899673462], [-3.8876984119415283], [-2.230909824371338], [-1.6335475444793701], [-3.1991963386535645], [-2.294529676437378], [-3.9899230003356934], [-1.13652765750885], [-2.6481993198394775], [-1.8137879371643066], [-2.9748620986938477], [-1.82759428024292], [-1.0172572135925293], [-2.148294448852539], [-1.9935448169708252], [-3.276510238647461], [-1.699991226196289], [-2.9313721656799316], [-2.244342565536499], [-2.315612316131592], [-1.3362303972244263]], "normalized_similarities": [[-7.251435279846191], [-8.186246871948242], [-3.4722373485565186], [-0.07849602401256561], [-1.8758814334869385], [-0.9390332698822021], [-0.44166356325149536], [-2.2963614463806152], [-1.5790908336639404], [-3.0942299365997314], [-1.1384286880493164], [-2.2154183387756348], [-2.7725472450256348], [-2.1864476203918457], [-2.0598111152648926], [-1.51595139503479], [-2.4703638553619385], [-1.9237726926803589], [-1.5878114700317383], [-2.4068922996520996], [-2.055692672729492], [-2.5150468349456787], [-2.894469738006592], [-2.468324899673462], [-3.8876984119415283], [-2.230909824371338], [-1.6335475444793701], [-3.1991963386535645], [-2.294529676437378], [-3.9899230003356934], [-1.13652765750885], [-2.6481993198394775], [-1.8137879371643066], [-2.9748620986938477], [-1.82759428024292], [-1.0172572135925293], [-2.148294448852539], [-1.9935448169708252], [-3.276510238647461], [-1.699991226196289], [-2.9313721656799316], [-2.244342565536499], [-2.315612316131592], [-1.3362303972244263]], "result_max_similarities": -0.04808875918388367, "full_text_display": "214\nSuppose -182 = -378*t + 1330. Which is bigger: -0.1238 or t?\nt\nSuppose -125 + 134 = -15*j - 216. Which is", "K": 1}, {"id": "result_3", "sample_idx": 3519, "score": -0.15987083315849304, "highlight_inds": [39], "matched_tokens_str": " redistribute", "original_pos": 39, "full_sequence_tokens": ["&lt;%", "\n", "#", " Copyright", " (", "C", ")", " 2012", " -", " present", " In", "structure", ",", " Inc", ".", "\n", "#", "\n", "#", " This", " file", " is", " part", " of", " Can", "vas", ".", "\n", "#", "\n", "#", " Can", "vas", " is", " free", " software", ":", " you", " can", " redistribute", " it", " and", "/", "or"], "sequence_similarities": [[-4.405556678771973], [-11.888114929199219], [-4.343569755554199], [-2.7989001274108887], [-2.9324734210968018], [-4.1564764976501465], [-2.874096393585205], [-2.9766502380371094], [-3.1840357780456543], [-3.8131585121154785], [-3.9886910915374756], [-2.8268768787384033], [-3.16373348236084], [-2.9578561782836914], [-3.6643128395080566], [-2.5701193809509277], [-2.9568467140197754], [-2.685817241668701], [-2.5491268634796143], [-3.192394733428955], [-2.8923583030700684], [-2.6918561458587646], [-2.639631509780884], [-2.4872360229492188], [-4.627723693847656], [-3.896184206008911], [-3.2474348545074463], [-2.4792628288269043], [-2.281064510345459], [-2.5548911094665527], [-2.145822525024414], [-3.88612699508667], [-3.374706268310547], [-2.5658085346221924], [-3.0956692695617676], [-1.8954139947891235], [-2.070314407348633], [-2.4314846992492676], [-2.6790592670440674], [-0.15987083315849304], [-2.399144411087036], [-1.447346568107605], [-1.0885531902313232], [-0.9223882555961609]], "normalized_similarities": [[-4.405556678771973], [-11.888114929199219], [-4.343569755554199], [-2.7989001274108887], [-2.9324734210968018], [-4.1564764976501465], [-2.874096393585205], [-2.9766502380371094], [-3.1840357780456543], [-3.8131585121154785], [-3.9886910915374756], [-2.8268768787384033], [-3.16373348236084], [-2.9578561782836914], [-3.6643128395080566], [-2.5701193809509277], [-2.9568467140197754], [-2.685817241668701], [-2.5491268634796143], [-3.192394733428955], [-2.8923583030700684], [-2.6918561458587646], [-2.639631509780884], [-2.4872360229492188], [-4.627723693847656], [-3.896184206008911], [-3.2474348545074463], [-2.4792628288269043], [-2.281064510345459], [-2.5548911094665527], [-2.145822525024414], [-3.88612699508667], [-3.374706268310547], [-2.5658085346221924], [-3.0956692695617676], [-1.8954139947891235], [-2.070314407348633], [-2.4314846992492676], [-2.6790592670440674], [-0.15987083315849304], [-2.399144411087036], [-1.447346568107605], [-1.0885531902313232], [-0.9223882555961609]], "result_max_similarities": -0.04808875918388367, "full_text_display": "&lt;%\n# Copyright (C) 2012 - present Instructure, Inc.\n#\n# This file is part of Canvas.\n#\n# Canvas is free software: you can redistribute it and/or", "K": 1}, {"id": "result_4", "sample_idx": 7559, "score": -0.31907716393470764, "highlight_inds": [33], "matched_tokens_str": " not", "original_pos": 33, "full_sequence_tokens": ["#", " Copyright", " 2018", "-", "2020", " Des", "cart", "es", " Labs", ".", "\n", "#", "\n", "#", " Licensed", " under", " the", " Apache", " License", ",", " Version", " 2", ".", "0", " (", "the", " &quot;", "License", "&quot;);", "\n", "#", " you", " may", " not", " use", " this", " file", " except", " in", " compliance", " with", " the", " License", "."], "sequence_similarities": [[-5.54575252532959], [-4.549306869506836], [-3.7892706394195557], [-2.781801223754883], [-2.2452175617218018], [-3.625819683074951], [-3.8682382106781006], [-3.8909316062927246], [-4.364361763000488], [-10.365764617919922], [-3.147815465927124], [-3.1846985816955566], [-3.1886532306671143], [-2.7012686729431152], [-2.376779079437256], [-1.7451295852661133], [-2.7878670692443848], [-1.9597073793411255], [-1.937648057937622], [-2.569002151489258], [-0.5702518820762634], [-2.610469102859497], [-2.5715274810791016], [-2.555001735687256], [-2.0499627590179443], [-2.357022285461426], [-2.371687173843384], [-1.8681213855743408], [-1.0011100769042969], [-1.866316556930542], [-1.9206092357635498], [-1.334311842918396], [-1.0232629776000977], [-0.31907716393470764], [-1.4126843214035034], [-1.5676143169403076], [-1.7565040588378906], [-0.43515676259994507], [-1.262113094329834], [-2.0185413360595703], [-2.4514856338500977], [-2.3709328174591064], [-1.166711449623108], [-1.644692063331604]], "normalized_similarities": [[-5.54575252532959], [-4.549306869506836], [-3.7892706394195557], [-2.781801223754883], [-2.2452175617218018], [-3.625819683074951], [-3.8682382106781006], [-3.8909316062927246], [-4.364361763000488], [-10.365764617919922], [-3.147815465927124], [-3.1846985816955566], [-3.1886532306671143], [-2.7012686729431152], [-2.376779079437256], [-1.7451295852661133], [-2.7878670692443848], [-1.9597073793411255], [-1.937648057937622], [-2.569002151489258], [-0.5702518820762634], [-2.610469102859497], [-2.5715274810791016], [-2.555001735687256], [-2.0499627590179443], [-2.357022285461426], [-2.371687173843384], [-1.8681213855743408], [-1.0011100769042969], [-1.866316556930542], [-1.9206092357635498], [-1.334311842918396], [-1.0232629776000977], [-0.31907716393470764], [-1.4126843214035034], [-1.5676143169403076], [-1.7565040588378906], [-0.43515676259994507], [-1.262113094329834], [-2.0185413360595703], [-2.4514856338500977], [-2.3709328174591064], [-1.166711449623108], [-1.644692063331604]], "result_max_similarities": -0.04808875918388367, "full_text_display": "# Copyright 2018-2020 Descartes Labs.\n#\n# Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);\n# you may not use this file except in compliance with the License.", "K": 1}, {"id": "result_5", "sample_idx": 4061, "score": -0.34027111530303955, "highlight_inds": [35], "matched_tokens_str": " not", "original_pos": 35, "full_sequence_tokens": ["#", " Copyright", " 2020", " Neural", " Networks", " and", " Deep", " Learning", " lab", ",", " M", "IPT", "\n", "#", "\n", "#", " Licensed", " under", " the", " Apache", " License", ",", " Version", " 2", ".", "0", " (", "the", " &quot;", "License", "&quot;);", "\n", "#", " you", " may", " not", " use", " this", " file", " except", " in", " compliance", " with", " the"], "sequence_similarities": [[-5.54575252532959], [-4.549306869506836], [-4.881425380706787], [-3.7304275035858154], [-5.590453147888184], [-3.2603917121887207], [-4.728013038635254], [-4.602555274963379], [-4.003800868988037], [-3.210752010345459], [-4.954519271850586], [-4.184877395629883], [-8.880095481872559], [-3.692736864089966], [-3.506105661392212], [-3.118969678878784], [-2.28361439704895], [-1.6239814758300781], [-2.6967172622680664], [-1.8917438983917236], [-1.939723253250122], [-2.52333927154541], [-0.4430340826511383], [-2.573563575744629], [-2.5865964889526367], [-2.601372718811035], [-1.9943389892578125], [-2.265500068664551], [-2.3692054748535156], [-1.801713466644287], [-1.0035358667373657], [-1.8797067403793335], [-2.0197627544403076], [-1.3398607969284058], [-1.0179738998413086], [-0.34027111530303955], [-1.368647575378418], [-1.5711076259613037], [-1.8233038187026978], [-0.44392281770706177], [-1.2623798847198486], [-1.9638490676879883], [-2.4613637924194336], [-2.343987226486206]], "normalized_similarities": [[-5.54575252532959], [-4.549306869506836], [-4.881425380706787], [-3.7304275035858154], [-5.590453147888184], [-3.2603917121887207], [-4.728013038635254], [-4.602555274963379], [-4.003800868988037], [-3.210752010345459], [-4.954519271850586], [-4.184877395629883], [-8.880095481872559], [-3.692736864089966], [-3.506105661392212], [-3.118969678878784], [-2.28361439704895], [-1.6239814758300781], [-2.6967172622680664], [-1.8917438983917236], [-1.939723253250122], [-2.52333927154541], [-0.4430340826511383], [-2.573563575744629], [-2.5865964889526367], [-2.601372718811035], [-1.9943389892578125], [-2.265500068664551], [-2.3692054748535156], [-1.801713466644287], [-1.0035358667373657], [-1.8797067403793335], [-2.0197627544403076], [-1.3398607969284058], [-1.0179738998413086], [-0.34027111530303955], [-1.368647575378418], [-1.5711076259613037], [-1.8233038187026978], [-0.44392281770706177], [-1.2623798847198486], [-1.9638490676879883], [-2.4613637924194336], [-2.343987226486206]], "result_max_similarities": -0.04808875918388367, "full_text_display": "# Copyright 2020 Neural Networks and Deep Learning lab, MIPT\n#\n# Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);\n# you may not use this file except in compliance with the", "K": 1}, {"id": "result_6", "sample_idx": 6396, "score": -0.3483164310455322, "highlight_inds": [38], "matched_tokens_str": " not", "original_pos": 38, "full_sequence_tokens": ["#", " Copyright", " 2019", " Per", "f", "Kit", "B", "ench", "marker", " Authors", ".", " All", " rights", " reserved", ".", "\n", "#", "\n", "#", " Licensed", " under", " the", " Apache", " License", ",", " Version", " 2", ".", "0", " (", "the", " &quot;", "License", "&quot;);", "\n", "#", " you", " may", " not", " use", " this", " file", " except", " in"], "sequence_similarities": [[-5.54575252532959], [-4.549306869506836], [-4.562952995300293], [-3.998047113418579], [-3.0669329166412354], [-3.7112669944763184], [-4.149603843688965], [-3.682250499725342], [-4.355813980102539], [-4.576094627380371], [-6.506964683532715], [-2.7268333435058594], [-2.198255777359009], [-2.932931423187256], [-3.0291805267333984], [-3.109886646270752], [-2.7348859310150146], [-2.97633695602417], [-2.412787437438965], [-2.2886385917663574], [-1.8154687881469727], [-2.5967533588409424], [-2.056259870529175], [-1.8619825839996338], [-2.605637550354004], [-0.6107670068740845], [-2.6598355770111084], [-2.6095566749572754], [-2.618083953857422], [-2.040045738220215], [-2.396193504333496], [-2.356832265853882], [-1.882489562034607], [-1.0514552593231201], [-1.8035341501235962], [-1.9211859703063965], [-1.3631839752197266], [-1.0509461164474487], [-0.3483164310455322], [-1.4641170501708984], [-1.5793850421905518], [-1.8484492301940918], [-0.4764988422393799], [-1.2709258794784546]], "normalized_similarities": [[-5.54575252532959], [-4.549306869506836], [-4.562952995300293], [-3.998047113418579], [-3.0669329166412354], [-3.7112669944763184], [-4.149603843688965], [-3.682250499725342], [-4.355813980102539], [-4.576094627380371], [-6.506964683532715], [-2.7268333435058594], [-2.198255777359009], [-2.932931423187256], [-3.0291805267333984], [-3.109886646270752], [-2.7348859310150146], [-2.97633695602417], [-2.412787437438965], [-2.2886385917663574], [-1.8154687881469727], [-2.5967533588409424], [-2.056259870529175], [-1.8619825839996338], [-2.605637550354004], [-0.6107670068740845], [-2.6598355770111084], [-2.6095566749572754], [-2.618083953857422], [-2.040045738220215], [-2.396193504333496], [-2.356832265853882], [-1.882489562034607], [-1.0514552593231201], [-1.8035341501235962], [-1.9211859703063965], [-1.3631839752197266], [-1.0509461164474487], [-0.3483164310455322], [-1.4641170501708984], [-1.5793850421905518], [-1.8484492301940918], [-0.4764988422393799], [-1.2709258794784546]], "result_max_similarities": -0.04808875918388367, "full_text_display": "# Copyright 2019 PerfKitBenchmarker Authors. All rights reserved.\n#\n# Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);\n# you may not use this file except in", "K": 1}, {"id": "result_7", "sample_idx": 9958, "score": -0.35928940773010254, "highlight_inds": [41], "matched_tokens_str": " redistribute", "original_pos": 41, "full_sequence_tokens": ["//", " Copyright", " (", "C", ")", " 2004", "-", "2013", " Free", " Software", " Foundation", ",", " Inc", ".", "\n", "//", "\n", "//", " This", " file", " is", " part", " of", " the", " GNU", " ISO", " C", "++", " Library", ".", "  ", "This", " library", " is", " free", "\n", "//", " software", ";", " you", " can", " redistribute", " it", " and"], "sequence_similarities": [[-3.603781223297119], [-4.229154586791992], [-3.7789018154144287], [-3.8729677200317383], [-3.3387725353240967], [-2.786813735961914], [-3.2051329612731934], [-2.618340015411377], [-4.168727874755859], [-3.005185127258301], [-3.196486234664917], [-3.88731050491333], [-2.4190011024475098], [-11.253316879272461], [-3.1188204288482666], [-3.0956969261169434], [-3.3347811698913574], [-2.9198391437530518], [-3.139075756072998], [-2.8968088626861572], [-2.654186487197876], [-2.606696844100952], [-2.471130132675171], [-3.2226014137268066], [-3.9972176551818848], [-3.202225923538208], [-4.602268218994141], [-4.489635944366455], [-4.6824822425842285], [-3.231842517852783], [-2.5784752368927], [-2.828021287918091], [-3.4620532989501953], [-2.7782821655273438], [-3.527811050415039], [-3.7654287815093994], [-3.0461983680725098], [-2.018510103225708], [-1.9038405418395996], [-2.0672123432159424], [-2.1004598140716553], [-0.35928940773010254], [-2.4154491424560547], [-1.3979275226593018]], "normalized_similarities": [[-3.603781223297119], [-4.229154586791992], [-3.7789018154144287], [-3.8729677200317383], [-3.3387725353240967], [-2.786813735961914], [-3.2051329612731934], [-2.618340015411377], [-4.168727874755859], [-3.005185127258301], [-3.196486234664917], [-3.88731050491333], [-2.4190011024475098], [-11.253316879272461], [-3.1188204288482666], [-3.0956969261169434], [-3.3347811698913574], [-2.9198391437530518], [-3.139075756072998], [-2.8968088626861572], [-2.654186487197876], [-2.606696844100952], [-2.471130132675171], [-3.2226014137268066], [-3.9972176551818848], [-3.202225923538208], [-4.602268218994141], [-4.489635944366455], [-4.6824822425842285], [-3.231842517852783], [-2.5784752368927], [-2.828021287918091], [-3.4620532989501953], [-2.7782821655273438], [-3.527811050415039], [-3.7654287815093994], [-3.0461983680725098], [-2.018510103225708], [-1.9038405418395996], [-2.0672123432159424], [-2.1004598140716553], [-0.35928940773010254], [-2.4154491424560547], [-1.3979275226593018]], "result_max_similarities": -0.04808875918388367, "full_text_display": "// Copyright (C) 2004-2013 Free Software Foundation, Inc.\n//\n// This file is part of the GNU ISO C++ Library.  This library is free\n// software; you can redistribute it and", "K": 1}, {"id": "result_8", "sample_idx": 13706, "score": -0.3660833239555359, "highlight_inds": [33], "matched_tokens_str": " not", "original_pos": 33, "full_sequence_tokens": ["//", " Copyright", " 1996", "-", "2020", " Cyber", "bot", "ics", " Ltd", ".", "\n", "//", "\n", "//", " Licensed", " under", " the", " Apache", " License", ",", " Version", " 2", ".", "0", " (", "the", " &quot;", "License", "&quot;);", "\n", "//", " you", " may", " not", " use", " this", " file", " except", " in", " compliance", " with", " the", " License", "."], "sequence_similarities": [[-3.603781223297119], [-4.229154586791992], [-3.5448083877563477], [-3.069096088409424], [-2.0659537315368652], [-4.843044757843018], [-3.6720399856567383], [-4.339948654174805], [-3.279747724533081], [-11.058344841003418], [-2.7728190422058105], [-2.8257710933685303], [-3.1992974281311035], [-2.684030055999756], [-2.7347867488861084], [-1.690412163734436], [-2.78916597366333], [-1.9022728204727173], [-1.9682923555374146], [-2.5298640727996826], [-0.6842513084411621], [-2.5092780590057373], [-2.503776788711548], [-2.3908209800720215], [-1.9802744388580322], [-2.3034889698028564], [-2.3273980617523193], [-1.9142566919326782], [-1.0095293521881104], [-1.8133289813995361], [-1.6415220499038696], [-1.3287005424499512], [-1.092545747756958], [-0.3660833239555359], [-1.4334890842437744], [-1.6542887687683105], [-1.8119516372680664], [-0.40702173113822937], [-1.2030706405639648], [-1.9866738319396973], [-2.4371750354766846], [-2.3554511070251465], [-1.131725788116455], [-1.600366234779358]], "normalized_similarities": [[-3.603781223297119], [-4.229154586791992], [-3.5448083877563477], [-3.069096088409424], [-2.0659537315368652], [-4.843044757843018], [-3.6720399856567383], [-4.339948654174805], [-3.279747724533081], [-11.058344841003418], [-2.7728190422058105], [-2.8257710933685303], [-3.1992974281311035], [-2.684030055999756], [-2.7347867488861084], [-1.690412163734436], [-2.78916597366333], [-1.9022728204727173], [-1.9682923555374146], [-2.5298640727996826], [-0.6842513084411621], [-2.5092780590057373], [-2.503776788711548], [-2.3908209800720215], [-1.9802744388580322], [-2.3034889698028564], [-2.3273980617523193], [-1.9142566919326782], [-1.0095293521881104], [-1.8133289813995361], [-1.6415220499038696], [-1.3287005424499512], [-1.092545747756958], [-0.3660833239555359], [-1.4334890842437744], [-1.6542887687683105], [-1.8119516372680664], [-0.40702173113822937], [-1.2030706405639648], [-1.9866738319396973], [-2.4371750354766846], [-2.3554511070251465], [-1.131725788116455], [-1.600366234779358]], "result_max_similarities": -0.04808875918388367, "full_text_display": "// Copyright 1996-2020 Cyberbotics Ltd.\n//\n// Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);\n// you may not use this file except in compliance with the License.", "K": 1}, {"id": "result_9", "sample_idx": 19722, "score": -0.37199193239212036, "highlight_inds": [37], "matched_tokens_str": " not", "original_pos": 37, "full_sequence_tokens": ["//", " Copyright", " JS", " Foundation", " and", " other", " contributors", ",", " http", "://", "js", ".", "found", "ation", "\n", "//", "\n", "//", " Licensed", " under", " the", " Apache", " License", ",", " Version", " 2", ".", "0", " (", "the", " &quot;", "License", "&quot;);", "\n", "//", " you", " may", " not", " use", " this", " file", " except", " in", " compliance"], "sequence_similarities": [[-3.603781223297119], [-4.229154586791992], [-6.922427654266357], [-3.622260093688965], [-2.59777569770813], [-2.863083839416504], [-2.9401233196258545], [-3.015441417694092], [-3.3509321212768555], [-1.9392099380493164], [-3.9958748817443848], [-13.30297565460205], [-4.2247772216796875], [-3.2930641174316406], [-3.5134129524230957], [-3.328616142272949], [-3.3865106105804443], [-2.861920118331909], [-2.9485201835632324], [-1.6785708665847778], [-2.709273338317871], [-2.0308172702789307], [-2.3666582107543945], [-2.682049512863159], [-0.7194366455078125], [-2.514878749847412], [-2.612210512161255], [-2.408848285675049], [-1.948555588722229], [-2.3119008541107178], [-2.2770442962646484], [-1.9342063665390015], [-1.002497673034668], [-1.8118870258331299], [-1.7181241512298584], [-1.332021951675415], [-1.1270296573638916], [-0.37199193239212036], [-1.437875747680664], [-1.697702407836914], [-1.9494712352752686], [-0.41327160596847534], [-1.2244737148284912], [-1.8745585680007935]], "normalized_similarities": [[-3.603781223297119], [-4.229154586791992], [-6.922427654266357], [-3.622260093688965], [-2.59777569770813], [-2.863083839416504], [-2.9401233196258545], [-3.015441417694092], [-3.3509321212768555], [-1.9392099380493164], [-3.9958748817443848], [-13.30297565460205], [-4.2247772216796875], [-3.2930641174316406], [-3.5134129524230957], [-3.328616142272949], [-3.3865106105804443], [-2.861920118331909], [-2.9485201835632324], [-1.6785708665847778], [-2.709273338317871], [-2.0308172702789307], [-2.3666582107543945], [-2.682049512863159], [-0.7194366455078125], [-2.514878749847412], [-2.612210512161255], [-2.408848285675049], [-1.948555588722229], [-2.3119008541107178], [-2.2770442962646484], [-1.9342063665390015], [-1.002497673034668], [-1.8118870258331299], [-1.7181241512298584], [-1.332021951675415], [-1.1270296573638916], [-0.37199193239212036], [-1.437875747680664], [-1.697702407836914], [-1.9494712352752686], [-0.41327160596847534], [-1.2244737148284912], [-1.8745585680007935]], "result_max_similarities": -0.04808875918388367, "full_text_display": "// Copyright JS Foundation and other contributors, http://js.foundation\n//\n// Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);\n// you may not use this file except in compliance", "K": 1}, {"id": "result_10", "sample_idx": 11841, "score": -0.372352659702301, "highlight_inds": [39], "matched_tokens_str": " not", "original_pos": 39, "full_sequence_tokens": ["/*", "\n", " *", " Copyright", " 2000", "-", "2009", " Jet", "Bra", "ins", " s", ".", "r", ".", "o", ".", "\n", " *", "\n", " *", " Licensed", " under", " the", " Apache", " License", ",", " Version", " 2", ".", "0", " (", "the", " &quot;", "License", "&quot;);", "\n", " *", " you", " may", " not", " use", " this", " file", " except"], "sequence_similarities": [[-4.838413715362549], [-10.442525863647461], [-5.147215366363525], [-3.459005355834961], [-3.296480178833008], [-3.511646270751953], [-2.9876389503479004], [-3.4810194969177246], [-2.930276393890381], [-3.5489017963409424], [-3.8635096549987793], [-3.208564043045044], [-3.538994073867798], [-3.349334478378296], [-3.568054676055908], [-3.330902576446533], [-2.860297679901123], [-2.6089210510253906], [-2.6520307064056396], [-2.212052583694458], [-2.752063035964966], [-1.7296204566955566], [-2.575136661529541], [-1.9955825805664062], [-2.0086987018585205], [-2.569730758666992], [-0.8658031225204468], [-2.6011548042297363], [-2.5387024879455566], [-2.4531311988830566], [-2.0068671703338623], [-2.292203903198242], [-2.3884851932525635], [-1.835526943206787], [-1.0757486820220947], [-1.9694088697433472], [-1.0639840364456177], [-1.241257905960083], [-1.054294228553772], [-0.372352659702301], [-1.4629336595535278], [-1.519726276397705], [-1.7174313068389893], [-0.5056953430175781]], "normalized_similarities": [[-4.838413715362549], [-10.442525863647461], [-5.147215366363525], [-3.459005355834961], [-3.296480178833008], [-3.511646270751953], [-2.9876389503479004], [-3.4810194969177246], [-2.930276393890381], [-3.5489017963409424], [-3.8635096549987793], [-3.208564043045044], [-3.538994073867798], [-3.349334478378296], [-3.568054676055908], [-3.330902576446533], [-2.860297679901123], [-2.6089210510253906], [-2.6520307064056396], [-2.212052583694458], [-2.752063035964966], [-1.7296204566955566], [-2.575136661529541], [-1.9955825805664062], [-2.0086987018585205], [-2.569730758666992], [-0.8658031225204468], [-2.6011548042297363], [-2.5387024879455566], [-2.4531311988830566], [-2.0068671703338623], [-2.292203903198242], [-2.3884851932525635], [-1.835526943206787], [-1.0757486820220947], [-1.9694088697433472], [-1.0639840364456177], [-1.241257905960083], [-1.054294228553772], [-0.372352659702301], [-1.4629336595535278], [-1.519726276397705], [-1.7174313068389893], [-0.5056953430175781]], "result_max_similarities": -0.04808875918388367, "full_text_display": "/*\n * Copyright 2000-2009 JetBrains s.r.o.\n *\n * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);\n * you may not use this file except", "K": 1}, {"id": "result_11", "sample_idx": 5886, "score": -0.37367039918899536, "highlight_inds": [35], "matched_tokens_str": " not", "original_pos": 35, "full_sequence_tokens": ["#", " Copyright", " 2016", " The", " Tensor", "Flow", " Authors", ".", " All", " Rights", " Reserved", ".", "\n", "#", "\n", "#", " Licensed", " under", " the", " Apache", " License", ",", " Version", " 2", ".", "0", " (", "the", " &quot;", "License", "&quot;);", "\n", "#", " you", " may", " not", " use", " this", " file", " except", " in", " compliance", " with", " the"], "sequence_similarities": [[-5.54575252532959], [-4.549306869506836], [-4.311359405517578], [-4.60206937789917], [-5.130287170410156], [-3.72741961479187], [-2.9909446239471436], [-8.298495292663574], [-2.516038656234741], [-3.0011913776397705], [-2.45115327835083], [-3.3389296531677246], [-3.103415012359619], [-2.951112747192383], [-2.849012851715088], [-2.4784951210021973], [-2.433119297027588], [-1.7878597974777222], [-2.6665003299713135], [-2.09747314453125], [-2.104820728302002], [-2.7281272411346436], [-0.7583721280097961], [-2.721637010574341], [-2.639932632446289], [-2.6528453826904297], [-2.2065539360046387], [-2.441056728363037], [-2.3818349838256836], [-2.1271257400512695], [-1.14119553565979], [-1.943493127822876], [-2.025581121444702], [-1.385253667831421], [-1.0898679494857788], [-0.37367039918899536], [-1.4997150897979736], [-1.6172016859054565], [-2.060429573059082], [-0.5517606735229492], [-1.3008099794387817], [-1.9655497074127197], [-2.501070499420166], [-2.402290105819702]], "normalized_similarities": [[-5.54575252532959], [-4.549306869506836], [-4.311359405517578], [-4.60206937789917], [-5.130287170410156], [-3.72741961479187], [-2.9909446239471436], [-8.298495292663574], [-2.516038656234741], [-3.0011913776397705], [-2.45115327835083], [-3.3389296531677246], [-3.103415012359619], [-2.951112747192383], [-2.849012851715088], [-2.4784951210021973], [-2.433119297027588], [-1.7878597974777222], [-2.6665003299713135], [-2.09747314453125], [-2.104820728302002], [-2.7281272411346436], [-0.7583721280097961], [-2.721637010574341], [-2.639932632446289], [-2.6528453826904297], [-2.2065539360046387], [-2.441056728363037], [-2.3818349838256836], [-2.1271257400512695], [-1.14119553565979], [-1.943493127822876], [-2.025581121444702], [-1.385253667831421], [-1.0898679494857788], [-0.37367039918899536], [-1.4997150897979736], [-1.6172016859054565], [-2.060429573059082], [-0.5517606735229492], [-1.3008099794387817], [-1.9655497074127197], [-2.501070499420166], [-2.402290105819702]], "result_max_similarities": -0.04808875918388367, "full_text_display": "# Copyright 2016 The TensorFlow Authors. All Rights Reserved.\n#\n# Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);\n# you may not use this file except in compliance with the", "K": 1}, {"id": "result_12", "sample_idx": 14102, "score": -0.3774273991584778, "highlight_inds": [34], "matched_tokens_str": " not", "original_pos": 34, "full_sequence_tokens": ["//", "\n", "//", " Copyright", " 2017", " The", " Ab", "se", "il", " Authors", ".", "\n", "//", "\n", "//", " Licensed", " under", " the", " Apache", " License", ",", " Version", " 2", ".", "0", " (", "the", " &quot;", "License", "&quot;);", "\n", "//", " you", " may", " not", " use", " this", " file", " except", " in", " compliance", " with", " the", " License"], "sequence_similarities": [[-3.603781223297119], [-10.614538192749023], [-3.6308951377868652], [-2.8112752437591553], [-2.2880475521087646], [-3.4771568775177], [-5.017322540283203], [-2.9721715450286865], [-3.5423192977905273], [-1.9945703744888306], [-2.075115442276001], [-2.164285898208618], [-2.182471752166748], [-2.2945823669433594], [-2.089592695236206], [-2.4916582107543945], [-1.7747557163238525], [-2.8312299251556396], [-2.0237879753112793], [-1.971129059791565], [-2.6565608978271484], [-0.8513760566711426], [-2.6105852127075195], [-2.5861785411834717], [-2.5398919582366943], [-2.072659969329834], [-2.385025978088379], [-2.371736764907837], [-2.000457763671875], [-1.1152019500732422], [-1.942629098892212], [-1.8625309467315674], [-1.3660807609558105], [-1.1117165088653564], [-0.3774273991584778], [-1.4761815071105957], [-1.7017933130264282], [-1.9021599292755127], [-0.4692233204841614], [-1.2636277675628662], [-1.9525734186172485], [-2.4654605388641357], [-2.4029693603515625], [-1.2023742198944092]], "normalized_similarities": [[-3.603781223297119], [-10.614538192749023], [-3.6308951377868652], [-2.8112752437591553], [-2.2880475521087646], [-3.4771568775177], [-5.017322540283203], [-2.9721715450286865], [-3.5423192977905273], [-1.9945703744888306], [-2.075115442276001], [-2.164285898208618], [-2.182471752166748], [-2.2945823669433594], [-2.089592695236206], [-2.4916582107543945], [-1.7747557163238525], [-2.8312299251556396], [-2.0237879753112793], [-1.971129059791565], [-2.6565608978271484], [-0.8513760566711426], [-2.6105852127075195], [-2.5861785411834717], [-2.5398919582366943], [-2.072659969329834], [-2.385025978088379], [-2.371736764907837], [-2.000457763671875], [-1.1152019500732422], [-1.942629098892212], [-1.8625309467315674], [-1.3660807609558105], [-1.1117165088653564], [-0.3774273991584778], [-1.4761815071105957], [-1.7017933130264282], [-1.9021599292755127], [-0.4692233204841614], [-1.2636277675628662], [-1.9525734186172485], [-2.4654605388641357], [-2.4029693603515625], [-1.2023742198944092]], "result_max_similarities": -0.04808875918388367, "full_text_display": "//\n// Copyright 2017 The Abseil Authors.\n//\n// Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);\n// you may not use this file except in compliance with the License", "K": 1}, {"id": "result_13", "sample_idx": 3542, "score": -0.3776777386665344, "highlight_inds": [31], "matched_tokens_str": " not", "original_pos": 31, "full_sequence_tokens": ["//", "\n", "//", " Copyright", " 2016", " Google", " Inc", ".", "\n", "//", "\n", "//", " Licensed", " under", " the", " Apache", " License", ",", " Version", " 2", ".", "0", " (", "the", " &quot;", "License", "&quot;);", "\n", "//", " you", " may", " not", " use", " this", " file", " except", " in", " compliance", " with", " the", " License", ".", "\n", "//"], "sequence_similarities": [[-3.603781223297119], [-10.614538192749023], [-3.6308951377868652], [-2.8112752437591553], [-2.312318801879883], [-3.1119656562805176], [-2.1873793601989746], [-2.9861385822296143], [-2.7144343852996826], [-2.6670985221862793], [-2.924678325653076], [-2.402611494064331], [-2.6577184200286865], [-1.843228816986084], [-2.9602787494659424], [-1.9996589422225952], [-2.1088833808898926], [-2.6398279666900635], [-0.868126392364502], [-2.658999443054199], [-2.6762125492095947], [-2.5672850608825684], [-2.0981454849243164], [-2.415570020675659], [-2.4346866607666016], [-2.175806999206543], [-1.1183207035064697], [-1.8927621841430664], [-1.8509304523468018], [-1.356747031211853], [-1.1143182516098022], [-0.3776777386665344], [-1.4581716060638428], [-1.6808664798736572], [-1.8789101839065552], [-0.41707906126976013], [-1.2347137928009033], [-1.896165132522583], [-2.4354121685028076], [-2.3842835426330566], [-1.3225581645965576], [-1.6921766996383667], [-1.6641706228256226], [-1.6396172046661377]], "normalized_similarities": [[-3.603781223297119], [-10.614538192749023], [-3.6308951377868652], [-2.8112752437591553], [-2.312318801879883], [-3.1119656562805176], [-2.1873793601989746], [-2.9861385822296143], [-2.7144343852996826], [-2.6670985221862793], [-2.924678325653076], [-2.402611494064331], [-2.6577184200286865], [-1.843228816986084], [-2.9602787494659424], [-1.9996589422225952], [-2.1088833808898926], [-2.6398279666900635], [-0.868126392364502], [-2.658999443054199], [-2.6762125492095947], [-2.5672850608825684], [-2.0981454849243164], [-2.415570020675659], [-2.4346866607666016], [-2.175806999206543], [-1.1183207035064697], [-1.8927621841430664], [-1.8509304523468018], [-1.356747031211853], [-1.1143182516098022], [-0.3776777386665344], [-1.4581716060638428], [-1.6808664798736572], [-1.8789101839065552], [-0.41707906126976013], [-1.2347137928009033], [-1.896165132522583], [-2.4354121685028076], [-2.3842835426330566], [-1.3225581645965576], [-1.6921766996383667], [-1.6641706228256226], [-1.6396172046661377]], "result_max_similarities": -0.04808875918388367, "full_text_display": "//\n// Copyright 2016 Google Inc.\n//\n// Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);\n// you may not use this file except in compliance with the License.\n//", "K": 1}, {"id": "result_14", "sample_idx": 9041, "score": -0.37912753224372864, "highlight_inds": [39], "matched_tokens_str": " not", "original_pos": 39, "full_sequence_tokens": ["/*", "\n", " *", " Copyright", " 2018", "-", "2020", " https", "://", "www", ".", "val", "ik", "tor", ".", "org", "\n", " *", "\n", " *", " Licensed", " under", " the", " Apache", " License", ",", " Version", " 2", ".", "0", " (", "the", " &quot;", "License", "&quot;);", "\n", " *", " you", " may", " not", " use", " this", " file", " except"], "sequence_similarities": [[-4.838413715362549], [-10.442525863647461], [-5.147215366363525], [-3.459005355834961], [-3.1517810821533203], [-3.286618232727051], [-2.8026132583618164], [-4.340466022491455], [-2.8644158840179443], [-2.853412628173828], [-3.6919102668762207], [-4.571341514587402], [-4.000110149383545], [-4.016670227050781], [-3.509572744369507], [-3.09293532371521], [-3.156632661819458], [-3.044872999191284], [-2.7907700538635254], [-2.4467458724975586], [-2.9344005584716797], [-1.6944189071655273], [-2.514907121658325], [-1.8715946674346924], [-1.9846041202545166], [-2.5783424377441406], [-0.7363746166229248], [-2.6029441356658936], [-2.6349973678588867], [-2.4203848838806152], [-2.0097663402557373], [-2.240281343460083], [-2.3183255195617676], [-1.9697378873825073], [-1.085523009300232], [-1.9635405540466309], [-1.1482254266738892], [-1.2522852420806885], [-1.0796198844909668], [-0.37912753224372864], [-1.4740982055664062], [-1.5474841594696045], [-1.7434087991714478], [-0.5338965654373169]], "normalized_similarities": [[-4.838413715362549], [-10.442525863647461], [-5.147215366363525], [-3.459005355834961], [-3.1517810821533203], [-3.286618232727051], [-2.8026132583618164], [-4.340466022491455], [-2.8644158840179443], [-2.853412628173828], [-3.6919102668762207], [-4.571341514587402], [-4.000110149383545], [-4.016670227050781], [-3.509572744369507], [-3.09293532371521], [-3.156632661819458], [-3.044872999191284], [-2.7907700538635254], [-2.4467458724975586], [-2.9344005584716797], [-1.6944189071655273], [-2.514907121658325], [-1.8715946674346924], [-1.9846041202545166], [-2.5783424377441406], [-0.7363746166229248], [-2.6029441356658936], [-2.6349973678588867], [-2.4203848838806152], [-2.0097663402557373], [-2.240281343460083], [-2.3183255195617676], [-1.9697378873825073], [-1.085523009300232], [-1.9635405540466309], [-1.1482254266738892], [-1.2522852420806885], [-1.0796198844909668], [-0.37912753224372864], [-1.4740982055664062], [-1.5474841594696045], [-1.7434087991714478], [-0.5338965654373169]], "result_max_similarities": -0.04808875918388367, "full_text_display": "/*\n * Copyright 2018-2020 https://www.valiktor.org\n *\n * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);\n * you may not use this file except", "K": 1}, {"id": "result_15", "sample_idx": 18842, "score": -0.38240930438041687, "highlight_inds": [35], "matched_tokens_str": " not", "original_pos": 35, "full_sequence_tokens": ["#", " Copyright", " 2015", " The", " Tensor", "Flow", " Authors", ".", " All", " Rights", " Reserved", ".", "\n", "#", "\n", "#", " Licensed", " under", " the", " Apache", " License", ",", " Version", " 2", ".", "0", " (", "the", " &quot;", "License", "&quot;);", "\n", "#", " you", " may", " not", " use", " this", " file", " except", " in", " compliance", " with", " the"], "sequence_similarities": [[-5.54575252532959], [-4.549306869506836], [-4.100479602813721], [-4.676228046417236], [-5.064634799957275], [-3.7170066833496094], [-2.9791202545166016], [-8.170819282531738], [-2.5146031379699707], [-3.0023834705352783], [-2.445279836654663], [-3.3400979042053223], [-3.097432851791382], [-2.934800863265991], [-2.842928886413574], [-2.471708059310913], [-2.4250996112823486], [-1.7883977890014648], [-2.664804697036743], [-2.100919485092163], [-2.114187240600586], [-2.7302238941192627], [-0.7617526054382324], [-2.726658821105957], [-2.63866925239563], [-2.6585519313812256], [-2.2078888416290283], [-2.4462180137634277], [-2.4060232639312744], [-2.1281235218048096], [-1.1415014266967773], [-1.9406321048736572], [-2.0236220359802246], [-1.389723539352417], [-1.0923597812652588], [-0.38240930438041687], [-1.5033738613128662], [-1.6202081441879272], [-2.0502798557281494], [-0.5576569437980652], [-1.3062399625778198], [-1.9670747518539429], [-2.5069172382354736], [-2.4046452045440674]], "normalized_similarities": [[-5.54575252532959], [-4.549306869506836], [-4.100479602813721], [-4.676228046417236], [-5.064634799957275], [-3.7170066833496094], [-2.9791202545166016], [-8.170819282531738], [-2.5146031379699707], [-3.0023834705352783], [-2.445279836654663], [-3.3400979042053223], [-3.097432851791382], [-2.934800863265991], [-2.842928886413574], [-2.471708059310913], [-2.4250996112823486], [-1.7883977890014648], [-2.664804697036743], [-2.100919485092163], [-2.114187240600586], [-2.7302238941192627], [-0.7617526054382324], [-2.726658821105957], [-2.63866925239563], [-2.6585519313812256], [-2.2078888416290283], [-2.4462180137634277], [-2.4060232639312744], [-2.1281235218048096], [-1.1415014266967773], [-1.9406321048736572], [-2.0236220359802246], [-1.389723539352417], [-1.0923597812652588], [-0.38240930438041687], [-1.5033738613128662], [-1.6202081441879272], [-2.0502798557281494], [-0.5576569437980652], [-1.3062399625778198], [-1.9670747518539429], [-2.5069172382354736], [-2.4046452045440674]], "result_max_similarities": -0.04808875918388367, "full_text_display": "# Copyright 2015 The TensorFlow Authors. All Rights Reserved.\n#\n# Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);\n# you may not use this file except in compliance with the", "K": 1}, {"id": "result_16", "sample_idx": 3035, "score": -0.38240930438041687, "highlight_inds": [35], "matched_tokens_str": " not", "original_pos": 35, "full_sequence_tokens": ["#", " Copyright", " 2015", " The", " Tensor", "Flow", " Authors", ".", " All", " Rights", " Reserved", ".", "\n", "#", "\n", "#", " Licensed", " under", " the", " Apache", " License", ",", " Version", " 2", ".", "0", " (", "the", " &quot;", "License", "&quot;);", "\n", "#", " you", " may", " not", " use", " this", " file", " except", " in", " compliance", " with", " the"], "sequence_similarities": [[-5.54575252532959], [-4.549306869506836], [-4.100479602813721], [-4.676228046417236], [-5.064634799957275], [-3.7170066833496094], [-2.9791202545166016], [-8.170819282531738], [-2.5146031379699707], [-3.0023834705352783], [-2.445279836654663], [-3.3400979042053223], [-3.097432851791382], [-2.934800863265991], [-2.842928886413574], [-2.471708059310913], [-2.4250996112823486], [-1.7883977890014648], [-2.664804697036743], [-2.100919485092163], [-2.114187240600586], [-2.7302238941192627], [-0.7617526054382324], [-2.726658821105957], [-2.63866925239563], [-2.6585519313812256], [-2.2078888416290283], [-2.4462180137634277], [-2.4060232639312744], [-2.1281235218048096], [-1.1415014266967773], [-1.9406321048736572], [-2.0236220359802246], [-1.389723539352417], [-1.0923597812652588], [-0.38240930438041687], [-1.5033738613128662], [-1.6202081441879272], [-2.0502798557281494], [-0.5576569437980652], [-1.3062399625778198], [-1.9670747518539429], [-2.5069172382354736], [-2.4046452045440674]], "normalized_similarities": [[-5.54575252532959], [-4.549306869506836], [-4.100479602813721], [-4.676228046417236], [-5.064634799957275], [-3.7170066833496094], [-2.9791202545166016], [-8.170819282531738], [-2.5146031379699707], [-3.0023834705352783], [-2.445279836654663], [-3.3400979042053223], [-3.097432851791382], [-2.934800863265991], [-2.842928886413574], [-2.471708059310913], [-2.4250996112823486], [-1.7883977890014648], [-2.664804697036743], [-2.100919485092163], [-2.114187240600586], [-2.7302238941192627], [-0.7617526054382324], [-2.726658821105957], [-2.63866925239563], [-2.6585519313812256], [-2.2078888416290283], [-2.4462180137634277], [-2.4060232639312744], [-2.1281235218048096], [-1.1415014266967773], [-1.9406321048736572], [-2.0236220359802246], [-1.389723539352417], [-1.0923597812652588], [-0.38240930438041687], [-1.5033738613128662], [-1.6202081441879272], [-2.0502798557281494], [-0.5576569437980652], [-1.3062399625778198], [-1.9670747518539429], [-2.5069172382354736], [-2.4046452045440674]], "result_max_similarities": -0.04808875918388367, "full_text_display": "# Copyright 2015 The TensorFlow Authors. All Rights Reserved.\n#\n# Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);\n# you may not use this file except in compliance with the", "K": 1}, {"id": "result_17", "sample_idx": 18642, "score": -0.38339513540267944, "highlight_inds": [35], "matched_tokens_str": " not", "original_pos": 35, "full_sequence_tokens": ["#", " Copyright", " 2019", " The", " Tensor", "Flow", " Authors", ".", " All", " Rights", " Reserved", ".", "\n", "#", "\n", "#", " Licensed", " under", " the", " Apache", " License", ",", " Version", " 2", ".", "0", " (", "the", " &quot;", "License", "&quot;);", "\n", "#", " you", " may", " not", " use", " this", " file", " except", " in", " compliance", " with", " the"], "sequence_similarities": [[-5.54575252532959], [-4.549306869506836], [-4.562952995300293], [-4.44474458694458], [-4.977781772613525], [-3.7149500846862793], [-2.947174549102783], [-8.237691879272461], [-2.5316741466522217], [-3.0091910362243652], [-2.4552979469299316], [-3.340601921081543], [-3.1019363403320312], [-2.950241804122925], [-2.852916717529297], [-2.4845621585845947], [-2.445974826812744], [-1.7931346893310547], [-2.6726913452148438], [-2.1055150032043457], [-2.107349395751953], [-2.7483973503112793], [-0.7680819034576416], [-2.7304317951202393], [-2.645083427429199], [-2.6586084365844727], [-2.2158660888671875], [-2.447927236557007], [-2.429219961166382], [-2.122431993484497], [-1.139428734779358], [-1.9451154470443726], [-2.032517910003662], [-1.3891239166259766], [-1.0914053916931152], [-0.38339513540267944], [-1.5032501220703125], [-1.6249037981033325], [-2.0603249073028564], [-0.5616929531097412], [-1.307425856590271], [-1.9661470651626587], [-2.5081839561462402], [-2.4059553146362305]], "normalized_similarities": [[-5.54575252532959], [-4.549306869506836], [-4.562952995300293], [-4.44474458694458], [-4.977781772613525], [-3.7149500846862793], [-2.947174549102783], [-8.237691879272461], [-2.5316741466522217], [-3.0091910362243652], [-2.4552979469299316], [-3.340601921081543], [-3.1019363403320312], [-2.950241804122925], [-2.852916717529297], [-2.4845621585845947], [-2.445974826812744], [-1.7931346893310547], [-2.6726913452148438], [-2.1055150032043457], [-2.107349395751953], [-2.7483973503112793], [-0.7680819034576416], [-2.7304317951202393], [-2.645083427429199], [-2.6586084365844727], [-2.2158660888671875], [-2.447927236557007], [-2.429219961166382], [-2.122431993484497], [-1.139428734779358], [-1.9451154470443726], [-2.032517910003662], [-1.3891239166259766], [-1.0914053916931152], [-0.38339513540267944], [-1.5032501220703125], [-1.6249037981033325], [-2.0603249073028564], [-0.5616929531097412], [-1.307425856590271], [-1.9661470651626587], [-2.5081839561462402], [-2.4059553146362305]], "result_max_similarities": -0.04808875918388367, "full_text_display": "# Copyright 2019 The TensorFlow Authors. All Rights Reserved.\n#\n# Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);\n# you may not use this file except in compliance with the", "K": 1}, {"id": "result_18", "sample_idx": 17935, "score": -0.38339513540267944, "highlight_inds": [35], "matched_tokens_str": " not", "original_pos": 35, "full_sequence_tokens": ["#", " Copyright", " 2019", " The", " Tensor", "Flow", " Authors", ".", " All", " Rights", " Reserved", ".", "\n", "#", "\n", "#", " Licensed", " under", " the", " Apache", " License", ",", " Version", " 2", ".", "0", " (", "the", " &quot;", "License", "&quot;);", "\n", "#", " you", " may", " not", " use", " this", " file", " except", " in", " compliance", " with", " the"], "sequence_similarities": [[-5.54575252532959], [-4.549306869506836], [-4.562952995300293], [-4.44474458694458], [-4.977781772613525], [-3.7149500846862793], [-2.947174549102783], [-8.237691879272461], [-2.5316741466522217], [-3.0091910362243652], [-2.4552979469299316], [-3.340601921081543], [-3.1019363403320312], [-2.950241804122925], [-2.852916717529297], [-2.4845621585845947], [-2.445974826812744], [-1.7931346893310547], [-2.6726913452148438], [-2.1055150032043457], [-2.107349395751953], [-2.7483973503112793], [-0.7680819034576416], [-2.7304317951202393], [-2.645083427429199], [-2.6586084365844727], [-2.2158660888671875], [-2.447927236557007], [-2.429219961166382], [-2.122431993484497], [-1.139428734779358], [-1.9451154470443726], [-2.032517910003662], [-1.3891239166259766], [-1.0914053916931152], [-0.38339513540267944], [-1.5032501220703125], [-1.6249037981033325], [-2.0603249073028564], [-0.5616929531097412], [-1.307425856590271], [-1.9661470651626587], [-2.5081839561462402], [-2.4059553146362305]], "normalized_similarities": [[-5.54575252532959], [-4.549306869506836], [-4.562952995300293], [-4.44474458694458], [-4.977781772613525], [-3.7149500846862793], [-2.947174549102783], [-8.237691879272461], [-2.5316741466522217], [-3.0091910362243652], [-2.4552979469299316], [-3.340601921081543], [-3.1019363403320312], [-2.950241804122925], [-2.852916717529297], [-2.4845621585845947], [-2.445974826812744], [-1.7931346893310547], [-2.6726913452148438], [-2.1055150032043457], [-2.107349395751953], [-2.7483973503112793], [-0.7680819034576416], [-2.7304317951202393], [-2.645083427429199], [-2.6586084365844727], [-2.2158660888671875], [-2.447927236557007], [-2.429219961166382], [-2.122431993484497], [-1.139428734779358], [-1.9451154470443726], [-2.032517910003662], [-1.3891239166259766], [-1.0914053916931152], [-0.38339513540267944], [-1.5032501220703125], [-1.6249037981033325], [-2.0603249073028564], [-0.5616929531097412], [-1.307425856590271], [-1.9661470651626587], [-2.5081839561462402], [-2.4059553146362305]], "result_max_similarities": -0.04808875918388367, "full_text_display": "# Copyright 2019 The TensorFlow Authors. All Rights Reserved.\n#\n# Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);\n# you may not use this file except in compliance with the", "K": 1}, {"id": "result_19", "sample_idx": 2509, "score": -0.3846455216407776, "highlight_inds": [39], "matched_tokens_str": " not", "original_pos": 43, "full_sequence_tokens": ["/*", "\n", " *", " Copyright", " 2014", " Red", " Hat", ",", " Inc", ".", " and", "/", "or", " its", " affiliates", ".", "\n", " *", "\n", " *", " Licensed", " under", " the", " Apache", " License", ",", " Version", " 2", ".", "0", " (", "the", " &quot;", "License", "&quot;);", "\n", " *", " you", " may", " not", " use", " this", " file", " except"], "sequence_similarities": [[-4.838413715362549], [-10.442525863647461], [-5.147215366363525], [-3.459005355834961], [-3.2260000705718994], [-3.669018268585205], [-3.173903226852417], [-3.5526552200317383], [-2.3880765438079834], [-3.5568413734436035], [-3.473766803741455], [-2.2012851238250732], [-3.118427276611328], [-3.385195016860962], [-2.973278522491455], [-3.349937915802002], [-2.9104373455047607], [-2.657942771911621], [-2.682469129562378], [-2.1656200885772705], [-2.7442286014556885], [-1.7431504726409912], [-2.6250905990600586], [-2.253615379333496], [-2.20113468170166], [-2.457451343536377], [-0.7194309830665588], [-2.6213014125823975], [-2.4338786602020264], [-2.5407352447509766], [-1.855055570602417], [-2.020110845565796], [-2.1786890029907227], [-2.1477792263031006], [-1.1006314754486084], [-2.0063719749450684], [-1.1712794303894043], [-1.3048207759857178], [-1.0857419967651367], [-0.3846455216407776], [-1.4951422214508057], [-1.4982101917266846], [-1.7295067310333252], [-0.4076911211013794]], "normalized_similarities": [[-4.838413715362549], [-10.442525863647461], [-5.147215366363525], [-3.459005355834961], [-3.2260000705718994], [-3.669018268585205], [-3.173903226852417], [-3.5526552200317383], [-2.3880765438079834], [-3.5568413734436035], [-3.473766803741455], [-2.2012851238250732], [-3.118427276611328], [-3.385195016860962], [-2.973278522491455], [-3.349937915802002], [-2.9104373455047607], [-2.657942771911621], [-2.682469129562378], [-2.1656200885772705], [-2.7442286014556885], [-1.7431504726409912], [-2.6250905990600586], [-2.253615379333496], [-2.20113468170166], [-2.457451343536377], [-0.7194309830665588], [-2.6213014125823975], [-2.4338786602020264], [-2.5407352447509766], [-1.855055570602417], [-2.020110845565796], [-2.1786890029907227], [-2.1477792263031006], [-1.1006314754486084], [-2.0063719749450684], [-1.1712794303894043], [-1.3048207759857178], [-1.0857419967651367], [-0.3846455216407776], [-1.4951422214508057], [-1.4982101917266846], [-1.7295067310333252], [-0.4076911211013794]], "result_max_similarities": -0.04808875918388367, "full_text_display": "/*\n * Copyright 2014 Red Hat, Inc. and/or its affiliates.\n *\n * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);\n * you may not use this file except", "K": 1}];
+    const globalMaxSequenceSimilarity = [-0.04808875918388367];
+    const tooltip = document.getElementById('tooltip');
+    let isNormalized = true;
+    let currentThreshold = 0.0;
+
+    function htmlDecode(input) {
+        const doc = new DOMParser().parseFromString(input, "text/html");
+        return doc.documentElement.textContent;
+    }
+
+    function getColorForSimilarity(sim, maxSim, isNormalizedMode = false, threshold = 0.0) {
+        if (sim === -Infinity || maxSim <= 0) {
+            return { backgroundColor: '#f8f9fa', color: '#6c757d' };
+        }
+
+        // Apply threshold cutoff - if below threshold, return transparent/no color
+        if (sim <= threshold) {
+            return { backgroundColor: 'transparent', color: '#6c757d' };
+        }
+
+        let t;
+        if (isNormalizedMode) {
+            // In normalized mode, use a more sensitive scale since values are 0-1
+            // Apply a power function to make smaller differences more visible
+            const normalizedT = Math.max(0, Math.min(1, sim / maxSim));
+            t = Math.pow(normalizedT, 0.7); // Makes mid-range values more visible
+        } else {
+            // In raw mode, use linear scaling
+            t = Math.max(0, Math.min(1, sim / maxSim));
+        }
+
+        let r, g, b;
+        if (isNormalizedMode) {
+            // Use white to red gradient for normalized mode (same as raw mode)
+            r = 255;
+            g = b = Math.round(255 * (1 - t));
+        } else {
+            // Original red gradient for raw mode
+            r = 255;
+            g = b = Math.round(255 * (1 - t));
+        }
+
+        const textColor = (r + g + b) / 3 > 127 ? '#000000' : '#FFFFFF';
+        return { backgroundColor: `rgb(${r},${g},${b})`, color: textColor };
+    }
+
+    function renderResult(resultData) {
+        const displayDiv = document.getElementById(`sequence_display_${resultData.id}`);
+        const fullTextDiv = document.getElementById(`full_text_display_${resultData.id}`);
+        if (!displayDiv) return;
+
+        // Choose which similarities to use based on toggle state
+        const currentSimilarities = isNormalized ? resultData.normalized_similarities : resultData.sequence_similarities;
+        const currentMaxSimilarities = isNormalized ? Array(resultData.K).fill(1) : globalMaxSequenceSimilarity; // Normalized max is always 1
+
+        displayDiv.innerHTML = '';
+        resultData.full_sequence_tokens.forEach((tokenHtml, i) => {
+            const span = document.createElement('span');
+            span.className = 'token';
+            span.innerHTML = tokenHtml;
+
+            const seqSim = currentSimilarities[i];
+            const rawSeqSim = resultData.sequence_similarities[i];
+            let maxIdx = 0
+            let K = resultData.K;
+            let maxSim = Number.NEGATIVE_INFINITY;
+            for (let j = 0; j < K; j++) {
+                if (currentSimilarities[i] && currentSimilarities[i][j] > maxSim) {
+                    maxIdx = j;
+                    maxSim = currentSimilarities[i][j];
+                }
+            }
+
+            try{
+                const colors = getColorForSimilarity(seqSim[maxIdx], currentMaxSimilarities[maxIdx], isNormalized, currentThreshold);
+                span.style.backgroundColor = colors.backgroundColor;
+                span.style.color = colors.color;
+            } catch { console.log("Get color for sim doesn't work") }
+
+            if (resultData.highlight_inds.includes(i)) {
+                span.classList.add('highlight-window');
+            }
+
+            span.onmousemove = e => {
+                tooltip.style.visibility = 'visible';
+                let rawTokenSimsText = resultData.sequence_similarities[i].map((s, j) => `Q${j+1}: ${s.toFixed(4)}`).join(', ');
+                let normalizedTokenSimsText = resultData.normalized_similarities[i].map((s, j) => `Q${j+1}: ${s.toFixed(4)}`).join(', ');
+
+                let tooltipContent = `<b>${htmlDecode(tokenHtml)}</b> (Index: ${i})<br>`;
+                if (isNormalized) {
+                    tooltipContent += `Normalized Sim: ${seqSim[maxIdx].toFixed(4)}<br>`;
+                    tooltipContent += `Raw Sim: ${rawSeqSim[maxIdx].toFixed(4)}<br>`;
+                    tooltipContent += `Normalized Token Sims: ${normalizedTokenSimsText}<br>`;
+                } else {
+                    tooltipContent += `Raw Sim: ${seqSim[maxIdx].toFixed(4)}<br>`;
+                    tooltipContent += `Raw Token Sims: ${rawTokenSimsText}<br>`;
+                }
+                tooltipContent += `Vector index match: ${maxIdx + 1}`;
+
+                tooltip.innerHTML = tooltipContent;
+                tooltip.style.left = `${e.pageX + 15}px`;
+                tooltip.style.top = `${e.pageY + 15}px`;
+            };
+            span.onmouseout = () => { tooltip.style.visibility = 'hidden'; };
+            displayDiv.appendChild(span);
+        });
+
+        if (fullTextDiv && resultData.full_text_display) {
+            fullTextDiv.innerHTML = `<p><strong>Full Text:</strong></p><p>${resultData.full_text_display}</p>`;
+        }
+    }
+
+    function toggleNormalization() {
+        isNormalized = !isNormalized;
+        const statusSpan = document.getElementById('normalizationStatus');
+        if (isNormalized) {
+            statusSpan.innerHTML = 'Showing normalized values (max = 1.0 per result) | <span style="background: linear-gradient(90deg, white, pink, red); padding: 2px 8px; border-radius: 3px; color: black; font-size: 0.8em;">White→Red colors</span>';
+            statusSpan.style.color = '#28a745';
+        } else {
+            statusSpan.innerHTML = 'Showing raw values (global scale) | <span style="background: linear-gradient(90deg, white, pink, red); padding: 2px 8px; border-radius: 3px; color: black; font-size: 0.8em;">White→Red colors</span>';
+            statusSpan.style.color = '#666';
+        }
+
+        // Re-render all results with new normalization setting
+        allResultsData.forEach(renderResult);
+    }
+
+    function updateThreshold() {
+        const slider = document.getElementById('thresholdSlider');
+        const valueDisplay = document.getElementById('thresholdValue');
+        currentThreshold = parseFloat(slider.value);
+        valueDisplay.textContent = currentThreshold.toFixed(3);
+
+        // Re-render all results with new threshold setting
+        allResultsData.forEach(renderResult);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        // Initialize normalization status (start with normalized mode)
+        const statusSpan = document.getElementById('normalizationStatus');
+        statusSpan.innerHTML = 'Showing normalized values (max = 1.0 per result) | <span style="background: linear-gradient(90deg, white, pink, red); padding: 2px 8px; border-radius: 3px; color: black; font-size: 0.8em;">White→Red colors</span>';
+        statusSpan.style.color = '#28a745';
+
+        // Set up toggle event listener
+        const toggleCheckbox = document.getElementById('normalizeToggle');
+        toggleCheckbox.addEventListener('change', toggleNormalization);
+
+        // Set up threshold slider event listener
+        const thresholdSlider = document.getElementById('thresholdSlider');
+        thresholdSlider.addEventListener('input', updateThreshold);
+
+        // Render initial results
+        allResultsData.forEach(renderResult);
+    });
+</script>
+</body></html>

@@ -1,0 +1,403 @@
+
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">
+<title>Token Activation Similarity Report</title><style>
+body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; padding: 20px; background-color: #f8f9fa; color: #212529; }
+.container { background-color: #ffffff; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.07); }
+h1 { color: #0056b3; text-align: center; margin-bottom: 25px; font-weight: 300;}
+h2 { color: #0056b3; border-bottom: 1px solid #dee2e6; padding-bottom: 10px; margin-top:0; font-size: 1.5em; font-weight: 400; }
+.token { padding: 3px 5px; margin: 2px 1px; border-radius: 4px; display: inline-block; border: 1px solid #ced4da; cursor: default; transition: transform 0.1s ease-out, box-shadow 0.1s ease-out; font-size: 0.9em; line-height: 1.5; }
+.token:hover { transform: translateY(-1px); box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+.token.highlight-window { border: 2px solid #c82333; font-weight: 600; background-color: #f8d7da !important; color: #721c24; }
+.sequence-display { margin-top: 12px; padding: 12px; border: 1px solid #e9ecef; background-color: #f8f9fa; border-radius: 6px; white-space: pre-wrap; word-wrap: break-word; line-height: 1.7; }
+.full-text-display { margin-top: 15px; padding: 10px; border: 1px solid #dfe6e9; background-color: #f9f9f9; border-radius: 6px; white-space: pre-wrap; word-wrap: break-word; line-height: 1.6; font-size: 0.95em; color: #333; }
+.tooltip { position: absolute; background-color: rgba(33,37,41,0.9); color: white; padding: 8px 12px; border-radius: 5px; visibility: hidden; z-index: 1000; pointer-events: none; font-size: 0.85em; max-width: 400px; }
+.details p { margin: 5px 0; font-size: 0.9em; color: #495057; } .details strong { color: #0056b3; }
+.footer-note { font-size: 0.8em; color: #6c757d; text-align: center; margin-top: 30px; }
+.global-max-info { background-color: #e3f2fd; padding: 10px; border-radius: 5px; margin-bottom: 20px; text-align: center; font-size: 0.9em; color: #1565c0; }
+.threshold-control { margin-top: 15px; padding: 10px; background-color: rgba(255,255,255,0.3); border-radius: 6px; }
+.threshold-slider { width: 200px; margin: 0 10px; }
+.threshold-value { font-weight: bold; color: #0056b3; }
+</style></head><body>
+<div class="explanation-section" style="background-color: #f0f8ff; padding: 15px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #0056b3;"><h3 style="color: #0056b3; margin-top: 0;">Feature Explanation</h3><div style="line-height: 1.6; color: #333;">This feature appears to act as a detector for product‐ or model–identifier strings—those alphanumeric sequences (often with capital letters, digits, and specific punctuation) that denote technical model numbers or specifications in product descriptions.</div></div><div class="global-max-info">
+    <strong>Query Type:</strong> 1-token sequences<br>
+    <strong>Query Vector Norms:</strong> ['10.0514']<br>
+    <strong>Global Max Sequence Similarities:</strong> [17.798128128051758]<br>
+    <div style="margin-top: 10px;">
+        <label style="font-weight: normal; cursor: pointer;">
+            <input type="checkbox" id="normalizeToggle" checked style="margin-right: 8px;">
+            Show Normalized Activations (divide by max per result)
+        </label>
+        <span id="normalizationStatus" style="margin-left: 15px; font-style: italic; color: #666;"></span>
+    </div>
+    <div class="threshold-control">
+        <label style="font-weight: normal;">
+            Activation Cutoff Threshold: <span class="threshold-value" id="thresholdValue">0.000</span>
+        </label><br>
+        <input type="range" id="thresholdSlider" class="threshold-slider"
+               min="0" max="1" step="0.001"
+               value="0.0">
+        <div style="margin-top: 5px; font-size: 0.8em; color: #666;">
+            No faithfulness data available - adjust manually
+        </div>
+    </div>
+</div>
+<div id="tooltip" class="tooltip"></div>
+
+<div class="container" id="container_result_0">
+    <h2>Result 1 (Sample Ref: 9052)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 17.7981</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">"T"</span></p>
+        <p><strong>Window Start Position:</strong> 14</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_0"></div>
+    <div class="full-text-display" id="full_text_display_result_0"></div>
+</div>
+<div class="container" id="container_result_1">
+    <h2>Result 2 (Sample Ref: 16734)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 16.7642</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">"DR"</span></p>
+        <p><strong>Window Start Position:</strong> 31</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_1"></div>
+    <div class="full-text-display" id="full_text_display_result_1"></div>
+</div>
+<div class="container" id="container_result_2">
+    <h2>Result 3 (Sample Ref: 6587)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 15.7121</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">" won"</span></p>
+        <p><strong>Window Start Position:</strong> 13</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_2"></div>
+    <div class="full-text-display" id="full_text_display_result_2"></div>
+</div>
+<div class="container" id="container_result_3">
+    <h2>Result 4 (Sample Ref: 4903)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 15.2616</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">"d"</span></p>
+        <p><strong>Window Start Position:</strong> 43</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_3"></div>
+    <div class="full-text-display" id="full_text_display_result_3"></div>
+</div>
+<div class="container" id="container_result_4">
+    <h2>Result 5 (Sample Ref: 14523)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 15.2095</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">" D"</span></p>
+        <p><strong>Window Start Position:</strong> 41</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_4"></div>
+    <div class="full-text-display" id="full_text_display_result_4"></div>
+</div>
+<div class="container" id="container_result_5">
+    <h2>Result 6 (Sample Ref: 7125)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 15.0484</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">"H"</span></p>
+        <p><strong>Window Start Position:</strong> 36</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_5"></div>
+    <div class="full-text-display" id="full_text_display_result_5"></div>
+</div>
+<div class="container" id="container_result_6">
+    <h2>Result 7 (Sample Ref: 5103)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 14.8965</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">" S"</span></p>
+        <p><strong>Window Start Position:</strong> 4</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_6"></div>
+    <div class="full-text-display" id="full_text_display_result_6"></div>
+</div>
+<div class="container" id="container_result_7">
+    <h2>Result 8 (Sample Ref: 3306)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 14.7892</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">"ain"</span></p>
+        <p><strong>Window Start Position:</strong> 34</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_7"></div>
+    <div class="full-text-display" id="full_text_display_result_7"></div>
+</div>
+<div class="container" id="container_result_8">
+    <h2>Result 9 (Sample Ref: 254)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 14.6765</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">"atar"</span></p>
+        <p><strong>Window Start Position:</strong> 28</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_8"></div>
+    <div class="full-text-display" id="full_text_display_result_8"></div>
+</div>
+<div class="container" id="container_result_9">
+    <h2>Result 10 (Sample Ref: 12855)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 14.6717</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">"�"</span></p>
+        <p><strong>Window Start Position:</strong> 16</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_9"></div>
+    <div class="full-text-display" id="full_text_display_result_9"></div>
+</div>
+<div class="container" id="container_result_10">
+    <h2>Result 11 (Sample Ref: 2370)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 14.5430</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">"x"</span></p>
+        <p><strong>Window Start Position:</strong> 40</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_10"></div>
+    <div class="full-text-display" id="full_text_display_result_10"></div>
+</div>
+<div class="container" id="container_result_11">
+    <h2>Result 12 (Sample Ref: 1622)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 14.4272</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">" H"</span></p>
+        <p><strong>Window Start Position:</strong> 43</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_11"></div>
+    <div class="full-text-display" id="full_text_display_result_11"></div>
+</div>
+<div class="container" id="container_result_12">
+    <h2>Result 13 (Sample Ref: 2995)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 14.3940</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">"X"</span></p>
+        <p><strong>Window Start Position:</strong> 22</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_12"></div>
+    <div class="full-text-display" id="full_text_display_result_12"></div>
+</div>
+<div class="container" id="container_result_13">
+    <h2>Result 14 (Sample Ref: 16703)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 14.2275</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">" H"</span></p>
+        <p><strong>Window Start Position:</strong> 13</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_13"></div>
+    <div class="full-text-display" id="full_text_display_result_13"></div>
+</div>
+<div class="container" id="container_result_14">
+    <h2>Result 15 (Sample Ref: 4597)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 14.1971</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">"X"</span></p>
+        <p><strong>Window Start Position:</strong> 20</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_14"></div>
+    <div class="full-text-display" id="full_text_display_result_14"></div>
+</div>
+<div class="container" id="container_result_15">
+    <h2>Result 16 (Sample Ref: 10837)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 14.1743</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">"y"</span></p>
+        <p><strong>Window Start Position:</strong> 10</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_15"></div>
+    <div class="full-text-display" id="full_text_display_result_15"></div>
+</div>
+<div class="container" id="container_result_16">
+    <h2>Result 17 (Sample Ref: 14817)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 14.1700</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">"Z"</span></p>
+        <p><strong>Window Start Position:</strong> 38</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_16"></div>
+    <div class="full-text-display" id="full_text_display_result_16"></div>
+</div>
+<div class="container" id="container_result_17">
+    <h2>Result 18 (Sample Ref: 16409)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 14.1197</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">"K"</span></p>
+        <p><strong>Window Start Position:</strong> 19</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_17"></div>
+    <div class="full-text-display" id="full_text_display_result_17"></div>
+</div>
+<div class="container" id="container_result_18">
+    <h2>Result 19 (Sample Ref: 6868)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 14.1133</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">" Edward"</span></p>
+        <p><strong>Window Start Position:</strong> 11</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_18"></div>
+    <div class="full-text-display" id="full_text_display_result_18"></div>
+</div>
+<div class="container" id="container_result_19">
+    <h2>Result 20 (Sample Ref: 3216)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 14.0571</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">" b"</span></p>
+        <p><strong>Window Start Position:</strong> 34</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_19"></div>
+    <div class="full-text-display" id="full_text_display_result_19"></div>
+</div>
+<script>
+    const allResultsData = [{"id": "result_0", "sample_idx": 9052, "score": 17.798128128051758, "highlight_inds": [14], "matched_tokens_str": "T", "original_pos": 14, "full_sequence_tokens": ["Two", " of", " my", " favorite", " modes", " the", "ses", " days", " is", " J", "T", "65", " and", " J", "T", "9", ".", " Mac", "Logger", "DX", ",", " WS", "J", "T", "-", "X", " and", " J", "T", "-", "Bridge", " make", " a", " powerful", " and", " fun", " combination", ".", " I", " have", " grown", " to", " enjoy", " the"], "sequence_similarities": [[-67.80814361572266], [-7.112031936645508], [-1.2548234462738037], [-4.212970733642578], [-6.2716474533081055], [-1.7321816682815552], [0.17575760185718536], [3.8793182373046875], [4.885895729064941], [3.323953151702881], [13.770702362060547], [8.476509094238281], [6.191912651062012], [12.742923736572266], [17.798128128051758], [6.5871758460998535], [-115.60591125488281], [3.022406816482544], [3.481985569000244], [2.7621679306030273], [-0.005363106727600098], [2.2868075370788574], [7.120437145233154], [11.798734664916992], [2.062340021133423], [6.197924613952637], [-0.24235355854034424], [6.839053153991699], [14.213736534118652], [4.300899982452393], [1.8361291885375977], [2.6367225646972656], [1.7198989391326904], [0.2637258768081665], [0.6474005579948425], [-2.172849416732788], [-8.533807754516602], [-3.7393078804016113], [-1.0606756210327148], [-1.3134617805480957], [1.4940547943115234], [4.269733428955078], [-6.8056721687316895], [-5.505021095275879]], "normalized_similarities": [[-3.809846878051758], [-0.39959436655044556], [-0.0705031156539917], [-0.2367086410522461], [-0.352376788854599], [-0.09732381254434586], [0.009875060990452766], [0.2179621458053589], [0.27451738715171814], [0.18675857782363892], [0.7737163305282593], [0.47625845670700073], [0.34789684414863586], [0.7159698605537415], [1.0], [0.37010496854782104], [-6.495397090911865], [0.16981598734855652], [0.1956377476453781], [0.15519429743289948], [-0.00030132982647046447], [0.12848584353923798], [0.40006664395332336], [0.6629199981689453], [0.11587398499250412], [0.348234623670578], [-0.013616800308227539], [0.38425686955451965], [0.7986084818840027], [0.24164900183677673], [0.1031641736626625], [0.14814606308937073], [0.09663369506597519], [0.014817618764936924], [0.036374643445014954], [-0.12208303064107895], [-0.47947782278060913], [-0.2100955694913864], [-0.059594783931970596], [-0.07379774749279022], [0.08394449204206467], [0.23989789187908173], [-0.3823813498020172], [-0.3093033730983734]], "result_max_similarities": 17.798128128051758, "full_text_display": "Two of my favorite modes theses days is JT65 and JT9. MacLoggerDX, WSJT-X and JT-Bridge make a powerful and fun combination. I have grown to enjoy the", "K": 1}, {"id": "result_1", "sample_idx": 16734, "score": 16.764209747314453, "highlight_inds": [31], "matched_tokens_str": "DR", "original_pos": 31, "full_sequence_tokens": ["Com", "pa", "q", " Comp", "aq", " Pres", "ario", " B", "1955", "TU", " (", "D", "DR", "2", "-", "533", "MHz", ")", " memory", " upgrade", " specification", ",", " Comp", "aq", " Pres", "ario", " B", "1955", "TU", " (", "D", "DR", "2", "-", "533", "MHz", ")", " maximum", " memory", ",", " memory", " speed", ",", " and"], "sequence_similarities": [[-54.61292266845703], [-11.565017700195312], [-5.238641738891602], [-5.084763050079346], [-2.035602569580078], [-0.971982479095459], [-4.161037921905518], [-0.3094322681427002], [-0.5243178606033325], [4.664131164550781], [1.0329477787017822], [10.41784954071045], [12.658069610595703], [8.369170188903809], [5.8845014572143555], [7.832552909851074], [3.225386142730713], [1.1595760583877563], [1.8659124374389648], [-2.0147242546081543], [-2.6760575771331787], [1.2849417924880981], [2.103423833847046], [2.5712785720825195], [3.6003341674804688], [0.9155493974685669], [2.584615707397461], [4.0539350509643555], [9.119921684265137], [4.920444488525391], [13.88992977142334], [16.764209747314453], [11.586525917053223], [7.67326545715332], [9.953521728515625], [1.704064130783081], [2.4337360858917236], [-0.1394948959350586], [-0.8703415393829346], [-0.36671483516693115], [1.475355863571167], [-3.185243606567383], [0.8725363612174988], [-2.3564398288726807]], "normalized_similarities": [[-3.068464517593384], [-0.6497884392738342], [-0.2943366765975952], [-0.28569090366363525], [-0.11437172442674637], [-0.05461150035262108], [-0.23379075527191162], [-0.017385663464665413], [-0.029459157958626747], [0.2620573937892914], [0.05803687870502472], [0.5853340029716492], [0.7112023234367371], [0.47022753953933716], [0.3306247293949127], [0.4400773346424103], [0.18122053146362305], [0.06515157222747803], [0.104837566614151], [-0.1131986603140831], [-0.15035612881183624], [0.07219533622264862], [0.11818230897188187], [0.14446903765201569], [0.2022872418165207], [0.0514407679438591], [0.1452184021472931], [0.22777311503887177], [0.5124090313911438], [0.2764585316181183], [0.7804151773452759], [0.941908597946167], [0.6509968638420105], [0.431127667427063], [0.5592454075813293], [0.09574400633573532], [0.13674113154411316], [-0.00783761590719223], [-0.04890073463320732], [-0.020604124292731285], [0.08289387822151184], [-0.17896509170532227], [0.049024052917957306], [-0.13239818811416626]], "result_max_similarities": 17.798128128051758, "full_text_display": "Compaq Compaq Presario B1955TU (DDR2-533MHz) memory upgrade specification, Compaq Presario B1955TU (DDR2-533MHz) maximum memory, memory speed, and", "K": 1}, {"id": "result_2", "sample_idx": 6587, "score": 15.712066650390625, "highlight_inds": [13], "matched_tokens_str": " won", "original_pos": 13, "full_sequence_tokens": ["It", " took", " Catherine", " Ch", "idge", "y", " 13", " years", " to", " write", " the", " novel", " that", " won", " the", " Ac", "orn", " Foundation", " Fiction", " Prize", " at", " the", " O", "ck", "ham", " New", " Zealand", " Book", " Awards", ".", "\n", "\u201c", "We", " have", " called", " up", " the", " spirits", " and", " can", " no", " longer", " get", " rid"], "sequence_similarities": [[-54.51890563964844], [2.8901829719543457], [7.438636302947998], [11.682004928588867], [9.255304336547852], [5.226463317871094], [1.1718366146087646], [2.669276475906372], [3.0756726264953613], [2.22758150100708], [2.962531089782715], [3.77565860748291], [6.549860954284668], [15.712066650390625], [7.846780300140381], [7.526679992675781], [8.647570610046387], [6.646709442138672], [1.2288405895233154], [-1.6629252433776855], [-1.352674961090088], [-0.008511722087860107], [3.597026824951172], [-0.06749308109283447], [5.789002418518066], [2.301931619644165], [1.2140328884124756], [2.413813591003418], [-1.3977773189544678], [-117.34840393066406], [3.0032694339752197], [-2.8524606227874756], [0.9050487279891968], [-0.8923709392547607], [-3.991609811782837], [-1.819310188293457], [-0.9974036812782288], [-4.761084079742432], [-3.2167415618896484], [0.9278285503387451], [4.137901782989502], [1.0784456729888916], [1.2795889377593994], [-2.5678305625915527]], "normalized_similarities": [[-3.0631818771362305], [0.1623869091272354], [0.41794487833976746], [0.65636146068573], [0.5200155973434448], [0.29365241527557373], [0.06584043800830841], [0.14997512102127075], [0.17280876636505127], [0.1251581907272339], [0.1664518415927887], [0.21213796734809875], [0.36800840497016907], [0.8827931880950928], [0.44087672233581543], [0.42289167642593384], [0.4858696758747101], [0.3734499216079712], [0.06904324889183044], [-0.09343259036540985], [-0.07600096613168716], [-0.00047823693603277206], [0.20210140943527222], [-0.003792144823819399], [0.3252590596675873], [0.12933559715747833], [0.06821126490831375], [0.13562177121639252], [-0.07853507250547409], [-6.5933003425598145], [0.16874074935913086], [-0.16026745736598969], [0.05085078254342079], [-0.05013846978545189], [-0.22427132725715637], [-0.10221918672323227], [-0.056039806455373764], [-0.2675047516822815], [-0.18073482811450958], [0.05213068053126335], [0.23249083757400513], [0.06059320643544197], [0.0718945786356926], [-0.14427532255649567]], "result_max_similarities": 17.798128128051758, "full_text_display": "It took Catherine Chidgey 13 years to write the novel that won the Acorn Foundation Fiction Prize at the Ockham New Zealand Book Awards.\n\u201cWe have called up the spirits and can no longer get rid", "K": 1}, {"id": "result_3", "sample_idx": 4903, "score": 15.261553764343262, "highlight_inds": [16], "matched_tokens_str": "d", "original_pos": 43, "full_sequence_tokens": ["Please", " tell", " me", " that", " it", "&#x27;s", " a", " typ", "o", " that", " he", " has", " Hardy", " 36", " (", "8", "d", "6", ")?", "?", " Max", " of", " 90", "hp", "!!", " If", " it", " were", " Hardy", " 3", " that", " would", " still", " give", " him", " 7", "d", "6", " (", "stats", ")", " plus", " 2", "d"], "sequence_similarities": [[-47.54623031616211], [-0.1702219843864441], [3.164862632751465], [0.006264090538024902], [7.2259521484375], [5.496415138244629], [6.913222312927246], [4.679665565490723], [3.480067014694214], [5.497220993041992], [1.6742770671844482], [6.0320539474487305], [2.3335564136505127], [3.2705466747283936], [6.3440399169921875], [11.818005561828613], [15.261553764343262], [10.190370559692383], [2.4787092208862305], [0.35830163955688477], [3.829329490661621], [0.9646430611610413], [3.4702937602996826], [3.724071741104126], [-1.5485222339630127], [-0.7620759010314941], [7.341625690460205], [-0.9805391430854797], [1.9168076515197754], [-1.357244610786438], [4.833957672119141], [6.4462385177612305], [8.281665802001953], [1.815675973892212], [4.678894996643066], [1.7377890348434448], [8.4794921875], [9.239652633666992], [7.544501781463623], [0.9239049553871155], [5.154266834259033], [2.407787799835205], [6.029793739318848], [10.857816696166992]], "normalized_similarities": [[-2.671417474746704], [-0.00956403836607933], [0.17781996726989746], [0.0003519522142596543], [0.40599507093429565], [0.30881983041763306], [0.3884241282939911], [0.2629302144050598], [0.19552993774414062], [0.30886512994766235], [0.09407040476799011], [0.338915079832077], [0.1311124563217163], [0.18375790119171143], [0.35644420981407166], [0.6640027165412903], [0.8574808239936829], [0.5725529193878174], [0.1392679661512375], [0.020131422206759453], [0.2151535004377365], [0.05419912934303284], [0.19498082995414734], [0.20923951268196106], [-0.08700478076934814], [-0.04281775653362274], [0.4124942719936371], [-0.05509226396679878], [0.10769715160131454], [-0.07625771313905716], [0.2715992033481598], [0.3621863126754761], [0.46531105041503906], [0.10201499611139297], [0.2628869116306305], [0.09763886779546738], [0.47642606496810913], [0.5191361904144287], [0.423893004655838], [0.05191023275256157], [0.2895960211753845], [0.1352832019329071], [0.33878809213638306], [0.6100538372993469]], "result_max_similarities": 17.798128128051758, "full_text_display": "Please tell me that it&#x27;s a typo that he has Hardy 36 (8d6)?? Max of 90hp!! If it were Hardy 3 that would still give him 7d6 (stats) plus 2d", "K": 1}, {"id": "result_4", "sample_idx": 14523, "score": 15.209512710571289, "highlight_inds": [41], "matched_tokens_str": " D", "original_pos": 41, "full_sequence_tokens": ["\u76f8", "\u6a5f", "\ufffd", "\ufffd", "\ufffd", "\ufffd", " Canon", " NB", "6", "L", " SD", "770", " SD", "1200", " D", "10", " S", "90", " S", "95", "\u597d", "\u7528", "\ufffd", "\ufffd", "\ufffd", "??", "\n", "\u76f8", "\u6a5f", "\ufffd", "\ufffd", "\ufffd", "\ufffd", " Canon", " NB", "6", "L", " SD", "770", " SD", "1200", " D", "10", " S"], "sequence_similarities": [[-32.97734451293945], [-7.651742458343506], [-7.575423240661621], [-0.2656571865081787], [2.5561256408691406], [0.37709975242614746], [-2.4281070232391357], [4.9446234703063965], [4.220739841461182], [4.637901782989502], [2.6906657218933105], [4.738190650939941], [6.497077941894531], [8.140968322753906], [9.082574844360352], [9.05398941040039], [9.653179168701172], [5.006434440612793], [8.391898155212402], [4.969934463500977], [0.4539909362792969], [-2.1984972953796387], [3.9473094940185547], [0.7442090511322021], [-2.0094311237335205], [-1.9996212720870972], [-107.44873046875], [1.527155876159668], [1.6203734874725342], [-3.3167619705200195], [-1.643121361732483], [1.2385649681091309], [-2.4548163414001465], [-0.3128337860107422], [7.547889709472656], [4.380247592926025], [7.407061576843262], [5.116673946380615], [6.906571388244629], [8.788427352905273], [10.031515121459961], [15.209512710571289], [13.200543403625488], [15.066404342651367]], "normalized_similarities": [[-1.852854609489441], [-0.4299183785915375], [-0.4256303310394287], [-0.014926130883395672], [0.1436176598072052], [0.02118760719895363], [-0.13642485439777374], [0.277817040681839], [0.23714515566825867], [0.26058366894721985], [0.15117689967155457], [0.26621848344802856], [0.3650427758693695], [0.45740586519241333], [0.5103106498718262], [0.5087046027183533], [0.5423704981803894], [0.2812899351119995], [0.4715045392513275], [0.2792391777038574], [0.025507790967822075], [-0.12352407723665237], [0.22178228199481964], [0.04181389510631561], [-0.11290126293897629], [-0.11235009133815765], [-6.03708028793335], [0.0858042985200882], [0.09104179590940475], [-0.18635453283786774], [-0.09231989830732346], [0.06958962231874466], [-0.13792553544044495], [-0.017576780170202255], [0.4240833520889282], [0.24610720574855804], [0.41617080569267273], [0.287483811378479], [0.3880504369735718], [0.4937838017940521], [0.5636275410652161], [0.8545568585395813], [0.7416815757751465], [0.8465162515640259]], "result_max_similarities": 17.798128128051758, "full_text_display": "\u76f8\u6a5f\u96fb\u6c60 Canon NB6L SD770 SD1200 D10 S90 S95\u597d\u7528\u55ce??\n\u76f8\u6a5f\u96fb\u6c60 Canon NB6L SD770 SD1200 D10 S", "K": 1}, {"id": "result_5", "sample_idx": 7125, "score": 15.048429489135742, "highlight_inds": [36], "matched_tokens_str": "H", "original_pos": 36, "full_sequence_tokens": ["F", "Q", "56", " ship", "building", " steel", " plate", " mechanical", " properties", "-", "BB", "N", " STE", "EL", " produced", " and", " exported", " A", "STM", " A", "131", ",", " AH", "32", ",", " DH", "32", ",", " E", "H", "32", ",", " AH", "36", ",", " E", "H", "36", ",", " ABS", ",", " LR", ",", " GL"], "sequence_similarities": [[-77.66410827636719], [-3.846510887145996], [-0.025481462478637695], [1.1192893981933594], [4.208457946777344], [-0.6324244141578674], [-2.5258493423461914], [0.5019445419311523], [-0.23988962173461914], [-2.754906415939331], [5.388553142547607], [7.157968521118164], [3.4886088371276855], [-0.7249171733856201], [-3.091926097869873], [-0.16888713836669922], [0.32968902587890625], [4.630361557006836], [2.7240755558013916], [7.431491851806641], [-0.3038482666015625], [2.3895416259765625], [7.114797592163086], [4.838026523590088], [5.397983074188232], [8.314146041870117], [2.2624919414520264], [5.039202690124512], [6.249410152435303], [9.50802230834961], [5.384149551391602], [6.2685933113098145], [12.889108657836914], [6.108938217163086], [7.78640079498291], [11.730743408203125], [15.048429489135742], [6.35893440246582], [7.790724754333496], [6.064080238342285], [9.239006042480469], [7.537903785705566], [7.277401447296143], [6.38242244720459]], "normalized_similarities": [[-4.363611221313477], [-0.21611884236335754], [-0.0014316934393718839], [0.06288804113864899], [0.23645508289337158], [-0.03553319722414017], [-0.14191657304763794], [0.028202097862958908], [-0.013478362001478672], [-0.15478630363941193], [0.3027595579624176], [0.4021753668785095], [0.19600987434387207], [-0.04072996601462364], [-0.17372198402881622], [-0.009489038959145546], [0.0185238029807806], [0.26016002893447876], [0.15305404365062714], [0.4175434410572052], [-0.01707192324101925], [0.13425803184509277], [0.399749755859375], [0.2718278169631958], [0.30328938364982605], [0.4671359956264496], [0.12711966037750244], [0.28313106298446655], [0.35112738609313965], [0.5342147350311279], [0.30251213908195496], [0.35220518708229065], [0.7241833806037903], [0.3432348668575287], [0.4374842643737793], [0.659099817276001], [0.8455063104629517], [0.3572810888290405], [0.4377271831035614], [0.3407144844532013], [0.5190998911857605], [0.42352229356765747], [0.40888577699661255], [0.35860076546669006]], "result_max_similarities": 17.798128128051758, "full_text_display": "FQ56 shipbuilding steel plate mechanical properties-BBN STEEL produced and exported ASTM A131, AH32, DH32, EH32, AH36, EH36, ABS, LR, GL", "K": 1}, {"id": "result_6", "sample_idx": 5103, "score": 14.8965425491333, "highlight_inds": [4], "matched_tokens_str": " S", "original_pos": 4, "full_sequence_tokens": ["THIS", " TH", "ING", " IS", " S", "WE", "ET", "!!!", " 2017", " CHE", "V", "Y", " IMP", "AL", "A", " PRE", "MI", "ER", " 2", "L", "Z", " BL", "ACK", " ON", " BL", "ACK", " WITH", " 20", "&quot;", " ALL", "OY", " WHE", "EL", "S", "!", " THIS", " BE", "AUT", "Y", " IS", " LO", "AD", "ED", " WITH"], "sequence_similarities": [[-34.09599685668945], [7.924676418304443], [6.36745023727417], [5.8090596199035645], [14.8965425491333], [9.131458282470703], [7.906430244445801], [3.955265998840332], [2.7426059246063232], [6.5360941886901855], [-3.1957061290740967], [1.205756664276123], [1.6128108501434326], [3.098006248474121], [3.118955373764038], [3.7171316146850586], [-5.880926132202148], [-5.635422706604004], [-0.058063507080078125], [5.0321550369262695], [7.910655975341797], [3.7191290855407715], [2.64546537399292], [5.282677173614502], [6.303062438964844], [6.24819278717041], [3.931797504425049], [2.220315456390381], [1.9716525077819824], [1.7483443021774292], [-2.9247450828552246], [-2.4523582458496094], [0.4666665196418762], [4.350430965423584], [-2.383601427078247], [3.107022762298584], [0.4673265814781189], [2.5570931434631348], [1.3006188869476318], [-0.4936103820800781], [0.9350929260253906], [6.044247627258301], [4.066428184509277], [6.3257575035095215]], "normalized_similarities": [[-1.9157068729400635], [0.4452533721923828], [0.3577595353126526], [0.3263859748840332], [0.8369724154472351], [0.5130572319030762], [0.4442282021045685], [0.22222933173179626], [0.15409518778324127], [0.3672349154949188], [-0.17955292761325836], [0.06774625927209854], [0.09061688184738159], [0.17406359314918518], [0.1752406358718872], [0.20884957909584045], [-0.33042386174201965], [-0.3166300654411316], [-0.003262337762862444], [0.28273507952690125], [0.44446560740470886], [0.20896181464195251], [0.14863727986812592], [0.2968108355998993], [0.35414186120033264], [0.3510589897632599], [0.22091072797775269], [0.12474994361400604], [0.11077864468097687], [0.09823191910982132], [-0.16432879865169525], [-0.13778743147850037], [0.02621997706592083], [0.24443194270133972], [-0.13392427563667297], [0.1745702028274536], [0.026257064193487167], [0.14367203414440155], [0.07307615876197815], [-0.027733836323022842], [0.052538834512233734], [0.33960017561912537], [0.22847504913806915], [0.35541701316833496]], "result_max_similarities": 17.798128128051758, "full_text_display": "THIS THING IS SWEET!!! 2017 CHEVY IMPALA PREMIER 2LZ BLACK ON BLACK WITH 20&quot; ALLOY WHEELS! THIS BEAUTY IS LOADED WITH", "K": 1}, {"id": "result_7", "sample_idx": 3306, "score": 14.789241790771484, "highlight_inds": [34], "matched_tokens_str": "ain", "original_pos": 34, "full_sequence_tokens": ["If", " a", " third", " party", " establishes", " a", " link", " on", " their", " website", " to", " the", " G", "ain", "deg", "ia", " website", ",", " this", " does", " not", " imply", " an", " institutional", " or", " commercial", " relationship", " between", " the", " two", " entities", " or", " that", " G", "ain", "deg", "ia", " accepts", " the", " contents", " or", " services", " that", " they"], "sequence_similarities": [[-70.39372253417969], [1.352475881576538], [0.2888932228088379], [4.102070331573486], [0.8106505870819092], [-0.23429059982299805], [-4.552170276641846], [0.46123600006103516], [3.6803195476531982], [-4.10023307800293], [0.292389452457428], [0.9332681894302368], [1.9466532468795776], [7.166159629821777], [0.6010757684707642], [2.248880386352539], [-1.271878957748413], [-0.7665884494781494], [-0.9289478063583374], [3.3395230770111084], [2.664660930633545], [0.517127513885498], [3.282559394836426], [4.378767967224121], [3.572409152984619], [-4.352169036865234], [-1.9479520320892334], [-6.700197219848633], [0.37929606437683105], [-0.34589684009552], [-0.6337177753448486], [3.59246826171875], [3.3338942527770996], [8.225540161132812], [14.789241790771484], [6.717474460601807], [2.1007659435272217], [0.07157182693481445], [3.1027541160583496], [2.478708028793335], [-0.062297940254211426], [2.7189419269561768], [2.7710790634155273], [4.7048563957214355]], "normalized_similarities": [[-3.9551193714141846], [0.07598978281021118], [0.016231663525104523], [0.23047763109207153], [0.04554695636034012], [-0.013163777999579906], [-0.2557668089866638], [0.025914860889315605], [0.206781268119812], [-0.23037439584732056], [0.016428101807832718], [0.052436310797929764], [0.1093740463256836], [0.4026355743408203], [0.033771853893995285], [0.1263548880815506], [-0.07146138697862625], [-0.04307129606604576], [-0.05219356715679169], [0.18763339519500732], [0.14971579611301422], [0.029055163264274597], [0.18443284928798676], [0.24602407217025757], [0.2007182538509369], [-0.244529590010643], [-0.10944701731204987], [-0.376455157995224], [0.02131100930273533], [-0.019434450194239616], [-0.035605866461992264], [0.20184528827667236], [0.1873171329498291], [0.46215760707855225], [0.8309436440467834], [0.3774259090423584], [0.11803296953439713], [0.0040213121101260185], [0.17433036863803864], [0.1392679065465927], [-0.003500252263620496], [0.15276561677455902], [0.15569497644901276], [0.26434558629989624]], "result_max_similarities": 17.798128128051758, "full_text_display": "If a third party establishes a link on their website to the Gaindegia website, this does not imply an institutional or commercial relationship between the two entities or that Gaindegia accepts the contents or services that they", "K": 1}, {"id": "result_8", "sample_idx": 254, "score": 14.676530838012695, "highlight_inds": [28], "matched_tokens_str": "atar", "original_pos": 28, "full_sequence_tokens": ["Commission", "ed", " by", " H", "ache", "tte", " India", ",", " to", " create", " the", " cover", " art", " for", " Dark", " Things", ",", " a", " dark", " fantasy", " novel", ",", " by", " S", "uk", "anya", " Ven", "k", "atar", "ag", "hav", "an", ".", " As", "ma", " is", " mixed", " media", " artist", " based", " in", " P", "une", ","], "sequence_similarities": [[-50.243778228759766], [-8.544352531433105], [-4.209746360778809], [4.186737060546875], [-2.895341634750366], [1.3400814533233643], [-0.8552001714706421], [0.023115158081054688], [1.6553375720977783], [-2.0814621448516846], [-0.19672024250030518], [1.6500080823898315], [0.6317681074142456], [-4.535706996917725], [0.3394005298614502], [-1.9730470180511475], [-0.6983667612075806], [3.0958080291748047], [7.062385559082031], [-0.32787156105041504], [-0.13406020402908325], [7.614925384521484], [4.693025588989258], [4.358753204345703], [1.4194583892822266], [5.793117046356201], [5.0220489501953125], [7.466832637786865], [14.676530838012695], [2.405364751815796], [8.689729690551758], [6.4195075035095215], [-109.11625671386719], [1.325041651725769], [1.3788418769836426], [-3.6475119590759277], [-1.148077130317688], [-0.5656748414039612], [-0.776104211807251], [1.790825366973877], [-3.9445316791534424], [0.33396536111831665], [-2.1735117435455322], [-2.2450079917907715]], "normalized_similarities": [[-2.822981119155884], [-0.4800702929496765], [-0.2365274727344513], [0.23523467779159546], [-0.16267675161361694], [0.0752933919429779], [-0.04805000498890877], [0.0012987409718334675], [0.09300627559423447], [-0.11694837361574173], [-0.01105286180973053], [0.0927068293094635], [0.03549632430076599], [-0.25484180450439453], [0.019069449976086617], [-0.11085699498653412], [-0.03923821449279785], [0.17394009232521057], [0.39680495858192444], [-0.018421687185764313], [-0.007532264105975628], [0.42784979939460754], [0.2636808454990387], [0.24489952623844147], [0.07975324243307114], [0.32549023628234863], [0.2821672558784485], [0.41952911019325256], [0.8246109485626221], [0.1351470649242401], [0.4882383942604065], [0.36068442463874817], [-6.130771636962891], [0.0744483694434166], [0.07747117429971695], [-0.20493794977664948], [-0.06450549513101578], [-0.03178282827138901], [-0.04360594600439072], [0.10061874985694885], [-0.22162620723247528], [0.0187640730291605], [-0.12212024629116058], [-0.12613731622695923]], "result_max_similarities": 17.798128128051758, "full_text_display": "Commissioned by Hachette India, to create the cover art for Dark Things, a dark fantasy novel, by Sukanya Venkataraghavan. Asma is mixed media artist based in Pune,", "K": 1}, {"id": "result_9", "sample_idx": 12855, "score": 14.671669960021973, "highlight_inds": [16], "matched_tokens_str": "\ufffd", "original_pos": 16, "full_sequence_tokens": ["\ufffd", "\ufffd", "\ufffd", "\ufffd", "\ufffd", "\ufffd", "\ufffd", "\ufffd", "\ufffd", "\ufffd", "\ufffd", "\ufffd", "\ufffd", "\uc5d0", "\uc11c", " \ufffd", "\ufffd", "\ufffd", "\ufffd", "\ufffd\ufffd", "\uc758", " \ufffd", "\ufffd", "\ufffd", "\ufffd", "\ufffd", "\ufffd", "\ufffd", "\ufffd", "\uc744", " \ufffd", "\ufffd", "\ufffd", "\ufffd", "\ufffd", "\ud558", "\ufffd", "\ufffd", " \ufffd", "\ufffd", "\ufffd", "\ud558", "\ub294", " population"], "sequence_similarities": [[-3.7898201942443848], [4.920408248901367], [3.0948214530944824], [9.194259643554688], [4.371623516082764], [4.981689929962158], [3.039562225341797], [6.582546234130859], [2.300741672515869], [1.1917128562927246], [7.345376968383789], [5.792150974273682], [9.500054359436035], [1.7495758533477783], [5.358954906463623], [3.9571192264556885], [14.671669960021973], [5.730047225952148], [10.367210388183594], [8.135506629943848], [-1.078243374824524], [1.9030733108520508], [2.257993221282959], [5.304046630859375], [1.315182089805603], [0.13714376091957092], [9.55172348022461], [4.902529716491699], [5.051281929016113], [1.0036518573760986], [4.968371391296387], [8.551097869873047], [3.214306116104126], [0.6103131771087646], [-3.0842502117156982], [1.1335692405700684], [-1.4008870124816895], [-3.788092613220215], [1.9128434658050537], [5.4953083992004395], [4.492398262023926], [4.439783573150635], [-2.6126794815063477], [-2.0289149284362793]], "normalized_similarities": [[-0.21293364465236664], [0.2764565050601959], [0.17388466000556946], [0.5165857672691345], [0.2456226497888565], [0.2798996567726135], [0.17077988386154175], [0.36984485387802124], [0.12926875054836273], [0.06695719808340073], [0.41270503401756287], [0.32543596625328064], [0.53376704454422], [0.09830111265182495], [0.3010965585708618], [0.22233344614505768], [0.8243377804756165], [0.3219466209411621], [0.5824888348579407], [0.45709899067878723], [-0.060581840574741364], [0.10692547261714935], [0.1268668919801712], [0.2980114817619324], [0.07389440387487411], [0.007705516181886196], [0.5366700887680054], [0.27545198798179626], [0.28380972146987915], [0.05639086663722992], [0.2791513502597809], [0.48044928908348083], [0.18059799075126648], [0.0342908650636673], [-0.17329071462154388], [0.06369036436080933], [-0.07870979607105255], [-0.21283657848834991], [0.1074744164943695], [0.3087576627731323], [0.2524084746837616], [0.24945227801799774], [-0.14679518342018127], [-0.11399596929550171]], "result_max_similarities": 17.798128128051758, "full_text_display": "\ud63c\ud569\uc138\ud3ec\uad70\uc5d0\uc11c \uc18c\uc218\uc758 \uc544\ud615\uad70\uc744 \uce21\uc815\ud558\uc5ec \uc6d0\ud558\ub294 population", "K": 1}, {"id": "result_10", "sample_idx": 2370, "score": 14.54300594329834, "highlight_inds": [40], "matched_tokens_str": "x", "original_pos": 40, "full_sequence_tokens": ["Opt", "oma", " GB", "-", "200", "+", " Dual", " channel", " edge", " blending", " processor", ",", " up", " to", " W", "UX", "GA", " resolution", ",", " 2", "x", " HD", "MI", " in", ",", " 2", "x", " D", "VI", "-", "I", " in", ",", " 2", "x", " HD", "MI", " out", ",", " 2", "x", " V", "GA", " out"], "sequence_similarities": [[-51.06648635864258], [-6.4197096824646], [-2.677649736404419], [-4.619381904602051], [-0.09962570667266846], [5.3935112953186035], [1.180256962776184], [0.19834041595458984], [2.031114339828491], [-4.189803123474121], [-0.7241096496582031], [-2.870284080505371], [2.2492899894714355], [-3.348604917526245], [-0.7866766452789307], [2.1542654037475586], [0.9093637466430664], [0.6449240446090698], [1.050870418548584], [3.7928996086120605], [10.561653137207031], [5.998017311096191], [2.654371738433838], [6.012219429016113], [5.350215435028076], [9.621244430541992], [13.970285415649414], [6.445839881896973], [4.5093560218811035], [2.8944618701934814], [9.580657958984375], [6.444086074829102], [5.658011436462402], [9.685140609741211], [11.583117485046387], [8.926587104797363], [4.393001556396484], [6.769401550292969], [8.195571899414062], [12.572376251220703], [14.54300594329834], [9.022151947021484], [4.350474834442139], [12.582208633422852]], "normalized_similarities": [[-2.8692054748535156], [-0.3606957793235779], [-0.1504455804824829], [-0.25954312086105347], [-0.005597538314759731], [0.3030381202697754], [0.06631354242563248], [0.01114389207214117], [0.11411954462528229], [-0.23540695011615753], [-0.040684595704078674], [-0.16126887500286102], [0.1263778954744339], [-0.18814365565776825], [-0.04419996589422226], [0.12103887647390366], [0.05109322443604469], [0.0362355001270771], [0.059043873101472855], [0.2131066620349884], [0.5934137105941772], [0.337002694606781], [0.1491376906633377], [0.33780065178871155], [0.30060550570487976], [0.5405762195587158], [0.7849300503730774], [0.3621639311313629], [0.2533612549304962], [0.16262732446193695], [0.5382958054542542], [0.3620653748512268], [0.317899227142334], [0.5441662669181824], [0.6508053541183472], [0.5015463829040527], [0.24682380259037018], [0.3803434669971466], [0.46047380566596985], [0.7063875794410706], [0.8171087503433228], [0.5069157481193542], [0.2444344013929367], [0.7069399952888489]], "result_max_similarities": 17.798128128051758, "full_text_display": "Optoma GB-200+ Dual channel edge blending processor, up to WUXGA resolution, 2x HDMI in, 2x DVI-I in, 2x HDMI out, 2x VGA out", "K": 1}, {"id": "result_11", "sample_idx": 1622, "score": 14.427230834960938, "highlight_inds": [43], "matched_tokens_str": " H", "original_pos": 43, "full_sequence_tokens": ["This", " is", " a", " placeholder", " page", " for", " Joseph", " H", "avel", ",", " which", " means", " this", " person", " is", " not", " currently", " on", " this", " site", ".", " We", " do", " suggest", " using", " the", " tools", " below", " to", " find", " Joseph", " H", "avel", ".", "\n", "You", " are", " visiting", " the", " placeholder", " page", " for", " Joseph", " H"], "sequence_similarities": [[-71.22822570800781], [-3.3287172317504883], [2.2757484912872314], [-2.521019220352173], [-4.436246871948242], [-4.073119163513184], [-3.786825656890869], [8.670083999633789], [-0.11509478092193604], [-2.3336410522460938], [4.083296298980713], [2.0270166397094727], [-1.6638081073760986], [0.9595881700515747], [0.8490473031997681], [2.118422508239746], [0.8825592994689941], [1.783581256866455], [2.3833611011505127], [-5.88154411315918], [-117.74596405029297], [-0.5244084596633911], [0.254391074180603], [-1.7796655893325806], [-4.44547176361084], [-0.9676816463470459], [-1.2527029514312744], [0.13421297073364258], [-3.3390088081359863], [-6.67437744140625], [-3.2995386123657227], [12.25274658203125], [0.43368256092071533], [-3.8221139907836914], [-2.3047828674316406], [-1.0912599563598633], [-5.254189491271973], [-1.1937822103500366], [-0.549575924873352], [-2.000058174133301], [0.2577245235443115], [1.6387779712677002], [0.8303585052490234], [14.427230834960938]], "normalized_similarities": [[-4.002006530761719], [-0.187026247382164], [0.12786448001861572], [-0.14164519309997559], [-0.24925357103347778], [-0.22885099053382874], [-0.2127653956413269], [0.4871346056461334], [-0.006466678809374571], [-0.13111722469329834], [0.22942279279232025], [0.11388931423425674], [-0.09348219633102417], [0.0539151169359684], [0.0477043017745018], [0.11902501434087753], [0.0495871976017952], [0.1002117320895195], [0.13391077518463135], [-0.3304585814476013], [-6.615637302398682], [-0.029464248567819595], [0.014293136075139046], [-0.09999173134565353], [-0.2497718781232834], [-0.05436985567212105], [-0.07038397341966629], [0.0075408476404845715], [-0.18760448694229126], [-0.37500447034835815], [-0.18538683652877808], [0.6884289383888245], [0.024366751313209534], [-0.2147480845451355], [-0.1294957995414734], [-0.06131318584084511], [-0.29521024227142334], [-0.06707347184419632], [-0.030878299847245216], [-0.11237463355064392], [0.014480428770184517], [0.09207586199045181], [0.04665426164865494], [0.8106038570404053]], "result_max_similarities": 17.798128128051758, "full_text_display": "This is a placeholder page for Joseph Havel, which means this person is not currently on this site. We do suggest using the tools below to find Joseph Havel.\nYou are visiting the placeholder page for Joseph H", "K": 1}, {"id": "result_12", "sample_idx": 2995, "score": 14.394023895263672, "highlight_inds": [22], "matched_tokens_str": "X", "original_pos": 22, "full_sequence_tokens": ["C", "hel", "sea", " P", "to", " Assembly", " P", "/", "N", ":", " 221", "X", "E", "AH", "X", "-", "V", "3", "X", "D", " or", " 221", "X", "E", "AH", "XV", "3", "X", "D", ".", " Gen", "u", "ine", " Chelsea", " new", " in", " the", " box", " ready", " to", " ship", " worldwide", ".", " For"], "sequence_similarities": [[-65.24618530273438], [1.533423900604248], [-1.1487160921096802], [0.8730828762054443], [-1.036972999572754], [1.416205883026123], [5.846517562866211], [6.038454055786133], [3.488813638687134], [-0.18037843704223633], [1.6741585731506348], [9.05971908569336], [7.765076160430908], [4.134189605712891], [5.669949531555176], [4.624696254730225], [8.600500106811523], [6.931256294250488], [10.76072883605957], [7.58071756362915], [7.19709587097168], [7.435859680175781], [14.394023895263672], [8.615495681762695], [6.79395866394043], [2.680421829223633], [5.830930709838867], [8.156597137451172], [6.412380695343018], [-109.53887939453125], [2.4207191467285156], [0.3069841265678406], [-3.818016529083252], [-0.829308271408081], [0.2542818784713745], [-1.975019931793213], [0.7010855674743652], [-2.073920249938965], [-2.389251708984375], [-3.2488574981689453], [-4.443815231323242], [-2.1179921627044678], [-5.254021167755127], [-4.4689621925354]], "normalized_similarities": [[-3.6659014225006104], [0.08615647256374359], [-0.06454139947891235], [0.04905475676059723], [-0.058263037353754044], [0.07957049459218979], [0.32849058508872986], [0.33927467465400696], [0.19602137804031372], [-0.010134685784578323], [0.09406374394893646], [0.5090265274047852], [0.4362861216068268], [0.23228226602077484], [0.31856998801231384], [0.2598417103290558], [0.4832249879837036], [0.38943737745285034], [0.604598879814148], [0.4259277880191803], [0.40437376499176025], [0.41778886318206787], [0.8087380528450012], [0.48406752943992615], [0.38172322511672974], [0.150601327419281], [0.32761484384536743], [0.4582839906215668], [0.3602840006351471], [-6.154516696929932], [0.13600976765155792], [0.017248112708330154], [-0.21451787650585175], [-0.0465952530503273], [0.014287001453340054], [-0.11096784472465515], [0.03939097374677658], [-0.11652462929487228], [-0.1342417448759079], [-0.18253928422927856], [-0.24967879056930542], [-0.11900083720684052], [-0.29520076513290405], [-0.25109168887138367]], "result_max_similarities": 17.798128128051758, "full_text_display": "Chelsea Pto Assembly P/N: 221XEAHX-V3XD or 221XEAHXV3XD. Genuine Chelsea new in the box ready to ship worldwide. For", "K": 1}, {"id": "result_13", "sample_idx": 16703, "score": 14.227540969848633, "highlight_inds": [13], "matched_tokens_str": " H", "original_pos": 13, "full_sequence_tokens": ["In", " 2000", ",", " an", " Anglo", "-", "S", "axon", " cemetery", " was", " found", " at", " Sutton", " H", "oo", ",", " 500", "m", " north", " of", " the", " famous", " East", " Angl", "ian", " \u2018", "bur", "ial", "-", "ground", " of", " kings", "\u2019", " (", "Car", "ver", " 1998", ";", " 2005", ").", " The", " discovery", " was", " made"], "sequence_similarities": [[-81.45154571533203], [-5.719552993774414], [-3.8640189170837402], [0.9898442029953003], [-1.7851459980010986], [-3.777545928955078], [3.21451997756958], [-3.8213837146759033], [-3.7161049842834473], [-2.117011070251465], [1.5611920356750488], [-1.3155022859573364], [7.382450103759766], [14.227540969848633], [5.847573757171631], [0.6560660600662231], [3.7454521656036377], [3.5037386417388916], [2.222738027572632], [-5.311542987823486], [2.749932050704956], [1.3926217555999756], [2.244296073913574], [6.522798538208008], [0.03191101551055908], [1.1694602966308594], [1.7591534852981567], [-1.5740621089935303], [-4.956879138946533], [-3.5982985496520996], [-6.842901706695557], [-3.9049878120422363], [3.44858980178833], [-2.140817642211914], [6.0409440994262695], [6.630821228027344], [5.0997419357299805], [2.217557430267334], [1.6144742965698242], [-112.51237487792969], [-2.878865957260132], [-1.3350118398666382], [-1.1981661319732666], [-2.332381248474121]], "normalized_similarities": [[-4.57641077041626], [-0.32135698199272156], [-0.2171025425195694], [0.055615074932575226], [-0.1002996489405632], [-0.21224400401115417], [0.18061000108718872], [-0.21470706164836884], [-0.20879189670085907], [-0.11894571781158447], [0.08771663904190063], [-0.07391239702701569], [0.41478800773620605], [0.7993841171264648], [0.32854992151260376], [0.036861520260572433], [0.21044078469276428], [0.1968599557876587], [0.12488605827093124], [-0.29843267798423767], [0.15450681746006012], [0.07824540883302689], [0.12609730660915375], [0.36648789048194885], [0.0017929421737790108], [0.06570692360401154], [0.09883923828601837], [-0.08843975514173508], [-0.2785056531429291], [-0.20217286050319672], [-0.38447311520576477], [-0.2194044142961502], [0.19376137852668762], [-0.12028330564498901], [0.3394145667552948], [0.37255722284317017], [0.2865324914455414], [0.12459497898817062], [0.0907103419303894], [-6.321584701538086], [-0.16175104677677155], [-0.07500855624675751], [-0.06731978058815002], [-0.13104642927646637]], "result_max_similarities": 17.798128128051758, "full_text_display": "In 2000, an Anglo-Saxon cemetery was found at Sutton Hoo, 500m north of the famous East Anglian \u2018burial-ground of kings\u2019 (Carver 1998; 2005). The discovery was made", "K": 1}, {"id": "result_14", "sample_idx": 4597, "score": 14.19711685180664, "highlight_inds": [20], "matched_tokens_str": "X", "original_pos": 20, "full_sequence_tokens": ["Grav", "ity", " separator", " machine", " 6", "s", " shaking", " table", " for", " gold", ",", " tin", ",", " tan", " ni", ",", " chrome", " mine", " .", " J", "X", "SC", " high", " recovery", " rate", " gold", " centrifug", "al", " concentr", "ator", " for", " fine", " gold", " recovery", " .", " Min", "eral", " washing", " machine", " .", " Preparation", " Equipment", " (", "Grav"], "sequence_similarities": [[-74.83599853515625], [-4.9761199951171875], [-6.2881574630737305], [-4.547002792358398], [-3.875760316848755], [3.4297192096710205], [1.3706166744232178], [-2.6282620429992676], [-0.4796640872955322], [-1.8292367458343506], [-0.6377854347229004], [-1.731421709060669], [2.6178054809570312], [-0.5684661865234375], [-1.0508053302764893], [5.504179000854492], [1.2676103115081787], [1.4280815124511719], [-3.8414790630340576], [-0.5193586349487305], [14.19711685180664], [6.1285223960876465], [2.276930809020996], [-2.451786994934082], [-1.0251002311706543], [-1.596247673034668], [-1.0307185649871826], [1.1782208681106567], [-4.915530204772949], [-2.870676040649414], [-2.060106039047241], [-4.633724689483643], [-4.253639221191406], [-4.11927604675293], [-4.885195255279541], [-0.3207482695579529], [-1.9161947965621948], [-1.9068478345870972], [-4.1838226318359375], [-5.577303886413574], [-1.244951605796814], [-2.368927001953125], [1.3637666702270508], [-3.1495895385742188]], "normalized_similarities": [[-4.2047119140625], [-0.27958670258522034], [-0.3533044159412384], [-0.2554764747619629], [-0.21776224672794342], [0.19270111620426178], [0.07700903713703156], [-0.1476707011461258], [-0.026950255036354065], [-0.1027769148349762], [-0.035834409296512604], [-0.09728111326694489], [0.14708319306373596], [-0.031939662992954254], [-0.059040214866399765], [0.30925604701042175], [0.07122155278921127], [0.0802377387881279], [-0.21583612263202667], [-0.02918051928281784], [0.7976747155189514], [0.3443352282047272], [0.1279309093952179], [-0.13775533437728882], [-0.057595957070589066], [-0.08968626707792282], [-0.05791162699460983], [0.06619914621114731], [-0.2761824131011963], [-0.16129089891910553], [-0.11574846506118774], [-0.26034897565841675], [-0.23899362981319427], [-0.2314443439245224], [-0.2744780480861664], [-0.018021460622549057], [-0.10766271501779556], [-0.10713754594326019], [-0.23507092893123627], [-0.3133646249771118], [-0.0699484571814537], [-0.1330997794866562], [0.07662416249513626], [-0.17696183919906616]], "result_max_similarities": 17.798128128051758, "full_text_display": "Gravity separator machine 6s shaking table for gold, tin, tan ni, chrome mine . JXSC high recovery rate gold centrifugal concentrator for fine gold recovery . Mineral washing machine . Preparation Equipment (Grav", "K": 1}, {"id": "result_15", "sample_idx": 10837, "score": 14.174317359924316, "highlight_inds": [10], "matched_tokens_str": "y", "original_pos": 10, "full_sequence_tokens": ["Step", " away", " from", " the", " baby", " wip", "es", ",", " writes", " Lind", "y", " Alexander", ".", "\n", "It", "\u2019", "s", " hard", " to", " resist", " reaching", " for", " a", " sanit", "ising", " wipe", " when", " we", " are", " confronted", " with", " a", " child", "\u2019", "s", " grub", "by", " hands", " or", " sticky", " face", ",", " but", " new"], "sequence_similarities": [[-46.58592224121094], [-9.76987361907959], [-5.536015510559082], [0.2339867353439331], [0.7111204266548157], [-2.003818988800049], [1.3134454488754272], [1.9992878437042236], [2.125216484069824], [11.600872039794922], [14.174317359924316], [7.4171295166015625], [-114.47380828857422], [0.0046651363372802734], [3.6387736797332764], [0.5575954914093018], [0.2700691819190979], [3.0994949340820312], [-0.835612416267395], [-3.6164541244506836], [-0.9428204298019409], [-1.0896859169006348], [-1.74088716506958], [-0.43601158261299133], [0.8870282173156738], [-1.7684507369995117], [0.3569602966308594], [0.3095545768737793], [-0.9063655138015747], [-0.21123647689819336], [-0.9359737634658813], [-0.4480304718017578], [-2.4226367473602295], [0.4204341173171997], [2.2742652893066406], [-1.3941915035247803], [0.7151297330856323], [-1.4231700897216797], [-5.117693901062012], [-0.7071628570556641], [-3.8817739486694336], [0.3148595094680786], [-2.563126564025879], [-0.9836721420288086]], "normalized_similarities": [[-2.617461919784546], [-0.5489270091056824], [-0.3110448122024536], [0.013146704994142056], [0.039954788982868195], [-0.11258593946695328], [0.0737968310713768], [0.11233135312795639], [0.11940674483776093], [0.6518029570579529], [0.7963936924934387], [0.4167364835739136], [-6.431789398193359], [0.00026211387012153864], [0.20444698631763458], [0.03132888302206993], [0.015174021944403648], [0.17414724826812744], [-0.04694945365190506], [-0.20319294929504395], [-0.05297300964593887], [-0.06122474744915962], [-0.09781293570995331], [-0.024497609585523605], [0.04983828589320183], [-0.0993616133928299], [0.02005605772137642], [0.017392534762620926], [-0.050924766808748245], [-0.011868465691804886], [-0.0525883249938488], [-0.025172898545861244], [-0.13611750304698944], [0.023622378706932068], [0.12778115272521973], [-0.07833360135555267], [0.04018005356192589], [-0.07996178418397903], [-0.28754112124443054], [-0.0397324301302433], [-0.21810013055801392], [0.017690597102046013], [-0.1440110206604004], [-0.055268291383981705]], "result_max_similarities": 17.798128128051758, "full_text_display": "Step away from the baby wipes, writes Lindy Alexander.\nIt\u2019s hard to resist reaching for a sanitising wipe when we are confronted with a child\u2019s grubby hands or sticky face, but new", "K": 1}, {"id": "result_16", "sample_idx": 14817, "score": 14.170029640197754, "highlight_inds": [38], "matched_tokens_str": "Z", "original_pos": 38, "full_sequence_tokens": ["Step", " 10", ".", " Now", " you", " can", " separate", " the", " screen", " from", " the", " display", " back", " cover", " and", " place", " it", " the", " front", " side", " down", " on", " the", " palm", "rest", "/", "key", "board", " assembly", ".", " Place", " screen", " of", " Sony", " SV", "S", "13", "11", "Z", "D", "Z", "B", " on", " palm"], "sequence_similarities": [[-46.58592224121094], [-3.755948066711426], [-116.2996826171875], [-5.908060073852539], [-2.3771581649780273], [-4.667410850524902], [-4.888364315032959], [-4.183358192443848], [-1.0019418001174927], [-2.877344846725464], [0.23111885786056519], [1.2410528659820557], [2.242668628692627], [-3.3921926021575928], [0.5235763788223267], [-2.821333885192871], [0.9433698654174805], [-2.738990545272827], [-0.4816608428955078], [0.8732393980026245], [-0.4581092596054077], [3.147952079772949], [0.9227490425109863], [-0.948845624923706], [-2.141233444213867], [-1.755475401878357], [-2.9332032203674316], [-4.947984218597412], [0.6616787314414978], [-2.0705254077911377], [-3.022575616836548], [-2.4859580993652344], [-0.4946357011795044], [0.6054149270057678], [2.5782694816589355], [9.768499374389648], [9.185613632202148], [12.360921859741211], [14.170029640197754], [10.69566535949707], [10.406753540039062], [9.717028617858887], [6.768289566040039], [3.308629035949707]], "normalized_similarities": [[-2.617461919784546], [-0.211030513048172], [-6.534377098083496], [-0.3319483995437622], [-0.13356225192546844], [-0.2622416615486145], [-0.2746560871601105], [-0.23504483699798584], [-0.05629478394985199], [-0.16166558861732483], [0.012985571287572384], [0.06972940266132355], [0.1260058730840683], [-0.1905926614999771], [0.0294174961745739], [-0.15851856768131256], [0.05300388112664223], [-0.15389205515384674], [-0.027062444016337395], [0.0490635521709919], [-0.02573918178677559], [0.17686983942985535], [0.051845286041498184], [-0.0533115416765213], [-0.12030666321516037], [-0.09863258898258209], [-0.16480402648448944], [-0.2780058681964874], [0.03717687353491783], [-0.11633388698101044], [-0.169825479388237], [-0.13967525959014893], [-0.027791444212198257], [0.03401565179228783], [0.1448618322610855], [0.5488498210906982], [0.5160999894142151], [0.694506824016571], [0.7961528301239014], [0.6009432673454285], [0.5847105383872986], [0.5459579229354858], [0.3802809715270996], [0.1858975887298584]], "result_max_similarities": 17.798128128051758, "full_text_display": "Step 10. Now you can separate the screen from the display back cover and place it the front side down on the palmrest/keyboard assembly. Place screen of Sony SVS1311ZDZB on palm", "K": 1}, {"id": "result_17", "sample_idx": 16409, "score": 14.119693756103516, "highlight_inds": [19], "matched_tokens_str": "K", "original_pos": 19, "full_sequence_tokens": ["This", " battery", " is", " an", " exact", " replacement", " for", " the", " IBM", " 08", "K", "82", "18", " laptop", " battery", ".", " This", " IBM", " 08", "K", "82", "18", " laptop", " battery", " equivalent", " is", " guaranteed", " to", " meet", " or", " exceed", " IBM", " original", " specifications", ".", " This", " TH", "INK", "PAD", " R", "40", "E", " 2", "684"], "sequence_similarities": [[-71.22822570800781], [3.2880215644836426], [1.5640785694122314], [5.510804653167725], [-0.7101234197616577], [1.7183237075805664], [0.7171909809112549], [-1.3206335306167603], [2.6703667640686035], [4.787659645080566], [9.587924003601074], [10.077444076538086], [6.695646286010742], [5.266086578369141], [2.4670448303222656], [-117.54859924316406], [3.184272050857544], [5.36235237121582], [9.415843963623047], [14.119693756103516], [10.929938316345215], [6.720598220825195], [6.180048942565918], [3.8811612129211426], [1.8708829879760742], [0.5279890298843384], [5.891416072845459], [4.0220046043396], [1.290945291519165], [2.6699037551879883], [-5.720415115356445], [4.623074531555176], [2.7813498973846436], [1.3459404706954956], [-2.344658613204956], [-1.3378463983535767], [1.9054975509643555], [-0.27641963958740234], [4.6813483238220215], [4.990633010864258], [6.830140590667725], [8.205839157104492], [3.9995527267456055], [5.435778617858887]], "normalized_similarities": [[-4.002006530761719], [0.18473973870277405], [0.08787882328033447], [0.30962833762168884], [-0.03989877179265022], [0.09654518961906433], [0.04029586538672447], [-0.07420069724321365], [0.15003637969493866], [0.2689979374408722], [0.5387040376663208], [0.5662080645561218], [0.3761994540691376], [0.29587867856025696], [0.13861259818077087], [-6.604548454284668], [0.1789105087518692], [0.301287442445755], [0.5290356278419495], [0.7933246493339539], [0.6141060590744019], [0.37760141491889954], [0.34723028540611267], [0.21806569397449493], [0.1051168367266655], [0.029665425419807434], [0.3310132324695587], [0.22597907483577728], [0.07253264635801315], [0.1500103622674942], [-0.32140544056892395], [0.2597506046295166], [0.1562720388174057], [0.07562258839607239], [-0.13173624873161316], [-0.07516781240701675], [0.10706168413162231], [-0.015530826523900032], [0.2630247473716736], [0.28040212392807007], [0.3837561309337616], [0.46105068922042847], [0.22471760213375092], [0.3054129481315613]], "result_max_similarities": 17.798128128051758, "full_text_display": "This battery is an exact replacement for the IBM 08K8218 laptop battery. This IBM 08K8218 laptop battery equivalent is guaranteed to meet or exceed IBM original specifications. This THINKPAD R40E 2684", "K": 1}, {"id": "result_18", "sample_idx": 6868, "score": 14.11328125, "highlight_inds": [10], "matched_tokens_str": " Edward", "original_pos": 11, "full_sequence_tokens": ["Ay", "oooo", " !", "!!", " This", " is", " ya", " girl", " Sarah", " from", " Edward", " M", ".", " Kennedy", " High", " School", "!", " I", "\u2019", "m", " 16", ",", " still", " a", " young", "in", "&#x27;.", " Turning", " 17", " real", " soon", ".", " No", " funny", ",", " I", " enjoy", " car", " rides", " with", " the", " music", " bump", "in"], "sequence_similarities": [[-96.27290344238281], [0.21748995780944824], [-7.86552619934082], [-2.4322643280029297], [-2.040006160736084], [-0.10459545254707336], [8.744388580322266], [4.07241678237915], [2.752700090408325], [2.128803253173828], [14.11328125], [11.544363975524902], [-121.75546264648438], [6.923559188842773], [5.185286521911621], [-1.2239320278167725], [-0.8028907775878906], [-0.5890113115310669], [2.8645236492156982], [0.014156579971313477], [0.47003936767578125], [1.3442935943603516], [1.6119389533996582], [-0.38801729679107666], [-4.405586242675781], [-3.380779504776001], [-2.7055280208587646], [-6.4753499031066895], [-3.2838354110717773], [-1.339046835899353], [-2.8336918354034424], [-36.368751525878906], [-3.4690160751342773], [-5.38724422454834], [-1.6582441329956055], [0.7558997869491577], [-0.8586055040359497], [-3.604414939880371], [-2.2660417556762695], [0.6018593311309814], [-1.3535070419311523], [1.1006546020507812], [4.392086029052734], [-1.193263292312622]], "normalized_similarities": [[-5.409158706665039], [0.012219822034239769], [-0.44192996621131897], [-0.1366584300994873], [-0.11461914330720901], [-0.005876766983419657], [0.4913094639778137], [0.22881151735782623], [0.1546623408794403], [0.11960826814174652], [0.7929643392562866], [0.6486279964447021], [-6.840913772583008], [0.3890049159526825], [0.29133886098861694], [-0.06876745820045471], [-0.04511096701025963], [-0.033094003796577454], [0.16094522178173065], [0.0007953971507959068], [0.026409482583403587], [0.0755300521850586], [0.09056789427995682], [-0.021801017224788666], [-0.24753087759017944], [-0.18995140492916107], [-0.1520119458436966], [-0.36382195353507996], [-0.18450453877449036], [-0.0752352625131607], [-0.15921291708946228], [-2.043403148651123], [-0.19490903615951538], [-0.30268600583076477], [-0.09316957741975784], [0.042470745742321014], [-0.04824133589863777], [-0.20251651108264923], [-0.1273191124200821], [0.03381587937474251], [-0.07604771852493286], [0.061841029673814774], [0.24677236378192902], [-0.06704431772232056]], "result_max_similarities": 17.798128128051758, "full_text_display": "Ayoooo !!! This is ya girl Sarah from Edward M. Kennedy High School! I\u2019m 16, still a youngin&#x27;. Turning 17 real soon. No funny, I enjoy car rides with the music bumpin", "K": 1}, {"id": "result_19", "sample_idx": 3216, "score": 14.057071685791016, "highlight_inds": [34], "matched_tokens_str": " b", "original_pos": 34, "full_sequence_tokens": ["C", "32", " AC", "ERT", " prop", "ulsion", " engine", " ratings", " of", " 1925", " m", "hp", " (", "1900", " b", "hp", ")", " 14", "17", " b", "k", "W", ",", " 18", "25", " m", "hp", " (", "1800", " b", "hp", ")", " 134", "2", " b", "k", "W", ",", " and", " 16", "22", " m", "hp", " ("], "sequence_similarities": [[-65.24618530273438], [3.043980360031128], [1.3375718593597412], [4.149439811706543], [-0.67146897315979], [-1.1943696737289429], [-2.9137659072875977], [-4.1640520095825195], [-1.2735130786895752], [-4.480216979980469], [4.922821044921875], [4.3735737800598145], [5.899940490722656], [2.0730178356170654], [6.08674430847168], [6.344328880310059], [3.5903732776641846], [2.399486541748047], [1.1130729913711548], [9.36743450164795], [3.855837106704712], [5.674375534057617], [1.3313145637512207], [3.459524631500244], [0.7585522532463074], [10.834922790527344], [5.775781631469727], [3.423525810241699], [4.2569708824157715], [11.539026260375977], [9.521995544433594], [7.129941940307617], [3.007053852081299], [7.03884220123291], [14.057071685791016], [9.830869674682617], [9.331377029418945], [4.716662406921387], [2.506381034851074], [5.163670539855957], [6.851362705230713], [12.586322784423828], [6.972983360290527], [3.4976251125335693]], "normalized_similarities": [[-3.6659014225006104], [0.17102812230587006], [0.07515238970518112], [0.23313911259174347], [-0.03772694244980812], [-0.06710647791624069], [-0.16371193528175354], [-0.2339601069688797], [-0.07155320048332214], [-0.2517240643501282], [0.27659207582473755], [0.24573223292827606], [0.33149218559265137], [0.11647392809391022], [0.34198787808418274], [0.35646045207977295], [0.20172758400440216], [0.13481679558753967], [0.0625387653708458], [0.5263156890869141], [0.2166428416967392], [0.3188186585903168], [0.07480081915855408], [0.19437575340270996], [0.04261977598071098], [0.608767569065094], [0.324516236782074], [0.19235314428806305], [0.2391808182001114], [0.6483280658721924], [0.5349998474121094], [0.4006006717681885], [0.16895337402820587], [0.3954821527004242], [0.7898061871528625], [0.5523541569709778], [0.5242897868156433], [0.2650088965892792], [0.14082273840904236], [0.2901243567466736], [0.3849484920501709], [0.7071711421012878], [0.39178183674812317], [0.19651645421981812]], "result_max_similarities": 17.798128128051758, "full_text_display": "C32 ACERT propulsion engine ratings of 1925 mhp (1900 bhp) 1417 bkW, 1825 mhp (1800 bhp) 1342 bkW, and 1622 mhp (", "K": 1}];
+    const globalMaxSequenceSimilarity = [17.798128128051758];
+    const tooltip = document.getElementById('tooltip');
+    let isNormalized = true;
+    let currentThreshold = 0.0;
+
+    function htmlDecode(input) {
+        const doc = new DOMParser().parseFromString(input, "text/html");
+        return doc.documentElement.textContent;
+    }
+
+    function getColorForSimilarity(sim, maxSim, isNormalizedMode = false, threshold = 0.0) {
+        if (sim === -Infinity || maxSim <= 0) {
+            return { backgroundColor: '#f8f9fa', color: '#6c757d' };
+        }
+
+        // Apply threshold cutoff - if below threshold, return transparent/no color
+        if (sim <= threshold) {
+            return { backgroundColor: 'transparent', color: '#6c757d' };
+        }
+
+        let t;
+        if (isNormalizedMode) {
+            // In normalized mode, use a more sensitive scale since values are 0-1
+            // Apply a power function to make smaller differences more visible
+            const normalizedT = Math.max(0, Math.min(1, sim / maxSim));
+            t = Math.pow(normalizedT, 0.7); // Makes mid-range values more visible
+        } else {
+            // In raw mode, use linear scaling
+            t = Math.max(0, Math.min(1, sim / maxSim));
+        }
+
+        let r, g, b;
+        if (isNormalizedMode) {
+            // Use white to red gradient for normalized mode (same as raw mode)
+            r = 255;
+            g = b = Math.round(255 * (1 - t));
+        } else {
+            // Original red gradient for raw mode
+            r = 255;
+            g = b = Math.round(255 * (1 - t));
+        }
+
+        const textColor = (r + g + b) / 3 > 127 ? '#000000' : '#FFFFFF';
+        return { backgroundColor: `rgb(${r},${g},${b})`, color: textColor };
+    }
+
+    function renderResult(resultData) {
+        const displayDiv = document.getElementById(`sequence_display_${resultData.id}`);
+        const fullTextDiv = document.getElementById(`full_text_display_${resultData.id}`);
+        if (!displayDiv) return;
+
+        // Choose which similarities to use based on toggle state
+        const currentSimilarities = isNormalized ? resultData.normalized_similarities : resultData.sequence_similarities;
+        const currentMaxSimilarities = isNormalized ? Array(resultData.K).fill(1) : globalMaxSequenceSimilarity; // Normalized max is always 1
+
+        displayDiv.innerHTML = '';
+        resultData.full_sequence_tokens.forEach((tokenHtml, i) => {
+            const span = document.createElement('span');
+            span.className = 'token';
+            span.innerHTML = tokenHtml;
+
+            const seqSim = currentSimilarities[i];
+            const rawSeqSim = resultData.sequence_similarities[i];
+            let maxIdx = 0
+            let K = resultData.K;
+            let maxSim = Number.NEGATIVE_INFINITY;
+            for (let j = 0; j < K; j++) {
+                if (currentSimilarities[i] && currentSimilarities[i][j] > maxSim) {
+                    maxIdx = j;
+                    maxSim = currentSimilarities[i][j];
+                }
+            }
+
+            try{
+                const colors = getColorForSimilarity(seqSim[maxIdx], currentMaxSimilarities[maxIdx], isNormalized, currentThreshold);
+                span.style.backgroundColor = colors.backgroundColor;
+                span.style.color = colors.color;
+            } catch { console.log("Get color for sim doesn't work") }
+
+            if (resultData.highlight_inds.includes(i)) {
+                span.classList.add('highlight-window');
+            }
+
+            span.onmousemove = e => {
+                tooltip.style.visibility = 'visible';
+                let rawTokenSimsText = resultData.sequence_similarities[i].map((s, j) => `Q${j+1}: ${s.toFixed(4)}`).join(', ');
+                let normalizedTokenSimsText = resultData.normalized_similarities[i].map((s, j) => `Q${j+1}: ${s.toFixed(4)}`).join(', ');
+
+                let tooltipContent = `<b>${htmlDecode(tokenHtml)}</b> (Index: ${i})<br>`;
+                if (isNormalized) {
+                    tooltipContent += `Normalized Sim: ${seqSim[maxIdx].toFixed(4)}<br>`;
+                    tooltipContent += `Raw Sim: ${rawSeqSim[maxIdx].toFixed(4)}<br>`;
+                    tooltipContent += `Normalized Token Sims: ${normalizedTokenSimsText}<br>`;
+                } else {
+                    tooltipContent += `Raw Sim: ${seqSim[maxIdx].toFixed(4)}<br>`;
+                    tooltipContent += `Raw Token Sims: ${rawTokenSimsText}<br>`;
+                }
+                tooltipContent += `Vector index match: ${maxIdx + 1}`;
+
+                tooltip.innerHTML = tooltipContent;
+                tooltip.style.left = `${e.pageX + 15}px`;
+                tooltip.style.top = `${e.pageY + 15}px`;
+            };
+            span.onmouseout = () => { tooltip.style.visibility = 'hidden'; };
+            displayDiv.appendChild(span);
+        });
+
+        if (fullTextDiv && resultData.full_text_display) {
+            fullTextDiv.innerHTML = `<p><strong>Full Text:</strong></p><p>${resultData.full_text_display}</p>`;
+        }
+    }
+
+    function toggleNormalization() {
+        isNormalized = !isNormalized;
+        const statusSpan = document.getElementById('normalizationStatus');
+        if (isNormalized) {
+            statusSpan.innerHTML = 'Showing normalized values (max = 1.0 per result) | <span style="background: linear-gradient(90deg, white, pink, red); padding: 2px 8px; border-radius: 3px; color: black; font-size: 0.8em;">White→Red colors</span>';
+            statusSpan.style.color = '#28a745';
+        } else {
+            statusSpan.innerHTML = 'Showing raw values (global scale) | <span style="background: linear-gradient(90deg, white, pink, red); padding: 2px 8px; border-radius: 3px; color: black; font-size: 0.8em;">White→Red colors</span>';
+            statusSpan.style.color = '#666';
+        }
+
+        // Re-render all results with new normalization setting
+        allResultsData.forEach(renderResult);
+    }
+
+    function updateThreshold() {
+        const slider = document.getElementById('thresholdSlider');
+        const valueDisplay = document.getElementById('thresholdValue');
+        currentThreshold = parseFloat(slider.value);
+        valueDisplay.textContent = currentThreshold.toFixed(3);
+
+        // Re-render all results with new threshold setting
+        allResultsData.forEach(renderResult);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        // Initialize normalization status (start with normalized mode)
+        const statusSpan = document.getElementById('normalizationStatus');
+        statusSpan.innerHTML = 'Showing normalized values (max = 1.0 per result) | <span style="background: linear-gradient(90deg, white, pink, red); padding: 2px 8px; border-radius: 3px; color: black; font-size: 0.8em;">White→Red colors</span>';
+        statusSpan.style.color = '#28a745';
+
+        // Set up toggle event listener
+        const toggleCheckbox = document.getElementById('normalizeToggle');
+        toggleCheckbox.addEventListener('change', toggleNormalization);
+
+        // Set up threshold slider event listener
+        const thresholdSlider = document.getElementById('thresholdSlider');
+        thresholdSlider.addEventListener('input', updateThreshold);
+
+        // Render initial results
+        allResultsData.forEach(renderResult);
+    });
+</script>
+</body></html>

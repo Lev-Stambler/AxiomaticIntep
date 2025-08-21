@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mechanistic Interpretability Results - gpt2</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            background-color: #f8fafc;
+            color: #1a202c;
+        }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        }
+        .header h1 {
+            margin: 0 0 0.5rem 0;
+            font-size: 2.5rem;
+            font-weight: 600;
+        }
+        .header p {
+            margin: 0;
+            opacity: 0.9;
+            font-size: 1.1rem;
+        }
+        .metadata {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        .metadata h2 {
+            margin: 0 0 1rem 0;
+            color: #2d3748;
+            font-size: 1.3rem;
+        }
+        .metadata-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+        .metadata-item {
+            padding: 0.75rem;
+            background: #f7fafc;
+            border-radius: 6px;
+            border-left: 4px solid #667eea;
+        }
+        .metadata-label {
+            font-weight: 600;
+            color: #4a5568;
+            font-size: 0.9rem;
+            margin-bottom: 0.25rem;
+        }
+        .metadata-value {
+            color: #2d3748;
+            font-family: 'SF Mono', Monaco, monospace;
+            font-size: 0.95rem;
+        }
+        .section {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        .section h2 {
+            margin: 0 0 1rem 0;
+            color: #2d3748;
+            font-size: 1.3rem;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 0.5rem;
+        }
+        .file-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1rem;
+        }
+        .file-card {
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 1rem;
+            transition: all 0.2s ease;
+            background: #fafafa;
+        }
+        .file-card:hover {
+            border-color: #667eea;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .file-card a {
+            text-decoration: none;
+            color: #2d3748;
+            display: block;
+        }
+        .file-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #4a5568;
+        }
+        .file-description {
+            font-size: 0.9rem;
+            color: #718096;
+            line-height: 1.4;
+        }
+        .explanation-preview {
+            font-size: 0.85rem;
+            color: #a0aec0;
+            font-style: italic;
+            margin-top: 0.5rem;
+            line-height: 1.3;
+        }
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            background: #667eea;
+            color: white;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            margin-top: 0.5rem;
+        }
+        .empty-section {
+            text-align: center;
+            color: #a0aec0;
+            font-style: italic;
+            padding: 2rem;
+        }
+        .footer {
+            text-align: center;
+            color: #718096;
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid #e2e8f0;
+        }
+    </style>
+</head>
+<body>
+    <div class="metadata">
+        <h2>📋 Run Information</h2>
+        <div class="metadata-grid">
+            <div class="metadata-item">
+                <div class="metadata-label">Model</div>
+                <div class="metadata-value">gpt2</div>
+            </div>
+            <div class="metadata-item">
+                <div class="metadata-label">Dataset</div>
+                <div class="metadata-value">EleutherAI/the_pile_deduplicated</div>
+            </div>
+            <div class="metadata-item">
+                <div class="metadata-label">Dictionary Size</div>
+                <div class="metadata-value">20</div>
+            </div>
+            <div class="metadata-item">
+                <div class="metadata-label">Layer</div>
+                <div class="metadata-value">1</div>
+            </div>
+            <div class="metadata-item">
+                <div class="metadata-label">Target Token Offset</div>
+                <div class="metadata-value">1</div>
+            </div>
+            <div class="metadata-item">
+                <div class="metadata-label">Generated</div>
+                <div class="metadata-value">2025-08-13 07:42:24</div>
+            </div>
+        </div>
+    </div>
+    <div class="section">
+        <h2>🎯 Feature Direction Visualizations</h2>
+
+        <div class="file-grid">
+            <div class="file-card">
+                <div class="file-title">Direction 0</div>
+                <div class="file-description">
+                    Interactive visualization showing activation similarities and token-level analysis
+
+
+                </div>
+                <div style="margin-top: 0.75rem;">
+
+                    <a href="html/direction_0_positive_visualization.html" style="display: inline-block; margin: 0.25rem 0.5rem 0.25rem 0; padding: 0.4rem 0.8rem; background: #28a745; color: white; border-radius: 4px; font-size: 0.85rem; text-decoration: none; font-weight: 500;">Positive</a>
+                    <a href="html/direction_0_negative_visualization.html" style="display: inline-block; margin: 0.25rem 0.5rem 0.25rem 0; padding: 0.4rem 0.8rem; background: #dc3545; color: white; border-radius: 4px; font-size: 0.85rem; text-decoration: none; font-weight: 500;">Negative</a>
+                </div>
+            </div>
+            <div class="file-card">
+                <div class="file-title">Direction 1</div>
+                <div class="file-description">
+                    Interactive visualization showing activation similarities and token-level analysis
+
+
+                </div>
+                <div style="margin-top: 0.75rem;">
+
+                    <a href="html/direction_1_positive_visualization.html" style="display: inline-block; margin: 0.25rem 0.5rem 0.25rem 0; padding: 0.4rem 0.8rem; background: #28a745; color: white; border-radius: 4px; font-size: 0.85rem; text-decoration: none; font-weight: 500;">Positive</a>
+                    <a href="html/direction_1_negative_visualization.html" style="display: inline-block; margin: 0.25rem 0.5rem 0.25rem 0; padding: 0.4rem 0.8rem; background: #dc3545; color: white; border-radius: 4px; font-size: 0.85rem; text-decoration: none; font-weight: 500;">Negative</a>
+                </div>
+            </div>
+            <div class="file-card">
+                <div class="file-title">Direction 2</div>
+                <div class="file-description">
+                    Interactive visualization showing activation similarities and token-level analysis
+
+
+                </div>
+                <div style="margin-top: 0.75rem;">
+
+                    <a href="html/direction_2_positive_visualization.html" style="display: inline-block; margin: 0.25rem 0.5rem 0.25rem 0; padding: 0.4rem 0.8rem; background: #28a745; color: white; border-radius: 4px; font-size: 0.85rem; text-decoration: none; font-weight: 500;">Positive</a>
+                    <a href="html/direction_2_negative_visualization.html" style="display: inline-block; margin: 0.25rem 0.5rem 0.25rem 0; padding: 0.4rem 0.8rem; background: #dc3545; color: white; border-radius: 4px; font-size: 0.85rem; text-decoration: none; font-weight: 500;">Negative</a>
+                </div>
+            </div>
+            <div class="file-card">
+                <div class="file-title">Direction 3</div>
+                <div class="file-description">
+                    Interactive visualization showing activation similarities and token-level analysis
+
+
+                </div>
+                <div style="margin-top: 0.75rem;">
+
+                    <a href="html/direction_3_positive_visualization.html" style="display: inline-block; margin: 0.25rem 0.5rem 0.25rem 0; padding: 0.4rem 0.8rem; background: #28a745; color: white; border-radius: 4px; font-size: 0.85rem; text-decoration: none; font-weight: 500;">Positive</a>
+                    <a href="html/direction_3_negative_visualization.html" style="display: inline-block; margin: 0.25rem 0.5rem 0.25rem 0; padding: 0.4rem 0.8rem; background: #dc3545; color: white; border-radius: 4px; font-size: 0.85rem; text-decoration: none; font-weight: 500;">Negative</a>
+                </div>
+            </div>
+            <div class="file-card">
+                <div class="file-title">Direction 4</div>
+                <div class="file-description">
+                    Interactive visualization showing activation similarities and token-level analysis
+
+
+                </div>
+                <div style="margin-top: 0.75rem;">
+
+                    <a href="html/direction_4_positive_visualization.html" style="display: inline-block; margin: 0.25rem 0.5rem 0.25rem 0; padding: 0.4rem 0.8rem; background: #28a745; color: white; border-radius: 4px; font-size: 0.85rem; text-decoration: none; font-weight: 500;">Positive</a>
+                    <a href="html/direction_4_negative_visualization.html" style="display: inline-block; margin: 0.25rem 0.5rem 0.25rem 0; padding: 0.4rem 0.8rem; background: #dc3545; color: white; border-radius: 4px; font-size: 0.85rem; text-decoration: none; font-weight: 500;">Negative</a>
+                </div>
+            </div>
+            <div class="file-card">
+                <div class="file-title">Direction 5</div>
+                <div class="file-description">
+                    Interactive visualization showing activation similarities and token-level analysis
+
+
+                </div>
+                <div style="margin-top: 0.75rem;">
+
+                    <a href="html/direction_5_positive_visualization.html" style="display: inline-block; margin: 0.25rem 0.5rem 0.25rem 0; padding: 0.4rem 0.8rem; background: #28a745; color: white; border-radius: 4px; font-size: 0.85rem; text-decoration: none; font-weight: 500;">Positive</a>
+                    <a href="html/direction_5_negative_visualization.html" style="display: inline-block; margin: 0.25rem 0.5rem 0.25rem 0; padding: 0.4rem 0.8rem; background: #dc3545; color: white; border-radius: 4px; font-size: 0.85rem; text-decoration: none; font-weight: 500;">Negative</a>
+                </div>
+            </div>
+            <div class="file-card">
+                <div class="file-title">Direction 6</div>
+                <div class="file-description">
+                    Interactive visualization showing activation similarities and token-level analysis
+
+
+                </div>
+                <div style="margin-top: 0.75rem;">
+
+                    <a href="html/direction_6_positive_visualization.html" style="display: inline-block; margin: 0.25rem 0.5rem 0.25rem 0; padding: 0.4rem 0.8rem; background: #28a745; color: white; border-radius: 4px; font-size: 0.85rem; text-decoration: none; font-weight: 500;">Positive</a>
+                    <a href="html/direction_6_negative_visualization.html" style="display: inline-block; margin: 0.25rem 0.5rem 0.25rem 0; padding: 0.4rem 0.8rem; background: #dc3545; color: white; border-radius: 4px; font-size: 0.85rem; text-decoration: none; font-weight: 500;">Negative</a>
+                </div>
+            </div>
+            <div class="file-card">
+                <div class="file-title">Direction 7</div>
+                <div class="file-description">
+                    Interactive visualization showing activation similarities and token-level analysis
+
+
+                </div>
+                <div style="margin-top: 0.75rem;">
+
+                    <a href="html/direction_7_positive_visualization.html" style="display: inline-block; margin: 0.25rem 0.5rem 0.25rem 0; padding: 0.4rem 0.8rem; background: #28a745; color: white; border-radius: 4px; font-size: 0.85rem; text-decoration: none; font-weight: 500;">Positive</a>
+                    <a href="html/direction_7_negative_visualization.html" style="display: inline-block; margin: 0.25rem 0.5rem 0.25rem 0; padding: 0.4rem 0.8rem; background: #dc3545; color: white; border-radius: 4px; font-size: 0.85rem; text-decoration: none; font-weight: 500;">Negative</a>
+                </div>
+            </div>
+            <div class="file-card">
+                <div class="file-title">Direction 8</div>
+                <div class="file-description">
+                    Interactive visualization showing activation similarities and token-level analysis
+
+
+                </div>
+                <div style="margin-top: 0.75rem;">
+
+                    <a href="html/direction_8_positive_visualization.html" style="display: inline-block; margin: 0.25rem 0.5rem 0.25rem 0; padding: 0.4rem 0.8rem; background: #28a745; color: white; border-radius: 4px; font-size: 0.85rem; text-decoration: none; font-weight: 500;">Positive</a>
+                    <a href="html/direction_8_negative_visualization.html" style="display: inline-block; margin: 0.25rem 0.5rem 0.25rem 0; padding: 0.4rem 0.8rem; background: #dc3545; color: white; border-radius: 4px; font-size: 0.85rem; text-decoration: none; font-weight: 500;">Negative</a>
+                </div>
+            </div>
+            <div class="file-card">
+                <div class="file-title">Direction 9</div>
+                <div class="file-description">
+                    Interactive visualization showing activation similarities and token-level analysis
+
+
+                </div>
+                <div style="margin-top: 0.75rem;">
+
+                    <a href="html/direction_9_positive_visualization.html" style="display: inline-block; margin: 0.25rem 0.5rem 0.25rem 0; padding: 0.4rem 0.8rem; background: #28a745; color: white; border-radius: 4px; font-size: 0.85rem; text-decoration: none; font-weight: 500;">Positive</a>
+                    <a href="html/direction_9_negative_visualization.html" style="display: inline-block; margin: 0.25rem 0.5rem 0.25rem 0; padding: 0.4rem 0.8rem; background: #dc3545; color: white; border-radius: 4px; font-size: 0.85rem; text-decoration: none; font-weight: 500;">Negative</a>
+                </div>
+            </div>
+            <div class="file-card">
+                <div class="file-title">Direction 10</div>
+                <div class="file-description">
+                    Interactive visualization showing activation similarities and token-level analysis
+
+
+                </div>
+                <div style="margin-top: 0.75rem;">
+
+                    <a href="html/direction_10_positive_visualization.html" style="display: inline-block; margin: 0.25rem 0.5rem 0.25rem 0; padding: 0.4rem 0.8rem; background: #28a745; color: white; border-radius: 4px; font-size: 0.85rem; text-decoration: none; font-weight: 500;">Positive</a>
+                    <a href="html/direction_10_negative_visualization.html" style="display: inline-block; margin: 0.25rem 0.5rem 0.25rem 0; padding: 0.4rem 0.8rem; background: #dc3545; color: white; border-radius: 4px; font-size: 0.85rem; text-decoration: none; font-weight: 500;">Negative</a>
+                </div>
+            </div>
+            <div class="file-card">
+                <div class="file-title">Direction 11</div>
+                <div class="file-description">
+                    Interactive visualization showing activation similarities and token-level analysis
+
+
+                </div>
+                <div style="margin-top: 0.75rem;">
+
+                    <a href="html/direction_11_positive_visualization.html" style="display: inline-block; margin: 0.25rem 0.5rem 0.25rem 0; padding: 0.4rem 0.8rem; background: #28a745; color: white; border-radius: 4px; font-size: 0.85rem; text-decoration: none; font-weight: 500;">Positive</a>
+                    <a href="html/direction_11_negative_visualization.html" style="display: inline-block; margin: 0.25rem 0.5rem 0.25rem 0; padding: 0.4rem 0.8rem; background: #dc3545; color: white; border-radius: 4px; font-size: 0.85rem; text-decoration: none; font-weight: 500;">Negative</a>
+                </div>
+            </div>
+            <div class="file-card">
+                <div class="file-title">Direction 12</div>
+                <div class="file-description">
+                    Interactive visualization showing activation similarities and token-level analysis
+
+
+                </div>
+                <div style="margin-top: 0.75rem;">
+
+                    <a href="html/direction_12_positive_visualization.html" style="display: inline-block; margin: 0.25rem 0.5rem 0.25rem 0; padding: 0.4rem 0.8rem; background: #28a745; color: white; border-radius: 4px; font-size: 0.85rem; text-decoration: none; font-weight: 500;">Positive</a>
+                    <a href="html/direction_12_negative_visualization.html" style="display: inline-block; margin: 0.25rem 0.5rem 0.25rem 0; padding: 0.4rem 0.8rem; background: #dc3545; color: white; border-radius: 4px; font-size: 0.85rem; text-decoration: none; font-weight: 500;">Negative</a>
+                </div>
+            </div>
+            <div class="file-card">
+                <div class="file-title">Direction 13</div>
+                <div class="file-description">
+                    Interactive visualization showing activation similarities and token-level analysis
+
+
+                </div>
+                <div style="margin-top: 0.75rem;">
+
+                    <a href="html/direction_13_positive_visualization.html" style="display: inline-block; margin: 0.25rem 0.5rem 0.25rem 0; padding: 0.4rem 0.8rem; background: #28a745; color: white; border-radius: 4px; font-size: 0.85rem; text-decoration: none; font-weight: 500;">Positive</a>
+                    <a href="html/direction_13_negative_visualization.html" style="display: inline-block; margin: 0.25rem 0.5rem 0.25rem 0; padding: 0.4rem 0.8rem; background: #dc3545; color: white; border-radius: 4px; font-size: 0.85rem; text-decoration: none; font-weight: 500;">Negative</a>
+                </div>
+            </div>
+            <div class="file-card">
+                <div class="file-title">Direction 14</div>
+                <div class="file-description">
+                    Interactive visualization showing activation similarities and token-level analysis
+
+
+                </div>
+                <div style="margin-top: 0.75rem;">
+
+                    <a href="html/direction_14_positive_visualization.html" style="display: inline-block; margin: 0.25rem 0.5rem 0.25rem 0; padding: 0.4rem 0.8rem; background: #28a745; color: white; border-radius: 4px; font-size: 0.85rem; text-decoration: none; font-weight: 500;">Positive</a>
+                    <a href="html/direction_14_negative_visualization.html" style="display: inline-block; margin: 0.25rem 0.5rem 0.25rem 0; padding: 0.4rem 0.8rem; background: #dc3545; color: white; border-radius: 4px; font-size: 0.85rem; text-decoration: none; font-weight: 500;">Negative</a>
+                </div>
+            </div>
+            <div class="file-card">
+                <div class="file-title">Direction 15</div>
+                <div class="file-description">
+                    Interactive visualization showing activation similarities and token-level analysis
+
+
+                </div>
+                <div style="margin-top: 0.75rem;">
+
+                    <a href="html/direction_15_positive_visualization.html" style="display: inline-block; margin: 0.25rem 0.5rem 0.25rem 0; padding: 0.4rem 0.8rem; background: #28a745; color: white; border-radius: 4px; font-size: 0.85rem; text-decoration: none; font-weight: 500;">Positive</a>
+                    <a href="html/direction_15_negative_visualization.html" style="display: inline-block; margin: 0.25rem 0.5rem 0.25rem 0; padding: 0.4rem 0.8rem; background: #dc3545; color: white; border-radius: 4px; font-size: 0.85rem; text-decoration: none; font-weight: 500;">Negative</a>
+                </div>
+            </div>
+            <div class="file-card">
+                <div class="file-title">Direction 16</div>
+                <div class="file-description">
+                    Interactive visualization showing activation similarities and token-level analysis
+
+
+                </div>
+                <div style="margin-top: 0.75rem;">
+
+                    <a href="html/direction_16_positive_visualization.html" style="display: inline-block; margin: 0.25rem 0.5rem 0.25rem 0; padding: 0.4rem 0.8rem; background: #28a745; color: white; border-radius: 4px; font-size: 0.85rem; text-decoration: none; font-weight: 500;">Positive</a>
+                    <a href="html/direction_16_negative_visualization.html" style="display: inline-block; margin: 0.25rem 0.5rem 0.25rem 0; padding: 0.4rem 0.8rem; background: #dc3545; color: white; border-radius: 4px; font-size: 0.85rem; text-decoration: none; font-weight: 500;">Negative</a>
+                </div>
+            </div>
+            <div class="file-card">
+                <div class="file-title">Direction 17</div>
+                <div class="file-description">
+                    Interactive visualization showing activation similarities and token-level analysis
+
+
+                </div>
+                <div style="margin-top: 0.75rem;">
+
+                    <a href="html/direction_17_positive_visualization.html" style="display: inline-block; margin: 0.25rem 0.5rem 0.25rem 0; padding: 0.4rem 0.8rem; background: #28a745; color: white; border-radius: 4px; font-size: 0.85rem; text-decoration: none; font-weight: 500;">Positive</a>
+                    <a href="html/direction_17_negative_visualization.html" style="display: inline-block; margin: 0.25rem 0.5rem 0.25rem 0; padding: 0.4rem 0.8rem; background: #dc3545; color: white; border-radius: 4px; font-size: 0.85rem; text-decoration: none; font-weight: 500;">Negative</a>
+                </div>
+            </div>
+            <div class="file-card">
+                <div class="file-title">Direction 18</div>
+                <div class="file-description">
+                    Interactive visualization showing activation similarities and token-level analysis
+
+
+                </div>
+                <div style="margin-top: 0.75rem;">
+
+                    <a href="html/direction_18_positive_visualization.html" style="display: inline-block; margin: 0.25rem 0.5rem 0.25rem 0; padding: 0.4rem 0.8rem; background: #28a745; color: white; border-radius: 4px; font-size: 0.85rem; text-decoration: none; font-weight: 500;">Positive</a>
+                    <a href="html/direction_18_negative_visualization.html" style="display: inline-block; margin: 0.25rem 0.5rem 0.25rem 0; padding: 0.4rem 0.8rem; background: #dc3545; color: white; border-radius: 4px; font-size: 0.85rem; text-decoration: none; font-weight: 500;">Negative</a>
+                </div>
+            </div>
+            <div class="file-card">
+                <div class="file-title">Direction 19</div>
+                <div class="file-description">
+                    Interactive visualization showing activation similarities and token-level analysis
+
+
+                </div>
+                <div style="margin-top: 0.75rem;">
+
+                    <a href="html/direction_19_positive_visualization.html" style="display: inline-block; margin: 0.25rem 0.5rem 0.25rem 0; padding: 0.4rem 0.8rem; background: #28a745; color: white; border-radius: 4px; font-size: 0.85rem; text-decoration: none; font-weight: 500;">Positive</a>
+                    <a href="html/direction_19_negative_visualization.html" style="display: inline-block; margin: 0.25rem 0.5rem 0.25rem 0; padding: 0.4rem 0.8rem; background: #dc3545; color: white; border-radius: 4px; font-size: 0.85rem; text-decoration: none; font-weight: 500;">Negative</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="footer">
+    </div>
+</body>
+</html>

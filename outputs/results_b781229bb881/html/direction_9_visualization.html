@@ -1,0 +1,403 @@
+
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">
+<title>Token Activation Similarity Report</title><style>
+body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; padding: 20px; background-color: #f8f9fa; color: #212529; }
+.container { background-color: #ffffff; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.07); }
+h1 { color: #0056b3; text-align: center; margin-bottom: 25px; font-weight: 300;}
+h2 { color: #0056b3; border-bottom: 1px solid #dee2e6; padding-bottom: 10px; margin-top:0; font-size: 1.5em; font-weight: 400; }
+.token { padding: 3px 5px; margin: 2px 1px; border-radius: 4px; display: inline-block; border: 1px solid #ced4da; cursor: default; transition: transform 0.1s ease-out, box-shadow 0.1s ease-out; font-size: 0.9em; line-height: 1.5; }
+.token:hover { transform: translateY(-1px); box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+.token.highlight-window { border: 2px solid #c82333; font-weight: 600; background-color: #f8d7da !important; color: #721c24; }
+.sequence-display { margin-top: 12px; padding: 12px; border: 1px solid #e9ecef; background-color: #f8f9fa; border-radius: 6px; white-space: pre-wrap; word-wrap: break-word; line-height: 1.7; }
+.full-text-display { margin-top: 15px; padding: 10px; border: 1px solid #dfe6e9; background-color: #f9f9f9; border-radius: 6px; white-space: pre-wrap; word-wrap: break-word; line-height: 1.6; font-size: 0.95em; color: #333; }
+.tooltip { position: absolute; background-color: rgba(33,37,41,0.9); color: white; padding: 8px 12px; border-radius: 5px; visibility: hidden; z-index: 1000; pointer-events: none; font-size: 0.85em; max-width: 400px; }
+.details p { margin: 5px 0; font-size: 0.9em; color: #495057; } .details strong { color: #0056b3; }
+.footer-note { font-size: 0.8em; color: #6c757d; text-align: center; margin-top: 30px; }
+.global-max-info { background-color: #e3f2fd; padding: 10px; border-radius: 5px; margin-bottom: 20px; text-align: center; font-size: 0.9em; color: #1565c0; }
+.threshold-control { margin-top: 15px; padding: 10px; background-color: rgba(255,255,255,0.3); border-radius: 6px; }
+.threshold-slider { width: 200px; margin: 0 10px; }
+.threshold-value { font-weight: bold; color: #0056b3; }
+</style></head><body>
+<div class="explanation-section" style="background-color: #f0f8ff; padding: 15px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #0056b3;"><h3 style="color: #0056b3; margin-top: 0;">Feature Explanation</h3><div style="line-height: 1.6; color: #333;">It appears to be a feature that “lights up” when the model is framing a direct, evaluative question—typically one beginning with “What” (and similar wh-phrases) that asks for a qualitative, comparative, or opinion-based response.</div></div><div class="global-max-info">
+    <strong>Query Type:</strong> 1-token sequences<br>
+    <strong>Query Vector Norms:</strong> ['25.6296']<br>
+    <strong>Global Max Sequence Similarities:</strong> [37.05201721191406]<br>
+    <div style="margin-top: 10px;">
+        <label style="font-weight: normal; cursor: pointer;">
+            <input type="checkbox" id="normalizeToggle" checked style="margin-right: 8px;">
+            Show Normalized Activations (divide by max per result)
+        </label>
+        <span id="normalizationStatus" style="margin-left: 15px; font-style: italic; color: #666;"></span>
+    </div>
+    <div class="threshold-control">
+        <label style="font-weight: normal;">
+            Activation Cutoff Threshold: <span class="threshold-value" id="thresholdValue">0.000</span>
+        </label><br>
+        <input type="range" id="thresholdSlider" class="threshold-slider"
+               min="0" max="1" step="0.001"
+               value="0.0">
+        <div style="margin-top: 5px; font-size: 0.8em; color: #666;">
+            No faithfulness data available - adjust manually
+        </div>
+    </div>
+</div>
+<div id="tooltip" class="tooltip"></div>
+
+<div class="container" id="container_result_0">
+    <h2>Result 1 (Sample Ref: 15571)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 37.0520</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">" better"</span></p>
+        <p><strong>Window Start Position:</strong> 0</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_0"></div>
+    <div class="full-text-display" id="full_text_display_result_0"></div>
+</div>
+<div class="container" id="container_result_1">
+    <h2>Result 2 (Sample Ref: 1472)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 35.6788</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">" better"</span></p>
+        <p><strong>Window Start Position:</strong> 15</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_1"></div>
+    <div class="full-text-display" id="full_text_display_result_1"></div>
+</div>
+<div class="container" id="container_result_2">
+    <h2>Result 3 (Sample Ref: 15849)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 35.5017</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">" things"</span></p>
+        <p><strong>Window Start Position:</strong> 3</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_2"></div>
+    <div class="full-text-display" id="full_text_display_result_2"></div>
+</div>
+<div class="container" id="container_result_3">
+    <h2>Result 4 (Sample Ref: 458)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 35.4772</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">" do"</span></p>
+        <p><strong>Window Start Position:</strong> 19</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_3"></div>
+    <div class="full-text-display" id="full_text_display_result_3"></div>
+</div>
+<div class="container" id="container_result_4">
+    <h2>Result 5 (Sample Ref: 5006)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 35.3370</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">" lovely"</span></p>
+        <p><strong>Window Start Position:</strong> 2</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_4"></div>
+    <div class="full-text-display" id="full_text_display_result_4"></div>
+</div>
+<div class="container" id="container_result_5">
+    <h2>Result 6 (Sample Ref: 2698)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 35.3157</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">" Kind"</span></p>
+        <p><strong>Window Start Position:</strong> 1</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_5"></div>
+    <div class="full-text-display" id="full_text_display_result_5"></div>
+</div>
+<div class="container" id="container_result_6">
+    <h2>Result 7 (Sample Ref: 6429)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 34.8564</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">" Kind"</span></p>
+        <p><strong>Window Start Position:</strong> 9</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_6"></div>
+    <div class="full-text-display" id="full_text_display_result_6"></div>
+</div>
+<div class="container" id="container_result_7">
+    <h2>Result 8 (Sample Ref: 5913)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 34.7813</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">" kind"</span></p>
+        <p><strong>Window Start Position:</strong> 1</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_7"></div>
+    <div class="full-text-display" id="full_text_display_result_7"></div>
+</div>
+<div class="container" id="container_result_8">
+    <h2>Result 9 (Sample Ref: 6829)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 34.7507</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">" do"</span></p>
+        <p><strong>Window Start Position:</strong> 4</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_8"></div>
+    <div class="full-text-display" id="full_text_display_result_8"></div>
+</div>
+<div class="container" id="container_result_9">
+    <h2>Result 10 (Sample Ref: 18027)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 34.6959</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">" are"</span></p>
+        <p><strong>Window Start Position:</strong> 1</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_9"></div>
+    <div class="full-text-display" id="full_text_display_result_9"></div>
+</div>
+<div class="container" id="container_result_10">
+    <h2>Result 11 (Sample Ref: 14493)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 34.6959</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">" are"</span></p>
+        <p><strong>Window Start Position:</strong> 1</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_10"></div>
+    <div class="full-text-display" id="full_text_display_result_10"></div>
+</div>
+<div class="container" id="container_result_11">
+    <h2>Result 12 (Sample Ref: 7771)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 34.6959</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">" are"</span></p>
+        <p><strong>Window Start Position:</strong> 1</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_11"></div>
+    <div class="full-text-display" id="full_text_display_result_11"></div>
+</div>
+<div class="container" id="container_result_12">
+    <h2>Result 13 (Sample Ref: 4777)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 34.6959</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">" are"</span></p>
+        <p><strong>Window Start Position:</strong> 1</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_12"></div>
+    <div class="full-text-display" id="full_text_display_result_12"></div>
+</div>
+<div class="container" id="container_result_13">
+    <h2>Result 14 (Sample Ref: 5097)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 34.6959</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">" are"</span></p>
+        <p><strong>Window Start Position:</strong> 1</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_13"></div>
+    <div class="full-text-display" id="full_text_display_result_13"></div>
+</div>
+<div class="container" id="container_result_14">
+    <h2>Result 15 (Sample Ref: 6178)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 34.6959</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">" are"</span></p>
+        <p><strong>Window Start Position:</strong> 1</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_14"></div>
+    <div class="full-text-display" id="full_text_display_result_14"></div>
+</div>
+<div class="container" id="container_result_15">
+    <h2>Result 16 (Sample Ref: 6215)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 34.6959</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">" are"</span></p>
+        <p><strong>Window Start Position:</strong> 1</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_15"></div>
+    <div class="full-text-display" id="full_text_display_result_15"></div>
+</div>
+<div class="container" id="container_result_16">
+    <h2>Result 17 (Sample Ref: 4403)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 34.6959</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">" are"</span></p>
+        <p><strong>Window Start Position:</strong> 1</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_16"></div>
+    <div class="full-text-display" id="full_text_display_result_16"></div>
+</div>
+<div class="container" id="container_result_17">
+    <h2>Result 18 (Sample Ref: 3189)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 34.6959</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">" are"</span></p>
+        <p><strong>Window Start Position:</strong> 1</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_17"></div>
+    <div class="full-text-display" id="full_text_display_result_17"></div>
+</div>
+<div class="container" id="container_result_18">
+    <h2>Result 19 (Sample Ref: 470)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 34.6959</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">" are"</span></p>
+        <p><strong>Window Start Position:</strong> 1</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_18"></div>
+    <div class="full-text-display" id="full_text_display_result_18"></div>
+</div>
+<div class="container" id="container_result_19">
+    <h2>Result 20 (Sample Ref: 222)</h2>
+    <div class="details">
+        <p><strong>FAISS Score (Similarity):</strong> 34.6959</p>
+        <p><strong>Matched 1-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">" are"</span></p>
+        <p><strong>Window Start Position:</strong> 1</p>
+    </div>
+    <div class="sequence-display" id="sequence_display_result_19"></div>
+    <div class="full-text-display" id="full_text_display_result_19"></div>
+</div>
+<script>
+    const allResultsData = [{"id": "result_0", "sample_idx": 15571, "score": 37.05201721191406, "highlight_inds": [1], "matched_tokens_str": " better", "original_pos": 0, "full_sequence_tokens": ["What", " better", " way", " to", " celebrate", " Easter", " than", " with", " the", " candy", "-", "colors", " of", " spring", "time", "?", " Think", " you", "&#x27;re", " too", " old", " for", " an", " Easter", " basket", "?", " Think", " again", "!", " Order", " a", " lush", " basket", " of", " Easter", " flowers", " from", " JE", "ANN", "IE", "&#x27;", "S", " FL", "OR"], "sequence_similarities": [[24.05988311767578], [37.05201721191406], [19.412540435791016], [15.49521255493164], [0.21682137250900269], [10.631484031677246], [7.086669921875], [14.08218002319336], [1.1245448589324951], [10.770933151245117], [15.157620429992676], [12.724722862243652], [6.4863996505737305], [3.741553544998169], [-1.0279229879379272], [-0.999699592590332], [-0.21727800369262695], [5.4368791580200195], [-2.9149370193481445], [2.272719383239746], [-1.2906994819641113], [-0.7231459617614746], [2.8594188690185547], [5.618438720703125], [3.1048898696899414], [-8.158852577209473], [-5.092805862426758], [8.575397491455078], [-7.835772514343262], [-5.737332344055176], [6.385375022888184], [11.092103958129883], [-0.32118523120880127], [7.370832443237305], [4.254204750061035], [0.633553147315979], [5.021210670471191], [0.8307156562805176], [5.851553916931152], [6.3806352615356445], [-7.672506332397461], [-5.958481311798096], [-1.5374910831451416], [-1.0099259614944458]], "normalized_similarities": [[0.6493542194366455], [1.0], [0.5239266753196716], [0.41820159554481506], [0.005851810332387686], [0.2869340181350708], [0.19126272201538086], [0.3800651431083679], [0.03035043552517891], [0.2906976044178009], [0.4090902805328369], [0.3434286117553711], [0.17506198585033417], [0.10098110139369965], [-0.027742700651288033], [-0.02698097564280033], [-0.005864134058356285], [0.14673638343811035], [-0.07867147773504257], [0.06133861467242241], [-0.03483479842543602], [-0.019517047330737114], [0.07717309892177582], [0.1516365110874176], [0.0837981328368187], [-0.22019995748996735], [-0.13745015859603882], [0.23144212365150452], [-0.21148031949996948], [-0.15484534204006195], [0.1723354160785675], [0.29936572909355164], [-0.00866849534213543], [0.19893202185630798], [0.11481709033250809], [0.01709901914000511], [0.135517880320549], [0.022420253604650497], [0.15792807936668396], [0.17220750451087952], [-0.20707391202449799], [-0.16081395745277405], [-0.04149547591805458], [-0.027256976813077927]], "result_max_similarities": 37.05201721191406, "full_text_display": "What better way to celebrate Easter than with the candy-colors of springtime? Think you&#x27;re too old for an Easter basket? Think again! Order a lush basket of Easter flowers from JEANNIE&#x27;S FLOR", "K": 1}, {"id": "result_1", "sample_idx": 1472, "score": 35.67876434326172, "highlight_inds": [15], "matched_tokens_str": " better", "original_pos": 15, "full_sequence_tokens": ["The", " week", " of", " April", " 8", "th", "-", "14", "th", " is", " National", " Library", " Week", " and", " what", " better", " way", " to", " celebrate", " than", " with", " a", " delicious", " homemade", " cake", "?", " Sign", " up", " for", " a", " library", " card", " during", " National", " Library", " Week", " and", " be", " entered", " in", " a", " drawing", " to", " win"], "sequence_similarities": [[1.3926849365234375], [2.130948066711426], [1.5860838890075684], [7.16579532623291], [5.036345481872559], [2.1464877128601074], [1.3802087306976318], [4.496027946472168], [4.937363624572754], [3.5468342304229736], [4.955340385437012], [-0.441237211227417], [-1.50477933883667], [8.732063293457031], [4.70285701751709], [35.67876434326172], [8.878470420837402], [14.965005874633789], [1.4155532121658325], [9.868249893188477], [15.461868286132812], [7.539511680603027], [7.4563398361206055], [6.647141456604004], [9.04434871673584], [-7.115701675415039], [2.8458213806152344], [5.178278923034668], [2.2910001277923584], [5.295477867126465], [1.1982359886169434], [10.834251403808594], [0.9966575503349304], [2.223576307296753], [2.5546000003814697], [-3.622370958328247], [5.0003204345703125], [4.188055992126465], [5.728733539581299], [2.720435619354248], [3.8470041751861572], [3.0055134296417236], [9.366610527038574], [0.9349255561828613]], "normalized_similarities": [[0.03758728876709938], [0.05751233547925949], [0.042806949466466904], [0.19339825212955475], [0.13592635095119476], [0.05793173611164093], [0.0372505709528923], [0.12134367227554321], [0.13325491547584534], [0.09572580456733704], [0.13374009728431702], [-0.011908587999641895], [-0.04061261564493179], [0.23567038774490356], [0.12692579627037048], [0.9629371762275696], [0.23962178826332092], [0.40389180183410645], [0.038204483687877655], [0.26633501052856445], [0.41730165481567383], [0.20348452031612396], [0.20123977959156036], [0.1794002652168274], [0.2440986931324005], [-0.19204626977443695], [0.07680611312389374], [0.13975700736045837], [0.061831995844841], [0.1429200917482376], [0.03233928978443146], [0.29240652918815613], [0.02689887396991253], [0.06001228839159012], [0.06894631683826447], [-0.09776447713375092], [0.1349540650844574], [0.1130317971110344], [0.15461327135562897], [0.07342206686735153], [0.10382711887359619], [0.08111605048179626], [0.2527962327003479], [0.02523278445005417]], "result_max_similarities": 37.05201721191406, "full_text_display": "The week of April 8th-14th is National Library Week and what better way to celebrate than with a delicious homemade cake? Sign up for a library card during National Library Week and be entered in a drawing to win", "K": 1}, {"id": "result_2", "sample_idx": 15849, "score": 35.50172424316406, "highlight_inds": [2], "matched_tokens_str": " things", "original_pos": 3, "full_sequence_tokens": ["Import", "ant", " things", " you", " Should", " Know", " about", " House", " and", " Land", " Pack", "ages", " People", " who", " live", " in", " their", " own", " homes", " usually", " have", " more", " joy", " and", " happiness", " while", " compared", " to", " those", " who", " rent", ".", " Once", " the", " construction", " jobs", " or", " the", " transfer", " process", " is", " completed", ",", " you"], "sequence_similarities": [[5.793417930603027], [17.133014678955078], [35.50172424316406], [27.55119514465332], [10.201297760009766], [11.321136474609375], [4.300329685211182], [1.7958128452301025], [2.898170232772827], [3.0707435607910156], [7.378803253173828], [9.153106689453125], [10.00191593170166], [13.075427055358887], [15.696623802185059], [6.0775041580200195], [5.905282974243164], [9.858711242675781], [9.886590957641602], [9.40134334564209], [3.1440086364746094], [-1.9137170314788818], [2.4531705379486084], [4.166919708251953], [-5.4903082847595215], [-7.552547454833984], [1.8345950841903687], [-0.6027846336364746], [0.5084905624389648], [9.539634704589844], [14.453906059265137], [-20.354015350341797], [11.171756744384766], [6.033608436584473], [6.921409606933594], [4.030551910400391], [8.60611629486084], [8.95535945892334], [1.0871672630310059], [11.89669132232666], [2.1928937435150146], [-0.07568836212158203], [-1.0080995559692383], [0.2967240810394287]], "normalized_similarities": [[0.15635904669761658], [0.46240437030792236], [0.9581590294837952], [0.7435815334320068], [0.27532368898391724], [0.3055470883846283], [0.11606195569038391], [0.04846734181046486], [0.0782189592719078], [0.08287655562162399], [0.19914713501930237], [0.2470339685678482], [0.2699425518512726], [0.35289379954338074], [0.4236375093460083], [0.16402627527713776], [0.15937817096710205], [0.26607757806777954], [0.2668300271034241], [0.25373363494873047], [0.08485390990972519], [-0.05164946988224983], [0.06620882451534271], [0.11246134340763092], [-0.14817838370800018], [-0.2038363367319107], [0.049514040350914], [-0.01626860536634922], [0.01372369471937418], [0.25746598839759827], [0.3900976777076721], [-0.5493362545967102], [0.30151548981666565], [0.1628415584564209], [0.18680250644683838], [0.10878090560436249], [0.2322711944580078], [0.24169695377349854], [0.029341649264097214], [0.3210808038711548], [0.05918419361114502], [-0.0020427594427019358], [-0.02720768377184868], [0.008008311502635479]], "result_max_similarities": 37.05201721191406, "full_text_display": "Important things you Should Know about House and Land Packages People who live in their own homes usually have more joy and happiness while compared to those who rent. Once the construction jobs or the transfer process is completed, you", "K": 1}, {"id": "result_3", "sample_idx": 458, "score": 35.47724151611328, "highlight_inds": [19], "matched_tokens_str": " do", "original_pos": 19, "full_sequence_tokens": ["as", " well", ",", " I", " will", " continue", " to", " give", " similar", " ahead", " in", " future", " ..", " as", " below", " mentioned", " ..", "\n", "What", " do", " you", " say", "?", " are", " you", " game", " ?", " Share", " the", " love", ",", " share", " this", " journal", " and", " watch", ".", "\n", "All", " above", " sounds", " good", " ?", "\n"], "sequence_similarities": [[13.876703262329102], [18.727924346923828], [-3.680114507675171], [1.1448553800582886], [4.688143730163574], [3.483330249786377], [2.5594053268432617], [3.0109052658081055], [1.7159278392791748], [-0.991633415222168], [5.680984020233154], [3.4290575981140137], [-5.814065933227539], [8.5156888961792], [9.070013046264648], [9.079439163208008], [1.2103286981582642], [-22.80453109741211], [2.160111904144287], [35.47724151611328], [16.291217803955078], [21.540435791015625], [-1.1652274131774902], [0.20467329025268555], [0.37186765670776367], [-4.181773662567139], [-14.301959991455078], [-1.8048678636550903], [1.0894957780838013], [6.737674236297607], [-3.94256854057312], [-6.508440971374512], [-2.486536979675293], [10.795680046081543], [3.7548751831054688], [-0.6343855857849121], [-2.0982213020324707], [-0.1120004653930664], [5.478826522827148], [1.4242130517959595], [9.496137619018555], [6.070431709289551], [-12.406511306762695], [-3.3382492065429688]], "normalized_similarities": [[0.3745194971561432], [0.5054495334625244], [-0.09932292252779007], [0.030898597091436386], [0.12652871012687683], [0.09401189535856247], [0.06907600164413452], [0.08126157522201538], [0.04631131887435913], [-0.026763277128338814], [0.15332455933094025], [0.09254712611436844], [-0.1569163203239441], [0.22983063757419586], [0.24479134380817413], [0.2450457513332367], [0.032665662467479706], [-0.6154733896255493], [0.05829944089055061], [0.9574982523918152], [0.43968504667282104], [0.5813566446304321], [-0.03144842013716698], [0.005523944739252329], [0.010036366991698742], [-0.1128622367978096], [-0.3859967887401581], [-0.04871172830462456], [0.029404493048787117], [0.18184365332126617], [-0.1064063161611557], [-0.17565685510635376], [-0.0671093538403511], [0.29136550426483154], [0.1013406440615654], [-0.017121486365795135], [-0.05662906914949417], [-0.00302278995513916], [0.14786851406097412], [0.03843820467591286], [0.25629204511642456], [0.16383539140224457], [-0.3348403871059418], [-0.09009628742933273]], "result_max_similarities": 37.05201721191406, "full_text_display": "as well, I will continue to give similar ahead in future .. as below mentioned ..\nWhat do you say? are you game ? Share the love, share this journal and watch.\nAll above sounds good ?\n", "K": 1}, {"id": "result_4", "sample_idx": 5006, "score": 35.337039947509766, "highlight_inds": [2], "matched_tokens_str": " lovely", "original_pos": 2, "full_sequence_tokens": ["What", " a", " lovely", " piece", " on", " one", " of", " my", " home", " towns", "!", " I", " lived", " in", " Stockholm", " when", " I", " was", " a", " child", ",", " and", " my", " mother", " still", " has", " a", " flat", " in", " L", "iding", "\u00f6", ",", " where", " I", " stay", " when", " visiting", ".", " I", " am", " a", " little", " obsessed"], "sequence_similarities": [[24.05988311767578], [31.022506713867188], [35.337039947509766], [14.709508895874023], [13.22686767578125], [15.362935066223145], [24.436063766479492], [12.669855117797852], [9.061514854431152], [11.574058532714844], [-4.169854164123535], [-0.22965049743652344], [2.017138957977295], [2.2687065601348877], [5.287806987762451], [1.0108695030212402], [5.435731410980225], [5.348369598388672], [-1.4759774208068848], [0.024175167083740234], [-2.431931972503662], [2.420520305633545], [1.9245953559875488], [16.52714729309082], [5.210920810699463], [-3.5095105171203613], [-0.32181286811828613], [1.0117645263671875], [6.3214311599731445], [1.4101598262786865], [2.2988357543945312], [16.759580612182617], [-0.6203722953796387], [-3.3333029747009277], [4.482060432434082], [8.756498336791992], [-2.055758476257324], [4.648081302642822], [-18.662649154663086], [1.255432367324829], [-0.926384449005127], [1.3102695941925049], [6.679121971130371], [-0.4864664077758789]], "normalized_similarities": [[0.6493542194366455], [0.8372690081596375], [0.9537143111228943], [0.3969961702823639], [0.3569810390472412], [0.41463154554367065], [0.6595069766044617], [0.3419477939605713], [0.24456198513507843], [0.31237325072288513], [-0.11254054307937622], [-0.006198056507855654], [0.054440733045339584], [0.061230313032865524], [0.14271306991577148], [0.027282441034913063], [0.14670540392398834], [0.14434759318828583], [-0.03983527794480324], [0.0006524656200781465], [-0.06563561409711838], [0.06532762199640274], [0.051943063735961914], [0.44605255126953125], [0.14063797891139984], [-0.09471847116947174], [-0.008685434237122536], [0.02730659767985344], [0.17060963809490204], [0.038058921694755554], [0.06204346939921379], [0.4523257315158844], [-0.016743279993534088], [-0.08996279537677765], [0.12096670269966125], [0.23632986843585968], [-0.05548303946852684], [0.12544745206832886], [-0.5036877989768982], [0.03388296812772751], [-0.025002267211675644], [0.03536297753453255], [0.18026338517665863], [-0.013129282742738724]], "result_max_similarities": 37.05201721191406, "full_text_display": "What a lovely piece on one of my home towns! I lived in Stockholm when I was a child, and my mother still has a flat in Liding\u00f6, where I stay when visiting. I am a little obsessed", "K": 1}, {"id": "result_5", "sample_idx": 2698, "score": 35.3156852722168, "highlight_inds": [1], "matched_tokens_str": " Kind", "original_pos": 1, "full_sequence_tokens": ["What", " Kind", " of", " Ann", "oy", "ing", " Food", "ie", " Are", " You", "?", "\n", "You", " gle", "eful", "ly", " describe", " yourself", " as", " a", " \u201c", "Food", "ie", "\u201d", " in", " your", " Facebook", ",", " Instagram", " or", " Twitter", " profile", ",", " but", " which", " especially", " annoying", " kind", " are", " you", "?", "\n", "We", " have"], "sequence_similarities": [[24.05988311767578], [35.3156852722168], [19.809574127197266], [19.927562713623047], [-0.5681424140930176], [4.469542503356934], [-0.2215440273284912], [7.0722808837890625], [-1.1392991542816162], [-6.46289587020874], [-11.366050720214844], [-21.76267433166504], [-1.6992378234863281], [-10.760703086853027], [1.2665448188781738], [1.2016937732696533], [-3.5320255756378174], [-0.41356515884399414], [3.8277835845947266], [2.021130084991455], [0.7518565654754639], [3.4814486503601074], [7.444058418273926], [-0.36560869216918945], [-2.729127883911133], [-0.9995768070220947], [6.33696174621582], [0.6467263698577881], [1.6416194438934326], [-3.934842348098755], [-4.276638507843018], [-3.5149827003479004], [-3.4348461627960205], [-3.716447114944458], [4.265964984893799], [4.038893699645996], [-0.07416343688964844], [3.8291032314300537], [0.6082565784454346], [-4.117128372192383], [-11.426831245422363], [-7.1244049072265625], [-10.114967346191406], [-3.511392116546631]], "normalized_similarities": [[0.6493542194366455], [0.953137993812561], [0.5346422791481018], [0.537826657295227], [-0.015333643183112144], [0.12062885612249374], [-0.0059792702086269855], [0.190874382853508], [-0.03074864111840725], [-0.17442764341831207], [-0.3067592978477478], [-0.5873546600341797], [-0.04586087167263031], [-0.2904215157032013], [0.03418288379907608], [0.032432615756988525], [-0.09532613307237625], [-0.011161744594573975], [0.10330837219953537], [0.05454844981431961], [0.020291920751333237], [0.09396111220121384], [0.20090831816196442], [-0.009867443703114986], [-0.07365666329860687], [-0.02697766199707985], [0.17102879285812378], [0.01745455153286457], [0.04430580511689186], [-0.106197789311409], [-0.1154225543141365], [-0.09486616402864456], [-0.09270334988832474], [-0.10030350089073181], [0.11513448506593704], [0.10900603979825974], [-0.0020016031339764595], [0.10334398597478867], [0.016416287049651146], [-0.11111751943826675], [-0.3083997070789337], [-0.19228115677833557], [-0.27299371361732483], [-0.09476925432682037]], "result_max_similarities": 37.05201721191406, "full_text_display": "What Kind of Annoying Foodie Are You?\nYou gleefully describe yourself as a \u201cFoodie\u201d in your Facebook, Instagram or Twitter profile, but which especially annoying kind are you?\nWe have", "K": 1}, {"id": "result_6", "sample_idx": 6429, "score": 34.8564453125, "highlight_inds": [9], "matched_tokens_str": " Kind", "original_pos": 9, "full_sequence_tokens": ["Mac", "ular", " Deg", "eneration", " Pro", "gn", "osis", ":", " What", " Kind", " of", " Vision", " Loss", " Can", " I", " Expect", "?", "\n", "Mac", "ular", " degeneration", " prognosis", " is", " of", " course", " different", " for", " every", " body", " and", " ...", " different", " for", " each", " eye", ".", "\n", "How", " fast", " one", "&#x27;s", " mac", "ular", " degeneration"], "sequence_similarities": [[4.750921726226807], [2.6512820720672607], [10.66762924194336], [2.4182376861572266], [11.531953811645508], [4.699524879455566], [7.264823913574219], [3.1029138565063477], [-0.6169307231903076], [34.8564453125], [15.6393404006958], [8.923795700073242], [1.4116270542144775], [8.002456665039062], [10.648292541503906], [5.820466995239258], [-11.494501113891602], [-25.08405113220215], [-1.578134536743164], [1.9148229360580444], [-1.7465989589691162], [2.2661592960357666], [-3.71876859664917], [-3.7066969871520996], [1.9847521781921387], [-0.11741161346435547], [-0.09253823757171631], [-1.558836579322815], [3.2340266704559326], [-2.3344757556915283], [0.9691698551177979], [5.142032623291016], [1.5054519176483154], [0.7285968065261841], [1.828941822052002], [-1.7624518871307373], [0.09035730361938477], [4.435868263244629], [8.14780330657959], [6.055912494659424], [5.094902992248535], [-2.633513927459717], [3.35457706451416], [-3.4055733680725098]], "normalized_similarities": [[0.12822303175926208], [0.07155567407608032], [0.28790953755378723], [0.06526602059602737], [0.3112368583679199], [0.1268358677625656], [0.19607093930244446], [0.08374480158090591], [-0.016650395467877388], [0.9407435059547424], [0.4220914840698242], [0.24084506928920746], [0.038098521530628204], [0.2159789800643921], [0.2873876690864563], [0.15708906948566437], [-0.31022605299949646], [-0.676995575428009], [-0.042592406272888184], [0.05167931690812111], [-0.04713910445570946], [0.06116156280040741], [-0.10036616027355194], [-0.10004035383462906], [0.053566642105579376], [-0.0031688318122178316], [-0.002497522160410881], [-0.042071569710969925], [0.0872834175825119], [-0.06300536543130875], [0.02615700662136078], [0.13877874612808228], [0.0406307689845562], [0.019664160907268524], [0.0493614636361599], [-0.047566961497068405], [0.0024386609438806772], [0.11972001940011978], [0.21990174055099487], [0.16344353556632996], [0.13750676810741425], [-0.07107612490653992], [0.09053695946931839], [-0.09191330522298813]], "result_max_similarities": 37.05201721191406, "full_text_display": "Macular Degeneration Prognosis: What Kind of Vision Loss Can I Expect?\nMacular degeneration prognosis is of course different for every body and ... different for each eye.\nHow fast one&#x27;s macular degeneration", "K": 1}, {"id": "result_7", "sample_idx": 5913, "score": 34.78131103515625, "highlight_inds": [1], "matched_tokens_str": " kind", "original_pos": 1, "full_sequence_tokens": ["What", " kind", " of", " wheels", " are", " you", " driving", " or", " to", "wing", "?", "\n", "What", " are", " the", " Benefits", " of", " a", " Travel", " Tra", "iler", " Policy", "?", "\n", "You", " store", " things", " in", " your", " travel", " trailer", " that", " you", " would", " not", " keep", " in", " your", " car", ",", " including", " jewelry", ",", " a"], "sequence_similarities": [[24.05988311767578], [34.78131103515625], [24.750404357910156], [15.053815841674805], [13.161218643188477], [3.6354966163635254], [4.857089996337891], [3.6648659706115723], [6.813485145568848], [-14.374161720275879], [-6.582927703857422], [-21.082304000854492], [0.055469512939453125], [24.953014373779297], [5.217938423156738], [-2.5266504287719727], [7.845366954803467], [6.054898262023926], [3.3815016746520996], [4.342343330383301], [3.0460100173950195], [0.3256652355194092], [-3.0969834327697754], [-2.868772506713867], [0.24513578414916992], [-2.636409044265747], [15.661924362182617], [13.542984962463379], [10.818852424621582], [1.5198438167572021], [3.7624568939208984], [13.280704498291016], [13.147489547729492], [0.2988405227661133], [-3.1619625091552734], [-2.4485490322113037], [4.333533763885498], [5.266113758087158], [9.74810791015625], [-3.971508502960205], [-3.70276141166687], [-2.724200963973999], [-6.322969913482666], [-6.295614242553711]], "normalized_similarities": [[0.6493542194366455], [0.9387156963348389], [0.6679907441139221], [0.40628868341445923], [0.35520923137664795], [0.09811872243881226], [0.13108840584754944], [0.09891137480735779], [0.1838897168636322], [-0.3879454433917999], [-0.17766718566417694], [-0.5689920783042908], [0.0014970713527873158], [0.673458993434906], [0.14082737267017365], [-0.06819198280572891], [0.21173927187919617], [0.16341616213321686], [0.09126362949609756], [0.11719586700201035], [0.0822090208530426], [0.008789406158030033], [-0.0835847482085228], [-0.07742553949356079], [0.006615990307182074], [-0.07115426659584045], [0.42270100116729736], [0.36551275849342346], [0.29199090600013733], [0.041019193828105927], [0.10154526680707932], [0.3584340512752533], [0.35483869910240173], [0.00806543231010437], [-0.08533847332000732], [-0.06608409434556961], [0.11695810407400131], [0.14212758839130402], [0.2630924880504608], [-0.10718737542629242], [-0.09993413835763931], [-0.07352368533611298], [-0.1706511676311493], [-0.16991285979747772]], "result_max_similarities": 37.05201721191406, "full_text_display": "What kind of wheels are you driving or towing?\nWhat are the Benefits of a Travel Trailer Policy?\nYou store things in your travel trailer that you would not keep in your car, including jewelry, a", "K": 1}, {"id": "result_8", "sample_idx": 6829, "score": 34.750732421875, "highlight_inds": [4], "matched_tokens_str": " do", "original_pos": 4, "full_sequence_tokens": ["Love", " this", " -", " what", " do", " you", " think", " cost", " would", " be", "???", "\n", "Thanks", "!", " This", " project", " was", " appro", "x", ".", " $", "12", "K", " installed", ",", " with", " task", " lighting", " and", " fabric", "-", "covered", " tack", "board", ".", "\n", "To", " be", " honest", " I", " think", " it", " is", " hugely"], "sequence_similarities": [[10.366167068481445], [11.750158309936523], [-1.3741602897644043], [6.861509323120117], [34.750732421875], [17.065174102783203], [29.913040161132812], [10.456184387207031], [15.028718948364258], [8.730231285095215], [-4.312149524688721], [-25.605684280395508], [1.3374762535095215], [-4.307942867279053], [2.1266040802001953], [5.806756019592285], [0.1617727279663086], [-9.920984268188477], [-8.052532196044922], [-9.22685432434082], [-3.810943603515625], [-4.154640197753906], [2.3114967346191406], [-0.7708690166473389], [2.1913435459136963], [-0.16259169578552246], [-3.351748466491699], [-4.224409580230713], [0.09245991706848145], [1.258570909500122], [-1.618173599243164], [-1.3821759223937988], [-1.5341745615005493], [4.399355888366699], [0.23093807697296143], [-1.5908503532409668], [2.761505603790283], [2.324894905090332], [2.659471273422241], [-0.41368913650512695], [-0.4565584659576416], [5.469474792480469], [-6.086498260498047], [-5.467958450317383]], "normalized_similarities": [[0.2797733545303345], [0.31712600588798523], [-0.0370873287320137], [0.18518584966659546], [0.9378904104232788], [0.4605734050273895], [0.807325541973114], [0.2822028398513794], [0.4056113660335541], [0.23562094569206238], [-0.1163809671998024], [-0.6910739541053772], [0.03609725832939148], [-0.11626742780208588], [0.057395096868276596], [0.15671902894973755], [0.004366097506135702], [-0.2677582800388336], [-0.2173304706811905], [-0.24902434647083282], [-0.10285387933254242], [-0.11212993413209915], [0.06238517910242081], [-0.02080504782497883], [0.059142354875802994], [-0.004388201050460339], [-0.09046062082052231], [-0.1140129417181015], [0.002495408523827791], [0.033967677503824234], [-0.04367302358150482], [-0.037303660064935684], [-0.04140596464276314], [0.11873458325862885], [0.006232806947082281], [-0.04293559491634369], [0.07453050464391708], [0.06274678558111191], [0.07177669554948807], [-0.011165090836584568], [-0.012322094291448593], [0.14761611819267273], [-0.16426901519298553], [-0.14757518470287323]], "result_max_similarities": 37.05201721191406, "full_text_display": "Love this - what do you think cost would be???\nThanks! This project was approx. $12K installed, with task lighting and fabric-covered tackboard.\nTo be honest I think it is hugely", "K": 1}, {"id": "result_9", "sample_idx": 18027, "score": 34.69594955444336, "highlight_inds": [1], "matched_tokens_str": " are", "original_pos": 1, "full_sequence_tokens": ["What", " are", " Smart", " Go", "als", "?", " How", " to", " Im", "plement", " Smart", " Go", "als", " via", " Google", " Analytics", "?", "\n", "Tech", "magn", "ate", " Bu", "ys", " Blog", "X", ",", " the", " Lead", "ing", " Blog", " Conference", " where", " Blog", "ging", " Community", " Connect", "s", "!"], "sequence_similarities": [[24.05988311767578], [34.69594955444336], [14.697050094604492], [6.636019706726074], [-4.424846172332764], [-7.619531631469727], [10.248550415039062], [13.81316089630127], [7.7304277420043945], [8.670591354370117], [0.2061617374420166], [-5.260337829589844], [-14.06594181060791], [-3.841022253036499], [0.46028459072113037], [3.6447601318359375], [-9.569622993469238], [-24.413021087646484], [3.2059502601623535], [0.8404148817062378], [4.90098762512207], [-1.7726101875305176], [4.249478340148926], [-0.15244531631469727], [-5.056944370269775], [2.9768788814544678], [-1.7027596235275269], [1.8208608627319336], [-5.041686058044434], [3.6326937675476074], [-1.3800415992736816], [2.998631477355957], [3.2117810249328613], [3.933492422103882], [3.9478282928466797], [-2.5947303771972656], [1.491821527481079], [-3.607416868209839]], "normalized_similarities": [[0.6493542194366455], [0.9364119172096252], [0.3966599106788635], [0.17910009622573853], [-0.119422547519207], [-0.2056441754102707], [0.2765989899635315], [0.37280455231666565], [0.20863716304302216], [0.23401132225990295], [0.005564116407185793], [-0.14197169244289398], [-0.3796268701553345], [-0.10366567224264145], [0.012422659434378147], [0.09836873412132263], [-0.2582753598690033], [-0.6588850617408752], [0.08652566373348236], [0.022682027891278267], [0.13227316737174988], [-0.04784112423658371], [0.11468952894210815], [-0.004114359617233276], [-0.13648229837417603], [0.08034323155879974], [-0.045955922454595566], [0.049143366515636444], [-0.13607048988342285], [0.09804307669401169], [-0.037246059626340866], [0.08093031495809555], [0.08668302744626999], [0.10616135597229004], [0.10654827207326889], [-0.07002939283847809], [0.040262896567583084], [-0.09736087918281555]], "result_max_similarities": 37.05201721191406, "full_text_display": "What are Smart Goals? How to Implement Smart Goals via Google Analytics?\nTechmagnate Buys BlogX, the Leading Blog Conference where Blogging Community Connects!", "K": 1}, {"id": "result_10", "sample_idx": 14493, "score": 34.695945739746094, "highlight_inds": [1], "matched_tokens_str": " are", "original_pos": 1, "full_sequence_tokens": ["What", " are", " the", " Benefits", " of", " Moving", " your", " business", " to", " the", " Microsoft", " Azure", " Cloud", "?", "\n", "In", " 2016", ",", " the", " U", ".", "S", ".", " federal", " government", " authorized", " Microsoft", "\u2019", "s", " Azure", " Gov", "Cloud", " to", " store", " sensitive", " data", " displaying", " its", " understanding", " and", " trust", " of", " the", " benefits"], "sequence_similarities": [[24.05988311767578], [34.695945739746094], [9.345211029052734], [4.36334753036499], [9.70698070526123], [-0.8902490139007568], [9.169877052307129], [12.19281005859375], [7.386483192443848], [1.975085973739624], [6.279447078704834], [8.161611557006836], [4.27787971496582], [-8.307827949523926], [-19.507585525512695], [1.3757905960083008], [10.079221725463867], [-1.601644515991211], [-1.5333545207977295], [-0.8777918815612793], [1.3669891357421875], [2.5184974670410156], [11.39499282836914], [-2.2514567375183105], [-0.018142223358154297], [-1.3574153184890747], [8.134596824645996], [-0.4070122241973877], [-2.376596689224243], [4.072032451629639], [-8.047847747802734], [1.710787057876587], [6.707012176513672], [-2.025218963623047], [-5.740913391113281], [-0.7640923857688904], [-4.804795742034912], [-0.1021924614906311], [-1.3254451751708984], [0.21505188941955566], [-0.12317204475402832], [-9.725372314453125], [-3.5905208587646484], [0.01784658432006836]], "normalized_similarities": [[0.6493542194366455], [0.9364117980003357], [0.25221869349479675], [0.11776275187730789], [0.2619825303554535], [-0.024027004837989807], [0.24748657643795013], [0.3290727734565735], [0.1993544101715088], [0.05330576002597809], [0.16947652399539948], [0.220274418592453], [0.11545605212450027], [-0.2242206633090973], [-0.5264918804168701], [0.037131328135728836], [0.27202895283699036], [-0.04322691634297371], [-0.041383832693099976], [-0.02369079925119877], [0.03689378499984741], [0.06797193735837936], [0.3075404167175293], [-0.06076475605368614], [-0.0004896419704891741], [-0.036635395139455795], [0.21954531967639923], [-0.01098488736897707], [-0.06414216756820679], [0.10990042239427567], [-0.2172040343284607], [0.046172574162483215], [0.18101611733436584], [-0.05465880408883095], [-0.15494199097156525], [-0.02062215283513069], [-0.12967704236507416], [-0.0027580808382481337], [-0.035772550851106644], [0.005804053507745266], [-0.0033243007492274046], [-0.26247888803482056], [-0.09690486639738083], [0.0004816629516426474]], "result_max_similarities": 37.05201721191406, "full_text_display": "What are the Benefits of Moving your business to the Microsoft Azure Cloud?\nIn 2016, the U.S. federal government authorized Microsoft\u2019s Azure GovCloud to store sensitive data displaying its understanding and trust of the benefits", "K": 1}, {"id": "result_11", "sample_idx": 7771, "score": 34.695945739746094, "highlight_inds": [1], "matched_tokens_str": " are", "original_pos": 1, "full_sequence_tokens": ["What", " are", " potential", " investors", " looking", " for", " in", " a", " company", "?", " They", " want", " to", " see", " research", " and", " establish", " the", " potential", " risks", " and", " returns", " involved", " in", " investing", ".", " Do", " you", " know", " who", " to", " approach", " for", " finance", ",", " and", " how", "?", " What", " do", " they", " expect", " from", " you"], "sequence_similarities": [[24.05988311767578], [34.695945739746094], [23.23302459716797], [13.32015609741211], [17.092525482177734], [8.890012741088867], [3.739035129547119], [10.574317932128906], [5.104945182800293], [-3.0686583518981934], [-5.293672561645508], [-2.003053665161133], [0.3337135314941406], [-6.104143142700195], [-3.743211507797241], [5.555065155029297], [-0.7352560758590698], [0.46300458908081055], [1.0853018760681152], [3.4003396034240723], [5.952197074890137], [-9.598016738891602], [-1.9026050567626953], [-5.10097599029541], [-6.145483493804932], [-22.291595458984375], [0.8345179557800293], [1.0713520050048828], [-7.281986236572266], [1.068546175956726], [10.273811340332031], [-4.883690357208252], [-1.0083956718444824], [2.0878167152404785], [-3.9517250061035156], [0.2632918357849121], [0.3103872537612915], [-5.404748916625977], [-4.850892066955566], [18.815183639526367], [7.109160423278809], [14.306849479675293], [0.43216609954833984], [0.8819332122802734]], "normalized_similarities": [[0.6493542194366455], [0.9364117980003357], [0.6270380616188049], [0.3594987988471985], [0.46131160855293274], [0.2399332970380783], [0.10091312974691391], [0.2853911519050598], [0.13777779042720795], [-0.08282027393579483], [-0.14287137985229492], [-0.05406058207154274], [0.0090066222473979], [-0.16474522650241852], [-0.10102584958076477], [0.14992612600326538], [-0.01984388753771782], [0.012496070004999638], [0.02929130382835865], [0.09177204966545105], [0.16064435243606567], [-0.2590416669845581], [-0.051349569112062454], [-0.13767066597938538], [-0.16586096584796906], [-0.6016297340393066], [0.022522874176502228], [0.028914809226989746], [-0.1965341418981552], [0.028839081525802612], [0.2772807478904724], [-0.13180632889270782], [-0.02721567451953888], [0.05634826049208641], [-0.10665343701839447], [0.00710600521415472], [0.008377067744731903], [-0.14586922526359558], [-0.1309211254119873], [0.5078045725822449], [0.19186972081661224], [0.3861287534236908], [0.011663767509162426], [0.02380256913602352]], "result_max_similarities": 37.05201721191406, "full_text_display": "What are potential investors looking for in a company? They want to see research and establish the potential risks and returns involved in investing. Do you know who to approach for finance, and how? What do they expect from you", "K": 1}, {"id": "result_12", "sample_idx": 4777, "score": 34.695945739746094, "highlight_inds": [1], "matched_tokens_str": " are", "original_pos": 1, "full_sequence_tokens": ["What", " are", " the", " possible", " side", " effects", " of", " ro", "sig", "lit", "az", "one", " (", "Av", "and", "ia", ")?", "\n", "What", " is", " the", " most", " important", " information", " I", " should", " know", " about", " ro", "sig", "lit", "az", "one", " (", "Av", "and", "ia", ")?", "\n", "What", " should", " I", " discuss", " with"], "sequence_similarities": [[24.05988311767578], [34.695945739746094], [9.345211029052734], [18.2222957611084], [8.64971923828125], [11.197225570678711], [0.9648194313049316], [7.808904647827148], [0.20286691188812256], [6.230585098266602], [15.450304985046387], [10.4749174118042], [-4.0597028732299805], [4.793496608734131], [8.691162109375], [7.328493118286133], [-10.267898559570312], [-24.665679931640625], [-5.282742977142334], [16.203819274902344], [2.8467588424682617], [6.066176891326904], [3.8336334228515625], [2.008354663848877], [8.25845718383789], [2.9587247371673584], [-8.619089126586914], [-3.8700709342956543], [-7.268064975738525], [-6.006580352783203], [0.9470791816711426], [4.158229827880859], [1.5374174118041992], [-8.31041431427002], [-0.07650542259216309], [6.820550918579102], [3.0551156997680664], [-11.849987983703613], [-5.004329681396484], [-9.181207656860352], [16.261621475219727], [5.656702518463135], [-2.4735677242279053], [6.587986946105957]], "normalized_similarities": [[0.6493542194366455], [0.9364117980003357], [0.25221869349479675], [0.4918030798435211], [0.23344799876213074], [0.30220285058021545], [0.026039592921733856], [0.21075518429279327], [0.005475192330777645], [0.16815778613090515], [0.4169895648956299], [0.28270843625068665], [-0.10956766456365585], [0.12937207520008087], [0.23456650972366333], [0.19778931140899658], [-0.2771211862564087], [-0.6657041311264038], [-0.1425763964653015], [0.43732622265815735], [0.07683141529560089], [0.16372056305408478], [0.10346625745296478], [0.05420365184545517], [0.22288818657398224], [0.07985326647758484], [-0.23262131214141846], [-0.10444966703653336], [-0.19615840911865234], [-0.16211210191249847], [0.02556079998612404], [0.11222681403160095], [0.0414934866130352], [-0.22429047524929047], [-0.002064811298623681], [0.18408042192459106], [0.08245477080345154], [-0.3198203146457672], [-0.13506227731704712], [-0.24779237806797028], [0.43888625502586365], [0.15266922116279602], [-0.06675932556390762], [0.17780372500419617]], "result_max_similarities": 37.05201721191406, "full_text_display": "What are the possible side effects of rosiglitazone (Avandia)?\nWhat is the most important information I should know about rosiglitazone (Avandia)?\nWhat should I discuss with", "K": 1}, {"id": "result_13", "sample_idx": 5097, "score": 34.695945739746094, "highlight_inds": [1], "matched_tokens_str": " are", "original_pos": 1, "full_sequence_tokens": ["What", " are", " you", " doing", " to", " embrace", " the", " simple", " jo", "ys", " in", " life", "?", "\n", "This", " year", " I", "\u2019", "ve", " started", " to", " set", " book", " reading", " goals", " for", " myself", ".", " I", " used", " to", " love", " to", " spend", " hours", " reading", ",", " but", " now", " with", " little", " ones", " and", " a"], "sequence_similarities": [[24.05988311767578], [34.695945739746094], [10.248648643493652], [14.916325569152832], [11.647295951843262], [3.9929444789886475], [1.7405543327331543], [6.978299617767334], [8.464320182800293], [3.9861369132995605], [4.347018241882324], [3.2795512676239014], [-4.204954147338867], [-23.331836700439453], [1.5210132598876953], [5.172179698944092], [3.3710978031158447], [4.463042736053467], [8.844572067260742], [-0.22379255294799805], [-1.2875268459320068], [5.444367408752441], [6.848877906799316], [-0.16628026962280273], [3.958376407623291], [0.644989013671875], [3.0915350914001465], [-2.8195528984069824], [-0.14381885528564453], [2.988865375518799], [4.483819484710693], [1.6674833297729492], [-1.990539312362671], [-6.250685691833496], [-6.679537773132324], [-5.097341537475586], [-6.671504497528076], [-3.9322094917297363], [-2.6659834384918213], [-2.2170610427856445], [-5.540287971496582], [-2.4477319717407227], [0.9827914237976074], [4.8715596199035645]], "normalized_similarities": [[0.6493542194366455], [0.9364117980003357], [0.276601642370224], [0.4025779664516449], [0.31434985995292664], [0.10776591300964355], [0.04697596654295921], [0.18833790719509125], [0.22844424843788147], [0.10758218169212341], [0.11732204258441925], [0.08851208537817001], [-0.1134878620505333], [-0.6297048926353455], [0.041050754487514496], [0.13959239423274994], [0.0909828394651413], [0.12045343220233917], [0.23870690166950226], [-0.006039956118911505], [-0.034749168902635574], [0.1469384878873825], [0.1848449409008026], [-0.004487751983106136], [0.10683295130729675], [0.01740766316652298], [0.08343770354986191], [-0.07609715312719345], [-0.0038815392181277275], [0.08066673576831818], [0.12101417779922485], [0.045003846287727356], [-0.05372283235192299], [-0.16870027780532837], [-0.1802746057510376], [-0.13757257163524628], [-0.18005779385566711], [-0.10612673312425613], [-0.0719524472951889], [-0.05983644723892212], [-0.14952729642391205], [-0.06606204062700272], [0.02652464061975479], [0.1314789354801178]], "result_max_similarities": 37.05201721191406, "full_text_display": "What are you doing to embrace the simple joys in life?\nThis year I\u2019ve started to set book reading goals for myself. I used to love to spend hours reading, but now with little ones and a", "K": 1}, {"id": "result_14", "sample_idx": 6178, "score": 34.695945739746094, "highlight_inds": [1], "matched_tokens_str": " are", "original_pos": 1, "full_sequence_tokens": ["What", " are", " the", " answers", " to", " the", " statement", " 94", "%", " Indiana", " Jones", " Equipment", " of", " the", " 94", "%", " game", "?", " It", " is", " sometimes", " difficult", " to", " find", " all", " the", " correct", " answers", ",", " but", " don", "\u2019", "t", " worry", ".", " If", " you", " get", " stuck", " on", " any", " level", " just", " visit"], "sequence_similarities": [[24.05988311767578], [34.695945739746094], [9.345211029052734], [-0.6410501003265381], [1.571988582611084], [5.24418830871582], [-0.13824141025543213], [2.7202913761138916], [12.864465713500977], [1.007237434387207], [-13.275592803955078], [-5.144558906555176], [-0.5770859718322754], [1.4157166481018066], [7.957149982452393], [16.109039306640625], [-2.6247434616088867], [-3.743964195251465], [0.7460031509399414], [-0.9272279739379883], [1.5124152898788452], [1.8906152248382568], [0.32422447204589844], [1.159355878829956], [2.0527968406677246], [1.945836067199707], [6.019771099090576], [-6.7871575355529785], [-4.143540859222412], [-0.5254833698272705], [-1.1389987468719482], [-3.78824520111084], [-0.23758912086486816], [-0.8680639266967773], [-23.882713317871094], [4.578289985656738], [5.24643611907959], [2.8188424110412598], [4.575607776641846], [4.062977313995361], [2.3706955909729004], [-1.5656793117523193], [8.108924865722656], [-3.7520413398742676]], "normalized_similarities": [[0.6493542194366455], [0.9364117980003357], [0.25221869349479675], [-0.017301354557275772], [0.04242653027176857], [0.14153583347797394], [-0.0037310090847313404], [0.07341817021369934], [0.3472001552581787], [0.027184415608644485], [-0.35829609632492065], [-0.13884693384170532], [-0.015575021505355835], [0.038208894431591034], [0.21475619077682495], [0.4347681999206543], [-0.07083941996097565], [-0.10104616731405258], [0.020133942365646362], [-0.025025034323334694], [0.040818702429533005], [0.05102597177028656], [0.008750521577894688], [0.031289953738451004], [0.05540310591459274], [0.052516333758831024], [0.1624681055545807], [-0.18317916989326477], [-0.11183036863803864], [-0.014182314276695251], [-0.030740533024072647], [-0.10224127024412155], [-0.006412312854081392], [-0.02342825010418892], [-0.6445725560188293], [0.12356385588645935], [0.14159651100635529], [0.07607797533273697], [0.12349145859479904], [0.10965603590011597], [0.06398290395736694], [-0.042256250977516174], [0.2188524603843689], [-0.10126415640115738]], "result_max_similarities": 37.05201721191406, "full_text_display": "What are the answers to the statement 94% Indiana Jones Equipment of the 94% game? It is sometimes difficult to find all the correct answers, but don\u2019t worry. If you get stuck on any level just visit", "K": 1}, {"id": "result_15", "sample_idx": 6215, "score": 34.695945739746094, "highlight_inds": [1], "matched_tokens_str": " are", "original_pos": 1, "full_sequence_tokens": ["What", " are", " the", " ingredients", " for", " a", " usable", " comparison", " table", "?", " We", "\u2019", "ve", " updated", " our", " 17", " comparison", " matrix", " tips", " to", " 24", ",", " using", " examples", " from", " the", " tele", "com", " industry", ",", " though", " these", " tips", " can", " be", " applied", " to", " any", " e", "-", "shop", " that", " uses", " compare"], "sequence_similarities": [[24.05988311767578], [34.695945739746094], [9.345211029052734], [17.199045181274414], [8.978479385375977], [13.386474609375], [13.397360801696777], [6.7216410636901855], [11.735088348388672], [-1.417525291442871], [-3.198751449584961], [-9.514151573181152], [0.5889447927474976], [-13.869914054870605], [-1.5293853282928467], [0.3710477352142334], [-5.223066329956055], [-4.197072505950928], [-0.7011716365814209], [5.470870494842529], [0.10930585861206055], [0.11114144325256348], [-4.344809532165527], [3.773667097091675], [-1.246598243713379], [2.295768976211548], [-1.1683237552642822], [0.2875478267669678], [5.815703392028809], [-4.915347099304199], [2.489687919616699], [1.3408942222595215], [1.8792452812194824], [3.1641411781311035], [3.727617025375366], [8.071141242980957], [6.019885540008545], [8.127099990844727], [3.9518022537231445], [-6.593796730041504], [3.404895305633545], [11.554764747619629], [18.533594131469727], [2.570607900619507]], "normalized_similarities": [[0.6493542194366455], [0.9364117980003357], [0.25221869349479675], [0.4641864597797394], [0.2423209398984909], [0.3612886965274811], [0.361582487821579], [0.18141093850135803], [0.31671929359436035], [-0.03825771063566208], [-0.08633136749267578], [-0.2567782402038574], [0.01589507982134819], [-0.37433627247810364], [-0.041276708245277405], [0.010014238767325878], [-0.1409657746553421], [-0.11327514052391052], [-0.018923979252576828], [0.14765378832817078], [0.0029500650707632303], [0.002999605843797326], [-0.11726243048906326], [0.1018478199839592], [-0.03364454582333565], [0.061960700899362564], [-0.03153198957443237], [0.007760652340948582], [0.15696050226688385], [-0.13266071677207947], [0.0671943947672844], [0.03618950769305229], [0.05071910843253136], [0.08539727330207825], [0.10060496628284454], [0.21783271431922913], [0.16247119009494781], [0.21934297680854797], [0.10665552318096161], [-0.17796052992343903], [0.09189500659704208], [0.31185251474380493], [0.5002047419548035], [0.06937835365533829]], "result_max_similarities": 37.05201721191406, "full_text_display": "What are the ingredients for a usable comparison table? We\u2019ve updated our 17 comparison matrix tips to 24, using examples from the telecom industry, though these tips can be applied to any e-shop that uses compare", "K": 1}, {"id": "result_16", "sample_idx": 4403, "score": 34.695945739746094, "highlight_inds": [1], "matched_tokens_str": " are", "original_pos": 1, "full_sequence_tokens": ["What", " are", " the", " health", "iest", " foods", " in", " the", " world", "?", "\n", "Dr", " Sears", " uses", " his", " new", " food", " ranking", " system", " to", " analyse", " thousands", " of", " foods", " in", " order", " to", " find", " the", " best", " proteins", ",", " carbohydrates", ",", " fats", " and", " spices", ".", "\n", "Each", " top", " food", " has", " a"], "sequence_similarities": [[24.05988311767578], [34.695945739746094], [9.345211029052734], [6.501964092254639], [6.380557537078857], [7.395601749420166], [8.775096893310547], [6.297758102416992], [4.506175994873047], [-0.49599123001098633], [-17.049131393432617], [-2.5118508338928223], [-3.6113357543945312], [-4.068420886993408], [1.6055526733398438], [1.9891068935394287], [-4.7348175048828125], [-6.778745174407959], [-2.765383720397949], [-0.16430407762527466], [-10.009700775146484], [-4.9464921951293945], [0.4137606620788574], [3.0773723125457764], [3.993251323699951], [6.16944694519043], [2.810781240463257], [-1.6349982023239136], [-1.000752568244934], [1.205643653869629], [0.4057959318161011], [-7.250208854675293], [4.5749945640563965], [-7.3414201736450195], [-1.167759656906128], [6.58080530166626], [4.739624977111816], [-1.963606357574463], [-0.6620557308197021], [0.18771696090698242], [0.5353918075561523], [-2.7013440132141113], [-3.3262226581573486], [-6.498146057128906]], "normalized_similarities": [[0.6493542194366455], [0.9364117980003357], [0.25221869349479675], [0.17548204958438873], [0.17220540344715118], [0.19960051774978638], [0.23683182895183563], [0.16997072100639343], [0.12161756306886673], [-0.013386349193751812], [-0.4601404368877411], [-0.06779254972934723], [-0.09746664017438889], [-0.10980295389890671], [0.04333239421248436], [0.05368417128920555], [-0.12778837978839874], [-0.1829521209001541], [-0.07463517040014267], [-0.00443441653624177], [-0.27015265822410583], [-0.13350129127502441], [0.011167021468281746], [0.08305545896291733], [0.10777419805526733], [0.16650772094726562], [0.0758604109287262], [-0.04412710294127464], [-0.027009395882487297], [0.03253921866416931], [0.010952060110867023], [-0.19567649066448212], [0.12347491085529327], [-0.19813820719718933], [-0.03151676431298256], [0.1776099056005478], [0.12791813910007477], [-0.05299593508243561], [-0.017868278548121452], [0.005066308658570051], [0.01444973424077034], [-0.07290679961442947], [-0.08977170288562775], [-0.17537900805473328]], "result_max_similarities": 37.05201721191406, "full_text_display": "What are the healthiest foods in the world?\nDr Sears uses his new food ranking system to analyse thousands of foods in order to find the best proteins, carbohydrates, fats and spices.\nEach top food has a", "K": 1}, {"id": "result_17", "sample_idx": 3189, "score": 34.695945739746094, "highlight_inds": [1], "matched_tokens_str": " are", "original_pos": 1, "full_sequence_tokens": ["What", " are", " mismatch", " diseases", "?", " San", " Diego", " chi", "rop", "ractor", " and", " movement", " &amp;", " mobility", " specialist", ",", " Dr", ".", " Ryan", " shares", " some", " examples", " and", " explains", " why", " they", " occur", ".", "\n", "In", " recent", " years", " there", " has", " been", " a", " growing", " movement", " towards", " preventive", " medicine", ".", " This", " trend"], "sequence_similarities": [[24.05988311767578], [34.695945739746094], [9.484376907348633], [12.330912590026855], [-1.804408073425293], [19.189311981201172], [6.498063087463379], [-9.162171363830566], [2.2656502723693848], [0.8687620162963867], [-0.28028059005737305], [-1.215564489364624], [-4.235426902770996], [-6.092073917388916], [-3.210357189178467], [1.9680261611938477], [-8.478374481201172], [-35.418113708496094], [-5.593801021575928], [-0.39783573150634766], [6.804396629333496], [11.464494705200195], [4.6996026039123535], [-1.5587526559829712], [-11.026044845581055], [6.307272434234619], [1.4346752166748047], [-1.3204412460327148], [-1.8867894411087036], [1.1662802696228027], [5.250332832336426], [2.6576602458953857], [7.625478744506836], [5.544800281524658], [2.9793357849121094], [-2.8190231323242188], [7.009984016418457], [-5.024051666259766], [-4.369513511657715], [-0.0979461669921875], [0.28282928466796875], [-2.0484838485717773], [0.46412837505340576], [-4.233038425445557]], "normalized_similarities": [[0.6493542194366455], [0.9364117980003357], [0.2559746503829956], [0.332800030708313], [-0.04869931936264038], [0.5179019570350647], [0.1753767728805542], [-0.2472786158323288], [0.06114782392978668], [0.02344709075987339], [-0.007564516272395849], [-0.03280697017908096], [-0.11431029438972473], [-0.164419487118721], [-0.08664459735155106], [0.05311522260308266], [-0.22882355749607086], [-0.9559024572372437], [-0.15097156167030334], [-0.01073722168803215], [0.18364442884922028], [0.3094162046909332], [0.12683796882629395], [-0.04206930473446846], [-0.29758283495903015], [0.17022749781608582], [0.038720570504665375], [-0.035637497901916504], [-0.05092271789908409], [0.031476836651563644], [0.14170166850090027], [0.07172781229019165], [0.20580469071865082], [0.14964908361434937], [0.08040954172611237], [-0.07608285546302795], [0.18919304013252258], [-0.13559454679489136], [-0.11792916804552078], [-0.0026434774044901133], [0.007633303292095661], [-0.055286701768636703], [0.012526399455964565], [-0.11424583196640015]], "result_max_similarities": 37.05201721191406, "full_text_display": "What are mismatch diseases? San Diego chiropractor and movement &amp; mobility specialist, Dr. Ryan shares some examples and explains why they occur.\nIn recent years there has been a growing movement towards preventive medicine. This trend", "K": 1}, {"id": "result_18", "sample_idx": 470, "score": 34.695945739746094, "highlight_inds": [1], "matched_tokens_str": " are", "original_pos": 1, "full_sequence_tokens": ["What", " are", " initial", " signs", " and", " symptoms", " of", " drug", " addiction", "?", "\n", "What", " are", " the", " signs", " and", " symptoms", " of", " a", " drug", " addict", "?", "\n", "What", " r", " signs", " and", " symptoms", " of", " drug", " addiction", "?", "\n", "What", " are", " the", " difference", " of", " signs", " and", " symptoms", " of", " pregnancy", " from"], "sequence_similarities": [[24.05988311767578], [34.695945739746094], [20.394371032714844], [8.862521171569824], [14.720672607421875], [7.208746433258057], [4.219485282897949], [10.937263488769531], [12.624099731445312], [-6.268792152404785], [-21.920244216918945], [-2.1623644828796387], [24.622455596923828], [6.064042568206787], [-2.641150712966919], [12.372886657714844], [4.158827781677246], [5.203320026397705], [6.942111968994141], [10.388751983642578], [18.88473129272461], [-4.481374740600586], [0.46402454376220703], [-2.977429151535034], [4.280325412750244], [4.26624870300293], [6.748281478881836], [2.6174066066741943], [2.2786951065063477], [6.361751556396484], [7.07371711730957], [-1.1383109092712402], [-2.1517176628112793], [-2.8039193153381348], [19.94169044494629], [3.6707077026367188], [6.523651599884033], [4.663943290710449], [-0.7648234367370605], [8.085760116577148], [1.3041164875030518], [1.4315133094787598], [5.45828104019165], [0.8153014183044434]], "normalized_similarities": [[0.6493542194366455], [0.9364117980003357], [0.5504254102706909], [0.23919132351875305], [0.3972974717617035], [0.19455745816230774], [0.11388004571199417], [0.29518672823905945], [0.34071287512779236], [-0.1691889613866806], [-0.5916073322296143], [-0.05836023762822151], [0.6645374894142151], [0.16366295516490936], [-0.07128223776817322], [0.33393287658691406], [0.11224295198917389], [0.14043283462524414], [0.1873612403869629], [0.28038290143013], [0.5096815824508667], [-0.1209481954574585], [0.012523597106337547], [-0.08035808801651001], [0.11552206426858902], [0.11514214426279068], [0.18212993443012238], [0.0706414058804512], [0.06149989366531372], [0.17169784009456635], [0.1909131407737732], [-0.030721968039870262], [-0.05807288736104965], [-0.07567521184682846], [0.5382079482078552], [0.0990690365433693], [0.17606738209724426], [0.1258755624294281], [-0.020641883835196495], [0.21822725236415863], [0.03519690781831741], [0.03863523155450821], [0.14731401205062866], [0.02200423926115036]], "result_max_similarities": 37.05201721191406, "full_text_display": "What are initial signs and symptoms of drug addiction?\nWhat are the signs and symptoms of a drug addict?\nWhat r signs and symptoms of drug addiction?\nWhat are the difference of signs and symptoms of pregnancy from", "K": 1}, {"id": "result_19", "sample_idx": 222, "score": 34.695945739746094, "highlight_inds": [1], "matched_tokens_str": " are", "original_pos": 1, "full_sequence_tokens": ["What", " are", " the", " 4", "C", "\u2019", "s", " of", " Diamond", " Quality", "?", "\n", "The", " 4", "C", "\u2019", "s", " -", " cut", ",", " color", ",", " clarity", ",", " and", " car", "at", " -", " refer", " to", " to", " the", " global", " standards", " set", " by", " the", " Gem", "ological", " Institute", " of", " America", " (", "G"], "sequence_similarities": [[24.05988311767578], [34.695945739746094], [9.345211029052734], [7.607247352600098], [11.210693359375], [-3.665179967880249], [0.5953965187072754], [0.946052074432373], [5.883225440979004], [-1.9420557022094727], [-7.598697662353516], [-20.47092056274414], [-4.020563125610352], [3.4610509872436523], [5.025233745574951], [-6.438195705413818], [-3.140768051147461], [-7.946486473083496], [-0.3572506904602051], [-2.7584478855133057], [0.6092711687088013], [-1.5253527164459229], [-5.997213363647461], [-3.1464109420776367], [2.866443634033203], [-2.0858616828918457], [-0.5884826183319092], [-7.34749698638916], [4.266528129577637], [8.922378540039062], [6.999629497528076], [2.707697868347168], [5.01216983795166], [5.841330528259277], [1.2352616786956787], [4.527383804321289], [3.0832090377807617], [2.673870325088501], [4.599946975708008], [1.831193447113037], [-1.357790231704712], [2.345818042755127], [-2.3476908206939697], [5.925726890563965]], "normalized_similarities": [[0.6493542194366455], [0.9364117980003357], [0.25221869349479675], [0.20531263947486877], [0.3025663495063782], [-0.09891984611749649], [0.016069207340478897], [0.025533078238368034], [0.15878286957740784], [-0.05241430550813675], [-0.20508189499378204], [-0.5524913668632507], [-0.1085113137960434], [0.09341059625148773], [0.13562645018100739], [-0.1737610101699829], [-0.0847664549946785], [-0.21446838974952698], [-0.009641868993639946], [-0.07444798201322556], [0.01644366979598999], [-0.04116787388920784], [-0.16185928881168365], [-0.08491875231266022], [0.07736268639564514], [-0.056295495480298996], [-0.01588260754942894], [-0.19830220937728882], [0.11514968425035477], [0.24080681800842285], [0.18891358375549316], [0.07307828217744827], [0.13527387380599976], [0.15765215456485748], [0.033338580280542374], [0.12218993902206421], [0.08321298658847809], [0.07216531038284302], [0.12414835393428802], [0.049422234296798706], [-0.03664551302790642], [0.06331147998571396], [-0.06336202472448349], [0.15992994606494904]], "result_max_similarities": 37.05201721191406, "full_text_display": "What are the 4C\u2019s of Diamond Quality?\nThe 4C\u2019s - cut, color, clarity, and carat - refer to to the global standards set by the Gemological Institute of America (G", "K": 1}];
+    const globalMaxSequenceSimilarity = [37.05201721191406];
+    const tooltip = document.getElementById('tooltip');
+    let isNormalized = true;
+    let currentThreshold = 0.0;
+
+    function htmlDecode(input) {
+        const doc = new DOMParser().parseFromString(input, "text/html");
+        return doc.documentElement.textContent;
+    }
+
+    function getColorForSimilarity(sim, maxSim, isNormalizedMode = false, threshold = 0.0) {
+        if (sim === -Infinity || maxSim <= 0) {
+            return { backgroundColor: '#f8f9fa', color: '#6c757d' };
+        }
+
+        // Apply threshold cutoff - if below threshold, return transparent/no color
+        if (sim <= threshold) {
+            return { backgroundColor: 'transparent', color: '#6c757d' };
+        }
+
+        let t;
+        if (isNormalizedMode) {
+            // In normalized mode, use a more sensitive scale since values are 0-1
+            // Apply a power function to make smaller differences more visible
+            const normalizedT = Math.max(0, Math.min(1, sim / maxSim));
+            t = Math.pow(normalizedT, 0.7); // Makes mid-range values more visible
+        } else {
+            // In raw mode, use linear scaling
+            t = Math.max(0, Math.min(1, sim / maxSim));
+        }
+
+        let r, g, b;
+        if (isNormalizedMode) {
+            // Use white to red gradient for normalized mode (same as raw mode)
+            r = 255;
+            g = b = Math.round(255 * (1 - t));
+        } else {
+            // Original red gradient for raw mode
+            r = 255;
+            g = b = Math.round(255 * (1 - t));
+        }
+
+        const textColor = (r + g + b) / 3 > 127 ? '#000000' : '#FFFFFF';
+        return { backgroundColor: `rgb(${r},${g},${b})`, color: textColor };
+    }
+
+    function renderResult(resultData) {
+        const displayDiv = document.getElementById(`sequence_display_${resultData.id}`);
+        const fullTextDiv = document.getElementById(`full_text_display_${resultData.id}`);
+        if (!displayDiv) return;
+
+        // Choose which similarities to use based on toggle state
+        const currentSimilarities = isNormalized ? resultData.normalized_similarities : resultData.sequence_similarities;
+        const currentMaxSimilarities = isNormalized ? Array(resultData.K).fill(1) : globalMaxSequenceSimilarity; // Normalized max is always 1
+
+        displayDiv.innerHTML = '';
+        resultData.full_sequence_tokens.forEach((tokenHtml, i) => {
+            const span = document.createElement('span');
+            span.className = 'token';
+            span.innerHTML = tokenHtml;
+
+            const seqSim = currentSimilarities[i];
+            const rawSeqSim = resultData.sequence_similarities[i];
+            let maxIdx = 0
+            let K = resultData.K;
+            let maxSim = Number.NEGATIVE_INFINITY;
+            for (let j = 0; j < K; j++) {
+                if (currentSimilarities[i] && currentSimilarities[i][j] > maxSim) {
+                    maxIdx = j;
+                    maxSim = currentSimilarities[i][j];
+                }
+            }
+
+            try{
+                const colors = getColorForSimilarity(seqSim[maxIdx], currentMaxSimilarities[maxIdx], isNormalized, currentThreshold);
+                span.style.backgroundColor = colors.backgroundColor;
+                span.style.color = colors.color;
+            } catch { console.log("Get color for sim doesn't work") }
+
+            if (resultData.highlight_inds.includes(i)) {
+                span.classList.add('highlight-window');
+            }
+
+            span.onmousemove = e => {
+                tooltip.style.visibility = 'visible';
+                let rawTokenSimsText = resultData.sequence_similarities[i].map((s, j) => `Q${j+1}: ${s.toFixed(4)}`).join(', ');
+                let normalizedTokenSimsText = resultData.normalized_similarities[i].map((s, j) => `Q${j+1}: ${s.toFixed(4)}`).join(', ');
+
+                let tooltipContent = `<b>${htmlDecode(tokenHtml)}</b> (Index: ${i})<br>`;
+                if (isNormalized) {
+                    tooltipContent += `Normalized Sim: ${seqSim[maxIdx].toFixed(4)}<br>`;
+                    tooltipContent += `Raw Sim: ${rawSeqSim[maxIdx].toFixed(4)}<br>`;
+                    tooltipContent += `Normalized Token Sims: ${normalizedTokenSimsText}<br>`;
+                } else {
+                    tooltipContent += `Raw Sim: ${seqSim[maxIdx].toFixed(4)}<br>`;
+                    tooltipContent += `Raw Token Sims: ${rawTokenSimsText}<br>`;
+                }
+                tooltipContent += `Vector index match: ${maxIdx + 1}`;
+
+                tooltip.innerHTML = tooltipContent;
+                tooltip.style.left = `${e.pageX + 15}px`;
+                tooltip.style.top = `${e.pageY + 15}px`;
+            };
+            span.onmouseout = () => { tooltip.style.visibility = 'hidden'; };
+            displayDiv.appendChild(span);
+        });
+
+        if (fullTextDiv && resultData.full_text_display) {
+            fullTextDiv.innerHTML = `<p><strong>Full Text:</strong></p><p>${resultData.full_text_display}</p>`;
+        }
+    }
+
+    function toggleNormalization() {
+        isNormalized = !isNormalized;
+        const statusSpan = document.getElementById('normalizationStatus');
+        if (isNormalized) {
+            statusSpan.innerHTML = 'Showing normalized values (max = 1.0 per result) | <span style="background: linear-gradient(90deg, white, pink, red); padding: 2px 8px; border-radius: 3px; color: black; font-size: 0.8em;">White→Red colors</span>';
+            statusSpan.style.color = '#28a745';
+        } else {
+            statusSpan.innerHTML = 'Showing raw values (global scale) | <span style="background: linear-gradient(90deg, white, pink, red); padding: 2px 8px; border-radius: 3px; color: black; font-size: 0.8em;">White→Red colors</span>';
+            statusSpan.style.color = '#666';
+        }
+
+        // Re-render all results with new normalization setting
+        allResultsData.forEach(renderResult);
+    }
+
+    function updateThreshold() {
+        const slider = document.getElementById('thresholdSlider');
+        const valueDisplay = document.getElementById('thresholdValue');
+        currentThreshold = parseFloat(slider.value);
+        valueDisplay.textContent = currentThreshold.toFixed(3);
+
+        // Re-render all results with new threshold setting
+        allResultsData.forEach(renderResult);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        // Initialize normalization status (start with normalized mode)
+        const statusSpan = document.getElementById('normalizationStatus');
+        statusSpan.innerHTML = 'Showing normalized values (max = 1.0 per result) | <span style="background: linear-gradient(90deg, white, pink, red); padding: 2px 8px; border-radius: 3px; color: black; font-size: 0.8em;">White→Red colors</span>';
+        statusSpan.style.color = '#28a745';
+
+        // Set up toggle event listener
+        const toggleCheckbox = document.getElementById('normalizeToggle');
+        toggleCheckbox.addEventListener('change', toggleNormalization);
+
+        // Set up threshold slider event listener
+        const thresholdSlider = document.getElementById('thresholdSlider');
+        thresholdSlider.addEventListener('input', updateThreshold);
+
+        // Render initial results
+        allResultsData.forEach(renderResult);
+    });
+</script>
+</body></html>

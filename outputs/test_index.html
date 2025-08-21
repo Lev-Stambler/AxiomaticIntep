@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Experiment Results Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f8fafc;
+            color: #1a202c;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .stats-bar {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        
+        .stats-item {
+            text-align: center;
+        }
+        
+        .stats-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #667eea;
+        }
+        
+        .stats-label {
+            font-size: 0.9rem;
+            color: #718096;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .controls {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        
+        .controls h2 {
+            margin-bottom: 1rem;
+            color: #2d3748;
+        }
+        
+        .filter-group {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .filter-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+        
+        .filter-item label {
+            font-size: 0.9rem;
+            color: #4a5568;
+            font-weight: 500;
+        }
+        
+        .filter-item input, .filter-item select {
+            padding: 0.5rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+        
+        .experiments-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .experiment-card {
+            background: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            transition: all 0.2s ease;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .experiment-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            border-color: #667eea;
+        }
+        
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+        
+        .experiment-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #2d3748;
+            margin: 0;
+        }
+        
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .status-complete {
+            background: #c6f6d5;
+            color: #22543d;
+        }
+        
+        .status-partial {
+            background: #feebc8;
+            color: #c05621;
+        }
+        
+        .status-unknown {
+            background: #e2e8f0;
+            color: #4a5568;
+        }
+        
+        .card-content {
+            margin-bottom: 1rem;
+        }
+        
+        .config-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            align-items: center;
+        }
+        
+        .config-label {
+            font-weight: 500;
+            color: #4a5568;
+            font-size: 0.9rem;
+        }
+        
+        .config-value {
+            font-family: 'SF Mono', Monaco, monospace;
+            font-size: 0.9rem;
+            color: #2d3748;
+        }
+        
+        .card-footer {
+            border-top: 1px solid #e2e8f0;
+            padding-top: 1rem;
+        }
+        
+        .card-link {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            background: #667eea;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: background 0.2s ease;
+        }
+        
+        .card-link:hover {
+            background: #5a67d8;
+        }
+        
+        .card-link.disabled {
+            background: #a0aec0;
+            cursor: not-allowed;
+        }
+        
+        .hidden {
+            display: none !important;
+        }
+        
+        .no-results {
+            text-align: center;
+            padding: 3rem;
+            color: #718096;
+            font-style: italic;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .stats-bar {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .filter-group {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .experiments-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🧠 Experiment Results Dashboard</h1>
+            <p>Browse and navigate mechanistic interpretability experiments</p>
+        </div>
+        
+        <div class="stats-bar">
+            <div class="stats-item">
+                <div class="stats-number">18</div>
+                <div class="stats-label">Total Experiments</div>
+            </div>
+            <div class="stats-item">
+                <div class="stats-number">0</div>
+                <div class="stats-label">Complete</div>
+            </div>
+            <div class="stats-item">
+                <div class="stats-number">18</div>
+                <div class="stats-label">Partial</div>
+            </div>
+        </div>
+        
+        <div class="controls">
+            <h2>🔍 Filter Experiments</h2>
+            <div class="filter-group">
+                <div class="filter-item">
+                    <label for="search">Search:</label>
+                    <input type="text" id="search" placeholder="Search experiments...">
+                </div>
+                <div class="filter-item">
+                    <label for="model-filter">Model:</label>
+                    <select id="model-filter">
+                        <option value="">All Models</option>
+                        <option value="pythia-70m-deduped">pythia-70m-deduped</option>
+                    </select>
+                </div>
+                <div class="filter-item">
+                    <label for="status-filter">Status:</label>
+                    <select id="status-filter">
+                        <option value="">All Status</option>
+                        <option value="complete">Complete</option>
+                        <option value="partial">Partial</option>
+                    </select>
+                </div>
+                <div class="filter-item">
+                    <label for="layer-filter">Layer:</label>
+                    <select id="layer-filter">
+                        <option value="">All Layers</option>
+                        <option value="0">Layer 0</option>
+                        <option value="1">Layer 1</option>
+                        <option value="2">Layer 2</option>
+                        <option value="3">Layer 3</option>
+                        <option value="4">Layer 4</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        
+        <div class="experiments-grid" id="experiments-grid">
+            
+        <div class="experiment-card" data-model="pythia-70m-deduped" data-layer="0" data-status="partial">
+            <div class="card-header">
+                <h3 class="experiment-title">Layer 0, Offset 0</h3>
+                <span class="status-badge status-partial">Partial</span>
+            </div>
+            <div class="card-content">
+                <div class="config-item">
+                    <span class="config-label">Model:</span>
+                    <span class="config-value">pythia-70m-deduped</span>
+                </div>
+                <div class="config-item">
+                    <span class="config-label">Dictionary Size:</span>
+                    <span class="config-value">20</span>
+                </div>
+                <div class="config-item">
+                    <span class="config-label">Last Updated:</span>
+                    <span class="config-value">2025-08-19 19:53</span>
+                </div>
+            </div>
+            <div class="card-footer">
+                <a href="outputs/results_3a807d1da667/index.html" class="card-link">View Results →</a>
+            </div>
+        </div>
+        
+
+        <div class="experiment-card" data-model="pythia-70m-deduped" data-layer="1" data-status="partial">
+            <div class="card-header">
+                <h3 class="experiment-title">Layer 1, Offset 0</h3>
+                <span class="status-badge status-partial">Partial</span>
+            </div>
+            <div class="card-content">
+                <div class="config-item">
+                    <span class="config-label">Model:</span>
+                    <span class="config-value">pythia-70m-deduped</span>
+                </div>
+                <div class="config-item">
+                    <span class="config-label">Dictionary Size:</span>
+                    <span class="config-value">20</span>
+                </div>
+                <div class="config-item">
+                    <span class="config-label">Last Updated:</span>
+                    <span class="config-value">2025-08-19 20:57</span>
+                </div>
+            </div>
+            <div class="card-footer">
+                <a href="outputs/results_ce7e5655da7a/index.html" class="card-link">View Results →</a>
+            </div>
+        </div>
+        
+
+        <div class="experiment-card" data-model="pythia-70m-deduped" data-layer="2" data-status="partial">
+            <div class="card-header">
+                <h3 class="experiment-title">Layer 2, Offset 0</h3>
+                <span class="status-badge status-partial">Partial</span>
+            </div>
+            <div class="card-content">
+                <div class="config-item">
+                    <span class="config-label">Model:</span>
+                    <span class="config-value">pythia-70m-deduped</span>
+                </div>
+                <div class="config-item">
+                    <span class="config-label">Dictionary Size:</span>
+                    <span class="config-value">20</span>
+                </div>
+                <div class="config-item">
+                    <span class="config-label">Last Updated:</span>
+                    <span class="config-value">2025-08-18 17:41</span>
+                </div>
+            </div>
+            <div class="card-footer">
+                <a href="outputs/results_3d9000a2e49c/index.html" class="card-link">View Results →</a>
+            </div>
+        </div>
+        
+
+        <div class="experiment-card" data-model="pythia-70m-deduped" data-layer="3" data-status="partial">
+            <div class="card-header">
+                <h3 class="experiment-title">Layer 3, Offset 0</h3>
+                <span class="status-badge status-partial">Partial</span>
+            </div>
+            <div class="card-content">
+                <div class="config-item">
+                    <span class="config-label">Model:</span>
+                    <span class="config-value">pythia-70m-deduped</span>
+                </div>
+                <div class="config-item">
+                    <span class="config-label">Dictionary Size:</span>
+                    <span class="config-value">20</span>
+                </div>
+                <div class="config-item">
+                    <span class="config-label">Last Updated:</span>
+                    <span class="config-value">2025-08-18 18:37</span>
+                </div>
+            </div>
+            <div class="card-footer">
+                <a href="outputs/results_ffc802c7c343/index.html" class="card-link">View Results →</a>
+            </div>
+        </div>
+        
+
+        <div class="experiment-card" data-model="pythia-70m-deduped" data-layer="4" data-status="partial">
+            <div class="card-header">
+                <h3 class="experiment-title">Layer 4, Offset 0</h3>
+                <span class="status-badge status-partial">Partial</span>
+            </div>
+            <div class="card-content">
+                <div class="config-item">
+                    <span class="config-label">Model:</span>
+                    <span class="config-value">pythia-70m-deduped</span>
+                </div>
+                <div class="config-item">
+                    <span class="config-label">Dictionary Size:</span>
+                    <span class="config-value">20</span>
+                </div>
+                <div class="config-item">
+                    <span class="config-label">Last Updated:</span>
+                    <span class="config-value">2025-08-19 00:14</span>
+                </div>
+            </div>
+            <div class="card-footer">
+                <a href="outputs/results_ea32c989f521/index.html" class="card-link">View Results →</a>
+            </div>
+        </div>
+        
+
+        <div class="experiment-card" data-model="pythia-70m-deduped" data-layer="0" data-status="partial">
+            <div class="card-header">
+                <h3 class="experiment-title">Layer 0, Offset 0</h3>
+                <span class="status-badge status-partial">Partial</span>
+            </div>
+            <div class="card-content">
+                <div class="config-item">
+                    <span class="config-label">Model:</span>
+                    <span class="config-value">pythia-70m-deduped</span>
+                </div>
+                <div class="config-item">
+                    <span class="config-label">Dictionary Size:</span>
+                    <span class="config-value">20</span>
+                </div>
+                <div class="config-item">
+                    <span class="config-label">Last Updated:</span>
+                    <span class="config-value">2025-08-18 21:37</span>
+                </div>
+            </div>
+            <div class="card-footer">
+                <a href="outputs/results_0788a21722e9/index.html" class="card-link">View Results →</a>
+            </div>
+        </div>
+        
+
+        <div class="experiment-card" data-model="pythia-70m-deduped" data-layer="1" data-status="partial">
+            <div class="card-header">
+                <h3 class="experiment-title">Layer 1, Offset 0</h3>
+                <span class="status-badge status-partial">Partial</span>
+            </div>
+            <div class="card-content">
+                <div class="config-item">
+                    <span class="config-label">Model:</span>
+                    <span class="config-value">pythia-70m-deduped</span>
+                </div>
+                <div class="config-item">
+                    <span class="config-label">Dictionary Size:</span>
+                    <span class="config-value">20</span>
+                </div>
+                <div class="config-item">
+                    <span class="config-label">Last Updated:</span>
+                    <span class="config-value">2025-08-18 22:20</span>
+                </div>
+            </div>
+            <div class="card-footer">
+                <a href="outputs/results_206911801af7/index.html" class="card-link">View Results →</a>
+            </div>
+        </div>
+        
+
+        <div class="experiment-card" data-model="pythia-70m-deduped" data-layer="2" data-status="partial">
+            <div class="card-header">
+                <h3 class="experiment-title">Layer 2, Offset 0</h3>
+                <span class="status-badge status-partial">Partial</span>
+            </div>
+            <div class="card-content">
+                <div class="config-item">
+                    <span class="config-label">Model:</span>
+                    <span class="config-value">pythia-70m-deduped</span>
+                </div>
+                <div class="config-item">
+                    <span class="config-label">Dictionary Size:</span>
+                    <span class="config-value">20</span>
+                </div>
+                <div class="config-item">
+                    <span class="config-label">Last Updated:</span>
+                    <span class="config-value">2025-08-18 22:57</span>
+                </div>
+            </div>
+            <div class="card-footer">
+                <a href="outputs/results_0c0cce090da4/index.html" class="card-link">View Results →</a>
+            </div>
+        </div>
+        
+
+        <div class="experiment-card" data-model="pythia-70m-deduped" data-layer="3" data-status="partial">
+            <div class="card-header">
+                <h3 class="experiment-title">Layer 3, Offset 0</h3>
+                <span class="status-badge status-partial">Partial</span>
+            </div>
+            <div class="card-content">
+                <div class="config-item">
+                    <span class="config-label">Model:</span>
+                    <span class="config-value">pythia-70m-deduped</span>
+                </div>
+                <div class="config-item">
+                    <span class="config-label">Dictionary Size:</span>
+                    <span class="config-value">20</span>
+                </div>
+                <div class="config-item">
+                    <span class="config-label">Last Updated:</span>
+                    <span class="config-value">2025-08-18 23:36</span>
+                </div>
+            </div>
+            <div class="card-footer">
+                <a href="outputs/results_b60c757a2dd5/index.html" class="card-link">View Results →</a>
+            </div>
+        </div>
+        
+
+        <div class="experiment-card" data-model="pythia-70m-deduped" data-layer="4" data-status="partial">
+            <div class="card-header">
+                <h3 class="experiment-title">Layer 4, Offset 0</h3>
+                <span class="status-badge status-partial">Partial</span>
+            </div>
+            <div class="card-content">
+                <div class="config-item">
+                    <span class="config-label">Model:</span>
+                    <span class="config-value">pythia-70m-deduped</span>
+                </div>
+                <div class="config-item">
+                    <span class="config-label">Dictionary Size:</span>
+                    <span class="config-value">20</span>
+                </div>
+                <div class="config-item">
+                    <span class="config-label">Last Updated:</span>
+                    <span class="config-value">2025-08-19 00:14</span>
+                </div>
+            </div>
+            <div class="card-footer">
+                <a href="outputs/results_ea32c989f521/index.html" class="card-link">View Results →</a>
+            </div>
+        </div>
+        
+
+        <div class="experiment-card" data-model="pythia-70m-deduped" data-layer="0" data-status="partial">
+            <div class="card-header">
+                <h3 class="experiment-title">Layer 0, Offset 1</h3>
+                <span class="status-badge status-partial">Partial</span>
+            </div>
+            <div class="card-content">
+                <div class="config-item">
+                    <span class="config-label">Model:</span>
+                    <span class="config-value">pythia-70m-deduped</span>
+                </div>
+                <div class="config-item">
+                    <span class="config-label">Dictionary Size:</span>
+                    <span class="config-value">20</span>
+                </div>
+                <div class="config-item">
+                    <span class="config-label">Last Updated:</span>
+                    <span class="config-value">2025-08-19 00:56</span>
+                </div>
+            </div>
+            <div class="card-footer">
+                <a href="outputs/results_b5a0963a1557/index.html" class="card-link">View Results →</a>
+            </div>
+        </div>
+        
+
+        <div class="experiment-card" data-model="pythia-70m-deduped" data-layer="1" data-status="partial">
+            <div class="card-header">
+                <h3 class="experiment-title">Layer 1, Offset 1</h3>
+                <span class="status-badge status-partial">Partial</span>
+            </div>
+            <div class="card-content">
+                <div class="config-item">
+                    <span class="config-label">Model:</span>
+                    <span class="config-value">pythia-70m-deduped</span>
+                </div>
+                <div class="config-item">
+                    <span class="config-label">Dictionary Size:</span>
+                    <span class="config-value">20</span>
+                </div>
+                <div class="config-item">
+                    <span class="config-label">Last Updated:</span>
+                    <span class="config-value">2025-08-19 01:33</span>
+                </div>
+            </div>
+            <div class="card-footer">
+                <a href="outputs/results_58f1b34f3894/index.html" class="card-link">View Results →</a>
+            </div>
+        </div>
+        
+
+        <div class="experiment-card" data-model="pythia-70m-deduped" data-layer="2" data-status="partial">
+            <div class="card-header">
+                <h3 class="experiment-title">Layer 2, Offset 1</h3>
+                <span class="status-badge status-partial">Partial</span>
+            </div>
+            <div class="card-content">
+                <div class="config-item">
+                    <span class="config-label">Model:</span>
+                    <span class="config-value">pythia-70m-deduped</span>
+                </div>
+                <div class="config-item">
+                    <span class="config-label">Dictionary Size:</span>
+                    <span class="config-value">20</span>
+                </div>
+                <div class="config-item">
+                    <span class="config-label">Last Updated:</span>
+                    <span class="config-value">2025-08-19 02:13</span>
+                </div>
+            </div>
+            <div class="card-footer">
+                <a href="outputs/results_04eabcc55e20/index.html" class="card-link">View Results →</a>
+            </div>
+        </div>
+        
+
+        <div class="experiment-card" data-model="pythia-70m-deduped" data-layer="3" data-status="partial">
+            <div class="card-header">
+                <h3 class="experiment-title">Layer 3, Offset 1</h3>
+                <span class="status-badge status-partial">Partial</span>
+            </div>
+            <div class="card-content">
+                <div class="config-item">
+                    <span class="config-label">Model:</span>
+                    <span class="config-value">pythia-70m-deduped</span>
+                </div>
+                <div class="config-item">
+                    <span class="config-label">Dictionary Size:</span>
+                    <span class="config-value">20</span>
+                </div>
+                <div class="config-item">
+                    <span class="config-label">Last Updated:</span>
+                    <span class="config-value">2025-08-19 02:47</span>
+                </div>
+            </div>
+            <div class="card-footer">
+                <a href="outputs/results_4281aea9e0e9/index.html" class="card-link">View Results →</a>
+            </div>
+        </div>
+        
+
+        <div class="experiment-card" data-model="pythia-70m-deduped" data-layer="0" data-status="partial">
+            <div class="card-header">
+                <h3 class="experiment-title">Layer 0, Offset 1</h3>
+                <span class="status-badge status-partial">Partial</span>
+            </div>
+            <div class="card-content">
+                <div class="config-item">
+                    <span class="config-label">Model:</span>
+                    <span class="config-value">pythia-70m-deduped</span>
+                </div>
+                <div class="config-item">
+                    <span class="config-label">Dictionary Size:</span>
+                    <span class="config-value">20</span>
+                </div>
+                <div class="config-item">
+                    <span class="config-label">Last Updated:</span>
+                    <span class="config-value">2025-08-19 03:28</span>
+                </div>
+            </div>
+            <div class="card-footer">
+                <a href="outputs/results_daa5a212d746/index.html" class="card-link">View Results →</a>
+            </div>
+        </div>
+        
+
+        <div class="experiment-card" data-model="pythia-70m-deduped" data-layer="1" data-status="partial">
+            <div class="card-header">
+                <h3 class="experiment-title">Layer 1, Offset 1</h3>
+                <span class="status-badge status-partial">Partial</span>
+            </div>
+            <div class="card-content">
+                <div class="config-item">
+                    <span class="config-label">Model:</span>
+                    <span class="config-value">pythia-70m-deduped</span>
+                </div>
+                <div class="config-item">
+                    <span class="config-label">Dictionary Size:</span>
+                    <span class="config-value">20</span>
+                </div>
+                <div class="config-item">
+                    <span class="config-label">Last Updated:</span>
+                    <span class="config-value">2025-08-19 04:12</span>
+                </div>
+            </div>
+            <div class="card-footer">
+                <a href="outputs/results_b3a37f8bdeaa/index.html" class="card-link">View Results →</a>
+            </div>
+        </div>
+        
+
+        <div class="experiment-card" data-model="pythia-70m-deduped" data-layer="2" data-status="partial">
+            <div class="card-header">
+                <h3 class="experiment-title">Layer 2, Offset 1</h3>
+                <span class="status-badge status-partial">Partial</span>
+            </div>
+            <div class="card-content">
+                <div class="config-item">
+                    <span class="config-label">Model:</span>
+                    <span class="config-value">pythia-70m-deduped</span>
+                </div>
+                <div class="config-item">
+                    <span class="config-label">Dictionary Size:</span>
+                    <span class="config-value">20</span>
+                </div>
+                <div class="config-item">
+                    <span class="config-label">Last Updated:</span>
+                    <span class="config-value">2025-08-19 04:49</span>
+                </div>
+            </div>
+            <div class="card-footer">
+                <a href="outputs/results_74446903ce72/index.html" class="card-link">View Results →</a>
+            </div>
+        </div>
+        
+
+        <div class="experiment-card" data-model="pythia-70m-deduped" data-layer="3" data-status="partial">
+            <div class="card-header">
+                <h3 class="experiment-title">Layer 3, Offset 1</h3>
+                <span class="status-badge status-partial">Partial</span>
+            </div>
+            <div class="card-content">
+                <div class="config-item">
+                    <span class="config-label">Model:</span>
+                    <span class="config-value">pythia-70m-deduped</span>
+                </div>
+                <div class="config-item">
+                    <span class="config-label">Dictionary Size:</span>
+                    <span class="config-value">20</span>
+                </div>
+                <div class="config-item">
+                    <span class="config-label">Last Updated:</span>
+                    <span class="config-value">2025-08-19 05:20</span>
+                </div>
+            </div>
+            <div class="card-footer">
+                <a href="outputs/results_5c2849638175/index.html" class="card-link">View Results →</a>
+            </div>
+        </div>
+        
+        </div>
+        
+        <div class="no-results hidden" id="no-results">
+            <h3>No experiments match your filters</h3>
+            <p>Try adjusting your search criteria</p>
+        </div>
+    </div>
+    
+    <script>
+        // Filter functionality
+        const searchInput = document.getElementById('search');
+        const modelFilter = document.getElementById('model-filter');
+        const statusFilter = document.getElementById('status-filter');
+        const layerFilter = document.getElementById('layer-filter');
+        const experimentsGrid = document.getElementById('experiments-grid');
+        const noResults = document.getElementById('no-results');
+        
+        function filterExperiments() {
+            const searchTerm = searchInput.value.toLowerCase();
+            const modelValue = modelFilter.value.toLowerCase();
+            const statusValue = statusFilter.value.toLowerCase();
+            const layerValue = layerFilter.value;
+            
+            const cards = document.querySelectorAll('.experiment-card');
+            let visibleCount = 0;
+            
+            cards.forEach(card => {
+                const cardText = card.textContent.toLowerCase();
+                const cardModel = card.dataset.model || '';
+                const cardStatus = card.dataset.status || '';
+                const cardLayer = card.dataset.layer || '';
+                
+                const matchesSearch = !searchTerm || cardText.includes(searchTerm);
+                const matchesModel = !modelValue || cardModel.includes(modelValue);
+                const matchesStatus = !statusValue || cardStatus === statusValue;
+                const matchesLayer = !layerValue || cardLayer === layerValue;
+                
+                if (matchesSearch && matchesModel && matchesStatus && matchesLayer) {
+                    card.classList.remove('hidden');
+                    visibleCount++;
+                } else {
+                    card.classList.add('hidden');
+                }
+            });
+            
+            // Show/hide no results message
+            if (visibleCount === 0) {
+                experimentsGrid.classList.add('hidden');
+                noResults.classList.remove('hidden');
+            } else {
+                experimentsGrid.classList.remove('hidden');
+                noResults.classList.add('hidden');
+            }
+        }
+        
+        // Attach event listeners
+        searchInput.addEventListener('input', filterExperiments);
+        modelFilter.addEventListener('change', filterExperiments);
+        statusFilter.addEventListener('change', filterExperiments);
+        layerFilter.addEventListener('change', filterExperiments);
+        
+        // Add keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            if (e.key === '/' && !searchInput.matches(':focus')) {
+                e.preventDefault();
+                searchInput.focus();
+            }
+        });
+        
+        console.log('🧠 Experiment Dashboard loaded successfully!');
+        console.log('💡 Tip: Press "/" to quickly search experiments');
+    </script>
+</body>
+</html>
