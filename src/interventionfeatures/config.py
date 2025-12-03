@@ -5,8 +5,6 @@ import json
 import os
 import random
 from dataclasses import dataclass, field
-from pathlib import Path
-from typing import List, Optional
 
 import torch
 
@@ -62,7 +60,7 @@ class ModelConfig:
     target_norm: float = 10.0
     use_output_logits: bool = False
     target_token_offset: int = 0
-    target_layers: Optional[List[int]] = None
+    target_layers: list[int] | None = None
     n_norm_discretization_steps: int = 1
 
 
@@ -90,7 +88,7 @@ class DatabaseConfig:
     index_size: int = 10000
     index_batch_size: int = 32
     scoring_type: str = "dot"
-    chroma_db_path: Optional[str] = None
+    chroma_db_path: str | None = None
     save_activations: bool = True
     use_MICS: bool = True
 
@@ -111,8 +109,8 @@ class LLMConfig:
 @dataclass
 class DatasetConfig:
     dataset_name: str = "allenai/c4"
-    dataset_config: Optional[str] = None
-    dataset_data_files: Optional[str] = None
+    dataset_config: str | None = None
+    dataset_data_files: str | None = None
     dataset_split: str = "train"
     dataset_streaming: bool = True
     dataset_text_column: str = "text"

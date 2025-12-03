@@ -13,16 +13,17 @@ except ImportError:
 
 from unittest.mock import MagicMock, patch
 
-import numpy as np
 import pytest
 import torch
 
 from interventionfeatures.core.search import (
+    CHROMADB_AVAILABLE,
     ActivationSimSearcher,
     _find_optimal_ordered,
 )
 
 
+@pytest.mark.skipif(not CHROMADB_AVAILABLE, reason="ChromaDB not installed")
 class TestActivationSimSearcher:
     """Test cases for ActivationSimSearcher class."""
 

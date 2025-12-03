@@ -1,5 +1,4 @@
 import math
-from typing import Dict, List, Optional, Tuple
 
 import torch
 
@@ -85,7 +84,7 @@ class SphericalAdamW:
         self,
         target_norm: float = -1.0,
         lr: float = 0.001,
-        betas: Tuple[float, float] = (0.9, 0.999),
+        betas: tuple[float, float] = (0.9, 0.999),
         eps: float = 1e-8,
         weight_decay: float = 0.01,
     ):
@@ -126,7 +125,7 @@ class SphericalAdamW:
 
         # Update parameters
         update = self.lr * m_hat / (torch.sqrt(v_hat) + self.eps)
-        
+
         params_new = params + update #* torch.norm(params, dim=-1).mean()
         if self.target_norm > 0:
             params_norm = params_new.norm(dim=-1)

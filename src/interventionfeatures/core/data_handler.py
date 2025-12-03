@@ -1,16 +1,6 @@
-import copy
-import hashlib
-import pickle
 import sys
-import time
-from pathlib import Path
-from typing import List, Optional, Tuple, Union
 
-import datasets
 import torch
-import torch.nn as nn
-import torch.nn.functional as F
-import transformer_lens
 from datasets import IterableDataset
 from torch.utils.data import DataLoader
 from tqdm.auto import tqdm
@@ -43,7 +33,7 @@ class TransformerDataHandler:
         layer_cutoff: int,
         hook_type: str,
         max_seq_len: int = 128,
-        device: Optional[torch.device] = None,
+        device: torch.device | None = None,
         seed: int = 42,
         force_dataset_download: bool = False,
     ):
@@ -76,7 +66,7 @@ class TransformerDataHandler:
 
         if self.tokenizer.pad_token_id is None:
             print(
-                f"DataHandler: Tokenizer does not have a pad_token_id. Using eos_token_id as default."
+                "DataHandler: Tokenizer does not have a pad_token_id. Using eos_token_id as default."
             )
             self.tokenizer.pad_token_id = self.tokenizer.eos_token_id
 
@@ -95,7 +85,7 @@ class TransformerDataHandler:
 
     def get_batch(
         self, batch_size: int
-    ) -> Optional[Tuple[torch.Tensor, torch.Tensor, torch.Tensor]]:
+    ) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor] | None:
         """
         Generates a batch of activations and corresponding tokens on-the-fly.
         If the dataset is exhausted, it will raise a StopIteration exception.
@@ -168,7 +158,7 @@ class TransformerDataHandler:
 
     def get_norm_stats(
         self, samples: int, batch_size: int
-    ) -> Tuple[float, float, float]:
+    ) -> tuple[float, float, float]:
         norms = []
         norms_max = []
         # Use ceiling division to ensure all samples are processed, including the last partial batch.

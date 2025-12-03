@@ -1,10 +1,9 @@
-import hashlib
 import json
 import os
 import time
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any
 
 import numpy as np
 import torch
@@ -22,18 +21,17 @@ except ImportError:
     stats = None
 
 # Local imports - using your existing modules
-from ..core import data_handler, model
+from ..config import Config
 from ..core.data_handler import TransformerDataHandler
 from ..core.model import IntervenableTransformerSegment
-from ..config import Config
 from .explainer import FeatureExplainer
 
 # Optional LangChain imports for explanation generation
 try:
     from langchain_anthropic import ChatAnthropic
-    from langchain_openai import ChatOpenAI
     from langchain_core.output_parsers import JsonOutputParser
     from langchain_core.prompts import ChatPromptTemplate
+    from langchain_openai import ChatOpenAI
 
     LANGCHAIN_AVAILABLE = True
 except ImportError:
@@ -71,20 +69,20 @@ F    """
         matching_values = matching_values.tolist()
     if hasattr(non_matching_values, 'tolist'):
         non_matching_values = non_matching_values.tolist()
-    
+
     all_activations = matching_values + non_matching_values
     if not all_activations:
         raise ValueError(f"No activations provided: {all_activations}")
 
     # Get unique, sorted activation values
     unique_activations = sorted(list(set(all_activations)))
-    
+
     best_threshold = unique_activations[0]
 
     # Create a list of candidate thresholds to test.
     # We test points lower than the min, higher than the max, and all midpoints.
-    candidate_thresholds = [unique_activations[0] - 1] 
-    candidate_thresholds.extend((unique_activations[i] + unique_activations[i+1]) / 2.0 
+    candidate_thresholds = [unique_activations[0] - 1]
+    candidate_thresholds.extend((unique_activations[i] + unique_activations[i+1]) / 2.0
                                 for i in range(len(unique_activations) - 1))
     candidate_thresholds.append(unique_activations[-1] + 1)
     max_accuracy = 0.0
@@ -95,14 +93,14 @@ F    """
         tp = sum(1 for act in matching_values if act > t)
         # True Negatives: Non-matching examples correctly classified (activation <= t)
         tn = sum(1 for act in non_matching_values if act <= t)
-        
+
         current_accuracy = (tp + tn) / len(all_activations)
-        
+
         # If this threshold gives higher accuracy, update our best
         if current_accuracy > max_accuracy:
             max_accuracy = current_accuracy
             best_threshold = t
-            
+
     return best_threshold
 
 class FaithfulnessConfig:
@@ -170,7 +168,7 @@ def create_test_data_chain(provider: str, model_name: str):
     return prompt_template | model | parser
 
 
-def _invoke_with_retry(chain, input_data: Dict[str, Any], max_retries: int = 10, delay: float = 1.0) -> Dict[str, Any]:
+def _invoke_with_retry(chain, input_data: dict[str, Any], max_retries: int = 10, delay: float = 1.0) -> dict[str, Any]:
     """
     Invoke a LangChain chain with retry logic for parsing failures.
     
@@ -187,7 +185,7 @@ def _invoke_with_retry(chain, input_data: Dict[str, Any], max_retries: int = 10,
         Exception: If all retry attempts fail
     """
     last_exception = None
-    
+
     for attempt in range(max_retries + 1):  # +1 for initial attempt
         try:
             result = chain.invoke(input_data)
@@ -206,7 +204,7 @@ def _invoke_with_retry(chain, input_data: Dict[str, Any], max_retries: int = 10,
             # For non-parsing errors, don't retry and re-raise immediately
             print(f"Non-parsing error occurred, not retrying: {e}")
             raise e
-    
+
     # If we get here, all retries failed
     raise last_exception
 
@@ -268,7 +266,7 @@ def _run_simulation_test(
             # outputs = data_handler.model(**tokens, output_hidden_states=True)
             ## Extract the relevant layer's activations
             # hidden_states = outputs.hidden_states[config.parent_config.layer_cutoff]  # Shape: [Batch size, seq_len, d_model]
-            hidden_states = x_batch  
+            hidden_states = x_batch
             c = css_direction.unsqueeze(1).unsqueeze(2).to(config.device)
             h = hidden_states.unsqueeze(0)
             # css_direction: [K, d_model]
@@ -313,13 +311,13 @@ def _run_simulation_test(
         }
 
 def get_sae_directions_and_explanations(
-    config: MainConfig,
+    config: Config,
     model: IntervenableTransformerSegment,
     data_handler: TransformerDataHandler,
     searcher: ActivationSimSearcher,
     feature_indices: torch.tensor,
     top_k_activations: int = 10,
-) -> Tuple[List[Dict], List[Dict], List[float]]:
+) -> tuple[list[dict], list[dict], list[float]]:
     """
     Extract SAE feature directions and generate explanations for them.
     
@@ -338,12 +336,12 @@ def get_sae_directions_and_explanations(
         raise ImportError(
             "sae_lens is required for SAE faithfulness testing. Install with: pip install sae_lens"
         )
-    
+
     if not hasattr(config, 'model_name_sae') or not config.model_name_sae:
         raise ValueError("config.model_name_sae must be specified for SAE faithfulness testing")
-    
+
     print(f"Loading SAE '{config.model_name_sae}' for layer {config.layer_cutoff}...")
-    
+
     # Load SAE
     sae, _, _ = SAE.from_pretrained(
         release=config.model_name_sae,
@@ -352,32 +350,31 @@ def get_sae_directions_and_explanations(
     )
     # Get SAE encoder directions (transposed to get [n_features, d_model])
     sae_directions = sae.W_enc.T
-    
+
     selected_directions = sae_directions[feature_indices]
-    
+
     print(f"Selected {feature_indices.shape[0]} SAE feature directions from {sae_directions.shape[0]} available")
-    
+
     # Create SAE results format compatible with existing faithfulness testing
     sae_results = []
     explanations = []
     max_activations = []
-    
+
     # Import explainer for generating explanations
-    from .explainer import FeatureExplainer
-    
+
     # Create FeatureExplainer instance to use the proper explanation generation
     explainer = FeatureExplainer(
         model=model,
         explainer_llm_provider=config.faithfulness_llm_provider,
         explainer_llm_model_name=config.faithfulness_llm_model_name,
     )
-    
+
     # Note: We now use the ActivationSimSearcher's indexed dataset instead of sample texts
     # This leverages the same large dataset that CSS directions use for finding examples
-    
+
     for i, (feature_idx, direction) in enumerate(zip(feature_indices, selected_directions)):
         print(f"Processing SAE feature {i+1}/{feature_indices.shape[0]} (feature index {feature_idx})")
-        
+
         # Create a CSS-like result structure
         sae_result = {
             "s": direction.unsqueeze(0),  # The direction vector
@@ -386,7 +383,7 @@ def get_sae_directions_and_explanations(
             "feature_type": "sae",
             "presence_threshold": sae.b_enc[feature_idx].item()  - torch.inner(sae.b_dec, direction.squeeze()).item() # The cutoff to grt passed the ReLU
         }
-        
+
         # Generate explanation using the proper FeatureExplainer with SAE activations
         try:
             # Use the explainer to generate high-quality explanations like CSS directions
@@ -397,40 +394,40 @@ def get_sae_directions_and_explanations(
                 data_handler=data_handler,
                 num_examples=top_k_activations,
             )
-            
+
             print(f"Generated explanation for SAE feature {feature_idx}: {explanation_text[:100]}...")
-            
+
         except Exception as e:
             raise e
             print(f"Warning: Could not generate explanation using explainer for SAE feature {feature_idx}: {e}")
             # Fallback to simple explanation
             max_activation = torch.linalg.norm(direction).item()
             explanation_text = f"SAE Feature {feature_idx.item()}: Feature extracted from layer {config.layer_cutoff} {config.hook_type} activations from SAE '{config.model_name_sae}'. Error during explanation generation: {str(e)}"
-        
+
         explanation = {
             "explanation": explanation_text,
             "feature_idx": feature_idx.item(),
             "feature_type": "sae",
         }
-        
+
         sae_results.append(sae_result)
         explanations.append(explanation)
         max_activations.append(max_activation)
-    
+
     return sae_results, explanations, max_activations
 
 
 def run_multi_trial_faithfulness_testing(
-    css_results: List[Dict],
-    explanations: List[Dict],
+    css_results: list[dict],
+    explanations: list[dict],
     data_handler: TransformerDataHandler,
     config,
     total_trials: int = 5,
-    output_dir: Optional[Path] = None,
+    output_dir: Path | None = None,
     progress=None,
-    thresholds: Optional[List[float]] = None,
+    thresholds: list[float] | None = None,
     use_cosine_sim = True
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     Run multiple trials of faithfulness testing on CSS directions and explanations.
 
@@ -559,7 +556,7 @@ def run_multi_trial_faithfulness_testing(
             if 'results' in d:  # Only process successful trials
                 matching_values += [x['activation'] for x in d['results'] if x['label'] == 1]
                 non_matching_values += [x['activation'] for x in d['results'] if x['label'] == 0]
-            
+
         if thresholds:
             threshold = thresholds[direction_idx]
         else:
@@ -575,11 +572,11 @@ def run_multi_trial_faithfulness_testing(
                 for j in range(len(direction_trials[i]['results'])):
                     act = direction_trials[i]['results'][j]['activation']
                     direction_trials[i]['results'][j]['prediction'] = 1 if act > threshold else 0
-                    is_correct = direction_trials[i]['results'][j]['prediction']  == direction_trials[i]['results'][j]['label'] 
+                    is_correct = direction_trials[i]['results'][j]['prediction']  == direction_trials[i]['results'][j]['label']
                     direction_trials[i]['results'][j]['correct'] = is_correct
                     n_corr_i += is_correct
                 direction_trials[i]['accuracy'] = n_corr_i / n_tot_i
-                
+
                 n_corr += n_corr_i
                 n_tot += n_tot_i
 
@@ -637,7 +634,7 @@ def run_multi_trial_faithfulness_testing(
         if all_accuracies
         else None,
     }
-    
+
     # Compute feature group statistics (positive vs negative polarity groups)
     feature_group_stats = _compute_feature_group_statistics(direction_summaries, confidence=0.95)
     overall_summary["feature_group_statistics"] = feature_group_stats
@@ -647,14 +644,14 @@ def run_multi_trial_faithfulness_testing(
         # Create html subdirectory for consolidated visualization files
         html_dir = output_dir / "html"
         html_dir.mkdir(exist_ok=True)
-        
+
         # Always generate summary HTML
         summary_html_file = html_dir / "faithfulness_summary.html"
         _generate_summary_html(
             direction_summaries, overall_summary, str(summary_html_file),
             sort_by="mean_accuracy"
         )
-        
+
         # Generate combined HTML if requested
         combined_html_file = html_dir / "faithfulness_combined.html"
         _generate_combined_faithfulness_html(
@@ -673,15 +670,15 @@ def run_multi_trial_faithfulness_testing(
 
 
 def run_sae_faithfulness_testing(
-    config: MainConfig,
+    config: Config,
     data_handler: TransformerDataHandler,
     model: IntervenableTransformerSegment,
     num_features: int = 20,
     total_trials: int = 5,
-    output_dir: Optional[Path] = None,
+    output_dir: Path | None = None,
     progress=None,
     searcher: ActivationSimSearcher = None,
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     Run faithfulness testing specifically for SAE features.
     
@@ -706,14 +703,14 @@ def run_sae_faithfulness_testing(
         raise ImportError(
             "sae_lens is required for SAE faithfulness testing. Install with: pip install sae_lens"
         )
-    
+
     if not LANGCHAIN_AVAILABLE:
         raise ImportError(
             "LangChain is required for faithfulness testing. Install with: pip install langchain langchain-anthropic langchain-openai"
         )
-    
+
     print(f"🧠 Starting SAE faithfulness testing with {num_features} features...")
-    
+
     # Extract SAE directions and generate explanations
     if searcher is None:
         # If no searcher provided, we need to create one or use a fallback approach
@@ -732,7 +729,7 @@ def run_sae_faithfulness_testing(
         sae_id=f"blocks.{config.layer_cutoff}.{config.hook_type}",
         device="cuda" if torch.cuda.is_available() else "cpu",
     )
-    
+
     sae_directions = sae.W_enc.T
     # Randomly sample features to evaluate
     if num_features > sae_directions.shape[0]:
@@ -740,7 +737,7 @@ def run_sae_faithfulness_testing(
         print(f"Warning: Requested {num_features} features but SAE only has {sae_directions.shape[0]}. Using all available.")
     #feature_indices = torch.tensor([2])
     feature_indices = torch.randperm(sae_directions.shape[0])[:num_features]
-    
+
     sae_results, explanations, max_activations = get_sae_directions_and_explanations(
         config=config,
         model=model,
@@ -751,9 +748,9 @@ def run_sae_faithfulness_testing(
     thresholds = [
         s['presence_threshold'] for s in sae_results
     ]
-    
+
     print(f"✅ Extracted {len(sae_results)} SAE features and generated explanations")
-    
+
     # Run the standard faithfulness testing pipeline
     results = run_multi_trial_faithfulness_testing(
         css_results=sae_results,
@@ -766,7 +763,7 @@ def run_sae_faithfulness_testing(
         thresholds=thresholds,
         use_cosine_sim=False
     )
-    
+
     # Add SAE-specific metadata
     results["sae_metadata"] = {
         "model_name_sae": config.model_name_sae,
@@ -775,13 +772,13 @@ def run_sae_faithfulness_testing(
         "num_features_tested": num_features,
         "feature_type": "sae",
     }
-    
+
     return results
 
 
 def _compute_confidence_interval(
-    data: List[float], confidence: float = 0.95
-) -> Tuple[float, float]:
+    data: list[float], confidence: float = 0.95
+) -> tuple[float, float]:
     """Compute confidence interval for a list of values."""
     if not data:
         return (0.0, 0.0)
@@ -805,8 +802,8 @@ def _compute_confidence_interval(
 
 
 def _compute_feature_group_statistics(
-    direction_summaries: List[Dict], confidence: float = 0.95
-) -> Dict[str, Any]:
+    direction_summaries: list[dict], confidence: float = 0.95
+) -> dict[str, Any]:
     """
     Compute aggregated statistics grouped by feature polarity.
     
@@ -819,7 +816,7 @@ def _compute_feature_group_statistics(
     """
     positive_features = [d for d in direction_summaries if d.get('polarity') == 'positive']
     negative_features = [d for d in direction_summaries if d.get('polarity') == 'negative']
-    
+
     def _compute_group_stats(features, group_name):
         if not features:
             return {
@@ -832,9 +829,9 @@ def _compute_feature_group_statistics(
                 'accuracy_95_ci': (0.0, 0.0),
                 'features': []
             }
-        
+
         accuracies = [f.get('mean_accuracy', 0.0) for f in features]
-        
+
         return {
             'count': len(features),
             'mean_accuracy': np.mean(accuracies),
@@ -845,10 +842,10 @@ def _compute_feature_group_statistics(
             'accuracy_95_ci': _compute_confidence_interval(accuracies, confidence),
             'features': features
         }
-    
+
     positive_stats = _compute_group_stats(positive_features, 'positive')
     negative_stats = _compute_group_stats(negative_features, 'negative')
-    
+
     # Combined statistics across all features
     all_features = direction_summaries
     all_accuracies = [f.get('mean_accuracy', 0.0) for f in all_features]
@@ -861,18 +858,18 @@ def _compute_feature_group_statistics(
         'max_accuracy': np.max(all_accuracies) if all_accuracies else 0.0,
         'accuracy_95_ci': _compute_confidence_interval(all_accuracies, confidence) if all_accuracies else (0.0, 0.0),
     }
-    
+
     # Comparison statistics between positive and negative groups
     comparison_stats = {}
     if positive_features and negative_features:
         pos_accuracies = [f.get('mean_accuracy', 0.0) for f in positive_features]
         neg_accuracies = [f.get('mean_accuracy', 0.0) for f in negative_features]
-        
+
         comparison_stats = {
             'positive_vs_negative_diff': positive_stats['mean_accuracy'] - negative_stats['mean_accuracy'],
             'positive_vs_negative_diff_abs': abs(positive_stats['mean_accuracy'] - negative_stats['mean_accuracy']),
         }
-        
+
         # Statistical significance test if scipy available and sufficient data
         if SCIPY_AVAILABLE and len(pos_accuracies) > 1 and len(neg_accuracies) > 1:
             try:
@@ -886,7 +883,7 @@ def _compute_feature_group_statistics(
             except Exception:
                 # In case of any statistical test errors
                 pass
-    
+
     return {
         'positive_group': positive_stats,
         'negative_group': negative_stats,
@@ -897,7 +894,7 @@ def _compute_feature_group_statistics(
 
 
 
-def _generate_faithfulness_html(trial_result: Dict[str, Any], output_file: str) -> None:
+def _generate_faithfulness_html(trial_result: dict[str, Any], output_file: str) -> None:
     """Generate HTML visualization for a single faithfulness trial."""
     direction_idx = trial_result["direction_idx"]
     trial_idx = trial_result["trial_idx"]
@@ -1135,7 +1132,7 @@ def _generate_faithfulness_html(trial_result: Dict[str, Any], output_file: str) 
 
 
 def _generate_combined_faithfulness_html(
-    all_trial_results: List[Dict], direction_summaries: List[Dict], output_file: str
+    all_trial_results: list[dict], direction_summaries: list[dict], output_file: str
 ) -> None:
     """Generate combined HTML visualization for all faithfulness trials."""
     # Group trials by direction
@@ -1145,22 +1142,22 @@ def _generate_combined_faithfulness_html(
         if direction_idx not in direction_trials:
             direction_trials[direction_idx] = []
         direction_trials[direction_idx].append(trial)
-    
+
     # Sort directions by index
     sorted_directions = sorted(direction_trials.keys())
-    
+
     # Generate trial cards HTML
     trial_cards_html = ""
     for direction_idx in sorted_directions:
         trials = direction_trials[direction_idx]
         direction_summary = next((s for s in direction_summaries if s["direction_idx"] == direction_idx), {})
-        
+
         # Direction header
         mean_accuracy = direction_summary.get("mean_accuracy", 0.0)
         optimal_threshold = direction_summary.get("optimal_threshold", "N/A")
         threshold_display = f"{optimal_threshold:.3f}" if isinstance(optimal_threshold, (int, float)) else str(optimal_threshold)
         num_trials = len(trials)
-        
+
         trial_cards_html += f"""
         <div class="direction-section">
             <div class="direction-header" onclick="toggleDirection({direction_idx})">
@@ -1174,35 +1171,35 @@ def _generate_combined_faithfulness_html(
             </div>
             <div class="direction-content hidden" id="direction-{direction_idx}">
         """
-        
+
         # Trial cards for this direction
         for trial in trials:
             trial_idx = trial["trial_idx"]
             accuracy = trial.get("accuracy", 0.0)
             explanation = trial.get("explanation", "No explanation available")
             css_score = trial.get("css_score", 0.0)
-            
+
             # Get detailed results for examples
             detailed_results = trial.get("results", [])
             total_examples = len(detailed_results)
             correct_predictions = sum(1 for res in detailed_results if res.get("correct", False))
-            
+
             # Generate examples HTML with clearer display
             examples_html = ""
             threshold_val = optimal_threshold if isinstance(optimal_threshold, (int, float)) else 0.0
-            
+
             for i, result in enumerate(detailed_results):  # Show all examples
                 correct = result.get("correct", False)
                 label = result.get("label", "Unknown")
                 prediction = result.get("prediction", "Unknown")
                 activation = result.get("activation", 0.0)
                 text = result.get("text", "")
-                
+
                 status_class = "correct" if correct else "incorrect"
                 status_icon = "✓" if correct else "✗"
                 label_text = "Positive" if label == 1 else "Negative"
                 pred_text = "Positive" if prediction == 1 else "Negative"
-                
+
                 # Show relationship to threshold
                 threshold_relation = ""
                 if isinstance(threshold_val, (int, float)):
@@ -1210,7 +1207,7 @@ def _generate_combined_faithfulness_html(
                         threshold_relation = f"(>{threshold_val:.3f})"
                     else:
                         threshold_relation = f"(<={threshold_val:.3f})"
-                
+
                 examples_html += f"""
                 <div class="example-detailed {status_class}">
                     <div class="example-header">
@@ -1225,7 +1222,7 @@ def _generate_combined_faithfulness_html(
                     </div>
                 </div>
                 """
-            
+
             trial_cards_html += f"""
             <div class="trial-card">
                 <div class="trial-header">
@@ -1249,17 +1246,17 @@ def _generate_combined_faithfulness_html(
                 </div>
             </div>
             """
-        
+
         trial_cards_html += """
             </div>
         </div>
         """
-    
+
     # Navigation menu
     nav_html = ""
     for direction_idx in sorted_directions:
         nav_html += f'<a href="#direction-{direction_idx}" class="nav-link">Direction {direction_idx}</a>'
-    
+
     html_content = f"""
 <!DOCTYPE html>
 <html lang="en">
@@ -1525,11 +1522,11 @@ def _generate_combined_faithfulness_html(
 
 
 def _generate_summary_html(
-    direction_summaries: List[Dict], overall_summary: Dict, output_file: str,
+    direction_summaries: list[dict], overall_summary: dict, output_file: str,
     sort_by: str = "mean_accuracy"
 ) -> None:
     """Generate HTML summary visualization for all faithfulness tests."""
-    
+
     # Sort directions by faithfulness score
     sorted_directions = sort_directions_by_faithfulness(
         direction_summaries, sort_by=sort_by, ascending=False
@@ -1692,7 +1689,7 @@ def _generate_summary_html(
 
         optimal_threshold = direction.get("optimal_threshold", "N/A")
         threshold_display = f"{optimal_threshold:.3f}" if isinstance(optimal_threshold, (int, float)) else str(optimal_threshold)
-        
+
         html_content += f"""
         <div class="direction-card">
             <div class="direction-header">
@@ -1754,10 +1751,10 @@ def _generate_summary_html(
 
 
 def run_aggregated_faithfulness_visualization(
-    multi_run_results: List[Dict[str, Any]],
-    output_dir: Optional[Path] = None,
+    multi_run_results: list[dict[str, Any]],
+    output_dir: Path | None = None,
     sort_by: str = "aggregated_accuracy",
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     Aggregate multiple runs of faithfulness testing and visualize as unified dataset.
     
@@ -1775,40 +1772,40 @@ def run_aggregated_faithfulness_visualization(
     """
     if not multi_run_results:
         raise ValueError("No multi-run results provided for aggregation")
-    
+
     # Extract all direction indices across all runs
     all_direction_indices = set()
     for run_result in multi_run_results:
         for direction_summary in run_result["direction_summaries"]:
             all_direction_indices.add(direction_summary["direction_idx"])
-    
+
     sorted_direction_indices = sorted(all_direction_indices)
-    
+
     # Aggregate results by direction
     aggregated_directions = []
-    
+
     for direction_idx in sorted_direction_indices:
         # Collect all trials for this direction across all runs
         all_trials_for_direction = []
         direction_metadata = None
-        
+
         for run_idx, run_result in enumerate(multi_run_results):
             # Find trials for this direction in this run
-            run_trials = [trial for trial in run_result["all_trials"] 
+            run_trials = [trial for trial in run_result["all_trials"]
                          if trial["direction_idx"] == direction_idx]
-            
+
             # Add run metadata to each trial
             for trial in run_trials:
                 trial["source_run_idx"] = run_idx
                 trial["source_run_timestamp"] = run_result.get("timestamp", "unknown")
-            
+
             all_trials_for_direction.extend(run_trials)
-            
+
             # Extract direction metadata (explanation, CSS score) from first available
             if direction_metadata is None:
                 direction_summary = next(
-                    (ds for ds in run_result["direction_summaries"] 
-                     if ds["direction_idx"] == direction_idx), 
+                    (ds for ds in run_result["direction_summaries"]
+                     if ds["direction_idx"] == direction_idx),
                     None
                 )
                 if direction_summary:
@@ -1816,18 +1813,18 @@ def run_aggregated_faithfulness_visualization(
                         "explanation": direction_summary["explanation"],
                         "css_score": direction_summary["css_score"],
                     }
-        
+
         if not all_trials_for_direction:
             continue
-            
+
         # Aggregate all individual test results across all trials
         all_matching_results = []
         all_non_matching_results = []
-        
+
         for trial in all_trials_for_direction:
             if "results" not in trial:
                 continue
-                
+
             for result in trial["results"]:
                 # Add trial and run metadata to each individual result
                 enhanced_result = result.copy()
@@ -1837,31 +1834,31 @@ def run_aggregated_faithfulness_visualization(
                     "source_direction_idx": trial["direction_idx"],
                     "trial_timestamp": trial.get("timestamp", "unknown"),
                 })
-                
+
                 if result["label"] == 1:
                     all_matching_results.append(enhanced_result)
                 else:
                     all_non_matching_results.append(enhanced_result)
-        
+
         # Calculate aggregated statistics
         all_results = all_matching_results + all_non_matching_results
         if not all_results:
             continue
-            
+
         total_examples = len(all_results)
         correct_predictions = sum(1 for res in all_results if res["correct"])
         aggregated_accuracy = correct_predictions / total_examples if total_examples > 0 else 0.0
-        
+
         # Calculate per-label accuracy
         matching_correct = sum(1 for res in all_matching_results if res["correct"])
         non_matching_correct = sum(1 for res in all_non_matching_results if res["correct"])
         matching_accuracy = matching_correct / len(all_matching_results) if all_matching_results else 0.0
         non_matching_accuracy = non_matching_correct / len(all_non_matching_results) if all_non_matching_results else 0.0
-        
+
         # Trial-level statistics
-        trial_accuracies = [trial["accuracy"] for trial in all_trials_for_direction 
+        trial_accuracies = [trial["accuracy"] for trial in all_trials_for_direction
                            if "accuracy" in trial]
-        
+
         aggregated_direction = {
             "direction_idx": direction_idx,
             "explanation": direction_metadata["explanation"] if direction_metadata else "No explanation available",
@@ -1884,20 +1881,20 @@ def run_aggregated_faithfulness_visualization(
             "all_non_matching_results": all_non_matching_results,
             "all_trials": all_trials_for_direction,
         }
-        
+
         aggregated_directions.append(aggregated_direction)
-    
+
     # Compute overall aggregated statistics
     total_aggregated_examples = sum(direction["total_examples"] for direction in aggregated_directions)
     total_aggregated_correct = sum(direction["correct_predictions"] for direction in aggregated_directions)
     overall_aggregated_accuracy = total_aggregated_correct / total_aggregated_examples if total_aggregated_examples > 0 else 0.0
-    
+
     # Collect all trial accuracies for overall statistics
     all_trial_accuracies = []
     for direction in aggregated_directions:
-        all_trial_accuracies.extend([trial["accuracy"] for trial in direction["all_trials"] 
+        all_trial_accuracies.extend([trial["accuracy"] for trial in direction["all_trials"]
                                    if "accuracy" in trial])
-    
+
     overall_summary = {
         "num_directions": len(aggregated_directions),
         "num_source_runs": len(multi_run_results),
@@ -1909,7 +1906,7 @@ def run_aggregated_faithfulness_visualization(
         "overall_trial_std_accuracy": np.std(all_trial_accuracies) if all_trial_accuracies else 0.0,
         "overall_trial_accuracy_95_ci": _compute_confidence_interval(all_trial_accuracies, confidence=0.95) if all_trial_accuracies else (0.0, 0.0),
     }
-    
+
     # Generate HTML visualization if output_dir is provided
     if output_dir:
         # Ensure output_dir exists first, then create html subdirectory for consolidated visualization files
@@ -1921,7 +1918,7 @@ def run_aggregated_faithfulness_visualization(
             aggregated_directions, overall_summary, str(aggregated_html_file),
             sort_by=sort_by, show_faithfulness_badges=True
         )
-    
+
     return {
         "overall_summary": overall_summary,
         "aggregated_directions": aggregated_directions,
@@ -1930,10 +1927,10 @@ def run_aggregated_faithfulness_visualization(
 
 
 def sort_directions_by_faithfulness(
-    direction_summaries: List[Dict], 
+    direction_summaries: list[dict],
     sort_by: str = "mean_accuracy",
     ascending: bool = False
-) -> List[Dict]:
+) -> list[dict]:
     """
     Sort direction summaries by faithfulness metrics.
     
@@ -1965,15 +1962,15 @@ def sort_directions_by_faithfulness(
         else:
             # Default to mean_accuracy
             return direction.get("mean_accuracy", 0.0)
-    
+
     return sorted(direction_summaries, key=get_sort_key, reverse=not ascending)
 
 
 def sort_aggregated_directions_by_faithfulness(
-    aggregated_directions: List[Dict],
-    sort_by: str = "aggregated_accuracy", 
+    aggregated_directions: list[dict],
+    sort_by: str = "aggregated_accuracy",
     ascending: bool = False
-) -> List[Dict]:
+) -> list[dict]:
     """
     Sort aggregated direction results by faithfulness metrics.
     
@@ -1985,7 +1982,7 @@ def sort_aggregated_directions_by_faithfulness(
         
     Returns:
         Sorted list of aggregated directions
-    """  
+    """
     def get_sort_key(direction):
         """Extract the sorting key from an aggregated direction."""
         if sort_by == "aggregated_accuracy":
@@ -2003,10 +2000,10 @@ def sort_aggregated_directions_by_faithfulness(
         else:
             # Default to aggregated_accuracy
             return direction.get("aggregated_accuracy", 0.0)
-    
+
     return sorted(aggregated_directions, key=get_sort_key, reverse=not ascending)
 
-def load_faithfulness_results(file_path: str) -> Dict[str, Any]:
+def load_faithfulness_results(file_path: str) -> dict[str, Any]:
     """
     Load faithfulness results from full format.
     
@@ -2016,12 +2013,12 @@ def load_faithfulness_results(file_path: str) -> Dict[str, Any]:
     Returns:
         Loaded results dictionary
     """
-    import json
     import gzip
+    import json
     from pathlib import Path
-    
+
     file_path = Path(file_path)
-    
+
     try:
         if file_path.suffix == '.gz':
             # Load gzipped file
@@ -2029,29 +2026,29 @@ def load_faithfulness_results(file_path: str) -> Dict[str, Any]:
                 results = json.load(f)
         else:
             # Load regular JSON file
-            with open(file_path, 'r', encoding='utf-8') as f:
+            with open(file_path, encoding='utf-8') as f:
                 results = json.load(f)
-        
+
         print(f"✓ Results loaded from {file_path}")
-        
+
         return results
-        
+
     except Exception as e:
         print(f"Error: Failed to load results from {file_path}: {e}")
         raise
 
 
 def _generate_aggregated_faithfulness_html(
-    aggregated_directions: List[Dict], overall_summary: Dict, output_file: str,
+    aggregated_directions: list[dict], overall_summary: dict, output_file: str,
     sort_by: str = "aggregated_accuracy", show_faithfulness_badges: bool = True
 ) -> None:
     """Generate HTML visualization for aggregated faithfulness testing results."""
-    
+
     # Sort directions by faithfulness score (highest first by default)
     sorted_directions = sort_aggregated_directions_by_faithfulness(
         aggregated_directions, sort_by=sort_by, ascending=False
     )
-    
+
     # Generate direction cards HTML
     direction_cards_html = ""
     for rank, direction in enumerate(sorted_directions, 1):
@@ -2069,11 +2066,11 @@ def _generate_aggregated_faithfulness_html(
         non_matching_accuracy = direction["non_matching_accuracy"]
         num_source_runs = direction["num_source_runs"]
         num_trials = direction["num_trials"]
-        
+
         # Build examples sections for matching and non-matching
         matching_examples_html = ""
         non_matching_examples_html = ""
-        
+
         # Show a sample of matching results
         for i, result in enumerate(direction["all_matching_results"][:20]):  # Show first 20
             correct_class = "correct" if result["correct"] else "incorrect"
@@ -2081,7 +2078,7 @@ def _generate_aggregated_faithfulness_html(
             prediction = result["prediction"]
             source_run = result.get("source_run_idx", "?")
             source_trial = result.get("source_trial_idx", "?")
-            
+
             matching_examples_html += f"""
                 <div class="example {correct_class}">
                     <div class="example-text">"{result['text'][:150]}{'...' if len(result['text']) > 150 else ''}"</div>
@@ -2093,15 +2090,15 @@ def _generate_aggregated_faithfulness_html(
                     </div>
                 </div>
             """
-        
-        # Show a sample of non-matching results  
+
+        # Show a sample of non-matching results
         for i, result in enumerate(direction["all_non_matching_results"][:20]):  # Show first 20
             correct_class = "correct" if result["correct"] else "incorrect"
             activation = result["activation"]
             prediction = result["prediction"]
             source_run = result.get("source_run_idx", "?")
             source_trial = result.get("source_trial_idx", "?")
-            
+
             non_matching_examples_html += f"""
                 <div class="example {correct_class}">
                     <div class="example-text">"{result['text'][:150]}{'...' if len(result['text']) > 150 else ''}"</div>
@@ -2113,13 +2110,13 @@ def _generate_aggregated_faithfulness_html(
                     </div>
                 </div>
             """
-        
+
         if len(direction["all_matching_results"]) > 20:
             matching_examples_html += f"<div class='examples-note'>... and {len(direction['all_matching_results']) - 20} more matching examples</div>"
-            
+
         if len(direction["all_non_matching_results"]) > 20:
             non_matching_examples_html += f"<div class='examples-note'>... and {len(direction['all_non_matching_results']) - 20} more non-matching examples</div>"
-        
+
         # Determine faithfulness badge
         faithfulness_badge = ""
         faithfulness_class = ""
@@ -2133,7 +2130,7 @@ def _generate_aggregated_faithfulness_html(
             else:
                 faithfulness_badge = f'<span class="faithfulness-badge low">Low Faithfulness ({aggregated_accuracy:.0%})</span>'
                 faithfulness_class = "low-faithfulness"
-        
+
         direction_cards_html += f"""
         <div class="direction-section {faithfulness_class}">
             <div class="direction-header" onclick="toggleDirection({direction_idx})">
@@ -2201,7 +2198,7 @@ def _generate_aggregated_faithfulness_html(
             </div>
         </div>
         """
-    
+
     html_content = f"""
 <!DOCTYPE html>
 <html lang="en">

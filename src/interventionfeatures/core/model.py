@@ -1,8 +1,8 @@
-from typing import Dict, List, Optional, Tuple, Union
 
 import torch
 import torch.nn.functional as F
 from transformer_lens import HookedTransformer
+
 from ..core.data_handler import TransformerDataHandler
 
 
@@ -26,7 +26,7 @@ class IntervenableTransformerSegment:
         base_model: HookedTransformer,
         layer_cutoff: int,
         data_handler: TransformerDataHandler,
-        target_layers: List[int],
+        target_layers: list[int],
         include_final_logits=False,
         softmax_temper: float = 0.3,
         target_token_offset: int = 0,  # Offset for the target token position
@@ -61,14 +61,14 @@ class IntervenableTransformerSegment:
             )  # type: ignore
 
         # Attributes to be set by __call__
-        self.current_h_input: Optional[torch.Tensor] = None
-        self.to_remove_dir : Optional[torch.Tensor] = None
-        self.current_injection_pos: Optional[torch.Tensor] = None
-        self.captured_outputs: Dict[Union[int, str], torch.Tensor] = {}
+        self.current_h_input: torch.Tensor | None = None
+        self.to_remove_dir : torch.Tensor | None = None
+        self.current_injection_pos: torch.Tensor | None = None
+        self.captured_outputs: dict[int | str, torch.Tensor] = {}
 
         # Prepare hook functions and list once
-        self._fwd_hooks_list: List[Tuple[str, callable]] = self._prepare_hooks()
-        self._remove_dir_hooks_list: List[Tuple[str, callable]] = self._prepare_remove_dir_hooks()
+        self._fwd_hooks_list: list[tuple[str, callable]] = self._prepare_hooks()
+        self._remove_dir_hooks_list: list[tuple[str, callable]] = self._prepare_remove_dir_hooks()
         print(
             "Hook for input is",
             self._fwd_hooks_list[0][0],
@@ -161,7 +161,7 @@ class IntervenableTransformerSegment:
 
         return actual_capture_hook_fn
 
-    def _prepare_remove_dir_hooks(self) -> List[Tuple[str, callable]]:
+    def _prepare_remove_dir_hooks(self) -> list[tuple[str, callable]]:
         """
         Prepares the list of forward hooks during initialization.
         """
@@ -174,7 +174,7 @@ class IntervenableTransformerSegment:
 
         return hooks
 
-    def _prepare_hooks(self) -> List[Tuple[str, callable]]:
+    def _prepare_hooks(self) -> list[tuple[str, callable]]:
         """
         Prepares the list of forward hooks during initialization.
         """
@@ -201,7 +201,7 @@ class IntervenableTransformerSegment:
         orthogonal_dir: torch.Tensor,
         original_tokens_padded: torch.Tensor,
         injection_pos: torch.Tensor,
-    ) -> Tuple[str, torch.Tensor]:
+    ) -> tuple[str, torch.Tensor]:
         """
         Runs the model segment, injecting y_embedding and streaming activations.
 
@@ -214,14 +214,14 @@ class IntervenableTransformerSegment:
             Tuple of next token and output logits.
         """
         if orthogonal_dir.ndim != 1:
-            raise ValueError(f"flatten_dir must be 2D.")
+            raise ValueError("flatten_dir must be 2D.")
         d_model_emb = orthogonal_dir.shape[0]
         # --- Input Validation ---
         if d_model_emb != self.d_model:
-            raise ValueError(f"y_embedding d_model mismatch.")
+            raise ValueError("y_embedding d_model mismatch.")
         max_seq_len = original_tokens_padded.shape[1]
         if torch.any(injection_pos < 0) or torch.any(injection_pos >= max_seq_len):
-            raise ValueError(f"injection_pos out of bounds.")
+            raise ValueError("injection_pos out of bounds.")
 
         # --- Set instance variables for hooks to use ---
         self.to_remove_dir = orthogonal_dir.to(self.device)
@@ -250,7 +250,7 @@ class IntervenableTransformerSegment:
         y_embedding: torch.Tensor,
         original_tokens_padded: torch.Tensor,
         injection_pos: torch.Tensor,
-    ) -> Dict[Union[int, str], torch.Tensor]:
+    ) -> dict[int | str, torch.Tensor]:
         """
         Runs the model segment, injecting y_embedding and streaming activations.
 
@@ -267,18 +267,18 @@ class IntervenableTransformerSegment:
 
         # --- Input Validation ---
         if d_model_emb != self.d_model:
-            raise ValueError(f"y_embedding d_model mismatch.")
+            raise ValueError("y_embedding d_model mismatch.")
         if y_embedding.ndim != 3:
-            raise ValueError(f"y_embedding must be 3D.")
+            raise ValueError("y_embedding must be 3D.")
         if not (
             injection_pos.ndim == 2
             and injection_pos.shape[0] == batch_size
             and injection_pos.shape[1] == num_S
         ):
-            raise ValueError(f"injection_pos shape mismatch or ndim error.")
+            raise ValueError("injection_pos shape mismatch or ndim error.")
         max_seq_len = original_tokens_padded.shape[1]
         if torch.any(injection_pos < 0) or torch.any(injection_pos >= max_seq_len):
-            raise ValueError(f"injection_pos out of bounds.")
+            raise ValueError("injection_pos out of bounds.")
 
         # --- Set instance variables for hooks to use ---
         self.current_h_input = y_embedding.to(self.device)
@@ -321,9 +321,9 @@ class IntervenableTransformerSegment:
     def call_with_intervention(
         self,
         intervention_dir: torch.Tensor,
-        original_tokens: List[torch.Tensor],
+        original_tokens: list[torch.Tensor],
         injection_pos: torch.Tensor,
-    ) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
+    ) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
         """
         Runs the model with and without an intervention, returning the logits for both.
 
@@ -344,7 +344,7 @@ class IntervenableTransformerSegment:
             target_pos = self._get_target_pos(self.current_injection_pos)
             tokens_for_attn_mask: torch.Tensor = toks.to(self.device).unsqueeze(0)
 
-            orig_logs.append( 
+            orig_logs.append(
                 _gather_pos(self.base_model(tokens_for_attn_mask), target_pos).squeeze()
             )
             # Run with intervention

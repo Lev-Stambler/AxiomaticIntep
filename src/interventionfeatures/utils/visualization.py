@@ -1,15 +1,13 @@
 import html
 import json
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple, Any
+from typing import Any
 
 import torch
 from tqdm.auto import tqdm
 
 # Config is just used for type hints, accepts any object with dict_size attribute
-
 # Local imports
-from ..core.data_handler import TransformerDataHandler
 from ..core.search import ActivationSimSearcher
 
 
@@ -43,8 +41,8 @@ class ActivationSimDisplay:
         self.d_model = searcher.d_model
         self.scoring_type = searcher.scoring_type
 
-        self.query_vecs_for_display: Optional[torch.Tensor] = None
-        self.original_query_norms: Optional[List[float]] = None
+        self.query_vecs_for_display: torch.Tensor | None = None
+        self.original_query_norms: list[float] | None = None
 
     def set_query(self, query_vecs: torch.Tensor):
         """
@@ -73,11 +71,11 @@ class ActivationSimDisplay:
     @torch.no_grad()
     def display_search_results(
         self,
-        results: List[Dict],
+        results: list[dict],
         scores_by_vec: torch.Tensor,
         output_file_path: str = "activation_similarity_report.html",
-        explanation: Optional[str] = None,
-        optimal_threshold: Optional[float] = None,
+        explanation: str | None = None,
+        optimal_threshold: float | None = None,
         polarity: str = "positive",
     ):
         """
@@ -192,15 +190,15 @@ class ActivationSimDisplay:
         K,
         global_max_similarity,
         output_file_path,
-        explanation: Optional[str] = None,
-        query_norms: Optional[List[float]] = None,
-        optimal_threshold: Optional[float] = None,
+        explanation: str | None = None,
+        query_norms: list[float] | None = None,
+        optimal_threshold: float | None = None,
         polarity: str = "positive",
     ):
         """Generates the final HTML content and writes it to a file."""
         polarity_title = f"({polarity.capitalize()})" if polarity != "positive" else ""
         polarity_badge = f'<span style="background-color: {"#28a745" if polarity == "positive" else "#dc3545"}; color: white; padding: 4px 8px; border-radius: 4px; font-size: 0.9em; margin-left: 10px;">{polarity.upper()}</span>' if polarity else ""
-        
+
         html_content = f"""
 <!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">
 <title>Token Activation Similarity Report {polarity_title}</title><style>
@@ -449,11 +447,11 @@ h2 {{ color: #0056b3; border-bottom: 1px solid #dee2e6; padding-bottom: 10px; ma
             with open(output_file_path, "w", encoding="utf-8") as f:
                 f.write(html_content)
             print(f"\nSuccess: HTML report saved to {output_file_path}")
-        except IOError as e:
+        except OSError as e:
             print(f"\nError: Failed to write HTML report to file: {e}")
 
 
-def extract_faithfulness_data(output_path: str) -> Dict[int, float]:
+def extract_faithfulness_data(output_path: str) -> dict[int, float]:
     """
     Extract faithfulness scores from validation results if available.
     
@@ -463,7 +461,7 @@ def extract_faithfulness_data(output_path: str) -> Dict[int, float]:
     Returns:
         Dictionary mapping direction indices to their faithfulness scores.
     """
-    
+
     output_dir = Path(output_path)
     faithfulness_scores = {}
 
@@ -472,13 +470,13 @@ def extract_faithfulness_data(output_path: str) -> Dict[int, float]:
     results_file = output_dir / "validation_results.json"
     if not results_file.exists():
         return faithfulness_scores
-        
+
     try:
-        with open(results_file, 'r', encoding='utf-8') as f:
+        with open(results_file, encoding='utf-8') as f:
             data = json.load(f)
     except Exception:
         return faithfulness_scores
-    
+
     def scores_from_direction(data):
         faithfulness_scores = {}
         # Extract scores from aggregated results
@@ -486,19 +484,19 @@ def extract_faithfulness_data(output_path: str) -> Dict[int, float]:
         aggregated_results = validation_results.get("aggregated_results", {})
         direction_summaries = aggregated_results.get("source_runs")[0].get("direction_summaries")
         aggregated_directions = aggregated_results.get("aggregated_directions", [])
-    
+
         for i, summary in enumerate(direction_summaries):
             accuracy = summary.get("mean_accuracy", -1)
             optimal_threshold = direction_summaries[i].get('optimal_threshold')
             direction_idx = summary['direction_idx']
             faithfulness_scores[direction_idx] = (accuracy, optimal_threshold)
-    
+
         return faithfulness_scores
-        
+
     return scores_from_direction(data)
 
 
-def find_related_direction_files(output_path: str) -> List[str]:
+def find_related_direction_files(output_path: str) -> list[str]:
     """
     Find direction visualization files within the given output path.
 
@@ -531,9 +529,9 @@ def find_related_direction_files(output_path: str) -> List[str]:
 
 def generate_index_page(
     output_path: str,
-    config_dict: Dict,
+    config_dict: dict,
     config: Any,
-    metadata: Optional[Dict] = None,
+    metadata: dict | None = None,
 ) -> str:
     """
     Generate an index.html page for a run with navigation to all HTML visualizations.
@@ -547,13 +545,13 @@ def generate_index_page(
     Returns:
         Path to the generated index.html file
     """
-    from pathlib import Path
     from datetime import datetime
-    
+    from pathlib import Path
+
     output_dir = Path(output_path)
     index_file = output_dir / "index.html"
     html_dir = output_dir / "html"
-    
+
     # Extract metadata
     timestamp = metadata.get("timestamp", datetime.now().isoformat()) if metadata else datetime.now().isoformat()
     model_name = config_dict.get("model_name", "Unknown")
@@ -569,7 +567,7 @@ def generate_index_page(
 
     # Extract faithfulness scores and threshold data for direction sorting and URL parameters
     faithfulness_data = extract_faithfulness_data(output_path)
-    
+
     # Extract direction numbers from files and sort by faithfulness score
     #direction_nums = []
     #for f in direction_files:
@@ -577,12 +575,12 @@ def generate_index_page(
     #    parts = file_name.split('_')
     #    if len(parts) >= 2 and parts[0].isdigit():
     #        direction_nums.append(int(parts[0]))
-    
+
     #print("SORTED", direction_nums)
     ## Sort by faithfulness score (use positive scores as default)
     #sorted_direction_nums = sorted(set(direction_nums), key=lambda num: faithfulness_scores_pos.get(num, -1.0) if faithfulness_scores_pos else 0, reverse=True)
     #print("SORTED", sorted_direction_nums)
-    
+
     # Load explanations if available
     explanations_map = {}
 
@@ -590,7 +588,7 @@ def generate_index_page(
     if explanations_file.exists():
         try:
             import json
-            with open(explanations_file, 'r', encoding='utf-8') as f:
+            with open(explanations_file, encoding='utf-8') as f:
                 data = json.load(f)
                 if "explanations" in data:
                     for explanation in data["explanations"]:
@@ -598,12 +596,12 @@ def generate_index_page(
                         explanation_text = explanation.get("explanation", "")
                         if direction_idx is not None and explanation_text:
                             explanations_map[direction_idx] = explanation_text
-        except (IOError, json.JSONDecodeError, KeyError) as e:
+        except (OSError, json.JSONDecodeError, KeyError) as e:
             print(f"Warning: Failed to load explanations from {explanations_file}: {e}")
-    
+
     # faithfulness_files = [or f in html_files if "faithfulness_" in f]
     # summary_files = [f for f in html_files if "summary" in f or "aggregated" in f] # TODO: put in
-    
+
     # Generate HTML content
     html_content = f"""<!DOCTYPE html>
 <html lang="en">
@@ -793,13 +791,13 @@ def generate_index_page(
         sorting_note = ""
         #if faithfulness_data:
         #    sorting_note = '<div style="text-align: center; margin-bottom: 15px; color: #718096; font-style: italic;">Directions sorted by faithfulness score (highest first)</div>'
-        
+
         html_content += f"""
     <div class="section">
         <h2>🎯 Feature Direction Visualizations</h2>
         {sorting_note}
         <div class="file-grid">"""
-        
+
         for idx, direction_file in enumerate(direction_idx_to_file):
             # Get faithfulness score and explanation for this direction
             faithfulness_info = ""
@@ -822,13 +820,13 @@ def generate_index_page(
                         explanation_info = f"<div class=\"explanation-preview\">{explanation_text}</div>"
             except (ValueError, TypeError):
                 pass
-            
+
             if direction_file:
                 title_prefix = ""
                 file_name = Path(direction_file).name
                 base_href = direction_file if direction_file.startswith("html/") else f"html/{file_name}"
                 base_href += "#threshold=" + str(optimal_threshold)
-                
+
                 html_content += f"""
                 <div class="file-card">
                     <a href="{base_href}">
@@ -844,7 +842,7 @@ def generate_index_page(
                         <span class="badge">Direction</span>
                     </a>
                 </div>"""
-        
+
         html_content += """
         </div>
     </div>"""
@@ -861,7 +859,7 @@ def generate_index_page(
     <div class="section">
         <h2>📊 Summary Reports</h2>
         <div class="file-grid">"""
-        
+
         for file_path in sorted(summary_files):
             file_name = Path(file_path).name
             if "summary" in file_name:
@@ -873,7 +871,7 @@ def generate_index_page(
             else:
                 title = file_name.replace("_", " ").title()
                 description = "Summary analysis results."
-                
+
             html_content += f"""
             <div class="file-card">
                 <a href="html/{file_name}">
@@ -882,7 +880,7 @@ def generate_index_page(
                     <span class="badge">Summary</span>
                 </a>
             </div>"""
-        
+
         html_content += """
         </div>
     </div>"""
@@ -901,22 +899,22 @@ def generate_index_page(
                     if part == "direction" and i + 1 < len(parts):
                         direction_idx = parts[i + 1]
                         break
-                
+
                 if direction_idx:
                     if direction_idx not in faithfulness_by_direction:
                         faithfulness_by_direction[direction_idx] = []
                     faithfulness_by_direction[direction_idx].append(file_path)
-        
+
         if faithfulness_by_direction:
             html_content += """
     <div class="section">
         <h2>🔍 Faithfulness Testing</h2>
         <div class="file-grid">"""
-            
+
             for direction_idx in sorted(faithfulness_by_direction.keys()):
                 files = faithfulness_by_direction[direction_idx]
                 trial_count = len(files)
-                
+
                 html_content += f"""
             <div class="file-card">
                 <div class="file-title">Direction {direction_idx} Faithfulness</div>
@@ -925,24 +923,24 @@ def generate_index_page(
                     predict feature activation through targeted interventions.
                 </div>
                 <div style="margin-top: 0.5rem;">"""
-                
+
                 for file_path in sorted(files):
                     file_name = Path(file_path).name
                     trial_num = file_name.split("_")[-1].replace(".html", "") if "trial_" in file_name else "0"
                     html_content += f"""
                     <a href="html/{file_name}" style="display: inline-block; margin: 0.25rem 0.5rem 0.25rem 0; padding: 0.25rem 0.5rem; background: #edf2f7; border-radius: 4px; font-size: 0.8rem; text-decoration: none; color: #4a5568;">Trial {trial_num}</a>"""
-                
+
                 html_content += """
                 </div>
                 <span class="badge">Validation</span>
             </div>"""
-            
+
             html_content += """
         </div>
     </div>"""
 
     # Footer
-    html_content += f"""
+    html_content += """
     <div class="footer">
     </div>
 </body>
@@ -954,6 +952,6 @@ def generate_index_page(
             f.write(html_content)
         print(f"✓ Index page generated: {index_file}")
         return str(index_file)
-    except IOError as e:
+    except OSError as e:
         print(f"Error: Failed to write index page: {e}")
         return ""

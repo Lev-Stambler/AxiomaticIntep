@@ -4,13 +4,12 @@ import pytest
 
 from interventionfeatures.config import (
     Config,
+    EarlyStoppingConfig,
     ModelConfig,
     TrainingConfig,
-    DatabaseConfig,
-    EarlyStoppingConfig,
     generate_param_hash,
-    setup_device,
     set_global_seed,
+    setup_device,
 )
 
 

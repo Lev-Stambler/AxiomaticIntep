@@ -1,57 +1,48 @@
 import os
-import re
-import threading
-from datetime import datetime
-from typing import Dict, List, Optional, Tuple
-import copy
-
-from sae_lens import SAE
-from interventionfeatures.core import css
-import torch
 import time
 
-try:
-    import tkinter as tk
-    from tkinter import messagebox, scrolledtext, ttk
-except ImportError:
-    print("TK Inter not installed, assuming no GUI")
+import torch
+from sae_lens import SAE
+
 # Optional LangChain imports for explanation generation
 try:
     from langchain_anthropic import ChatAnthropic
-    from langchain_openai import ChatOpenAI
-    from langchain_core.exceptions import OutputParserException
     from langchain_core.output_parsers import StrOutputParser
     from langchain_core.prompts import ChatPromptTemplate
-    from langchain_core.runnables import Runnable, RunnableLambda
+    from langchain_core.runnables import Runnable
+    from langchain_openai import ChatOpenAI
 
     LANGCHAIN_AVAILABLE = True
-except ImportError as e:
-    raise e
+except ImportError:
+    LANGCHAIN_AVAILABLE = False
+    ChatAnthropic = None
+    ChatOpenAI = None
+    ChatPromptTemplate = None
+    StrOutputParser = None
+    Runnable = None
 
 # Local imports
-from ..core.search import ActivationSimSearcher
-from ..core.model import IntervenableTransformerSegment
 from ..core.data_handler import TransformerDataHandler
+from ..core.model import IntervenableTransformerSegment
+from ..core.search import ActivationSimSearcher
 
-
-
-prompt_template = ChatPromptTemplate.from_messages(
-            [
-                (
-                    "system",
-                    """
-you are an expert in mechanistic interpretability. I will provide text examples where a specific
-feature in a language model has high activation. the activations appear in parentheses after each token.""" + \
-"""\n your task is to provide a single, concise, abstract explanation of the concept this feature represents based on the highlighted tokens (highlighted by two stars, **) and the context surrounding the token
-(consider the rest of the context as well being part of the explanation. I.e. if the samples are all different but the same language or describing some similar context like science, code, etc., feel free to use that context as a description)
-            """,
-                ),
-                (
-                    "human",
-                    "here are the top activating examples with activations following each token in parentheses:\n{examples}\n\n.",
-                ),
-            ]
-        )
+prompt_template = None
+if LANGCHAIN_AVAILABLE:
+    prompt_template = ChatPromptTemplate.from_messages(
+        [
+            (
+                "system",
+                """you are an expert in mechanistic interpretability. I will provide text examples where a specific
+feature in a language model has high activation. the activations appear in parentheses after each token.
+your task is to provide a single, concise, abstract explanation of the concept this feature represents based on the highlighted tokens (highlighted by two stars, **) and the context surrounding the token
+(consider the rest of the context as well being part of the explanation. I.e. if the samples are all different but the same language or describing some similar context like science, code, etc., feel free to use that context as a description)""",
+            ),
+            (
+                "human",
+                "here are the top activating examples with activations following each token in parentheses:\n{examples}\n\n.",
+            ),
+        ]
+    )
 
 
 
@@ -214,8 +205,8 @@ class FeatureExplainer:
         searcher: ActivationSimSearcher,
         data_handler: TransformerDataHandler,
         num_examples: int = 5,
-        shift_with_relu : Optional[float] = None
-    ) -> Tuple[List[str], List[torch.Tensor], List[int], float]:
+        shift_with_relu : float | None = None
+    ) -> tuple[list[str], list[torch.Tensor], list[int], float]:
         """
         Gets top activating text examples for a CSS direction.
 
@@ -319,7 +310,7 @@ class FeatureExplainer:
                     raise f"Score access failed for token {token_idx}: {score_error}"
 
                 if shift_with_relu is not None:
-                    t = token_score + shift_with_relu 
+                    t = token_score + shift_with_relu
                     token_score = t if t > 0.0 else 0.0
                 # Format the token with its score
                 formatted_token = f"{token_text}({token_score:.3f})"
@@ -339,7 +330,7 @@ class FeatureExplainer:
 
         return top_examples_list, original_toks, top_toks_inds, max_score
 
-    def generate_explanation(self, examples: List[str],
+    def generate_explanation(self, examples: list[str],
                                             ) -> str:
         """
         Generates an explanation for a feature based on its top activating examples.
@@ -359,9 +350,9 @@ class FeatureExplainer:
             return "API unavailable - basic pattern detected from examples"
 
         formatted_examples = "\n\n".join(f"- {ex} " for i, ex in enumerate(examples))
-        
+
         print("FORMATTED EXAMPLES!", formatted_examples)
-        
+
 
         print("Generating explanation with the language model...")
         MAX_RETRIES = 5
@@ -380,15 +371,15 @@ class FeatureExplainer:
                 time.sleep(sleep_time)
                 if i == MAX_RETRIES - 1:
                     raise e
-            
+
     def explain_css_direction(
         self,
         css_direction: torch.Tensor,
         searcher: ActivationSimSearcher,
         data_handler: TransformerDataHandler,
         num_examples: int = 10,
-        shift_with_relu : Optional[float] = None
-    ) -> Tuple[str, List[str], float]:
+        shift_with_relu : float | None = None
+    ) -> tuple[str, list[str], float]:
         """
         Performs the full pipeline of explaining a single feature direction.
 
@@ -425,11 +416,11 @@ class FeatureExplainer:
 
     def explain_css_directions(
         self,
-        css_directions: List[Dict[str, torch.Tensor]],
+        css_directions: list[dict[str, torch.Tensor]],
         searcher: ActivationSimSearcher,
         data_handler: TransformerDataHandler,
         num_examples: int = 10,
-    ) -> List[Tuple[str, List[str], float]]:
+    ) -> list[tuple[str, list[str], float]]:
         """
         Runs the explanation pipeline for a list of CSS directions.
         This is the method called by Main2.py.
@@ -458,11 +449,11 @@ class FeatureExplainer:
 
     def explain_css_directions_positive_negative(
         self,
-        css_directions: List[Dict[str, torch.Tensor]],
+        css_directions: list[dict[str, torch.Tensor]],
         searcher: ActivationSimSearcher,
         data_handler: TransformerDataHandler,
         num_examples: int = 10,
-    ) -> List[Dict[str, Tuple[str, List[str], float]]]:
+    ) -> list[dict[str, tuple[str, list[str], float]]]:
         """
         Runs the explanation pipeline for a list of CSS directions, generating both
         positive and negative explanations.
@@ -484,7 +475,7 @@ class FeatureExplainer:
         for i, direction_dict in enumerate(css_directions):
             print(f"\n--- Explaining Direction {i+1}/{len(css_directions)} (Positive & Negative) ---")
             direction_tensor = direction_dict["s"]
-            
+
             # Generate positive explanation (original direction)
             print(f"Generating positive explanation for direction {i+1}...")
             positive_result = self.explain_css_direction(
@@ -493,7 +484,7 @@ class FeatureExplainer:
                 data_handler,
                 num_examples,
             )
-            
+
             # Generate negative explanation (negated direction)
             print(f"Generating negative explanation for direction {i+1}...")
             negative_direction = -direction_tensor
@@ -503,7 +494,7 @@ class FeatureExplainer:
                 data_handler,
                 num_examples,
             )
-            
+
             results.append({
                 "positive": positive_result,
                 "negative": negative_result
@@ -517,12 +508,12 @@ class FeatureExplainer:
         searcher: ActivationSimSearcher,
         data_handler: TransformerDataHandler,
         num_examples: int = 10,
-    ) -> Tuple[str, List[str], float]:
+    ) -> tuple[str, list[str], float]:
         """
         Explain an SAE feature using the current pipeline
         """
         print(f"Searching for top {num_examples} SAE feature {feature_idx} activating examples from indexed dataset...")
-        
+
         # Calculate SAE feature activations for all samples in the searcher's dataset
         print("Computing SAE activations for all indexed samples...")
         sae_dir: torch.Tensor = sae.W_enc[:, feature_idx].detach().unsqueeze(0)
@@ -538,5 +529,5 @@ class FeatureExplainer:
             sae_dir,
             searcher,
             data_handler,
-            shift_with_relu=sae_cutoff # Shift by 
+            shift_with_relu=sae_cutoff # Shift by
         )

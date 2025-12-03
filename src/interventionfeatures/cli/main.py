@@ -6,7 +6,6 @@ import os
 import pickle
 import sys
 from pathlib import Path
-from typing import Optional
 
 # Fix sqlite3 for ChromaDB compatibility
 try:
@@ -176,8 +175,9 @@ def explain(cfg: DictConfig) -> None:
 
 def print_config():
     """Print the default configuration."""
-    from ..config import Config
     from dataclasses import asdict
+
+    from ..config import Config
 
     cfg = Config()
     print(OmegaConf.to_yaml(OmegaConf.create(asdict(cfg))))

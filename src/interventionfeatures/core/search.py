@@ -1,7 +1,6 @@
 import os
 import pickle
 import sys
-from typing import Any, Dict, List, Optional, Tuple, Union
 
 import numpy as np
 import torch
@@ -10,17 +9,24 @@ from tqdm.auto import tqdm
 from .data_handler import TransformerDataHandler
 
 # Fix sqlite3 module for ChromaDB compatibility
-import pysqlite3
-sys.modules["sqlite3"] = sys.modules.pop("pysqlite3")
+try:
+    import pysqlite3
+    sys.modules["sqlite3"] = sys.modules.pop("pysqlite3")
+except ImportError:
+    pass
 
 # Optional ChromaDB import for similarity search
-import chromadb
-CHROMADB_AVAILABLE = True
+try:
+    import chromadb
+    CHROMADB_AVAILABLE = True
+except ImportError:
+    CHROMADB_AVAILABLE = False
+    chromadb = None
 
 
 def _find_optimal_ordered(
     tensor: torch.Tensor, score_function: str
-) -> Tuple[torch.Tensor, float]:
+) -> tuple[torch.Tensor, float]:
     """
     Finds the sequence of well-ordered indices that maximizes a scoring function and returns the score.
     This is a corrected and robust version.
@@ -131,7 +137,7 @@ class ActivationSimSearcher:
         d_model: int,
         scoring_type: str,
         collection_name: str = "activation_windows",
-        chroma_db_path: Optional[str] = None,
+        chroma_db_path: str | None = None,
         save_activations: bool = True,
     ):
         """
@@ -246,7 +252,7 @@ class ActivationSimSearcher:
         Raises:
             RuntimeError: If indexing fails
         """
-        print(f"Building ChromaDB index...")
+        print("Building ChromaDB index...")
 
         if start_fresh:
             if self.collection.count() > 0:
@@ -322,7 +328,7 @@ class ActivationSimSearcher:
         top_k: int = 10,
         rerank_top_n: int = 100,
         aggregation: str = "min",
-    ) -> Tuple[List[Dict], torch.Tensor]:
+    ) -> tuple[list[dict], torch.Tensor]:
         """
         Performs a two-stage search with aggregation-based re-ranking.
 
@@ -378,7 +384,7 @@ class ActivationSimSearcher:
         # Pad the embeddings to ensure they are all the same length
         max_length = (
             self.data_handler.max_seq_len - 1
-        )  
+        )
         for i in range(len(embeddings_per_tok)):
             if embeddings_per_tok[i].size(0) < max_length:
                 padding = torch.zeros(
@@ -455,7 +461,7 @@ class ActivationSimSearcher:
 
         return results, top_score_by_vec
 
-    def get_index_stats(self) -> Dict:
+    def get_index_stats(self) -> dict:
         """Get statistics about the current index."""
         if not self.is_indexed:
             return {"indexed": False}

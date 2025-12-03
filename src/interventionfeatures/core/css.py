@@ -5,9 +5,7 @@ import torch.nn as nn
 
 EVAL_SAMPLE = 128
 import sys
-import time
 from contextlib import contextmanager
-from typing import Dict, List, Optional, Tuple, Union
 
 import torch.nn.functional as F
 from tqdm.auto import tqdm
@@ -77,14 +75,14 @@ def get_memory_stats():
 
 
 def intervention_objective(
-    fx: Dict[str, torch.Tensor],
-    fy: Dict[str, torch.Tensor],
+    fx: dict[str, torch.Tensor],
+    fy: dict[str, torch.Tensor],
     x,
     s_current: torch.Tensor,  # Shape (S, K, d_model)
     s_prior: torch.Tensor,  # Shape (K, d_model)
     overlap_penalty: float = 100.0,  # 0.5,
     target_norm: float = 1.0,
-    norm_penalty=1.0, 
+    norm_penalty=1.0,
 ) -> torch.Tensor:
     """
     We expect fx and fy to be dictionaries with keys corresponding to different layers or components.
@@ -94,10 +92,10 @@ def intervention_objective(
     """
     """Compute L2 objective between two tensors"""
 
-    all_fx: List[torch.Tensor] = [
+    all_fx: list[torch.Tensor] = [
         fx[k] for k in fx.keys()
     ]  # Unsqueeze for dimension matching to S
-    all_fy: List[torch.Tensor] = [fy[k] for k in fy.keys()]
+    all_fy: list[torch.Tensor] = [fy[k] for k in fy.keys()]
 
     BS = all_fx[0].shape[0]
 
@@ -112,8 +110,8 @@ def intervention_objective(
             r = robust_kl_divergence_batched(fx, fy)
             rets[:, i] = r
         else:
-            r = ((1 - F.cosine_similarity(fx, fy, dim=-1)) / 2) 
-            r = r.squeeze(-1)  
+            r = ((1 - F.cosine_similarity(fx, fy, dim=-1)) / 2)
+            r = r.squeeze(-1)
             rets[:, i] = r
 
     r = torch.sum(
@@ -146,13 +144,13 @@ def intervention_objective(
 
     return (
         r + corrections
-    ) 
+    )
 
 
 def add_in_offset_vec(
     x_batch_detached: torch.Tensor,
     s_current: torch.Tensor,
-    alpha: Union[torch.Tensor, float],
+    alpha: torch.Tensor | float,
     use_MICS: bool = True,
 ):
     """
@@ -175,15 +173,15 @@ def add_in_offset_vec(
         x_parallel = torch.sum(x_batch_detached * s_unit,
                                dim=-1, keepdim=True) * s_unit
         x_orthogonal = x_batch_detached - x_parallel
-    
+
         # Calculate the new parallel component using the derived formula
         # An epsilon is added to the denominator to avoid division by zero if alpha is +/-1
         c_times_s_norm = torch.linalg.norm(x_orthogonal, dim=-1, keepdim=True) * alpha
         new_parallel_component = (c_times_s_norm / torch.sqrt(1.0 - alpha**2 + 1e-8)) * s_unit
-    
+
         # Reconstruct the new vector
         x_prime = new_parallel_component + x_orthogonal
-        x_final = F.normalize(x_prime, dim=-1) 
+        x_final = F.normalize(x_prime, dim=-1)
         return x_final
 
     else:
@@ -262,7 +260,7 @@ class CSSDirectionFinder:
         norm_upper_bound: float = 90.0,
         optimizer_type: str = "adamw",
         scheduler_type: str = "exponential",
-        scheduler_params: Optional[Dict] = None,
+        scheduler_params: dict | None = None,
         early_stopping_enabled: bool = False,
         early_stopping_patience: int = 5,
         early_stopping_min_delta: float = 1e-6,
@@ -301,7 +299,7 @@ class CSSDirectionFinder:
         self.scheduler_params = scheduler_params or {}
 
         self._setup_model_for_efficiency()
-        print(f"CSSFinder initialized:")
+        print("CSSFinder initialized:")
         print(f"  Device: {self.device}")
         print(f"  Optimizer: {self.optimizer_type}")
         print(f"  Scheduler: {self.scheduler_type}")
@@ -398,8 +396,8 @@ class CSSDirectionFinder:
             raise ValueError(f"Unknown optimizer type: {self.optimizer_type}")
 
     def _check_early_stopping(
-        self, score_history: List[float], patience_counter: int
-    ) -> Tuple[bool, int]:
+        self, score_history: list[float], patience_counter: int
+    ) -> tuple[bool, int]:
         """Check if early stopping criteria are met.
 
         Args:
@@ -440,7 +438,7 @@ class CSSDirectionFinder:
 
     def _generate_batch_samples(
         self, batch_size: int
-    ) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]:
+    ) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]:
         """
         Generate a batch of samples from the data handler.
 
@@ -482,7 +480,7 @@ class CSSDirectionFinder:
     def _get_alpha(self, batch_size: int):
         alpha = torch.rand(
             (batch_size, 1, 1), device=self.device
-        )  
+        )
         return alpha
 
     def _pga_iteration_enhanced(
@@ -627,7 +625,7 @@ class CSSDirectionFinder:
         )
         return 0
 
-    def _find_optimal_s_single(self, prior_s: torch.Tensor, pga_its=None) -> Dict:
+    def _find_optimal_s_single(self, prior_s: torch.Tensor, pga_its=None) -> dict:
         if pga_its is None:
             pga_its = self.pga_iterations
         print("PRIOR S SHAPE", prior_s.shape, prior_s.device)
@@ -651,7 +649,7 @@ class CSSDirectionFinder:
 
             pbar = tqdm(
                 range(pga_its),
-                desc=f"PGA",
+                desc="PGA",
                 file=sys.stderr,
                 position=0,
                 # ascii=True,
@@ -789,7 +787,7 @@ class CSSDirectionFinder:
             }
             return result_dict
 
-    def find_optimal_s_directions(self, do_sort=True) -> List[Dict]:
+    def find_optimal_s_directions(self, do_sort=True) -> list[dict]:
         """Find optimal s directions with enhanced optimization."""
         print(f"Starting Enhanced PGA with {self.dict_size} candidates...")
         print(f"Using {self.optimizer_type} optimizer with {self.scheduler_type} scheduler")
@@ -822,7 +820,7 @@ class CSSDirectionFinder:
 
     @torch.no_grad()
     def _evaluate_J_s(
-        self, s_current: torch.Tensor, num_samples: int, s_prior: Union[torch.Tensor, None] = None
+        self, s_current: torch.Tensor, num_samples: int, s_prior: torch.Tensor | None = None
     ) -> float:
         if s_prior is None:
             s_prior = torch.zeros((0, s_current.shape[0], s_current.shape[1]))
@@ -874,8 +872,8 @@ class CSSDirectionFinder:
         return sum_score / total_samples
 
     def final_evaluation_and_ranking(
-        self, all_s_candidates: List[torch.Tensor], do_sort=True
-    ) -> List[Dict]:
+        self, all_s_candidates: list[torch.Tensor], do_sort=True
+    ) -> list[dict]:
         """Final evaluation and ranking with memory optimization"""
         print("Final evaluation and ranking...")
 
@@ -909,14 +907,14 @@ class CSSDirectionFinder:
         # Sort and return top candidates
         if do_sort:
             evaluated_candidates.sort(key=lambda x: x["score_J_s"], reverse=True)
-        
+
         # Transform each CSS direction into positive and negative feature pairs
         feature_pairs = []
         for i, candidate in enumerate(evaluated_candidates):
             base_feature_id = i
             s_vector = candidate["s"]
             score = candidate["score_J_s"]
-            
+
             # Positive feature (original direction)
             positive_feature = {
                 "s": s_vector,
@@ -925,8 +923,8 @@ class CSSDirectionFinder:
                 "base_feature_id": base_feature_id,
                 "feature_id": f"{base_feature_id}_positive"
             }
-            
-            # Negative feature (negated direction)  
+
+            # Negative feature (negated direction)
             negative_feature = {
                 "s": -s_vector,
                 "score_J_s": score,  # Same score for both polarities
@@ -934,8 +932,8 @@ class CSSDirectionFinder:
                 "base_feature_id": base_feature_id,
                 "feature_id": f"{base_feature_id}_negative"
             }
-            
+
             feature_pairs.extend([positive_feature, negative_feature])
-        
+
         print(f"Generated {len(feature_pairs)} features ({len(evaluated_candidates)} pairs) with positive/negative polarities")
         return feature_pairs
