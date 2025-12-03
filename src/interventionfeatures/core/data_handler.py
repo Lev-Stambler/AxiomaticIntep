@@ -86,22 +86,7 @@ class TransformerDataHandler:
         """
         Loads and prepares the dataset iterator, removing unused columns to prevent errors.
         """
-        dataset : IterableDataset = self.dataset
-
-		# This commented out fix is specifically for the allenai/c4 dataset
-        # *** FIX START ***
-        # The primary cause of the error is that the DataLoader tries to collate all
-        # columns, including non-tensor types like 'datetime'.
-        # We fix this by explicitly removing all columns except the one we need for processing.
-        # all_columns = dataset.column_names
-        if False: # TODO: with c4 this fixes an issue but not with pythia!
-            try:
-                # C4 Dataset has a weird bug where the time-stamp doesn't parse
-                # As we don't use it, we'll just remove it
-                dataset = dataset.remove_columns(["timestamp"])
-            except:
-                pass
-
+        dataset: IterableDataset = self.dataset
         self.dataset = dataset.shuffle(seed=self.seed)
 
         # Create DataLoader with batch_size=1 for individual samples

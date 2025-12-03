@@ -1,10 +1,7 @@
-import time  # Not used in this class, but kept from original
-from typing import Dict, List, Optional, Tuple, Union  # Added Tuple
+from typing import Dict, List, Optional, Tuple, Union
 
 import torch
-import torch.nn as nn
 import torch.nn.functional as F
-from tqdm.auto import tqdm  # Not used in this class, but kept from original
 from transformer_lens import HookedTransformer
 from ..core.data_handler import TransformerDataHandler
 
@@ -95,24 +92,12 @@ class IntervenableTransformerSegment:
 
         act_batch_size, _, _ = activation_at_hook_point.shape
 
-        dim = activation_at_hook_point.shape[-1]
-
         for b_idx in range(act_batch_size):
-            if False:
-                projed_down = (
-                    torch.eye(dim).to(self.to_remove_dir.device) - torch.outer(self.to_remove_dir, self.to_remove_dir)
-                ).to(activation_at_hook_point.device)
-                activation_at_hook_point[
-                    b_idx, self.current_injection_pos[b_idx]
-                ] = activation_at_hook_point[
-                    b_idx, self.current_injection_pos[b_idx]
-                ] @ projed_down
-            else: # Simply remove the direction
-                activation_at_hook_point[
-                    b_idx, self.current_injection_pos[b_idx]
-                ] = activation_at_hook_point[
-                    b_idx, self.current_injection_pos[b_idx]
-                ] - self.to_remove_dir
+            activation_at_hook_point[
+                b_idx, self.current_injection_pos[b_idx]
+            ] = activation_at_hook_point[
+                b_idx, self.current_injection_pos[b_idx]
+            ] - self.to_remove_dir
         return activation_at_hook_point
 
     def _hook_fn_inject(

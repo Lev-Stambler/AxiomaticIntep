@@ -6,7 +6,7 @@ from typing import Dict, List, Optional, Tuple, Any
 import torch
 from tqdm.auto import tqdm
 
-from interventionfeatures.utils.config import MainConfig
+# Config is just used for type hints, accepts any object with dict_size attribute
 
 # Local imports
 from ..core.data_handler import TransformerDataHandler
@@ -532,7 +532,7 @@ def find_related_direction_files(output_path: str) -> List[str]:
 def generate_index_page(
     output_path: str,
     config_dict: Dict,
-    config: MainConfig,
+    config: Any,
     metadata: Optional[Dict] = None,
 ) -> str:
     """

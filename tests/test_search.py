@@ -17,7 +17,7 @@ import numpy as np
 import pytest
 import torch
 
-from src.interventionfeatures.core.search import (
+from interventionfeatures.core.search import (
     ActivationSimSearcher,
     _find_optimal_ordered,
 )

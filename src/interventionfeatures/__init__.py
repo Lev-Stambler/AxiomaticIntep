@@ -1,34 +1,24 @@
 """
-FourierFeatures: A package for mechanistic interpretability using Fourier features and Causal Scrubbing Search (CSS).
-
-This package provides tools for:
-- Finding interpretable directions in neural networks using CSS
-- Analyzing activation patterns and feature representations
-- Manual and automated explanation of neural network features
-- Faithfulness evaluation of explanations
+interventionfeatures: Mechanistic interpretability using CSS and activation patching.
 
 Main components:
-- core: Core algorithms (CSS, model interventions, data handling)
-- analysis: Analysis and interpretation tools (explainers, faithfulness testing)
-- utils: Utilities (configuration, visualization, math utilities)
-- cli: Command-line interface
+- core: CSS direction finding, model interventions, data handling
+- analysis: Feature explanation and faithfulness testing
+- config: Hydra-based configuration
 """
 
-__version__ = "0.1.0"
-__author__ = "Lev Stambler"
+__version__ = "0.2.0"
 
-from .analysis.explainer import FeatureExplainer
-
-# Import main classes for convenience
+from .config import Config, set_global_seed, setup_device
 from .core.css import CSSDirectionFinder
 from .core.data_handler import TransformerDataHandler
 from .core.model import IntervenableTransformerSegment
-from .utils.config import MainConfig
 
 __all__ = [
+    "Config",
     "CSSDirectionFinder",
     "TransformerDataHandler",
     "IntervenableTransformerSegment",
-    "FeatureExplainer",
-    "MainConfig",
+    "set_global_seed",
+    "setup_device",
 ]

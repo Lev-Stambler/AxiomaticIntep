@@ -25,7 +25,7 @@ except ImportError:
 from ..core import data_handler, model
 from ..core.data_handler import TransformerDataHandler
 from ..core.model import IntervenableTransformerSegment
-from ..utils.config import MainConfig
+from ..config import Config
 from .explainer import FeatureExplainer
 
 # Optional LangChain imports for explanation generation
@@ -106,30 +106,23 @@ F    """
     return best_threshold
 
 class FaithfulnessConfig:
-    """Configuration class for faithfulness testing - inherits from MainConfig"""
+    """Configuration class for faithfulness testing."""
 
-    def __init__(self, parent_config: MainConfig):
-        # Initialize parent class to get all global parameters
-        super().__init__()
-
+    def __init__(self, parent_config: Config):
         self.parent_config = parent_config
-        # Faithfulness-specific parameters
-        self.llm_provider = parent_config.faithfulness_llm_provider
-        self.llm_model_name = parent_config.faithfulness_llm_model_name
+        self.llm_provider = parent_config.llm.faithfulness.provider
+        self.llm_model_name = parent_config.llm.faithfulness.model_name
         self.batch_size = 32
         self.cosine_acts = True
-
-        # Device setup
         self.device = self._setup_device()
 
     def _setup_device(self):
-        """Determine and set up the best available device"""
+        """Determine and set up the best available device."""
         if torch.cuda.is_available():
             return "cuda"
         elif hasattr(torch.backends, "mps") and torch.backends.mps.is_available():
             return "mps"
-        else:
-            return "cpu"
+        return "cpu"
 
 
 # --- Part 2: LangChain Setup for Test Data Generation ---
@@ -257,7 +250,7 @@ def _run_simulation_test(
         tokens = data_handler.tokenizer(
             text,
             return_tensors="pt",
-            max_length=config.parent_config.max_seq_len,
+            max_length=config.parent_config.model.max_seq_len,
             truncation=True,
             padding=True,
         )["input_ids"].to(config.device)

@@ -1,14 +1,12 @@
 """Pytest configuration and shared fixtures."""
 
-# Fix sqlite3 module for ChromaDB compatibility before any other imports
+import sys
+
+# Fix sqlite3 module for ChromaDB compatibility
 try:
-    import sys
-
     import pysqlite3
-
     sys.modules["sqlite3"] = sys.modules.pop("pysqlite3")
 except ImportError:
-    # pysqlite3 not available, continue with system sqlite3
     pass
 
 import shutil
@@ -19,9 +17,7 @@ from unittest.mock import MagicMock
 import pytest
 import torch
 
-from src.interventionfeatures.utils.config import set_global_seed
-
-from src.interventionfeatures.utils.config import MainConfig
+from interventionfeatures.config import Config, set_global_seed
 
 
 @pytest.fixture
@@ -35,13 +31,7 @@ def temp_dir():
 @pytest.fixture
 def sample_config():
     """Create a sample configuration for testing."""
-    config = MainConfig()
-    config.model_name = "test-model"
-    config.layer_cutoff = 1
-    config.max_seq_len = 10
-    config.pga_batch_size = 4
-    config.dict_size = 1
-    return config
+    return Config()
 
 
 @pytest.fixture
@@ -61,19 +51,9 @@ def sample_tensor():
     return torch.randn(4, 32)
 
 
-@pytest.fixture
-def sample_activations():
-    """Create sample activation data for testing."""
-    return {
-        "activations": torch.randn(8, 32),
-        "tokens": torch.randint(0, 1000, (8,)),
-        "sample_idx": 0,
-    }
-
-
 @pytest.fixture(autouse=True)
 def set_torch_deterministic():
-    """Set global random seeds and PyTorch to deterministic mode for reproducible tests."""
+    """Set global random seeds for reproducible tests."""
     set_global_seed(42)
 
 
@@ -92,4 +72,3 @@ def pytest_configure(config):
     """Configure pytest with custom markers."""
     config.addinivalue_line("markers", "slow: mark test as slow running")
     config.addinivalue_line("markers", "integration: mark test as integration test")
-    config.addinivalue_line("markers", "unit: mark test as unit test")

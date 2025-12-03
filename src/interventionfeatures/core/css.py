@@ -1,20 +1,9 @@
+import math
+
 import torch
 import torch.nn as nn
 
 EVAL_SAMPLE = 128
-
-# Optional Ax imports for hyperparameter optimization
-try:
-    from ax import Client, RangeParameterConfig
-    from ax.service.utils.report_utils import exp_to_df
-
-    AX_AVAILABLE = True
-except ImportError:
-    AX_AVAILABLE = False
-    exp_to_df = None
-    Client = None
-    RangeParameterConfig = None
-import math
 import sys
 import time
 from contextlib import contextmanager
@@ -223,38 +212,33 @@ class CSSDirectionFinder:
         data_handler: TransformerDataHandler,
         model_segment: IntervenableTransformerSegment,
     ):
-        """Create CSSDirectionFinder from a MainConfig object."""
+        """Create CSSDirectionFinder from a config object."""
         return cls(
             data_handler=data_handler,
             model_segment=model_segment,
-            pga_batch_size=config.pga_batch_size,
-            eval_batch_size=config.eval_batch_size,
-            n_norm_discretization_steps=config.n_norm_discretization_steps,
-            num_x_samples_for_final_eval=5 * EVAL_SAMPLE,  # Default from Main2.py
-            dict_size=config.dict_size,
-            pga_iterations=config.pga_its,
-            pga_learning_rate=config.learning_rate,
-            sample_temp=config.sample_temp,
-            target_norm=config.target_norm,
-            kwise_coords=config.k,
-            norm_lower_bound=config.norm_lower_bound,
-            norm_upper_bound=config.norm_upper_bound,
-            lr_lower_bound=config.lr_lower_bound,
-            lr_upper_bound=config.lr_upper_bound,
+            pga_batch_size=config.training.pga_batch_size,
+            eval_batch_size=config.training.eval_batch_size,
+            n_norm_discretization_steps=config.model.n_norm_discretization_steps,
+            num_x_samples_for_final_eval=5 * EVAL_SAMPLE,
+            dict_size=config.training.dict_size,
+            pga_iterations=config.training.pga_its,
+            pga_learning_rate=config.training.learning_rate,
+            sample_temp=config.training.sample_temp,
+            target_norm=config.model.target_norm,
+            kwise_coords=config.training.k,
+            norm_lower_bound=config.training.norm_lower_bound,
+            norm_upper_bound=config.training.norm_upper_bound,
             optimizer_type="adamw",
             scheduler_params={
-                "betas": (config.beta1, config.beta2),
-                "eps": config.eps,
-                "weight_decay": config.weight_decay,
+                "betas": (config.training.beta1, config.training.beta2),
+                "eps": config.training.eps,
+                "weight_decay": config.training.weight_decay,
             },
-            skip_ax=not config.use_ax,
-            early_stopping_enabled=config.early_stopping_enabled,
-            early_stopping_patience=config.early_stopping_patience_ax if config.use_ax else config.early_stopping_patience,
-            early_stopping_min_delta=config.early_stopping_min_delta_ax if config.use_ax else config.early_stopping_min_delta,
-            early_stopping_eval_freq=config.early_stopping_eval_freq_ax if config.use_ax else config.early_stopping_eval_freq,
-            num_trials=config.num_trials,
-            pga_its_for_ax=config.pga_its_for_ax,
-            use_MICS=config.use_MICS,
+            early_stopping_enabled=config.training.early_stopping.enabled,
+            early_stopping_patience=config.training.early_stopping.patience,
+            early_stopping_min_delta=config.training.early_stopping.min_delta,
+            early_stopping_eval_freq=config.training.early_stopping.eval_freq,
+            use_MICS=config.database.use_MICS,
         )
 
     def __init__(
@@ -272,33 +256,20 @@ class CSSDirectionFinder:
         max_memory_usage: float = 0.85,
         use_gradient_checkpointing: bool = True,
         sample_temp: float = 0.5,
-        target_norm=10.0,
-        skip_ax=False,
+        target_norm: float = 10.0,
         kwise_coords: int = 2,
-        # Norm bounds for Ax optimization
         norm_lower_bound: float = 0.5,
         norm_upper_bound: float = 90.0,
-        # Learning rate bounds for Ax optimization
-        lr_lower_bound: float = 1e-4,
-        lr_upper_bound: float = 1.0,
-        # New optimization parameters
-        optimizer_type: str = "sgd_decay",  # 'sgd_decay', 'adam', 'adamw'
-        scheduler_type: str = "exponential",  # 'exponential', 'cosine', 'step', 'linear'
+        optimizer_type: str = "adamw",
+        scheduler_type: str = "exponential",
         scheduler_params: Optional[Dict] = None,
-        # Early stopping parameters
         early_stopping_enabled: bool = False,
         early_stopping_patience: int = 5,
         early_stopping_min_delta: float = 1e-6,
         early_stopping_eval_freq: int = 10,
         n_norm_discretization_steps: int = 1,
-        # Ax optimization parameters
-        num_trials: int = 5,
-        pga_its_for_ax: int = 150,
-        # Scaling parameters
         use_MICS: bool = True,
     ):
-        # Copy all existing initialization code...
-        self.skip_ax = skip_ax
         self.n_norm_discretization_steps = n_norm_discretization_steps
         self.data_handler = data_handler
         self.max_overlap = max_overlap
@@ -306,43 +277,25 @@ class CSSDirectionFinder:
         self.max_memory_usage = max_memory_usage
         self.use_gradient_checkpointing = use_gradient_checkpointing
         self.kwise_coordinates = kwise_coords
-        self.target_token_offset = int(
-            model_segment.target_token_offset
-        )  # TODO IDK WHY NEED INT
+        self.target_token_offset = int(model_segment.target_token_offset)
         self.intermediate_eval = intermediate_eval
         self.sample_temp = sample_temp
         self.target_norm = target_norm
         self.use_MICS = use_MICS
-
-        # Norm bounds for Ax optimization
         self.norm_lower_bound = norm_lower_bound
         self.norm_upper_bound = norm_upper_bound
-
-        # Adaptive batch sizes
         self.pga_batch_size = pga_batch_size
         self.eval_batch_size = eval_batch_size
         self.num_x_samples_for_final_eval = num_x_samples_for_final_eval
-
         self.dict_size = dict_size
         self.pga_iterations = pga_iterations
         self.pga_learning_rate = pga_learning_rate
-
         self.d_model = data_handler.d_model
         self.device = self._determine_device()
-
-        # Early stopping parameters
         self.early_stopping_enabled = early_stopping_enabled
         self.early_stopping_patience = early_stopping_patience
         self.early_stopping_min_delta = early_stopping_min_delta
         self.early_stopping_eval_freq = early_stopping_eval_freq
-
-        # Ax optimization parameters
-        self.num_trials = num_trials
-        self.pga_its_for_ax = pga_its_for_ax
-        self.lr_lower_bound = lr_lower_bound
-        self.lr_upper_bound = lr_upper_bound
-
-        # New optimization parameters
         self.optimizer_type = optimizer_type
         self.scheduler_type = scheduler_type
         self.scheduler_params = scheduler_params or {}
@@ -674,65 +627,6 @@ class CSSDirectionFinder:
         )
         return 0
 
-    def _ax_optimize(self, s_prior: torch.Tensor) -> Dict:
-        """
-        Find optimal parameters for the run
-        """
-        if not AX_AVAILABLE:
-            raise ImportError(
-                "Ax optimization requires the 'ax-platform' package. Install with: pip install ax-platform"
-            )
-
-        ax_client = Client()
-        ax_client.configure_experiment(
-            parameters=[
-                RangeParameterConfig(name="lr", bounds=(self.lr_lower_bound,
-                                      self.lr_upper_bound), parameter_type="float"),
-                RangeParameterConfig(
-                    name="target_norm", bounds=(self.norm_lower_bound, self.norm_upper_bound), parameter_type="float"
-                ),
-            ],
-        )
-        ax_client.configure_optimization(objective="score")
-
-        def eval_func(params):
-            self.target_norm = params["target_norm"]
-            self.pga_learning_rate = params['lr']
-            # Use shorter iterations for Ax trials, let early stopping handle convergence
-            pga_its_for_ax = (
-                self.pga_its_for_ax
-                if not self.early_stopping_enabled
-                else min(self.pga_its_for_ax, self.pga_iterations)
-            )
-            result_dict = self._find_optimal_s_single(s_prior, pga_its=pga_its_for_ax)
-            score = result_dict["final_score"]
-
-            # Log early stopping info for Ax trials
-            if result_dict.get("early_stopped", False):
-                print(
-                    f"Ax trial early stopped at iteration {result_dict['early_stop_iteration']}/{pga_its_for_ax}"
-                )
-
-            metrics_result = {"score": score}
-            print(f"Evaluated parameters: {params}, score: {score}")
-            return metrics_result
-
-        for i in range(self.num_trials):
-            print(f"\n--- Running trial {i+1}/{self.num_trials} ---")
-            for trial_index, parameters in ax_client.get_next_trials(
-                max_trials=1
-            ).items():
-                print(f"Generated parameters for trial {trial_index}: {parameters}")
-                raw_data = eval_func(parameters)
-                ax_client.complete_trial(trial_index=trial_index, raw_data=raw_data)
-                print(f"Trial {trial_index} completed")
-
-        print("\n--- Optimization Complete ---")
-        best_params = ax_client.get_best_parameterization()
-        print("Got best params", best_params[0])
-        self.target_norm = best_params[0]["target_norm"]
-        self.pga_learning_rate = best_params[0]['lr']
-
     def _find_optimal_s_single(self, prior_s: torch.Tensor, pga_its=None) -> Dict:
         if pga_its is None:
             pga_its = self.pga_iterations
@@ -896,49 +790,35 @@ class CSSDirectionFinder:
             return result_dict
 
     def find_optimal_s_directions(self, do_sort=True) -> List[Dict]:
-        """Find optimal s directions with enhanced optimization"""
+        """Find optimal s directions with enhanced optimization."""
         print(f"Starting Enhanced PGA with {self.dict_size} candidates...")
-        print(
-            f"Using {self.optimizer_type} optimizer with {self.scheduler_type} scheduler"
-        )
+        print(f"Using {self.optimizer_type} optimizer with {self.scheduler_type} scheduler")
 
         all_s_candidates = []
 
-        # Ensure model is in eval mode
         if hasattr(self.model_segment, "base_model"):
             self.model_segment.base_model.eval()
+
         pga_its_offset = 0
         norm_idx = 0
+
         for i in range(self.dict_size):
             prior_s = (
-                torch.stack([a["vector"] for a in all_s_candidates[:i]], dim=0).to(
-                    self.device
-                )
+                torch.stack([a["vector"] for a in all_s_candidates[:i]], dim=0).to(self.device)
                 if i > 0
-                else torch.zeros(
-                    (0, self.kwise_coordinates, self.d_model), device=self.device
-                )
+                else torch.zeros((0, self.kwise_coordinates, self.d_model), device=self.device)
             )
-            if not self.skip_ax:
-                self._ax_optimize(prior_s)  # Run Ax optimization to set parameters
-            elif self.n_norm_discretization_steps > 0:
-                offset = (self.norm_upper_bound - self.norm_lower_bound) * \
-                    (norm_idx + 1) / self.n_norm_discretization_steps
+
+            if self.n_norm_discretization_steps > 0:
+                offset = (self.norm_upper_bound - self.norm_lower_bound) * (norm_idx + 1) / self.n_norm_discretization_steps
                 self.target_norm = self.norm_lower_bound + offset
                 norm_idx = (norm_idx + 1) % self.n_norm_discretization_steps
-            else:
-                pass # No changes, use set -1
 
-            result_dict = self._find_optimal_s_single(
-                prior_s, self.pga_iterations + pga_its_offset
-            )
-            pga_its_offset += 200  # TODO: this is hardcoded hack
+            result_dict = self._find_optimal_s_single(prior_s, self.pga_iterations + pga_its_offset)
+            pga_its_offset += 200
             all_s_candidates.append(result_dict)
 
-        # Final evaluation and ranking
-        return self.final_evaluation_and_ranking(
-            [r["vector"] for r in all_s_candidates], do_sort=do_sort
-        )
+        return self.final_evaluation_and_ranking([r["vector"] for r in all_s_candidates], do_sort=do_sort)
 
     @torch.no_grad()
     def _evaluate_J_s(

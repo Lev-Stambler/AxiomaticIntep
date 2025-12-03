@@ -1,16 +1,16 @@
 [build-system]
-requires = ["setuptools>=61.0", "wheel"]
-build-backend = "setuptools.build_meta"
+requires = ["hatchling"]
+build-backend = "hatchling.build"
 
 [project]
 name = "interventionfeatures"
-version = "0.1.0"
-description = "A package for mechanistic interpretability using Fourier features and Causal Scrubbing Search (CSS)"
+version = "0.2.0"
+description = "Mechanistic interpretability using CSS and activation patching"
 readme = "README.md"
-requires-python = ">=3.8"
+requires-python = ">=3.10"
 license = {text = "MIT"}
 authors = [
-    {name = "Lev Stambler", email = "lev@example.com"},
+    {name = "Lev Stambler"},
 ]
 keywords = ["machine learning", "interpretability", "transformers", "mechanistic interpretability"]
 classifiers = [
@@ -18,123 +18,76 @@ classifiers = [
     "Intended Audience :: Science/Research",
     "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.8",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
     "Topic :: Scientific/Engineering :: Artificial Intelligence",
 ]
 
 dependencies = [
-    "torch>=1.9.0",
-    "transformers>=4.20.0",
-    "datasets>=2.0.0",
-    "numpy>=1.21.0",
-    "tqdm>=4.60.0",
-    "matplotlib>=3.5.0",
-    "pandas>=1.3.0",
-    "scikit-learn>=1.0.0",
+    "torch>=2.0.0",
+    "transformers>=4.30.0",
+    "datasets>=2.14.0",
+    "numpy>=1.24.0",
+    "tqdm>=4.65.0",
+    "matplotlib>=3.7.0",
+    "pandas>=2.0.0",
+    "scikit-learn>=1.3.0",
     "transformer-lens>=1.0.0",
     "sae-lens>=1.0.0",
-    "python-dotenv>=0.19.0",
-    "pydantic>=2.0.0",
-    "rich>=12.0.0",
-    "typer>=0.9.0",
-    "tomli>=1.2.0; python_version<'3.11'",
-    "tomli-w>=1.0.0",
+    "python-dotenv>=1.0.0",
+    "hydra-core>=1.3.0",
+    "omegaconf>=2.3.0",
 ]
 
 [project.optional-dependencies]
-dev = [
-    "pytest>=7.0.0",
-    "pytest-cov>=4.0.0",
-    "black>=22.0.0",
-    "ruff>=0.1.0",
-    "mypy>=1.0.0",
-    "pre-commit>=2.20.0",
-    "sphinx>=5.0.0",
-    "sphinx-rtd-theme>=1.0.0",
-]
-
-gui = [
-    "tkinter; platform_system != 'Darwin'",
-]
-
 search = [
     "chromadb>=0.4.0",
+    "pysqlite3-binary>=0.5.0",
 ]
 
 explain = [
     "langchain-anthropic>=0.1.0",
+    "langchain-openai>=0.1.0",
     "langchain-core>=0.1.0",
 ]
 
-optimization = [
-    "ax-platform>=0.3.0",
+dev = [
+    "pytest>=7.4.0",
+    "pytest-cov>=4.1.0",
+    "ruff>=0.1.0",
+    "mypy>=1.5.0",
 ]
 
 all = [
-    "interventionfeatures[dev,gui,search,explain,optimization]",
+    "interventionfeatures[search,explain,dev]",
 ]
 
 [project.urls]
-"Homepage" = "https://github.com/your-username/interventionfeatures"
-"Bug Reports" = "https://github.com/your-username/interventionfeatures/issues"
-"Source" = "https://github.com/your-username/interventionfeatures"
+"Homepage" = "https://github.com/levstambler/interventionfeatures"
+"Bug Reports" = "https://github.com/levstambler/interventionfeatures/issues"
 
 [project.scripts]
 interventionfeatures = "interventionfeatures.cli.main:main"
 
-[tool.setuptools.packages.find]
-where = ["src"]
-
-[tool.setuptools.package-dir]
-"" = "src"
-
-[tool.black]
-line-length = 100
-target-version = ['py38']
-include = '\.pyi?$'
+[tool.hatch.build.targets.wheel]
+packages = ["src/interventionfeatures"]
 
 [tool.ruff]
-target-version = "py38"
+target-version = "py310"
 line-length = 100
-select = [
-    "E",  # pycodestyle errors
-    "W",  # pycodestyle warnings
-    "F",  # pyflakes
-    "I",  # isort
-    "B",  # flake8-bugbear
-    "C4", # flake8-comprehensions
-    "UP", # pyupgrade
-]
-ignore = [
-    "E501",  # line too long, handled by black
-    "B008",  # do not perform function calls in argument defaults
-    "C901",  # too complex
-]
+select = ["E", "W", "F", "I", "B", "C4", "UP"]
+ignore = ["E501", "B008", "C901"]
 
 [tool.ruff.per-file-ignores]
 "__init__.py" = ["F401"]
 
 [tool.mypy]
-python_version = "3.8"
+python_version = "3.10"
 warn_return_any = true
 warn_unused_configs = true
-disallow_untyped_defs = true
-disallow_incomplete_defs = true
-check_untyped_defs = true
-disallow_untyped_decorators = true
-no_implicit_optional = true
-warn_redundant_casts = true
-warn_unused_ignores = true
-warn_no_return = true
-warn_unreachable = true
-strict_equality = true
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 python_files = ["test_*.py"]
-python_classes = ["Test*"]
-python_functions = ["test_*"]
-addopts = "--cov=interventionfeatures --cov-report=term-missing --cov-report=xml"
+addopts = "-v"
