@@ -86,8 +86,7 @@ def run(cfg: DictConfig) -> None:
     print("=" * 60)
     print(f"\nConfiguration:\n{OmegaConf.to_yaml(cfg)}")
 
-    output_dir = Path(cfg.output_dir)
-    output_dir.mkdir(parents=True, exist_ok=True)
+    output_dir = Path(cfg.output_dir)  # Created automatically by Hydra
 
     # Save config
     config_path = output_dir / "config.yaml"
@@ -173,6 +172,159 @@ def explain(cfg: DictConfig) -> None:
     print(f"Explanations saved to: {explanations_path}")
 
 
+@hydra.main(version_base=None, config_path="../../../conf", config_name="config")
+def benchmark(cfg: DictConfig) -> None:
+    """Run RAVEL and/or MIB benchmarks on CSS directions."""
+    setup_environment()
+
+    print("=" * 60)
+    print("InterventionFeatures - Benchmark Evaluation")
+    print("=" * 60)
+    print(f"\nBenchmark Configuration:\n{OmegaConf.to_yaml(cfg.benchmark)}")
+
+    from ..config import setup_device
+
+    output_dir = Path(cfg.output_dir)
+    directions_path = output_dir / cfg.benchmark.directions_path
+
+    if not directions_path.exists():
+        print(f"Error: directions not found at {directions_path}")
+        print("Run the 'run' command first to generate CSS directions.")
+        sys.exit(1)
+
+    # Load CSS directions
+    with open(directions_path, "rb") as f:
+        css_directions = pickle.load(f)
+
+    print(f"Loaded {len(css_directions)} CSS directions")
+
+    device = setup_device()
+    results = {}
+
+    # Run RAVEL if enabled
+    if "ravel" in cfg.benchmark.enabled_benchmarks:
+        print("\n--- Running RAVEL Benchmark ---")
+        try:
+            from ..benchmarks.ravel import RAVELBenchmarkRunner
+
+            ravel_runner = RAVELBenchmarkRunner(
+                css_directions=css_directions,
+                model_name=cfg.model.model_name,
+                layer=cfg.model.layer_cutoff,
+                device=device,
+                ravel_repo_path=cfg.benchmark.ravel.ravel_repo_path,
+            )
+
+            ravel_results = ravel_runner.run_all_evaluations(
+                direction_indices=cfg.benchmark.direction_indices,
+                entity_types=list(cfg.benchmark.ravel.entity_types)
+                if cfg.benchmark.ravel.entity_types
+                else None,
+            )
+            results["ravel"] = ravel_results
+
+            # Print summary
+            print("\nRAVEL Results:")
+            for task_name, result in ravel_results.items():
+                print(f"  {task_name}:")
+                print(f"    CAUSE: {result.metrics.get('cause', 0):.4f}")
+                print(f"    Isolation: {result.metrics.get('isolation', 0):.4f}")
+                print(f"    Disentangle: {result.metrics.get('disentangle', 0):.4f}")
+
+        except ImportError as e:
+            print(f"Warning: Could not run RAVEL benchmark: {e}")
+            print("Make sure pyvene is installed: pip install pyvene")
+
+    # Run MIB if enabled
+    if "mib" in cfg.benchmark.enabled_benchmarks:
+        print("\n--- Running MIB Benchmark ---")
+        try:
+            from ..benchmarks.mib import MIBBenchmarkRunner
+
+            mib_runner = MIBBenchmarkRunner(
+                css_directions=css_directions,
+                model_name=cfg.model.model_name,
+                layer=cfg.model.layer_cutoff,
+                device=device,
+                hf_cache_dir=cfg.benchmark.mib.hf_cache_dir,
+            )
+
+            # Get tasks to run
+            tasks_to_run = (
+                list(cfg.benchmark.mib.tasks)
+                if cfg.benchmark.mib.tasks
+                else None
+            )
+
+            num_samples = (
+                cfg.benchmark.mib.max_samples_per_task
+                if cfg.benchmark.mib.max_samples_per_task > 0
+                else None
+            )
+
+            mib_results = mib_runner.run_all_evaluations(
+                direction_indices=cfg.benchmark.direction_indices,
+                tasks=tasks_to_run,
+                num_samples=num_samples,
+            )
+            results["mib"] = mib_results
+
+            # Print summary
+            print("\nMIB Results:")
+            for task_name, result in mib_results.items():
+                print(f"  {task_name}: IIA = {result.metrics.get('iia', 0):.4f}")
+
+            # Print aggregate
+            aggregate_iia = mib_runner.get_aggregate_score(mib_results)
+            print(f"\n  Aggregate IIA: {aggregate_iia:.4f}")
+
+        except ImportError as e:
+            print(f"Warning: Could not run MIB benchmark: {e}")
+            print("Make sure required dependencies are installed.")
+
+    # Save results
+    if results:
+        _save_benchmark_results(results, output_dir, cfg.benchmark.output_format)
+
+
+def _save_benchmark_results(
+    results: dict,
+    output_dir: Path,
+    output_format: str,
+) -> None:
+    """Save benchmark results to file."""
+    results_path = output_dir / f"benchmark_results.{output_format}"
+
+    if output_format == "json":
+        # Convert BenchmarkResult objects to dicts
+        serializable = {}
+        for bench_name, bench_results in results.items():
+            serializable[bench_name] = {}
+            for task_name, result in bench_results.items():
+                serializable[bench_name][task_name] = result.to_dict()
+
+        with open(results_path, "w") as f:
+            json.dump(serializable, f, indent=2, default=str)
+
+    elif output_format == "pickle":
+        with open(results_path, "wb") as f:
+            pickle.dump(results, f)
+
+    else:
+        # Default to JSON
+        results_path = output_dir / "benchmark_results.json"
+        serializable = {}
+        for bench_name, bench_results in results.items():
+            serializable[bench_name] = {}
+            for task_name, result in bench_results.items():
+                serializable[bench_name][task_name] = result.to_dict()
+
+        with open(results_path, "w") as f:
+            json.dump(serializable, f, indent=2, default=str)
+
+    print(f"\nResults saved to: {results_path}")
+
+
 def print_config():
     """Print the default configuration."""
     from dataclasses import asdict
@@ -183,15 +335,26 @@ def print_config():
     print(OmegaConf.to_yaml(OmegaConf.create(asdict(cfg))))
 
 
+def viz():
+    """Launch Streamlit visualization app."""
+    import subprocess
+
+    app_path = Path(__file__).parent.parent / "utils" / "streamlit_app.py"
+    args = sys.argv[2:] if len(sys.argv) > 2 else []
+    subprocess.run([sys.executable, "-m", "streamlit", "run", str(app_path), "--", *args])
+
+
 def main():
     """Main entry point for the CLI."""
     if len(sys.argv) < 2:
         print("Usage: interventionfeatures <command> [options]")
         print("")
         print("Commands:")
-        print("  run      Run the CSS direction finding pipeline")
-        print("  explain  Generate explanations for CSS directions")
-        print("  config   Print the default configuration")
+        print("  run        Run the CSS direction finding pipeline")
+        print("  explain    Generate explanations for CSS directions")
+        print("  benchmark  Run RAVEL and MIB benchmark evaluations")
+        print("  viz        Launch Streamlit visualization app")
+        print("  config     Print the default configuration")
         print("")
         print("Use 'interventionfeatures <command> --help' for command options.")
         sys.exit(1)
@@ -206,13 +369,20 @@ def main():
     elif command == "explain":
         sys.argv = [sys.argv[0]] + sys.argv[2:]
         explain()
+    elif command == "benchmark":
+        sys.argv = [sys.argv[0]] + sys.argv[2:]
+        benchmark()
+    elif command == "viz":
+        viz()
     elif command in ["--help", "-h"]:
         print("Usage: interventionfeatures <command> [options]")
         print("")
         print("Commands:")
-        print("  run      Run the CSS direction finding pipeline")
-        print("  explain  Generate explanations for CSS directions")
-        print("  config   Print the default configuration")
+        print("  run        Run the CSS direction finding pipeline")
+        print("  explain    Generate explanations for CSS directions")
+        print("  benchmark  Run RAVEL and MIB benchmark evaluations")
+        print("  viz        Launch Streamlit visualization app")
+        print("  config     Print the default configuration")
     else:
         print(f"Unknown command: {command}")
         print("Use 'interventionfeatures --help' for available commands.")

@@ -59,14 +59,10 @@ class ActivationSimDisplay:
         self.original_query_norms = torch.norm(query_vecs, p=2, dim=1).cpu().tolist()
 
         if self.scoring_type == "cosine":
-            self.query_vecs_for_display = torch.nn.functional.normalize(
-                query_vecs, p=2, dim=1
-            )
+            self.query_vecs_for_display = torch.nn.functional.normalize(query_vecs, p=2, dim=1)
         else:
             self.query_vecs_for_display = query_vecs
-        print(
-            f"Display query set for {self.query_vecs_for_display.shape[0]}-token sequences."
-        )
+        print(f"Display query set for {self.query_vecs_for_display.shape[0]}-token sequences.")
 
     @torch.no_grad()
     def display_search_results(
@@ -112,9 +108,7 @@ class ActivationSimDisplay:
             sample_idx = res_item["sample_idx"]
             original_matched_token_pos = res_item["token_pos"]
 
-            full_tokens_tensor_cpu = torch.tensor(
-                self.searcher.indexed_sample_tokens[sample_idx]
-            )
+            full_tokens_tensor_cpu = torch.tensor(self.searcher.indexed_sample_tokens[sample_idx])
             # Extract similarities for this result: shape (K, SEQ_LEN)
             sequence_similarities = scores_by_vec[res_idx]
 
@@ -127,9 +121,7 @@ class ActivationSimDisplay:
             normalized_sequence_sims = active_sequence_sims.clone()
             for i in range(K):
                 if result_max_similarities > 0:
-                    normalized_sequence_sims[i] = (
-                        active_sequence_sims[i] / result_max_similarities
-                    )
+                    normalized_sequence_sims[i] = active_sequence_sims[i] / result_max_similarities
 
             for i in range(K):
                 global_max_similarity[i] = max(
@@ -139,14 +131,12 @@ class ActivationSimDisplay:
             # Map from original padded index to the new un-padded index
             original_indices_in_padded_seq = torch.where(non_pad_mask_cpu)[0].tolist()
             pos_map = {
-                orig_idx: new_idx
-                for new_idx, orig_idx in enumerate(original_indices_in_padded_seq)
+                orig_idx: new_idx for new_idx, orig_idx in enumerate(original_indices_in_padded_seq)
             }
             max_inds = res_item["max_indices"]
 
             tokens_str_list_escaped = [
-                escape_html_text(self.tokenizer.decode([t_id]))
-                for t_id in active_tokens_ids
+                escape_html_text(self.tokenizer.decode([t_id])) for t_id in active_tokens_ids
             ]
 
             max_token_ids = [active_tokens_ids[i] for i in max_inds]
@@ -165,9 +155,7 @@ class ActivationSimDisplay:
                     "matched_tokens_str": matched_tokens_str,
                     "original_pos": original_matched_token_pos,
                     "full_sequence_tokens": tokens_str_list_escaped,
-                    "sequence_similarities": active_sequence_sims.transpose(0, 1)
-                    .cpu()
-                    .tolist(),
+                    "sequence_similarities": active_sequence_sims.transpose(0, 1).cpu().tolist(),
                     "normalized_similarities": normalized_sequence_sims.transpose(0, 1)
                     .cpu()
                     .tolist(),
@@ -181,7 +169,14 @@ class ActivationSimDisplay:
 
         # Generate and save the HTML file
         self._write_html_report(
-            js_results_data, K, global_max_similarity, output_file_path, explanation, query_norms, optimal_threshold, polarity
+            js_results_data,
+            K,
+            global_max_similarity,
+            output_file_path,
+            explanation,
+            query_norms,
+            optimal_threshold,
+            polarity,
         )
 
     def _write_html_report(
@@ -197,7 +192,11 @@ class ActivationSimDisplay:
     ):
         """Generates the final HTML content and writes it to a file."""
         polarity_title = f"({polarity.capitalize()})" if polarity != "positive" else ""
-        polarity_badge = f'<span style="background-color: {"#28a745" if polarity == "positive" else "#dc3545"}; color: white; padding: 4px 8px; border-radius: 4px; font-size: 0.9em; margin-left: 10px;">{polarity.upper()}</span>' if polarity else ""
+        polarity_badge = (
+            f'<span style="background-color: {"#28a745" if polarity == "positive" else "#dc3545"}; color: white; padding: 4px 8px; border-radius: 4px; font-size: 0.9em; margin-left: 10px;">{polarity.upper()}</span>'
+            if polarity
+            else ""
+        )
 
         html_content = f"""
 <!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">
@@ -219,9 +218,9 @@ h2 {{ color: #0056b3; border-bottom: 1px solid #dee2e6; padding-bottom: 10px; ma
 .threshold-slider {{ width: 200px; margin: 0 10px; }}
 .threshold-value {{ font-weight: bold; color: #0056b3; }}
 </style></head><body>
-{'<div class="explanation-section" style="background-color: #f0f8ff; padding: 15px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #0056b3;"><h3 style="color: #0056b3; margin-top: 0;">Feature Explanation</h3><div style="line-height: 1.6; color: #333;">' + escape_html_text(explanation) + '</div></div>' if explanation else ''}<div class="global-max-info">
+{'<div class="explanation-section" style="background-color: #f0f8ff; padding: 15px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #0056b3;"><h3 style="color: #0056b3; margin-top: 0;">Feature Explanation</h3><div style="line-height: 1.6; color: #333;">' + escape_html_text(explanation) + "</div></div>" if explanation else ""}<div class="global-max-info">
     <strong>Query Type:</strong> {K}-token sequences {polarity_badge}<br>
-    {'<strong>Query Vector Norms:</strong> ' + str([f"{norm:.4f}" for norm in query_norms]) + '<br>' if query_norms else ''}
+    {"<strong>Query Vector Norms:</strong> " + str([f"{norm:.4f}" for norm in query_norms]) + "<br>" if query_norms else ""}
     <strong>Global Max Sequence Similarities:</strong> {global_max_similarity}<br>
     <div style="margin-top: 10px;">
         <label style="font-weight: normal; cursor: pointer;">
@@ -238,7 +237,7 @@ h2 {{ color: #0056b3; border-bottom: 1px solid #dee2e6; padding-bottom: 10px; ma
                min="0" max="1" step="0.001" 
                value="{optimal_threshold if optimal_threshold is not None else 0.0}">
         <div style="margin-top: 5px; font-size: 0.8em; color: #666;">
-            {f'Default from faithfulness testing: {optimal_threshold:.3f}' if optimal_threshold is not None else 'No faithfulness data available - adjust manually'}
+            {f"Default from faithfulness testing: {optimal_threshold:.3f}" if optimal_threshold is not None else "No faithfulness data available - adjust manually"}
         </div>
     </div>
 </div>
@@ -246,15 +245,15 @@ h2 {{ color: #0056b3; border-bottom: 1px solid #dee2e6; padding-bottom: 10px; ma
 """
         for res_data in js_results_data:
             html_content += f"""
-<div class="container" id="container_{res_data['id']}">
-    <h2>Result {int(res_data['id'].split('_')[1]) + 1} (Sample Ref: {res_data['sample_idx']})</h2>
+<div class="container" id="container_{res_data["id"]}">
+    <h2>Result {int(res_data["id"].split("_")[1]) + 1} (Sample Ref: {res_data["sample_idx"]})</h2>
     <div class="details">
-        <p><strong>FAISS Score (Similarity):</strong> {res_data['score']:.4f}</p>
-        <p><strong>Matched {K}-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">"{res_data['matched_tokens_str']}"</span></p>
-        <p><strong>Window Start Position:</strong> {res_data['original_pos']}</p>
+        <p><strong>FAISS Score (Similarity):</strong> {res_data["score"]:.4f}</p>
+        <p><strong>Matched {K}-Token Window:</strong> <span style="background-color: #f8d7da; padding: 2px; border-radius:3px;">"{res_data["matched_tokens_str"]}"</span></p>
+        <p><strong>Window Start Position:</strong> {res_data["original_pos"]}</p>
     </div>
-    <div class="sequence-display" id="sequence_display_{res_data['id']}"></div>
-    <div class="full-text-display" id="full_text_display_{res_data['id']}"></div>
+    <div class="sequence-display" id="sequence_display_{res_data["id"]}"></div>
+    <div class="full-text-display" id="full_text_display_{res_data["id"]}"></div>
 </div>"""
 
         html_content += f"""
@@ -447,6 +446,21 @@ h2 {{ color: #0056b3; border-bottom: 1px solid #dee2e6; padding-bottom: 10px; ma
             with open(output_file_path, "w", encoding="utf-8") as f:
                 f.write(html_content)
             print(f"\nSuccess: HTML report saved to {output_file_path}")
+
+            # Also save JSON for Streamlit app
+            json_path = output_file_path.replace(".html", ".json")
+            json_data = {
+                "results": js_results_data,
+                "global_max_similarity": global_max_similarity,
+                "K": K,
+                "polarity": polarity,
+                "explanation": explanation,
+                "query_norms": query_norms,
+                "optimal_threshold": optimal_threshold,
+            }
+            with open(json_path, "w", encoding="utf-8") as f:
+                json.dump(json_data, f)
+            print(f"Success: JSON data saved to {json_path}")
         except OSError as e:
             print(f"\nError: Failed to write HTML report to file: {e}")
 
@@ -454,10 +468,10 @@ h2 {{ color: #0056b3; border-bottom: 1px solid #dee2e6; padding-bottom: 10px; ma
 def extract_faithfulness_data(output_path: str) -> dict[int, float]:
     """
     Extract faithfulness scores from validation results if available.
-    
+
     Args:
         output_path: Path to output directory containing validation results
-        
+
     Returns:
         Dictionary mapping direction indices to their faithfulness scores.
     """
@@ -472,7 +486,7 @@ def extract_faithfulness_data(output_path: str) -> dict[int, float]:
         return faithfulness_scores
 
     try:
-        with open(results_file, encoding='utf-8') as f:
+        with open(results_file, encoding="utf-8") as f:
             data = json.load(f)
     except Exception:
         return faithfulness_scores
@@ -487,8 +501,8 @@ def extract_faithfulness_data(output_path: str) -> dict[int, float]:
 
         for i, summary in enumerate(direction_summaries):
             accuracy = summary.get("mean_accuracy", -1)
-            optimal_threshold = direction_summaries[i].get('optimal_threshold')
-            direction_idx = summary['direction_idx']
+            optimal_threshold = direction_summaries[i].get("optimal_threshold")
+            direction_idx = summary["direction_idx"]
             faithfulness_scores[direction_idx] = (accuracy, optimal_threshold)
 
         return faithfulness_scores
@@ -535,13 +549,13 @@ def generate_index_page(
 ) -> str:
     """
     Generate an index.html page for a run with navigation to all HTML visualizations.
-    
+
     Args:
         output_path: Directory where index.html will be saved
         config_dict: Configuration dictionary with run parameters
         html_files: List of HTML file paths relative to output_path
         metadata: Optional metadata dictionary with additional info
-        
+
     Returns:
         Path to the generated index.html file
     """
@@ -553,7 +567,11 @@ def generate_index_page(
     html_dir = output_dir / "html"
 
     # Extract metadata
-    timestamp = metadata.get("timestamp", datetime.now().isoformat()) if metadata else datetime.now().isoformat()
+    timestamp = (
+        metadata.get("timestamp", datetime.now().isoformat())
+        if metadata
+        else datetime.now().isoformat()
+    )
     model_name = config_dict.get("model_name", "Unknown")
     dataset_name = config_dict.get("dataset_name", "Unknown")
     dict_size = config_dict.get("dict_size", "Unknown")
@@ -569,17 +587,17 @@ def generate_index_page(
     faithfulness_data = extract_faithfulness_data(output_path)
 
     # Extract direction numbers from files and sort by faithfulness score
-    #direction_nums = []
-    #for f in direction_files:
+    # direction_nums = []
+    # for f in direction_files:
     #    file_name = Path(f).name
     #    parts = file_name.split('_')
     #    if len(parts) >= 2 and parts[0].isdigit():
     #        direction_nums.append(int(parts[0]))
 
-    #print("SORTED", direction_nums)
+    # print("SORTED", direction_nums)
     ## Sort by faithfulness score (use positive scores as default)
-    #sorted_direction_nums = sorted(set(direction_nums), key=lambda num: faithfulness_scores_pos.get(num, -1.0) if faithfulness_scores_pos else 0, reverse=True)
-    #print("SORTED", sorted_direction_nums)
+    # sorted_direction_nums = sorted(set(direction_nums), key=lambda num: faithfulness_scores_pos.get(num, -1.0) if faithfulness_scores_pos else 0, reverse=True)
+    # print("SORTED", sorted_direction_nums)
 
     # Load explanations if available
     explanations_map = {}
@@ -588,7 +606,8 @@ def generate_index_page(
     if explanations_file.exists():
         try:
             import json
-            with open(explanations_file, encoding='utf-8') as f:
+
+            with open(explanations_file, encoding="utf-8") as f:
                 data = json.load(f)
                 if "explanations" in data:
                     for explanation in data["explanations"]:
@@ -781,7 +800,7 @@ def generate_index_page(
             </div>
             <div class="metadata-item">
                 <div class="metadata-label">Generated</div>
-                <div class="metadata-value">{timestamp[:19].replace('T', ' ')}</div>
+                <div class="metadata-value">{timestamp[:19].replace("T", " ")}</div>
             </div>
         </div>
     </div>"""
@@ -789,7 +808,7 @@ def generate_index_page(
     # Direction visualizations section
     if True:
         sorting_note = ""
-        #if faithfulness_data:
+        # if faithfulness_data:
         #    sorting_note = '<div style="text-align: center; margin-bottom: 15px; color: #718096; font-style: italic;">Directions sorted by faithfulness score (highest first)</div>'
 
         html_content += f"""
@@ -814,25 +833,29 @@ def generate_index_page(
                     explanation_text = explanations_map[idx]
                     max_chars = 150
                     if len(explanation_text) > max_chars:
-                        truncated = explanation_text[:max_chars].rsplit(' ', 1)[0]
-                        explanation_info = f"<div class=\"explanation-preview\">{truncated}...</div>"
+                        truncated = explanation_text[:max_chars].rsplit(" ", 1)[0]
+                        explanation_info = f'<div class="explanation-preview">{truncated}...</div>'
                     else:
-                        explanation_info = f"<div class=\"explanation-preview\">{explanation_text}</div>"
+                        explanation_info = (
+                            f'<div class="explanation-preview">{explanation_text}</div>'
+                        )
             except (ValueError, TypeError):
                 pass
 
             if direction_file:
                 title_prefix = ""
                 file_name = Path(direction_file).name
-                base_href = direction_file if direction_file.startswith("html/") else f"html/{file_name}"
+                base_href = (
+                    direction_file if direction_file.startswith("html/") else f"html/{file_name}"
+                )
                 base_href += "#threshold=" + str(optimal_threshold)
 
                 html_content += f"""
                 <div class="file-card">
                     <a href="{base_href}">
-                        <div class="file-title">{title_prefix}Direction {idx // 2} <span {"class='positive'> Positive" if
-                                                                                          idx % 2 == 0
-                                                                                          else "class='negative'> Negative"}
+                        <div class="file-title">{title_prefix}Direction {idx // 2} <span {
+                    "class='positive'> Positive" if idx % 2 == 0 else "class='negative'> Negative"
+                }
                                                                                           </span> </div>
                         <div class="file-description">
                             Interactive visualization showing feature activation patterns
@@ -864,7 +887,9 @@ def generate_index_page(
             file_name = Path(file_path).name
             if "summary" in file_name:
                 title = "Faithfulness Summary"
-                description = "Comprehensive summary of all faithfulness testing results across directions."
+                description = (
+                    "Comprehensive summary of all faithfulness testing results across directions."
+                )
             elif "aggregated" in file_name:
                 title = "Aggregated Analysis"
                 description = "Statistical aggregation of multiple validation trials with confidence intervals."
@@ -919,14 +944,18 @@ def generate_index_page(
             <div class="file-card">
                 <div class="file-title">Direction {direction_idx} Faithfulness</div>
                 <div class="file-description">
-                    {trial_count} trial{'s' if trial_count != 1 else ''} testing how well explanations 
+                    {trial_count} trial{"s" if trial_count != 1 else ""} testing how well explanations 
                     predict feature activation through targeted interventions.
                 </div>
                 <div style="margin-top: 0.5rem;">"""
 
                 for file_path in sorted(files):
                     file_name = Path(file_path).name
-                    trial_num = file_name.split("_")[-1].replace(".html", "") if "trial_" in file_name else "0"
+                    trial_num = (
+                        file_name.split("_")[-1].replace(".html", "")
+                        if "trial_" in file_name
+                        else "0"
+                    )
                     html_content += f"""
                     <a href="html/{file_name}" style="display: inline-block; margin: 0.25rem 0.5rem 0.25rem 0; padding: 0.25rem 0.5rem; background: #edf2f7; border-radius: 4px; font-size: 0.8rem; text-decoration: none; color: #4a5568;">Trial {trial_num}</a>"""
 

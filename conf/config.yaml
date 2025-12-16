@@ -4,7 +4,18 @@ defaults:
   - database: default
   - llm: openai
   - dataset: c4
+  - benchmark: default
+  - visualization: default
   - _self_
+  - override hydra/hydra_logging: default
+  - override hydra/job_logging: default
 
 seed: 62
-output_dir: outputs
+output_dir: ${hydra:runtime.output_dir}
+
+# Hydra configuration for timestamped output directories
+hydra:
+  run:
+    dir: outputs/${now:%Y-%m-%d}/${now:%H-%M-%S}
+  job:
+    chdir: false  # Don't change working directory

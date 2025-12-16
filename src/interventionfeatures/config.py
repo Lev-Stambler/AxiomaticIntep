@@ -121,6 +121,49 @@ class DatasetConfig:
 
 
 @dataclass
+class RAVELConfig:
+    """RAVEL benchmark configuration."""
+
+    entity_types: list[str] = field(
+        default_factory=lambda: ["cities", "nobel", "verbs", "objects", "occupations"]
+    )
+    attributes_per_entity: int = -1  # -1 means all attributes
+    ravel_repo_path: str | None = None  # Path to cloned RAVEL repo
+    use_cached_data: bool = True
+
+
+@dataclass
+class MIBConfig:
+    """MIB (Mechanistic Interpretability Benchmark) configuration."""
+
+    tasks: list[str] = field(
+        default_factory=lambda: [
+            "ioi",
+            "arithmetic_add",
+            "arithmetic_sub",
+            "mcqa",
+            "arc_easy",
+            "ravel",
+        ]
+    )
+    max_samples_per_task: int = -1  # -1 means all samples
+    hf_cache_dir: str | None = None
+
+
+@dataclass
+class BenchmarkConfig:
+    """Configuration for benchmark evaluations."""
+
+    enabled_benchmarks: list[str] = field(default_factory=lambda: ["ravel", "mib"])
+    directions_path: str = "directions.pkl"  # Relative to output_dir
+    direction_indices: list[int] | None = None  # Which directions to use, None = all
+    orthonormalize_featurizer: bool = True
+    output_format: str = "json"  # json, csv, or pickle
+    ravel: RAVELConfig = field(default_factory=RAVELConfig)
+    mib: MIBConfig = field(default_factory=MIBConfig)
+
+
+@dataclass
 class Config:
     """Main configuration for interventionfeatures."""
 
@@ -129,6 +172,7 @@ class Config:
     database: DatabaseConfig = field(default_factory=DatabaseConfig)
     llm: LLMConfig = field(default_factory=LLMConfig)
     dataset: DatasetConfig = field(default_factory=DatasetConfig)
+    benchmark: BenchmarkConfig = field(default_factory=BenchmarkConfig)
     seed: int = 62
     output_dir: str = "outputs"
 
