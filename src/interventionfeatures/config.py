@@ -80,6 +80,9 @@ class TrainingConfig:
     norm_lower_bound: float = 0.5
     norm_upper_bound: float = 90.0
     early_stopping: EarlyStoppingConfig = field(default_factory=EarlyStoppingConfig)
+    inactive_mode: str = "soft"  # Options: "none", "hard", "soft"
+    eps_check: float = 0.1  # Threshold for hard mode
+    inactive_sigma: float = 0.1  # Sigma for soft Gaussian weighting
 
 
 @dataclass

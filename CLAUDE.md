@@ -5,38 +5,37 @@ This file provides guidance to Claude Code when working with this repository.
 ## Development Commands
 
 ```bash
-# Install with uv
-uv pip install -e .
+# Install dependencies
+uv sync
 
-# Install with dev dependencies
-uv pip install -e ".[dev]"
-
-# Install with all optional features
-uv pip install -e ".[all]"
+# Install with optional features
+uv sync --extra dev      # Development tools
+uv sync --extra search   # ChromaDB
+uv sync --extra explain  # LangChain
 ```
 
 ## CLI Usage
 
 ```bash
+# Print default configuration
+uv run interventionfeatures config
+
 # Run the CSS direction finding pipeline
-interventionfeatures run
+uv run interventionfeatures run
 
 # Override config values
-interventionfeatures run model.layer_cutoff=3 training.dict_size=5
+uv run interventionfeatures run model.layer_cutoff=3 training.dict_size=5
 
 # Generate explanations
-interventionfeatures explain
-
-# Print default configuration
-interventionfeatures config
+uv run interventionfeatures explain results.pkl db_path/
 ```
 
 ## Testing
 
 ```bash
-make test        # Run all tests
-make lint        # Run linting
-make format      # Format code
+uv run pytest tests/         # Run tests
+uv run ruff check src/       # Lint
+uv run ruff format src/      # Format
 ```
 
 ## Code Architecture
@@ -89,7 +88,7 @@ conf/
 Override any config value via CLI:
 
 ```bash
-interventionfeatures run model.layer_cutoff=5 training.learning_rate=0.1
+uv run interventionfeatures run model.layer_cutoff=5 training.learning_rate=0.1
 ```
 
 ### Optional Dependencies

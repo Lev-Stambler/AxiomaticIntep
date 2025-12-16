@@ -4,17 +4,16 @@ Mechanistic interpretability using CSS (Causal Scrubbing Search) and activation 
 
 ## Installation
 
-Requires Python 3.10+
+Requires Python 3.10+ and [uv](https://docs.astral.sh/uv/).
 
 ```bash
-# Using uv (recommended)
-uv pip install -e .
+# Install dependencies and create venv
+uv sync
 
-# With dev dependencies
-uv pip install -e ".[dev]"
-
-# With all optional features
-uv pip install -e ".[all]"
+# With optional features
+uv sync --extra search   # ChromaDB similarity search
+uv sync --extra explain  # LangChain AI explanations
+uv sync --extra dev      # Development tools
 ```
 
 ## Quick Start
@@ -31,17 +30,17 @@ OPENAI_API_KEY=your_key  # for explanations
 ### CLI Usage
 
 ```bash
+# Print default configuration
+uv run interventionfeatures config
+
 # Run CSS direction finding
-interventionfeatures run
+uv run interventionfeatures run
 
 # Override config values
-interventionfeatures run model.layer_cutoff=3 training.dict_size=5
+uv run interventionfeatures run model.layer_cutoff=3 training.dict_size=5
 
 # Generate explanations for found directions
-interventionfeatures explain
-
-# Print default configuration
-interventionfeatures config
+uv run interventionfeatures explain results.pkl db_path/
 ```
 
 ### Configuration
@@ -50,27 +49,26 @@ Configuration uses Hydra with YAML files in `conf/`:
 
 ```
 conf/
-    config.yaml       # Main config
-    model/            # Model configs
-    training/         # Training configs
-    database/         # Database configs
-    llm/              # LLM configs
-    dataset/          # Dataset configs
+├── config.yaml       # Main config with defaults
+├── model/            # Model presets
+├── training/         # Training presets
+├── database/         # Database presets
+├── llm/              # LLM presets
+└── dataset/          # Dataset presets
 ```
 
 Override any value via CLI:
 
 ```bash
-interventionfeatures run model.model_name="EleutherAI/pythia-160m"
+uv run interventionfeatures run model.model_name="EleutherAI/pythia-160m" seed=42
 ```
 
 ## Development
 
 ```bash
-make test     # Run tests
-make lint     # Run linting
-make format   # Format code
-make clean    # Clean build artifacts
+uv run pytest              # Run tests
+uv run ruff check src/     # Lint
+uv run ruff format src/    # Format
 ```
 
 ## Package Structure

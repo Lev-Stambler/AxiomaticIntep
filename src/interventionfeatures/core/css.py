@@ -74,6 +74,60 @@ def get_memory_stats():
     return 0.0, 0.0
 
 
+def compute_inactive_weights(
+    x: torch.Tensor,
+    s: torch.Tensor,
+    mode: str,
+    eps_check: float = 0.1,
+    sigma: float = 0.1,
+) -> tuple[torch.Tensor, torch.Tensor]:
+    """
+    Compute weights for inactive sample filtering/weighting.
+
+    Focuses the score on samples where the feature is not already active.
+    Uses cosine similarity to determine feature activation.
+
+    Args:
+        x: Activations tensor (B, K, d_model)
+        s: Intervention direction tensor (K, d_model)
+        mode: "none", "hard", or "soft"
+        eps_check: Threshold for hard mode (feature inactive if |cos| < eps_check)
+        sigma: Sigma for soft Gaussian weighting
+
+    Returns:
+        weights: (B,) tensor of weights per sample
+        mask: (B,) boolean tensor (for hard mode, indicates valid samples)
+    """
+    if mode == "none":
+        B = x.shape[0]
+        return torch.ones(B, device=x.device), torch.ones(
+            B, dtype=torch.bool, device=x.device
+        )
+
+    # Compute cosine similarity: cos(x, s)
+    s_norm = F.normalize(s, p=2, dim=-1)  # (K, d_model)
+    x_norm = F.normalize(x, p=2, dim=-1)  # (B, K, d_model)
+    cos_sim = torch.sum(x_norm * s_norm.unsqueeze(0), dim=-1)  # (B, K)
+
+    # Take max over K dimensions (if feature active in any coord, consider it active)
+    cos_sim_max = cos_sim.abs().max(dim=-1).values  # (B,)
+
+    if mode == "hard":
+        mask = cos_sim_max < eps_check
+        weights = mask.float()
+        return weights, mask
+
+    elif mode == "soft":
+        # Gaussian kernel: w = exp(-cos²(x,s) / σ²)
+        cos_sq = cos_sim_max**2
+        weights = torch.exp(-cos_sq / (sigma**2))
+        mask = torch.ones_like(weights, dtype=torch.bool)
+        return weights, mask
+
+    else:
+        raise ValueError(f"Unknown inactive_mode: {mode}")
+
+
 def intervention_objective(
     fx: dict[str, torch.Tensor],
     fy: dict[str, torch.Tensor],
@@ -237,6 +291,9 @@ class CSSDirectionFinder:
             early_stopping_min_delta=config.training.early_stopping.min_delta,
             early_stopping_eval_freq=config.training.early_stopping.eval_freq,
             use_MICS=config.database.use_MICS,
+            inactive_mode=config.training.inactive_mode,
+            eps_check=config.training.eps_check,
+            inactive_sigma=config.training.inactive_sigma,
         )
 
     def __init__(
@@ -267,6 +324,9 @@ class CSSDirectionFinder:
         early_stopping_eval_freq: int = 10,
         n_norm_discretization_steps: int = 1,
         use_MICS: bool = True,
+        inactive_mode: str = "soft",
+        eps_check: float = 0.1,
+        inactive_sigma: float = 0.1,
     ):
         self.n_norm_discretization_steps = n_norm_discretization_steps
         self.data_handler = data_handler
@@ -280,6 +340,9 @@ class CSSDirectionFinder:
         self.sample_temp = sample_temp
         self.target_norm = target_norm
         self.use_MICS = use_MICS
+        self.inactive_mode = inactive_mode
+        self.eps_check = eps_check
+        self.inactive_sigma = inactive_sigma
         self.norm_lower_bound = norm_lower_bound
         self.norm_upper_bound = norm_upper_bound
         self.pga_batch_size = pga_batch_size
@@ -520,6 +583,24 @@ class CSSDirectionFinder:
             s_current.requires_grad_(True)
             x_sel = select_positions(x_batch, pos_indices)
 
+            # Compute inactive weights for filtering/weighting
+            inactive_weights, inactive_mask = compute_inactive_weights(
+                x_sel.detach(),
+                s_current.detach(),
+                self.inactive_mode,
+                self.eps_check,
+                self.inactive_sigma,
+            )
+
+            # For hard mode, filter samples before forward pass
+            if self.inactive_mode == "hard":
+                if inactive_mask.sum() == 0:
+                    # No inactive samples in this batch, skip iteration
+                    return s_current.detach()
+                x_sel = x_sel[inactive_mask]
+                tokens_batch_padded = tokens_batch_padded[inactive_mask]
+                pos_indices = pos_indices[inactive_mask]
+
             alpha = self._get_alpha(x_sel.shape[0])  # Samlpe a random scaling value
 
             # y_batch_embed = add_in_offset_vec(x_sel, s_current, alpha)
@@ -541,7 +622,14 @@ class CSSDirectionFinder:
                 target_norm=self.target_norm,
             )
 
-            objective = objective.mean()  # Average over batch
+            # Apply weighting based on inactive_mode
+            if self.inactive_mode == "soft":
+                # Weighted average: Σ(w_i * score_i) / Σ(w_i)
+                objective = (objective * inactive_weights).sum() / (
+                    inactive_weights.sum() + 1e-8
+                )
+            else:
+                objective = objective.mean()  # Standard average (for "none" and "hard")
 
             # Compute gradient
             grad_s = torch.autograd.grad(objective, s_current)[0]
