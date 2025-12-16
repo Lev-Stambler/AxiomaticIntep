@@ -11,9 +11,6 @@ from .scheduler import (
     SphericalOptimizerWrapper,
     StepDecayScheduler,
 )
-
-# Backward compatibility alias
-SphericalAdamW = SphericalOptimizerWrapper
 from .search import ActivationSimSearcher
 
 __all__ = [
@@ -26,5 +23,5 @@ __all__ = [
     "CosineAnnealingScheduler",
     "StepDecayScheduler",
     "LinearDecayScheduler",
-    "SphericalAdamW",
+    "SphericalOptimizerWrapper",
 ]
