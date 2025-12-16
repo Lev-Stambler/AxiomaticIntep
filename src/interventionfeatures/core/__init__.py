@@ -8,9 +8,12 @@ from .scheduler import (
     ExponentialDecayScheduler,
     LearningRateScheduler,
     LinearDecayScheduler,
-    SphericalAdamW,
+    SphericalOptimizerWrapper,
     StepDecayScheduler,
 )
+
+# Backward compatibility alias
+SphericalAdamW = SphericalOptimizerWrapper
 from .search import ActivationSimSearcher
 
 __all__ = [

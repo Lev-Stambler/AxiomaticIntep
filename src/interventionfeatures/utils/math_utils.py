@@ -72,68 +72,39 @@ def minimally_change_x(x: torch.Tensor, s: torch.Tensor, alpha: float) -> torch.
     return x_prime
 
 
-def robust_kl_divergence_batched(p_dist, q_dist, epsilon=1e-6):
-    """
-    Calculates KL divergence D_KL(P || Q) robustly for batches of distributions.
-    P is represented by p_dist, and Q (the reference distribution) by q_dist.
-
-    The formula for KL divergence is: sum_i ( P_i * (log P_i - log Q_i) ).
-    PyTorch's F.kl_div(input, target, reduction='none', log_target=False) computes
-    element-wise: target_i * (log target_i - input_i).
-    To compute D_KL(P || Q):
-    - 'target' should be P (p_dist).
-    - 'input' should be log Q (log(q_dist + epsilon)).
-    The result is then summed over the distribution dimension.
+def robust_kl_divergence_batched(
+    p_dist: torch.Tensor, q_dist: torch.Tensor, epsilon: float = 1e-6
+) -> torch.Tensor:
+    """Compute KL divergence D_KL(P || Q) for batched distributions.
 
     Args:
-        p_dist (torch.Tensor): The first probability distribution(s) (P).
-                                 Shape: [C] for a single distribution, or [B, C] for a batch.
-                                 B is batch size, C is number of classes/categories.
-        q_dist (torch.Tensor): The second probability distribution(s) (Q, the reference).
-                                 Must have the same shape as p_dist.
-        epsilon (float): A small constant added to q_dist before taking the
-                         logarithm to prevent log(0) issues, which would make
-                         KL divergence infinite if p_dist_i > 0 and q_dist_i = 0.
+        p_dist: Distribution P, shape [C] or [B, C]
+        q_dist: Distribution Q (reference), same shape as p_dist
+        epsilon: Small constant to prevent log(0)
 
     Returns:
-        torch.Tensor: The KL divergence for each distribution in the batch.
-                      Shape: [] (scalar tensor) if input is 1D [C].
-                      Shape: [B] if input is 2D [B, C].
+        KL divergence values, shape [] or [B]
     """
-    # Ensure inputs are PyTorch tensors
-    if not isinstance(p_dist, torch.Tensor):
-        p_dist = torch.tensor(p_dist, dtype=torch.float32)
-    if not isinstance(q_dist, torch.Tensor):
-        q_dist = torch.tensor(q_dist, dtype=torch.float32)
-
-    # Validate shapes
-    # if p_dist.shape != q_dist.shape:
-    #    raise ValueError("Input distributions p_dist and q_dist must have the same shape.")
-    if p_dist.dim() == 0:
-        raise ValueError("Input distributions must be at least 1D.")
-
-    # Ensure inputs are non-negative (they should be probabilities)
-    if torch.any(p_dist < 0) or torch.any(q_dist < 0):
-        # This is a basic check; for actual probability distributions,
-        # elements must also sum to 1.
-        print(
-            "Warning: Input distributions contain negative values. KL divergence is typically for non-negative distributions."
-        )
-
-    log_q_dist = torch.log(q_dist + epsilon)
-    element_wise_kl = F.kl_div(log_q_dist, p_dist, reduction="none", log_target=False)
-    kl_div_values = torch.sum(element_wise_kl, dim=-1)
-
-    return kl_div_values
+    log_q = torch.log(q_dist + epsilon)
+    return F.kl_div(log_q, p_dist, reduction="none", log_target=False).sum(dim=-1)
 
 
-def sample_multinomial(N, K, sorted=True):
+def sample_multinomial(N: int, K: int, token_offset: int = 0, sorted: bool = True) -> torch.Tensor:
+    """Sample K unique indices from [token_offset, N) uniformly.
+
+    Args:
+        N: Upper bound (exclusive)
+        K: Number of samples
+        token_offset: Lower bound offset (indices start from here)
+        sorted: Whether to return sorted indices
+
+    Returns:
+        Tensor of K sampled indices
     """
-    We want to have some order, so we have samples which are sorted.
-    """
-    # Create uniform probabilities
-    probs = torch.ones(N) / N
-    r = torch.multinomial(probs, K, replacement=False).type(torch.int64)
+    token_offset = max(0, token_offset)
+    valid_range = N - token_offset
+    probs = torch.ones(valid_range) / valid_range
+    r = torch.multinomial(probs, K, replacement=False).to(torch.int64)
     if sorted:
-        r, _ = r.sort(dim=-1)  # Sort the last dimensionin ascending order
-    return r
+        r, _ = r.sort(dim=-1)
+    return r + token_offset

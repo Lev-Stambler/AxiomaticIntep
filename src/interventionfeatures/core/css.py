@@ -18,32 +18,23 @@ from .scheduler import (
     ExponentialDecayScheduler,
     LearningRateScheduler,
     LinearDecayScheduler,
-    SphericalAdamW,
+    SphericalOptimizerWrapper,
     StepDecayScheduler,
 )
 
 
-# Method 2: Using torch.multinomial (often fastest)
-def sample_multinomial(N, K, token_offset: int, sorted=True):
-    """
-    We want to have some order, so we have samples which are sorted.
-    """
-    # Create uniform probabilities
-    token_offset = 0 if token_offset <= 0 else token_offset
-    probs = torch.ones(N - token_offset) / (N - token_offset)
-    r = torch.multinomial(probs, K, replacement=False).type(torch.int64)
-    if sorted:
-        r, _ = r.sort(dim=-1)  # Sort the last dimensionin ascending order
-    return r
+def select_positions(x_batch: torch.Tensor, pos_indices: torch.Tensor) -> torch.Tensor:
+    """Select positions from batch using gather (vectorized).
 
+    Args:
+        x_batch: Shape (B, seq_len, d_model)
+        pos_indices: Shape (B, K) - position indices to select
 
-def select_positions(x_batch: torch.Tensor, pos_indices: torch.Tensor):
-    x_sel = torch.zeros_like(
-        x_batch[:, torch.arange(pos_indices.shape[-1])], device=x_batch.device
-    )
-    for b_idx in range(x_batch.shape[0]):
-        x_sel[b_idx] = x_batch[b_idx, pos_indices[b_idx]]
-    return x_sel
+    Returns:
+        Selected positions with shape (B, K, d_model)
+    """
+    expanded_indices = pos_indices.unsqueeze(-1).expand(-1, -1, x_batch.shape[-1])
+    return torch.gather(x_batch, dim=1, index=expanded_indices)
 
 
 def calc_overlap(s: torch.Tensor, s_prior: torch.Tensor, do_relu=True):
@@ -100,9 +91,7 @@ def compute_inactive_weights(
     """
     if mode == "none":
         B = x.shape[0]
-        return torch.ones(B, device=x.device), torch.ones(
-            B, dtype=torch.bool, device=x.device
-        )
+        return torch.ones(B, device=x.device), torch.ones(B, dtype=torch.bool, device=x.device)
 
     # Compute cosine similarity: cos(x, s)
     s_norm = F.normalize(s, p=2, dim=-1)  # (K, d_model)
@@ -146,9 +135,7 @@ def intervention_objective(
     """
     """Compute L2 objective between two tensors"""
 
-    all_fx: list[torch.Tensor] = [
-        fx[k] for k in fx.keys()
-    ]  # Unsqueeze for dimension matching to S
+    all_fx: list[torch.Tensor] = [fx[k] for k in fx.keys()]  # Unsqueeze for dimension matching to S
     all_fy: list[torch.Tensor] = [fy[k] for k in fy.keys()]
 
     BS = all_fx[0].shape[0]
@@ -164,7 +151,7 @@ def intervention_objective(
             r = robust_kl_divergence_batched(fx, fy)
             rets[:, i] = r
         else:
-            r = ((1 - F.cosine_similarity(fx, fy, dim=-1)) / 2)
+            r = (1 - F.cosine_similarity(fx, fy, dim=-1)) / 2
             r = r.squeeze(-1)
             rets[:, i] = r
 
@@ -196,9 +183,7 @@ def intervention_objective(
         # Subtract it from the objective
         corrections -= n
 
-    return (
-        r + corrections
-    )
+    return r + corrections
 
 
 def add_in_offset_vec(
@@ -224,8 +209,7 @@ def add_in_offset_vec(
         # mask = torch.abs(cos_sim) <= 0.3
 
         # Decompose x into parallel and orthogonal components with respect to s_unit
-        x_parallel = torch.sum(x_batch_detached * s_unit,
-                               dim=-1, keepdim=True) * s_unit
+        x_parallel = torch.sum(x_batch_detached * s_unit, dim=-1, keepdim=True) * s_unit
         x_orthogonal = x_batch_detached - x_parallel
 
         # Calculate the new parallel component using the derived formula
@@ -240,6 +224,7 @@ def add_in_offset_vec(
 
     else:
         return x_batch_detached + s_current.unsqueeze(0)
+
 
 def adaptive_batch_size(base_batch_size: int, max_memory_gb: float = 0.8) -> int:
     """Dynamically adjust batch size based on available memory"""
@@ -376,15 +361,9 @@ class CSSDirectionFinder:
 
     def _determine_device(self):
         """Determine the best device to use"""
-        if (
-            hasattr(self.data_handler, "device")
-            and self.data_handler.device is not None
-        ):
+        if hasattr(self.data_handler, "device") and self.data_handler.device is not None:
             return self.data_handler.device
-        elif (
-            hasattr(self.model_segment, "device")
-            and self.model_segment.device is not None
-        ):
+        elif hasattr(self.model_segment, "device") and self.model_segment.device is not None:
             return self.model_segment.device
         else:
             device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -421,39 +400,36 @@ class CSSDirectionFinder:
             return ExponentialDecayScheduler(self.pga_learning_rate, decay_rate)
         elif self.scheduler_type == "cosine":
             min_lr = self.scheduler_params.get("min_lr", 1e-6)
-            return CosineAnnealingScheduler(
-                self.pga_learning_rate, self.pga_iterations, min_lr
-            )
+            return CosineAnnealingScheduler(self.pga_learning_rate, self.pga_iterations, min_lr)
         elif self.scheduler_type == "step":
             step_size = self.scheduler_params.get("step_size", self.pga_iterations // 4)
             gamma = self.scheduler_params.get("gamma", 0.5)
             return StepDecayScheduler(self.pga_learning_rate, step_size, gamma)
         elif self.scheduler_type == "linear":
             min_lr = self.scheduler_params.get("min_lr", 1e-6)
-            return LinearDecayScheduler(
-                self.pga_learning_rate, self.pga_iterations, min_lr
-            )
+            return LinearDecayScheduler(self.pga_learning_rate, self.pga_iterations, min_lr)
         else:
             raise ValueError(f"Unknown scheduler type: {self.scheduler_type}")
 
     def _create_optimizer(self):
-        """Create optimizer"""
-        if self.optimizer_type == "adam":
-            raise NotImplementedError(
-                "Adam optimizer is not supported in this version. Use AdamW or SphericalAdamW instead."
-            )
+        """Create optimizer with sphere constraint using bitsandbytes AdamW8bit."""
+        if self.optimizer_type in ("adam", "sgd_decay"):
+            raise NotImplementedError(f"{self.optimizer_type} is not supported. Use adamw instead.")
         if self.optimizer_type == "adamw":
+            # Create a dummy parameter for the wrapper
+            dummy_param = torch.nn.Parameter(
+                torch.zeros(self.kwise_coordinates, self.d_model, device=self.device)
+            )
             betas = self.scheduler_params.get("betas", (0.9, 0.999))
             eps = self.scheduler_params.get("eps", 1e-8)
             weight_decay = self.scheduler_params.get("weight_decay", 0.01)
-            return SphericalAdamW(
+            return SphericalOptimizerWrapper(
+                params=dummy_param,
+                target_norm=self.target_norm,
                 lr=self.pga_learning_rate,
                 betas=betas,
                 eps=eps,
-                weight_decay=weight_decay)
-        elif self.optimizer_type == "sgd_decay":
-            raise NotImplementedError(
-                "SGD optimizer is not supported in this version. Use SphericalAdam or SphericalAdamW instead."
+                weight_decay=weight_decay,
             )
         else:
             raise ValueError(f"Unknown optimizer type: {self.optimizer_type}")
@@ -492,9 +468,7 @@ class CSSDirectionFinder:
     def _generate_s_samples(self, K: int) -> torch.Tensor:
         """Generate random samples on unit sphere"""
         with cuda_memory_manager():
-            s_rand = torch.randn(
-                K, self.d_model, device=self.device, dtype=torch.float32
-            )
+            s_rand = torch.randn(K, self.d_model, device=self.device, dtype=torch.float32)
             s_rand_norm = torch.linalg.norm(s_rand, dim=-1, keepdim=True)
             s_on_unit_sphere = torch.div(s_rand, s_rand_norm + 1e-9)
             return s_on_unit_sphere * self.target_norm
@@ -522,18 +496,17 @@ class CSSDirectionFinder:
 
         x_batch = x_batch_from_handler.to(self.device, non_blocking=True)
 
-        # For every item in the batch, sample random positions for injection
-        pos_indices = torch.zeros(
-            (x_batch.shape[0], self.kwise_coordinates),
-            dtype=torch.int64,
-            device=self.device,
-        )
-        for b_idx in range(x_batch.shape[0]):
-            pos_indices[b_idx] = sample_multinomial(
-                x_batch[b_idx].shape[0],
-                self.kwise_coordinates,
-                self.target_token_offset,
-            )
+        # Vectorized position sampling for the batch
+        actual_batch_size = x_batch.shape[0]
+        seq_len = x_batch.shape[1]
+        token_offset = max(0, self.target_token_offset)
+        valid_len = seq_len - token_offset
+
+        # Sample all positions at once using uniform probabilities
+        probs = torch.ones(actual_batch_size, valid_len, device=self.device) / valid_len
+        pos_indices = torch.multinomial(probs, self.kwise_coordinates, replacement=False)
+        pos_indices = pos_indices + token_offset  # Add offset
+        pos_indices, _ = pos_indices.sort(dim=-1)  # Sort positions
 
         tokens_batch_padded = self._pad_and_stack_tokens_optimized(
             tokens_batch_list, self.data_handler.tokenizer, self.device
@@ -541,9 +514,7 @@ class CSSDirectionFinder:
         return x_batch, tokens_batch_padded, pos_indices
 
     def _get_alpha(self, batch_size: int):
-        alpha = torch.rand(
-            (batch_size, 1, 1), device=self.device
-        )
+        alpha = torch.rand((batch_size, 1, 1), device=self.device)
         return alpha
 
     def _pga_iteration_enhanced(
@@ -561,9 +532,7 @@ class CSSDirectionFinder:
 
         """
         # Adaptive batch size
-        current_batch_size = adaptive_batch_size(
-            self.pga_batch_size, self.max_memory_usage
-        )
+        current_batch_size = adaptive_batch_size(self.pga_batch_size, self.max_memory_usage)
 
         with cuda_memory_manager():
             # Get batch data
@@ -609,9 +578,7 @@ class CSSDirectionFinder:
             with torch.no_grad():
                 fx_logits = self.model_segment(x_sel, tokens_batch_padded, pos_indices)
 
-            fy_logits = self.model_segment(
-                y_batch_embed, tokens_batch_padded, pos_indices
-            )
+            fy_logits = self.model_segment(y_batch_embed, tokens_batch_padded, pos_indices)
 
             objective = intervention_objective(
                 fx_logits,
@@ -625,9 +592,7 @@ class CSSDirectionFinder:
             # Apply weighting based on inactive_mode
             if self.inactive_mode == "soft":
                 # Weighted average: Σ(w_i * score_i) / Σ(w_i)
-                objective = (objective * inactive_weights).sum() / (
-                    inactive_weights.sum() + 1e-8
-                )
+                objective = (objective * inactive_weights).sum() / (inactive_weights.sum() + 1e-8)
             else:
                 objective = objective.mean()  # Standard average (for "none" and "hard")
 
@@ -686,15 +651,11 @@ class CSSDirectionFinder:
                 )
 
         if max_len == 0:
-            return torch.empty(
-                len(processed_tokens), 0, dtype=torch.long, device=device_to_use
-            )
+            return torch.empty(len(processed_tokens), 0, dtype=torch.long, device=device_to_use)
 
         # Pre-allocate output tensor
         batch_size = len(processed_tokens)
-        result = torch.full(
-            (batch_size, max_len), pad_id, dtype=torch.long, device=device_to_use
-        )
+        result = torch.full((batch_size, max_len), pad_id, dtype=torch.long, device=device_to_use)
 
         # Fill in-place
         for i, t in enumerate(processed_tokens):
@@ -708,9 +669,7 @@ class CSSDirectionFinder:
             return tokenizer.pad_token_id
         elif tokenizer.eos_token_id is not None:
             return tokenizer.eos_token_id
-        tqdm.write(
-            "Warning: pad_token_id and eos_token_id are None. Using 0 as pad_token_id."
-        )
+        tqdm.write("Warning: pad_token_id and eos_token_id are None. Using 0 as pad_token_id.")
         return 0
 
     def _find_optimal_s_single(self, prior_s: torch.Tensor, pga_its=None) -> dict:
@@ -752,8 +711,7 @@ class CSSDirectionFinder:
             for iter_idx in pbar:
                 # Check memory and evaluate periodically
                 should_evaluate = (iter_idx % 10 == 0) or (
-                    self.early_stopping_enabled
-                    and iter_idx % self.early_stopping_eval_freq == 0
+                    self.early_stopping_enabled and iter_idx % self.early_stopping_eval_freq == 0
                 )
 
                 # Update progress bar less frequently to prevent newlines
@@ -795,9 +753,7 @@ class CSSDirectionFinder:
                             break
 
                     if prior_s.shape[0] > 0:
-                        overlap = torch.max(
-                            calc_overlap(s_current, prior_s, do_relu=True)
-                        ).item()
+                        overlap = torch.max(calc_overlap(s_current, prior_s, do_relu=True)).item()
 
                     lr_history.append(current_lr)
 
@@ -813,9 +769,7 @@ class CSSDirectionFinder:
                     }
 
                     if self.early_stopping_enabled:
-                        postfix[
-                            "pat"
-                        ] = f"{patience_counter}/{self.early_stopping_patience}"
+                        postfix["pat"] = f"{patience_counter}/{self.early_stopping_patience}"
                         if len(score_history) > 1:
                             best_score = (
                                 max(score_history[:-1])
@@ -896,7 +850,11 @@ class CSSDirectionFinder:
             )
 
             if self.n_norm_discretization_steps > 0:
-                offset = (self.norm_upper_bound - self.norm_lower_bound) * (norm_idx + 1) / self.n_norm_discretization_steps
+                offset = (
+                    (self.norm_upper_bound - self.norm_lower_bound)
+                    * (norm_idx + 1)
+                    / self.n_norm_discretization_steps
+                )
                 self.target_norm = self.norm_lower_bound + offset
                 norm_idx = (norm_idx + 1) % self.n_norm_discretization_steps
 
@@ -904,7 +862,9 @@ class CSSDirectionFinder:
             pga_its_offset += 200
             all_s_candidates.append(result_dict)
 
-        return self.final_evaluation_and_ranking([r["vector"] for r in all_s_candidates], do_sort=do_sort)
+        return self.final_evaluation_and_ranking(
+            [r["vector"] for r in all_s_candidates], do_sort=do_sort
+        )
 
     @torch.no_grad()
     def _evaluate_J_s(
@@ -917,9 +877,7 @@ class CSSDirectionFinder:
         total_samples = 0
         for _ in range(math.ceil(num_samples / batch_size)):
             # Generate a batch of samples
-            x_batch, tokens, pos_indices = self._generate_batch_samples(
-                batch_size
-            )
+            x_batch, tokens, pos_indices = self._generate_batch_samples(batch_size)
             x_sel = select_positions(x_batch, pos_indices)
 
             alpha = self._get_alpha(x_sel.shape[0])
@@ -982,9 +940,7 @@ class CSSDirectionFinder:
                 s_prior = (
                     torch.stack(unique_candidates[:i], dim=0).to(self.device)
                     if i > 0
-                    else torch.zeros(
-                        (0, self.kwise_coordinates, self.d_model), device=self.device
-                    )
+                    else torch.zeros((0, self.kwise_coordinates, self.d_model), device=self.device)
                 )
                 score = self._evaluate_J_s(
                     s_cand.to(self.device), self.num_x_samples_for_final_eval, s_prior
@@ -1009,7 +965,7 @@ class CSSDirectionFinder:
                 "score_J_s": score,
                 "polarity": "positive",
                 "base_feature_id": base_feature_id,
-                "feature_id": f"{base_feature_id}_positive"
+                "feature_id": f"{base_feature_id}_positive",
             }
 
             # Negative feature (negated direction)
@@ -1018,10 +974,12 @@ class CSSDirectionFinder:
                 "score_J_s": score,  # Same score for both polarities
                 "polarity": "negative",
                 "base_feature_id": base_feature_id,
-                "feature_id": f"{base_feature_id}_negative"
+                "feature_id": f"{base_feature_id}_negative",
             }
 
             feature_pairs.extend([positive_feature, negative_feature])
 
-        print(f"Generated {len(feature_pairs)} features ({len(evaluated_candidates)} pairs) with positive/negative polarities")
+        print(
+            f"Generated {len(feature_pairs)} features ({len(evaluated_candidates)} pairs) with positive/negative polarities"
+        )
         return feature_pairs
