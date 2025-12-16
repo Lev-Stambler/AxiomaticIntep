@@ -166,6 +166,8 @@ class FeatureExplainer:
             api_key_env = "ANTHROPIC_API_KEY"
         elif self.llm_provider == "openai":
             api_key_env = "OPENAI_API_KEY"
+        elif self.llm_provider == "openrouter":
+            api_key_env = "OPENROUTER_API_KEY"
         else:
             print(f"Warning: Unknown LLM provider '{self.llm_provider}'. No API key check.")
             return False
@@ -187,6 +189,17 @@ class FeatureExplainer:
             if ChatOpenAI is None:
                 raise ImportError("langchain-openai is not installed.")
             return ChatOpenAI(model=self.llm_model_name)#, temperature=self.temperature)
+        elif self.llm_provider == "openrouter":
+            # OpenRouter uses OpenAI-compatible API
+            if ChatOpenAI is None:
+                raise ImportError("langchain-openai is not installed.")
+            import os
+            return ChatOpenAI(
+                model=self.llm_model_name,
+                openai_api_key=os.environ.get("OPENROUTER_API_KEY"),
+                openai_api_base="https://openrouter.ai/api/v1",
+                temperature=self.temperature
+            )
         else:
             raise ValueError(f"Unsupported LLM provider: {self.llm_provider}")
 

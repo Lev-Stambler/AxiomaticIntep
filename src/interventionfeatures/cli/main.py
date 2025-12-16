@@ -130,6 +130,56 @@ def run(cfg: DictConfig) -> None:
             cfg.database.index_batch_size
         )
 
+    # Generate visualizations
+    if cfg.visualization.enabled:
+        print("\nGenerating visualizations...")
+        from ..utils.visualization import ActivationSimDisplay, generate_index_page
+
+        html_dir = output_dir / "html"
+        html_dir.mkdir(exist_ok=True)
+
+        # Load CSS results
+        with open(results_path, "rb") as f:
+            css_results = pickle.load(f)
+
+        vis_display = ActivationSimDisplay(searcher)
+
+        # Generate visualization for each direction
+        for idx, result in enumerate(css_results):
+            direction_vec = result["s"]
+            polarity = result.get("polarity", "positive")
+
+            print(f"  Generating visualization for direction {idx+1}/{len(css_results)} ({polarity})...")
+
+            top_results, scores_by_vec = searcher.search_with_aggregation(
+                direction_vec.to(device),
+                use_cosine_scoring=(cfg.database.scoring_type == "cosine"),
+                top_k=cfg.visualization.num_examples,
+                rerank_top_n=200,
+                aggregation="mean",
+            )
+
+            vis_display.set_query(direction_vec)
+            output_json = html_dir / f"{idx}_{polarity}_visualization.json"
+
+            vis_display.display_search_results(
+                results=top_results,
+                scores_by_vec=scores_by_vec,
+                output_file_path=str(output_json),
+                polarity=polarity
+            )
+
+        # Generate index page
+        config_dict = OmegaConf.to_container(cfg, resolve=True)
+        generate_index_page(
+            output_path=str(output_dir),
+            config_dict=config_dict,
+            config=cfg,
+        )
+
+        print(f"  Visualizations saved to: {html_dir}")
+        print(f"  Run Streamlit: uv run interventionfeatures viz {output_dir}")
+
     print("\nPipeline complete!")
     print(f"Output directory: {output_dir}")
 
@@ -141,35 +191,74 @@ def explain(cfg: DictConfig) -> None:
 
     output_dir = Path(cfg.output_dir)
     directions_path = output_dir / "directions.pkl"
+    searcher_db_path = output_dir / "searcher_db"
 
+    # Validate prerequisites
     if not directions_path.exists():
-        print(f"Error: directions.pkl not found at {directions_path}")
-        print("Run the 'run' command first to generate CSS directions.")
+        print(f"Error: {directions_path} not found. Run 'run' command first.")
+        sys.exit(1)
+    if not searcher_db_path.exists():
+        print(f"Error: {searcher_db_path} not found. Run 'run' command first.")
         sys.exit(1)
 
+    # Load directions
     with open(directions_path, "rb") as f:
         css_results = pickle.load(f)
 
+    # Setup pipeline components
+    print("\nInitializing components...")
+    data_handler, model_segment, device = setup_pipeline(cfg)
+
+    # Load search index
+    from ..core.search import ActivationSimSearcher
+    searcher = ActivationSimSearcher(
+        data_handler=data_handler,
+        d_model=data_handler.d_model,
+        device=device,
+        scoring_type=cfg.database.scoring_type,
+        chroma_db_path=str(searcher_db_path),
+        save_activations=cfg.database.save_activations,
+    )
+
+    # Initialize explainer
     from ..analysis.explainer import FeatureExplainer
+    explainer = FeatureExplainer(
+        model=model_segment,
+        explainer_llm_provider=cfg.llm.explainer.provider,
+        explainer_llm_model_name=cfg.llm.explainer.model_name,
+        temperature=0.0
+    )
 
     print(f"\nGenerating explanations for {len(css_results)} directions...")
 
-    explainer = FeatureExplainer(
-        llm_provider=cfg.llm.explainer.provider,
-        llm_model_name=cfg.llm.explainer.model_name,
-    )
-
     explanations = []
     for i, result in enumerate(css_results):
-        print(f"  Direction {i+1}/{len(css_results)}...")
-        # This is a placeholder - actual implementation depends on FeatureExplainer API
-        explanations.append({"direction_id": i, "explanation": "TODO"})
+        direction_vec = result["s"]
+        polarity = result.get("polarity", "positive")
 
+        print(f"  Direction {i+1}/{len(css_results)} ({polarity})...")
+
+        explanation, examples, max_act = explainer.explain_css_direction(
+            css_direction=direction_vec.to(device),
+            searcher=searcher,
+            data_handler=data_handler,
+            num_examples=10
+        )
+
+        explanations.append({
+            "direction_index": i,
+            "polarity": polarity,
+            "explanation": explanation,
+            "max_activation": max_act,
+            "examples": examples[:5]
+        })
+
+    # Save explanations
     explanations_path = output_dir / "explanations.json"
     with open(explanations_path, "w") as f:
-        json.dump(explanations, f, indent=2)
+        json.dump({"explanations": explanations}, f, indent=2)
 
-    print(f"Explanations saved to: {explanations_path}")
+    print(f"\nExplanations saved to: {explanations_path}")
 
 
 @hydra.main(version_base=None, config_path="../../../conf", config_name="config")

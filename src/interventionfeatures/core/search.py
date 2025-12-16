@@ -238,6 +238,47 @@ class ActivationSimSearcher:
         except Exception as e:
             raise RuntimeError(f"Failed to extract activations: {e}")
 
+    def _extract_activations_batch(
+        self, data_handler: TransformerDataHandler, batch_tokens: torch.Tensor
+    ) -> list[torch.Tensor]:
+        """Extract activations for a batch of token sequences.
+
+        Args:
+            data_handler: Data handler with model
+            batch_tokens: (batch_size, seq_len) tensor
+
+        Returns:
+            List of activation tensors (one per sample, padding removed)
+        """
+        try:
+            with torch.no_grad():
+                hook_name = data_handler.hook_point_name_for_x
+
+                # Single forward pass for entire batch
+                _, cache = data_handler.model.run_with_cache(
+                    batch_tokens.to(self.device),
+                    names_filter=[hook_name],
+                )
+
+                # Extract per-sample activations, removing padding
+                activations_list = []
+                pad_token_id = getattr(data_handler.tokenizer, "pad_token_id", None)
+
+                for i in range(batch_tokens.size(0)):
+                    tokens = batch_tokens[i]
+                    acts = cache[hook_name][i].cpu()
+
+                    # Remove padding tokens
+                    if pad_token_id is not None:
+                        mask = tokens != pad_token_id
+                        acts = acts[mask]
+
+                    activations_list.append(acts)
+
+                return activations_list
+        except Exception as e:
+            raise RuntimeError(f"Failed to extract batch activations: {e}")
+
     # build_index_incremental is unchanged
     def build_index_incremental(
         self, num_samples_to_index: int, batch_size: int = 256, start_fresh: bool = True
@@ -283,20 +324,25 @@ class ActivationSimSearcher:
                     break
                 _, batch_tokens = batch_data
                 num_in_this_batch = batch_tokens.size(0)
-                newly_fetched_tokens = list(torch.unbind(batch_tokens.cpu(), dim=0))
+
+                # Extract activations in batch (optimized - single forward pass)
+                batch_activations = self._extract_activations_batch(data_handler, batch_tokens)
 
                 batch_embeddings, batch_metadatas, batch_ids = [], [], []
-                for _sample_idx, tokens in enumerate(newly_fetched_tokens):
+                for _sample_idx, (tokens, activations) in enumerate(
+                    zip(torch.unbind(batch_tokens.cpu(), dim=0), batch_activations)
+                ):
                     sample_idx = total_samples_processed + _sample_idx
+
+                    # Clean tokens (remove padding)
                     pad_token_id = getattr(data_handler.tokenizer, "pad_token_id", None)
                     clean_tokens = (
                         tokens[tokens != pad_token_id]
                         if pad_token_id is not None
                         else tokens
                     )
-                    activations = self._extract_activations_for_sample(
-                        data_handler, clean_tokens
-                    )
+
+                    # Activations already computed in batch - just use them
                     for i in range(activations.size(0)):
                         batch_ids.append(f"s{sample_idx}_t{i}")
                         batch_metadatas.append(

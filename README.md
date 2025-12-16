@@ -25,7 +25,9 @@ Create a `.env` file with your API keys:
 
 ```bash
 HUGGINGFACE_API_KEY=your_key
-OPENAI_API_KEY=your_key  # for explanations
+OPENROUTER_API_KEY=your_key  # for explanations (recommended)
+# or
+OPENAI_API_KEY=your_key  # alternative to OpenRouter
 ```
 
 ### CLI Usage
@@ -34,18 +36,95 @@ OPENAI_API_KEY=your_key  # for explanations
 # Print default configuration
 uv run interventionfeatures config
 
-# Run CSS direction finding
-uv run interventionfeatures run
+# Run CSS direction finding (includes visualization generation)
+uv run python -m interventionfeatures.cli.main run dataset.dataset_config=en
 
 # Override config values
-uv run interventionfeatures run model.layer_cutoff=3 training.dict_size=5
+uv run python -m interventionfeatures.cli.main run model.layer_cutoff=3 training.dict_size=5
 
-# Generate explanations for found directions
-uv run interventionfeatures explain results.pkl db_path/
+# Generate LLM explanations (requires OPENROUTER_API_KEY or OPENAI_API_KEY)
+uv run python -m interventionfeatures.cli.main explain llm=openrouter
+
+# View visualizations in Streamlit
+uv run python -m interventionfeatures.cli.main viz outputs/2025-12-16/14-30-45/
 
 # Run benchmark evaluations (RAVEL and MIB)
-uv run interventionfeatures benchmark
+uv run python -m interventionfeatures.cli.main benchmark
 ```
+
+**Note:** Outputs are automatically saved to timestamped directories: `outputs/YYYY-MM-DD/HH-MM-SS/`
+
+## ChromaDB Similarity Search
+
+The pipeline uses ChromaDB to build an efficient similarity search index for finding high-activation examples.
+
+### How It Works
+
+**Index Building Process:**
+1. During `run` command: extracts activations from ~10k samples (configurable)
+2. Stores activation vectors in ChromaDB with HNSW index
+3. Saves token metadata for each activation
+4. Persists index to `<output_dir>/searcher_db/`
+
+**Search Process:**
+- Two-stage search: fast approximate search → precise re-ranking
+- Supports cosine similarity and dot product scoring
+- Used for generating explanations and visualizations
+
+**Performance:**
+- Index building: ~5-10 minutes for 10k samples (with batching optimization)
+- Search queries: <1 second
+- Index reused across `explain` and `viz` commands
+
+### Configuration
+
+```yaml
+# conf/database/default.yaml
+index_size: 10000          # Number of samples to index
+index_batch_size: 128      # Batch size (higher = faster)
+scoring_type: "dot"        # "dot" or "cosine"
+save_activations: true     # Cache activations to disk
+```
+
+### Examples
+
+```bash
+# Build larger index
+uv run python -m interventionfeatures.cli.main run database.index_size=50000
+
+# Use cosine similarity
+uv run python -m interventionfeatures.cli.main run database.scoring_type=cosine
+
+# Reuse existing index (specify output directory)
+uv run python -m interventionfeatures.cli.main explain  # Uses index from Hydra's output dir
+```
+
+### Directory Structure
+
+```
+outputs/2025-12-16/14-30-45/
+├── searcher_db/              # ChromaDB persistent storage
+│   ├── chroma.sqlite3        # Metadata database
+│   └── indexed_sample_tokens.pkl
+├── directions.pkl            # CSS directions
+├── explanations.json         # LLM explanations
+├── html/                     # Visualization data
+│   └── *_visualization.json
+└── config.yaml              # Run configuration
+```
+
+### Troubleshooting
+
+**Error: "ChromaDB not indexed"**
+- Run `uv run interventionfeatures run` first to build the index
+
+**Slow index building**
+- Increase `database.index_batch_size` to 256 or 512
+- Reduce `database.index_size` for faster iteration
+
+**Out of memory during indexing**
+- Decrease `database.index_batch_size`
+- Set `database.save_activations=false` to reduce memory usage
 
 ### Configuration
 
