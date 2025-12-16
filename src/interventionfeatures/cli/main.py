@@ -9,13 +9,37 @@ from pathlib import Path
 
 # Fix sqlite3 for ChromaDB compatibility
 try:
-    import pysqlite3
+    import pysqlite3  # noqa: F401
+
     sys.modules["sqlite3"] = sys.modules.pop("pysqlite3")
 except ImportError:
     pass
 
 import hydra
 from omegaconf import DictConfig, OmegaConf
+
+
+# Compute config path - works both in development and when installed
+def get_config_path():
+    """Get the path to the conf directory."""
+    # Try to find conf relative to this file (development mode)
+    current_file = Path(__file__).resolve()
+    dev_conf = current_file.parent.parent.parent.parent / "conf"
+    if dev_conf.exists():
+        return str(dev_conf)
+
+    # In installed mode, conf should be at the package root
+    import site
+    for site_dir in site.getsitepackages():
+        installed_conf = Path(site_dir) / "conf"
+        if installed_conf.exists():
+            return str(installed_conf)
+
+    # Fallback to relative path
+    return "../../../conf"
+
+
+CONFIG_PATH = get_config_path()
 
 
 def setup_environment():
@@ -76,7 +100,7 @@ def setup_pipeline(cfg: DictConfig):
     return data_handler, model_segment, device
 
 
-@hydra.main(version_base=None, config_path="../../../conf", config_name="config")
+@hydra.main(version_base=None, config_path=CONFIG_PATH, config_name="config")
 def run(cfg: DictConfig) -> None:
     """Run the CSS direction finding pipeline."""
     setup_environment()
@@ -184,7 +208,7 @@ def run(cfg: DictConfig) -> None:
     print(f"Output directory: {output_dir}")
 
 
-@hydra.main(version_base=None, config_path="../../../conf", config_name="config")
+@hydra.main(version_base=None, config_path=CONFIG_PATH, config_name="config")
 def explain(cfg: DictConfig) -> None:
     """Generate explanations for CSS directions."""
     setup_environment()
@@ -261,7 +285,7 @@ def explain(cfg: DictConfig) -> None:
     print(f"\nExplanations saved to: {explanations_path}")
 
 
-@hydra.main(version_base=None, config_path="../../../conf", config_name="config")
+@hydra.main(version_base=None, config_path=CONFIG_PATH, config_name="config")
 def benchmark(cfg: DictConfig) -> None:
     """Run RAVEL and/or MIB benchmarks on CSS directions."""
     setup_environment()
@@ -376,6 +400,113 @@ def benchmark(cfg: DictConfig) -> None:
         _save_benchmark_results(results, output_dir, cfg.benchmark.output_format)
 
 
+@hydra.main(version_base=None, config_path=CONFIG_PATH, config_name="config")
+def discover(cfg: DictConfig) -> None:
+    """Discover task-specific CSS directions for benchmark tasks.
+
+    This command implements task-targeted CSS direction finding, which optimizes
+    directions to maximize Interchange Intervention Accuracy (IIA) for specific
+    benchmark tasks, rather than finding generic high-sensitivity features.
+    """
+    setup_environment()
+
+    print("=" * 60)
+    print("Task-Targeted CSS Direction Discovery")
+    print("=" * 60)
+    print(f"\nDiscover Configuration:\n{OmegaConf.to_yaml(cfg.discover)}")
+
+    from transformer_lens import HookedTransformer
+
+    from ..config import set_global_seed, setup_device
+    from ..core.task_css import TaskTargetedCSSFinder
+
+    set_global_seed(cfg.seed)
+    device = setup_device()
+
+    output_dir = Path(cfg.output_dir)
+
+    # Save config
+    config_path = output_dir / "config.yaml"
+    OmegaConf.save(cfg, config_path)
+    print(f"Config saved to: {config_path}")
+
+    # Load model
+    print(f"\nLoading model: {cfg.model.model_name}")
+    model = HookedTransformer.from_pretrained(
+        cfg.model.model_name,
+        device=device,
+    )
+    model.eval()
+
+    # Discover directions for each task
+    tasks = list(cfg.discover.tasks)
+    all_results = {}
+
+    for task_name in tasks:
+        print(f"\n{'='*60}")
+        print(f"Processing task: {task_name}")
+        print(f"{'='*60}")
+
+        try:
+            finder = TaskTargetedCSSFinder(
+                model=model,
+                task_name=task_name,
+                layer=cfg.model.layer_cutoff,
+                device=device,
+                max_seq_len=cfg.model.max_seq_len,
+                hf_cache_dir=cfg.discover.hf_cache_dir,
+            )
+
+            # Find direction(s) for this task
+            if cfg.discover.num_directions_per_task > 1:
+                results = finder.find_multiple_directions(
+                    num_directions=cfg.discover.num_directions_per_task,
+                    num_iterations=cfg.discover.iterations,
+                    batch_size=cfg.discover.batch_size,
+                    learning_rate=cfg.discover.learning_rate,
+                    target_norm=cfg.discover.target_norm,
+                    orthogonality_weight=cfg.discover.orthogonality_weight,
+                )
+            else:
+                result = finder.find_task_direction(
+                    num_iterations=cfg.discover.iterations,
+                    batch_size=cfg.discover.batch_size,
+                    learning_rate=cfg.discover.learning_rate,
+                    target_norm=cfg.discover.target_norm,
+                    eval_freq=cfg.discover.eval_freq,
+                )
+                results = [result]
+
+            all_results[task_name] = results
+
+            # Print summary
+            for i, r in enumerate(results):
+                print(f"  Direction {i+1}: IIA = {r['iia']:.4f}")
+
+        except Exception as e:
+            print(f"Error processing task {task_name}: {e}")
+            import traceback
+            traceback.print_exc()
+
+    # Save results
+    save_path = output_dir / "task_directions.pkl"
+    with open(save_path, "wb") as f:
+        pickle.dump(all_results, f)
+    print(f"\nResults saved to: {save_path}")
+
+    # Print summary
+    print("\n" + "=" * 60)
+    print("Discovery Summary")
+    print("=" * 60)
+    for task_name, results in all_results.items():
+        avg_iia = sum(r["iia"] for r in results) / len(results)
+        print(f"  {task_name}: {len(results)} direction(s), avg IIA = {avg_iia:.4f}")
+
+    print(f"\nOutput directory: {output_dir}")
+    print("\nTo evaluate on benchmarks, run:")
+    print("  uv run interventionfeatures benchmark benchmark.directions_path=task_directions.pkl")
+
+
 def _save_benchmark_results(
     results: dict,
     output_dir: Path,
@@ -440,6 +571,7 @@ def main():
         print("")
         print("Commands:")
         print("  run        Run the CSS direction finding pipeline")
+        print("  discover   Discover task-targeted CSS directions for benchmarks")
         print("  explain    Generate explanations for CSS directions")
         print("  benchmark  Run RAVEL and MIB benchmark evaluations")
         print("  viz        Launch Streamlit visualization app")
@@ -455,6 +587,9 @@ def main():
     elif command == "run":
         sys.argv = [sys.argv[0]] + sys.argv[2:]
         run()
+    elif command == "discover":
+        sys.argv = [sys.argv[0]] + sys.argv[2:]
+        discover()
     elif command == "explain":
         sys.argv = [sys.argv[0]] + sys.argv[2:]
         explain()
@@ -468,6 +603,7 @@ def main():
         print("")
         print("Commands:")
         print("  run        Run the CSS direction finding pipeline")
+        print("  discover   Discover task-targeted CSS directions for benchmarks")
         print("  explain    Generate explanations for CSS directions")
         print("  benchmark  Run RAVEL and MIB benchmark evaluations")
         print("  viz        Launch Streamlit visualization app")

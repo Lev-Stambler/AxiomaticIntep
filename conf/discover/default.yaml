@@ -1,0 +1,26 @@
+# Task-targeted CSS direction discovery configuration
+# Uses benchmark tasks as optimization targets instead of generic sensitivity
+# Optimized for A40 GPU (48GB VRAM)
+
+# Tasks to discover directions for
+# Available: ioi, arithmetic_add, arithmetic_sub, mcqa, arc_easy, arc_challenge
+#            ravel_country, ravel_language, ravel_continent, ravel_timezone
+tasks:
+  - ioi
+  - ravel_country
+
+# PGA optimization parameters (tuned for A40 48GB)
+iterations: 512
+batch_size: 128  # A40 can handle larger batches
+learning_rate: 0.1
+target_norm: 10.0
+
+# Multiple directions per task
+num_directions_per_task: 1
+orthogonality_weight: 0.1  # Penalty for overlap with prior directions
+
+# Logging
+eval_freq: 50  # How often to log progress during training
+
+# HuggingFace cache
+hf_cache_dir: null

@@ -164,6 +164,23 @@ class BenchmarkConfig:
 
 
 @dataclass
+class DiscoverConfig:
+    """Configuration for task-targeted CSS direction discovery."""
+
+    tasks: list[str] = field(
+        default_factory=lambda: ["ioi", "ravel_country"]
+    )
+    iterations: int = 512
+    batch_size: int = 32
+    learning_rate: float = 0.1
+    target_norm: float = 10.0
+    num_directions_per_task: int = 1  # How many directions to find per task
+    orthogonality_weight: float = 0.1  # Weight for orthogonality penalty
+    eval_freq: int = 50  # How often to log progress
+    hf_cache_dir: str | None = None  # HuggingFace cache directory
+
+
+@dataclass
 class Config:
     """Main configuration for interventionfeatures."""
 
@@ -173,6 +190,7 @@ class Config:
     llm: LLMConfig = field(default_factory=LLMConfig)
     dataset: DatasetConfig = field(default_factory=DatasetConfig)
     benchmark: BenchmarkConfig = field(default_factory=BenchmarkConfig)
+    discover: DiscoverConfig = field(default_factory=DiscoverConfig)
     seed: int = 62
     output_dir: str = "outputs"
 

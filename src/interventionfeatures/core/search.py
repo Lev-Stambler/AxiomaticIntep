@@ -270,7 +270,7 @@ class ActivationSimSearcher:
 
                     # Remove padding tokens
                     if pad_token_id is not None:
-                        mask = tokens != pad_token_id
+                        mask = tokens.cpu() != pad_token_id
                         acts = acts[mask]
 
                     activations_list.append(acts)

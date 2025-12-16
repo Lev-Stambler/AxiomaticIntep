@@ -96,3 +96,6 @@ uv run interventionfeatures run model.layer_cutoff=5 training.learning_rate=0.1
 - `[search]` - ChromaDB for similarity search
 - `[explain]` - LangChain for AI explanations
 - `[dev]` - Testing and linting tools
+
+## Extra for Claude
+Don't run any tests locally, ask for the runpod instance of ssh instance

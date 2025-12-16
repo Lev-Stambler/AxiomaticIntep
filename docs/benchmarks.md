@@ -13,6 +13,90 @@ Both benchmarks use **interchange interventions** (also called activation patchi
 
 ---
 
+## Task-Targeted CSS Discovery
+
+### The Key Insight
+
+The standard CSS algorithm finds directions that maximize **generic sensitivity** - how much an intervention changes model outputs (measured by KL divergence). This produces many features that may or may not be useful for specific tasks.
+
+**Task-targeted CSS** takes a different approach: it optimizes directions to maximize **task-specific IIA** (Interchange Intervention Accuracy). Instead of finding features blindly and then evaluating them, we directly optimize for benchmark performance.
+
+```
+Standard CSS: Find many features → Evaluate on benchmarks
+Task-targeted CSS: Load benchmark task → Find 1-5 features that maximize task performance
+```
+
+### How It Works
+
+1. **Load task dataset** (e.g., IOI with base/source input pairs)
+2. **Define task-specific objective**: Does intervention cause correct output?
+3. **PGA optimization**: Gradient ascent on IIA, not KL divergence
+4. **Output**: Task-specific direction that maximizes benchmark score
+
+### Usage
+
+```bash
+# Discover direction for IOI task
+uv run interventionfeatures discover discover.tasks=[ioi]
+
+# Discover directions for RAVEL attributes
+uv run interventionfeatures discover \
+  discover.tasks=[ravel_country,ravel_continent,ravel_language]
+
+# Find multiple directions per task
+uv run interventionfeatures discover \
+  discover.num_directions_per_task=3 \
+  discover.orthogonality_weight=0.1
+
+# Then evaluate discovered directions on benchmark
+uv run interventionfeatures benchmark \
+  benchmark.directions_path=task_directions.pkl
+```
+
+### Available Tasks
+
+| Task | Dataset | Description |
+|------|---------|-------------|
+| `ioi` | mib-bench/ioi | Indirect Object Identification |
+| `arithmetic_add` | mib-bench/arithmetic_addition | Addition problems |
+| `arithmetic_sub` | mib-bench/arithmetic_subtraction | Subtraction problems |
+| `mcqa` | mib-bench/copycolors_mcqa | Multiple choice QA |
+| `arc_easy` | mib-bench/arc_easy | ARC Easy questions |
+| `arc_challenge` | mib-bench/arc_challenge | ARC Challenge questions |
+| `ravel_country` | mib-bench/ravel | City → Country attribute |
+| `ravel_language` | mib-bench/ravel | City → Language attribute |
+| `ravel_continent` | mib-bench/ravel | City → Continent attribute |
+| `ravel_timezone` | mib-bench/ravel | City → Timezone attribute |
+
+### Configuration
+
+```yaml
+# conf/discover/default.yaml
+tasks:
+  - ioi
+  - ravel_country
+
+iterations: 512
+batch_size: 32
+learning_rate: 0.1
+target_norm: 10.0
+num_directions_per_task: 1
+orthogonality_weight: 0.1
+eval_freq: 50
+```
+
+### Comparison: Generic vs Task-Targeted CSS
+
+| Aspect | Generic CSS | Task-Targeted CSS |
+|--------|-------------|-------------------|
+| Data | Random C4 samples | Task contrastive pairs |
+| Objective | KL divergence (sensitivity) | IIA (task accuracy) |
+| Output | Many generic features | Few task-specific features |
+| Use case | Exploration | Benchmark submission |
+| Efficiency | Find 10,000 features | Find 1-5 per task |
+
+---
+
 ## RAVEL Benchmark
 
 ### Reference

@@ -42,6 +42,9 @@ uv run python -m interventionfeatures.cli.main run dataset.dataset_config=en
 # Override config values
 uv run python -m interventionfeatures.cli.main run model.layer_cutoff=3 training.dict_size=5
 
+# Task-targeted CSS discovery (optimizes directly for benchmark IIA)
+uv run interventionfeatures discover discover.tasks=[ioi,ravel_country]
+
 # Generate LLM explanations (requires OPENROUTER_API_KEY or OPENAI_API_KEY)
 uv run python -m interventionfeatures.cli.main explain llm=openrouter
 
