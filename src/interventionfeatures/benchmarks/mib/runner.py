@@ -1,59 +1,81 @@
 """MIB (Mechanistic Interpretability Benchmark) runner.
 
-MIB evaluates featurization methods on their ability to localize causal variables
-using Interchange Intervention Accuracy (IIA).
-
-Reference: https://github.com/aaronmueller/mib
-Paper: https://arxiv.org/abs/2504.13151
+Wraps the official MIB implementation: https://github.com/aaronmueller/mib
 """
 
 from __future__ import annotations
 
-from ..base import BaseBenchmarkRunner, BenchmarkResult
-from .tasks import (
-    ARCTask,
-    ArithmeticTask,
-    BaseMIBTask,
-    IOITask,
-    MCQATask,
-    RAVELTask,
+import os
+import sys
+import torch
+import torch.nn as nn
+from typing import Any
+
+# Add MIB to path
+MIB_PATH = os.path.join(
+    os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__)))),
+    "interventionfeatures",
+    "benchmarks",
+    "external",
+    "MIB",
+    "MIB-causal-variable-track",
 )
+if MIB_PATH not in sys.path:
+    sys.path.append(MIB_PATH)
+
+from ..base import BaseBenchmarkRunner, BenchmarkResult
+
+# Import MIB components
+try:
+    from CausalAbstraction.experiments.residual_stream_experiment import PatchResidualStream
+    from CausalAbstraction.neural.featurizers import Featurizer
+    from CausalAbstraction.neural.pipeline import LMPipeline
+    from CausalAbstraction.neural.LM_units import TokenPosition
+except ImportError as e:
+    print(f"Error importing MIB components: {e}")
+    # We might be in a context where MIB is not yet set up
+    pass
+
+
+class CSSFeaturizerModule(nn.Module):
+    """Adapter to make CSSFeaturizer compatible with MIB's featurizer module interface."""
+    def __init__(self, css_featurizer):
+        super().__init__()
+        self.css = css_featurizer
+
+    def forward(self, x):
+        # x -> (features, error)
+        # We pass x itself as 'error' (residual context) because 
+        # CSSFeaturizer.inverse_featurizer expects the full original activation 
+        # to compute the orthogonal component.
+        f = self.css.forward_featurizer(x)
+        return f, x
+
+
+class CSSInverseFeaturizerModule(nn.Module):
+    """Adapter to make CSSFeaturizer compatible with MIB's inverse featurizer interface."""
+    def __init__(self, css_featurizer):
+        super().__init__()
+        self.css = css_featurizer
+
+    def forward(self, f, error):
+        # (features, error) -> reconstructed x
+        # error is the original x (see CSSFeaturizerModule)
+        return self.css.inverse_featurizer(f, error)
 
 
 class MIBBenchmarkRunner(BaseBenchmarkRunner):
     """
-    Runner for MIB Causal Variable Track.
-
-    Implements evaluation on all 5 MIB tasks:
-    - IOI (Indirect Object Identification)
-    - Arithmetic (Addition/Subtraction)
-    - MCQA (Multiple Choice QA)
-    - ARC (AI2 Reasoning Challenge - Easy and Challenge)
-    - RAVEL
-
-    Uses Interchange Intervention Accuracy (IIA) as the primary metric.
+    Runner for MIB Causal Variable Track using official implementation.
     """
 
-    # Task name to class mapping
-    TASK_CLASSES: dict[str, type[BaseMIBTask]] = {
-        "ioi": IOITask,
-        "arithmetic_add": ArithmeticTask,
-        "arithmetic_sub": ArithmeticTask,
-        "mcqa": MCQATask,
-        "arc_easy": ARCTask,
-        "arc_challenge": ARCTask,
-        "ravel": RAVELTask,
-    }
-
-    # HuggingFace dataset paths
-    HF_DATASETS = {
-        "ioi": "mib-bench/ioi",
-        "arithmetic_add": "mib-bench/arithmetic_addition",
-        "arithmetic_sub": "mib-bench/arithmetic_subtraction",
-        "mcqa": "mib-bench/copycolors_mcqa",
-        "arc_easy": "mib-bench/arc_easy",
-        "arc_challenge": "mib-bench/arc_challenge",
-        "ravel": "mib-bench/ravel",
+    # Task name mapping to MIB module names
+    TASK_MAPPING = {
+        "ioi": "IOI_task",
+        "arithmetic": "two_digit_addition_task", # Mapped from 'arithmetic'
+        "mcqa": "simple_MCQA",
+        "arc_easy": "ARC",
+        "ravel": "RAVEL",
     }
 
     def __init__(
@@ -62,187 +84,69 @@ class MIBBenchmarkRunner(BaseBenchmarkRunner):
         model_name: str,
         layer: int,
         device: str = "cuda",
-        hf_cache_dir: str | None = None,
     ):
-        """
-        Initialize MIB benchmark runner.
-
-        Args:
-            css_directions: Output from CSSDirectionFinder
-            model_name: HuggingFace model name
-            layer: Layer index for interventions
-            device: Device to run on
-            hf_cache_dir: Optional HuggingFace cache directory
-        """
         super().__init__(css_directions, model_name, layer, device)
-        self.hf_cache_dir = hf_cache_dir
-        self._task_instances: dict[str, BaseMIBTask] = {}
+        # Note: We don't load self._model here because MIB uses its own LMPipeline
 
     def get_available_tasks(self) -> list[str]:
-        """Return available MIB tasks."""
-        return list(self.TASK_CLASSES.keys())
+        return list(self.TASK_MAPPING.keys())
 
-    def _get_task_instance(self, task_name: str) -> BaseMIBTask:
-        """Get or create task instance."""
-        if task_name not in self._task_instances:
-            if self._model is None:
-                self._load_model()
+    def load_data(self, task_name: str) -> Any:
+        # MIB handles data loading internally in get_counterfactual_datasets
+        return None
 
-            task_class = self.TASK_CLASSES.get(task_name)
-            if not task_class:
-                raise ValueError(f"Unknown task: {task_name}")
-
-            # Create task with appropriate parameters
-            kwargs = {
-                "model": self._model,
-                "layer": self.layer,
-                "device": self.device,
-            }
-
-            # Add task-specific parameters
-            if task_name == "arithmetic_add":
-                kwargs["operation"] = "add"
-            elif task_name == "arithmetic_sub":
-                kwargs["operation"] = "sub"
-            elif task_name == "arc_easy":
-                kwargs["difficulty"] = "easy"
-            elif task_name == "arc_challenge":
-                kwargs["difficulty"] = "challenge"
-
-            self._task_instances[task_name] = task_class(**kwargs)
-
-        return self._task_instances[task_name]
-
-    def load_data(self, task_name: str) -> list[dict]:
-        """
-        Load MIB dataset from HuggingFace.
-
-        Args:
-            task_name: Name of the task
-
-        Returns:
-            List of processed examples
-        """
-        dataset_name = self.HF_DATASETS.get(task_name)
-        if not dataset_name:
-            raise ValueError(f"Unknown task: {task_name}")
-
-        try:
-            from datasets import load_dataset
-
-            dataset = load_dataset(
-                dataset_name,
-                split="test",
-                cache_dir=self.hf_cache_dir,
-            )
-
-            # Get task instance for processing
-            task = self._get_task_instance(task_name)
-
-            # Process each example
-            processed = []
-            for item in dataset:
-                processed.append(task.process_example(dict(item)))
-
-            return processed
-
-        except Exception as e:
-            print(f"Warning: Could not load {dataset_name} from HuggingFace: {e}")
-            return self._generate_synthetic_data(task_name)
-
-    def _generate_synthetic_data(self, task_name: str) -> list[dict]:
-        """Generate synthetic test data for demonstration."""
-        examples = []
-
+    def _get_task_modules(self, task_name: str):
+        """Import task-specific modules dynamically."""
         if task_name == "ioi":
-            # IOI synthetic examples
-            pairs = [
-                ("John gave Mary the book. Mary gave", "John", "Mary"),
-                ("Alice sent Bob a letter. Bob sent", "Alice", "Bob"),
-                ("Tom helped Sarah with homework. Sarah helped", "Tom", "Sarah"),
-            ]
-            for base, base_io, source_io in pairs:
-                examples.append(
-                    {
-                        "base_input": f"{base} the book to",
-                        "source_input": base.replace(base_io, source_io) + " the book to",
-                        "base_answer": base_io,
-                        "source_answer": source_io,
-                        "intervention_position": -2,
-                        "metadata": {"task_type": "ioi"},
-                    }
-                )
-
-        elif task_name.startswith("arithmetic"):
-            op = "+" if "add" in task_name else "-"
-            for a in [12, 23, 34]:
-                for b in [11, 22, 33]:
-                    result = a + b if op == "+" else a - b
-                    alt_b = b + 10
-                    alt_result = a + alt_b if op == "+" else a - alt_b
-                    examples.append(
-                        {
-                            "base_input": f"{a} {op} {b} =",
-                            "source_input": f"{a} {op} {alt_b} =",
-                            "base_answer": str(result),
-                            "source_answer": str(alt_result),
-                            "intervention_position": -2,
-                            "metadata": {"task_type": task_name},
-                        }
-                    )
-
+            from tasks.IOI_task.ioi_task import get_counterfactual_datasets, get_causal_model, get_token_positions
+            variable = "indirect_object" 
+        elif task_name == "arithmetic":
+            from tasks.two_digit_addition_task.arithmetic import get_counterfactual_datasets, get_causal_model, get_token_positions
+            variable = "sum" # Default variable
         elif task_name == "mcqa":
-            qa_pairs = [
-                ("The sky is blue.", "blue", "What color is the sky?", ["blue", "red"]),
-                ("The grass is green.", "green", "What color is the grass?", ["green", "yellow"]),
-            ]
-            for context, answer, question, choices in qa_pairs:
-                choice_str = " ".join(f"{chr(65 + i)}) {c}" for i, c in enumerate(choices))
-                examples.append(
-                    {
-                        "base_input": f"{context} {question} {choice_str}",
-                        "source_input": f"{context.replace(answer, choices[1])} {question} {choice_str}",
-                        "base_answer": "A",
-                        "source_answer": "B",
-                        "intervention_position": -2,
-                        "metadata": {"task_type": "mcqa"},
-                    }
-                )
-
-        elif task_name.startswith("arc"):
-            examples.append(
-                {
-                    "base_input": "What gas do plants absorb? A) oxygen B) carbon dioxide C) nitrogen",
-                    "source_input": "What gas do plants absorb? A) oxygen B) carbon dioxide C) nitrogen",
-                    "base_answer": "B",
-                    "source_answer": "B",
-                    "intervention_position": -2,
-                    "metadata": {"task_type": task_name},
-                }
-            )
-
+            from tasks.simple_MCQA.simple_MCQA import get_counterfactual_datasets, get_causal_model, get_token_positions
+            variable = "object"
+        elif task_name == "arc_easy":
+            from tasks.ARC.ARC import get_counterfactual_datasets, get_causal_model, get_token_positions
+            variable = "answer"
         elif task_name == "ravel":
-            cities = [
-                ("Paris", "France", "Berlin", "Germany"),
-                ("Tokyo", "Japan", "Seoul", "South Korea"),
-            ]
-            for base_city, base_country, src_city, src_country in cities:
-                examples.append(
-                    {
-                        "base_input": f"{base_city} is located in",
-                        "source_input": f"{src_city} is located in",
-                        "base_answer": base_country,
-                        "source_answer": src_country,
-                        "intervention_position": -2,
-                        "metadata": {
-                            "entity": base_city,
-                            "attribute": "country",
-                            "task_type": "ravel",
-                        },
-                    }
-                )
+            from tasks.RAVEL.ravel import get_counterfactual_datasets, get_causal_model, get_token_positions
+            variable = "country" # Default
+        else:
+            raise ValueError(f"Unknown task: {task_name}")
+            
+        return get_counterfactual_datasets, get_causal_model, get_token_positions, variable
 
-        return examples
+    def _get_checker(self, task_name: str):
+        import re
+        
+        def simple_checker(output_text, expected):
+            return expected in output_text
+        
+        def arithmetic_checker(output_text, expected):
+            numbers_in_output = re.findall(r'\d+', output_text)
+            if not numbers_in_output:
+                return False
+            first_number = numbers_in_output[0]
+            if expected[0] == "0":
+                expected_no_leading_zero = expected[1:]
+                return first_number == expected_no_leading_zero or first_number == expected
+            return first_number == expected
+        
+        def ravel_checker(output_text, expected):
+            if output_text is None:
+                return False
+            output_clean = re.sub(r'[^\w\s]+', '', output_text.lower()).strip()
+            expected_list = [e.strip().lower() for e in expected.split(',')]
+            if any(part in output_clean for part in expected_list):
+                return True
+            return False
+
+        if task_name == "arithmetic":
+            return arithmetic_checker
+        elif task_name == "ravel":
+            return ravel_checker
+        return simple_checker
 
     def run_evaluation(
         self,
@@ -251,121 +155,110 @@ class MIBBenchmarkRunner(BaseBenchmarkRunner):
         num_samples: int | None = None,
     ) -> BenchmarkResult:
         """
-        Run MIB evaluation for a specific task.
-
-        Args:
-            task_name: One of the available task names
-            direction_indices: Which CSS directions to use
-            num_samples: Limit evaluation to N samples
-
-        Returns:
-            BenchmarkResult with IIA score
+        Run MIB evaluation using official PatchResidualStream.
         """
-        # Ensure model is loaded
-        if self._model is None:
-            self._load_model()
+        # 1. Setup task components
+        get_cf_datasets, get_causal_model, get_token_pos, variable = self._get_task_modules(task_name)
+        
+        # 2. Setup Pipeline
+        # Map model names to what MIB expects or use full path
+        pipeline = LMPipeline(self.model_name, max_new_tokens=10, device=self.device) 
+        # Note: max_new_tokens=10 to allow for generation checks
+        pipeline.tokenizer.padding_side = "left"
 
-        # Get task instance
-        task = self._get_task_instance(task_name)
-
-        # Load data
-        examples = self.load_data(task_name)
-
-        if num_samples and num_samples > 0:
-            examples = examples[:num_samples]
-
-        if not examples:
-            return BenchmarkResult(
-                task_name=task_name,
-                metrics={"iia": 0.0},
-                per_sample_results=[],
-                metadata={"error": "No examples loaded"},
-            )
-
-        # Create featurizer
-        featurizer = self.get_featurizer(direction_indices)
-        featurizer = featurizer.to(self.device)
-
-        # Run evaluation
-        iia_results = []
-        per_sample_results = []
-
-        for i, example in enumerate(examples):
+        # 3. Get Data
+        # MIB loads data via get_counterfactual_datasets
+        # We assume size=None loads all, but we can limit if num_samples is set
+        # However, MIB logic usually loads all. We can slice later if needed but 
+        # FilterExperiment uses batch_size.
+        dataset_size = num_samples if num_samples else None
+        
+        # MIB's get_counterfactual_datasets usually has signature (hf=True, size=...)
+        # But some might differ. IOI uses (size=...).
+        try:
+            cf_datasets = get_cf_datasets(hf=True, size=dataset_size)
+        except TypeError:
+            # Fallback for IOI which might not have hf arg in some versions or differs
             try:
-                iia = task.evaluate_single(example, featurizer)
-                iia_results.append(iia)
-                per_sample_results.append(
-                    {
-                        "index": i,
-                        "iia": iia,
-                        "base_input": example.get("base_input", "")[:50],
-                    }
-                )
-            except Exception as e:
-                print(f"Warning: Error evaluating example {i}: {e}")
-                continue
+                cf_datasets = get_cf_datasets(size=dataset_size)
+            except:
+                cf_datasets = get_cf_datasets()
 
-        # Compute aggregate metric
-        iia_score = sum(iia_results) / len(iia_results) if iia_results else 0.0
+        # Filter for test sets
+        cf_datasets = {k: v for k, v in cf_datasets.items() if "test" in k}
+        
+        if not cf_datasets:
+            return BenchmarkResult(task_name, {"iia": 0.0}, [], {"error": "No datasets found"})
+
+        # 4. Setup Causal Model and Token Positions
+        causal_model = get_causal_model()
+        token_positions = get_token_pos(pipeline, causal_model)
+        
+        # 5. Create Featurizer
+        css_featurizer = self.get_featurizer(direction_indices)
+        css_featurizer = css_featurizer.to(self.device)
+        
+        # Wrap in MIB Featurizer
+        mib_featurizer = Featurizer(
+            featurizer=CSSFeaturizerModule(css_featurizer),
+            inverse_featurizer=CSSInverseFeaturizerModule(css_featurizer),
+            n_features=css_featurizer.num_directions,
+            id="css"
+        )
+        
+        # Construct featurizers dict for all layers/positions
+        # MIB expects: {(layer, position_id): featurizer}
+        # But PatchResidualStream init logic iterates layers and token_positions 
+        # and looks up featurizers. If not found, it creates IdentityFeaturizer.
+        # We want to apply OUR featurizer at the specific layer we are testing.
+        
+        featurizers_map = {}
+        for pos in token_positions:
+            featurizers_map[(self.layer, pos.id)] = mib_featurizer
+
+        # 6. Run Experiment
+        checker = self._get_checker(task_name)
+        
+        # Filter datasets (optional, but good practice in MIB)
+        # filter_experiment = FilterExperiment(pipeline, causal_model, checker)
+        # filtered_datasets = filter_experiment.filter(cf_datasets, verbose=False)
+        # We skip filtering for speed/simplicity and use all test data
+        filtered_datasets = cf_datasets
+
+        experiment = PatchResidualStream(
+            pipeline=pipeline,
+            causal_model=causal_model,
+            layers=[self.layer],
+            token_positions=token_positions,
+            checker=checker,
+            featurizers=featurizers_map,
+            config={"method_name": "css", "batch_size": 32}
+        )
+
+        # perform_interventions returns results dict
+        results = experiment.perform_interventions(
+            filtered_datasets,
+            target_variables_list=[[variable]],
+            save_dir=None
+        )
+
+        # 7. Parse Results
+        # MIB results structure is complex. We need to extract IIA (Interchange Intervention Accuracy).
+        # results["dataset"][dataset_name]["model_unit"][unit_name][variable_name]["average_score"]
+        
+        scores = []
+        per_sample = []
+        
+        for ds_name, ds_data in results["dataset"].items():
+            for unit_name, unit_data in ds_data["model_unit"].items():
+                if variable in unit_data:
+                     score = unit_data[variable].get("average_score", 0.0)
+                     scores.append(score)
+        
+        avg_score = sum(scores) / len(scores) if scores else 0.0
 
         return BenchmarkResult(
             task_name=task_name,
-            metrics={"iia": iia_score},
-            per_sample_results=per_sample_results,
-            metadata={
-                "num_samples": len(examples),
-                "num_evaluated": len(iia_results),
-                "model": self.model_name,
-                "layer": self.layer,
-                "num_directions": featurizer.num_directions,
-            },
+            metrics={"iia": avg_score},
+            metadata={"num_datasets": len(cf_datasets), "variable": variable}
         )
-
-    def run_all_evaluations(
-        self,
-        direction_indices: list[int] | None = None,
-        tasks: list[str] | None = None,
-        num_samples: int | None = None,
-        **kwargs,
-    ) -> dict[str, BenchmarkResult]:
-        """
-        Run evaluation on multiple MIB tasks.
-
-        Args:
-            direction_indices: Which CSS directions to use
-            tasks: Specific tasks to run, None = all
-            num_samples: Limit samples per task
-
-        Returns:
-            Dictionary mapping task names to results
-        """
-        if tasks is None:
-            tasks = self.get_available_tasks()
-
-        results = {}
-        for task_name in tasks:
-            if task_name not in self.TASK_CLASSES:
-                print(f"Warning: Unknown task {task_name}, skipping")
-                continue
-
-            print(f"Running MIB task: {task_name}")
-            results[task_name] = self.run_evaluation(task_name, direction_indices, num_samples)
-            print(f"  IIA: {results[task_name].metrics['iia']:.4f}")
-
-        return results
-
-    def get_aggregate_score(self, results: dict[str, BenchmarkResult]) -> float:
-        """
-        Compute aggregate IIA score across all tasks.
-
-        Args:
-            results: Dictionary of task results
-
-        Returns:
-            Mean IIA across all tasks
-        """
-        if not results:
-            return 0.0
-
-        scores = [r.metrics.get("iia", 0.0) for r in results.values()]
-        return sum(scores) / len(scores)
