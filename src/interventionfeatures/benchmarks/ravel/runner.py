@@ -55,7 +55,7 @@ class RAVELBenchmarkRunner(BaseBenchmarkRunner):
         model_name: str,
         layer: int,
         device: str = "cuda",
-        ravel_data_dir: str | None = None,
+        ravel_repo_path: str | None = None,
     ):
         """
         Initialize RAVEL benchmark runner.
@@ -65,24 +65,22 @@ class RAVELBenchmarkRunner(BaseBenchmarkRunner):
             model_name: HuggingFace model name
             layer: Layer index for interventions
             device: Device to run on
-            ravel_data_dir: Directory containing RAVEL json data
+            ravel_repo_path: Directory containing RAVEL json data (or path to repo)
         """
         super().__init__(css_directions, model_name, layer, device)
         
         # Default data path
-        if ravel_data_dir is None:
+        if ravel_repo_path is None:
             base_path = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
             self.ravel_data_dir = os.path.join(
                 base_path, 
                 "interventionfeatures", 
                 "benchmarks", 
-                "external", 
                 "ravel", 
-                "data",
                 "data"
             )
         else:
-            self.ravel_data_dir = ravel_data_dir
+            self.ravel_data_dir = ravel_repo_path
 
     def _load_model(self):
         """Load model with tokenizer."""

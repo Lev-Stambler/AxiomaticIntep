@@ -84,8 +84,10 @@ class MIBBenchmarkRunner(BaseBenchmarkRunner):
         model_name: str,
         layer: int,
         device: str = "cuda",
+        hf_cache_dir: str | None = None,
     ):
         super().__init__(css_directions, model_name, layer, device)
+        self.hf_cache_dir = hf_cache_dir
         # Note: We don't load self._model here because MIB uses its own LMPipeline
 
     def get_available_tasks(self) -> list[str]:
