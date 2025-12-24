@@ -7,14 +7,6 @@ import pickle
 import sys
 from pathlib import Path
 
-# Fix sqlite3 for ChromaDB compatibility
-try:
-    import pysqlite3  # noqa: F401
-
-    sys.modules["sqlite3"] = sys.modules.pop("pysqlite3")
-except ImportError:
-    pass
-
 import hydra
 from omegaconf import DictConfig, OmegaConf
 
@@ -139,13 +131,20 @@ def run(cfg: DictConfig) -> None:
     from ..core.search import ActivationSimSearcher
 
     print("\nBuilding similarity search index...")
+    db_path = str(output_dir / "searcher_db")
+    puffer_data_dir = cfg.database.openpuffer_data_dir or str(output_dir / "puffer_data")
+
     searcher = ActivationSimSearcher(
         data_handler=data_handler,
         d_model=data_handler.d_model,
         device=device,
         scoring_type=cfg.database.scoring_type,
-        chroma_db_path=str(output_dir / "searcher_db"),
+        db_path=db_path,
         save_activations=cfg.database.save_activations,
+        openpuffer_host=cfg.database.openpuffer_host,
+        openpuffer_port=cfg.database.openpuffer_port,
+        openpuffer_binary_path=cfg.database.openpuffer_binary_path,
+        openpuffer_data_dir=puffer_data_dir,
     )
 
     if not searcher.is_indexed:
@@ -235,13 +234,19 @@ def explain(cfg: DictConfig) -> None:
 
     # Load search index
     from ..core.search import ActivationSimSearcher
+
+    puffer_data_dir = cfg.database.openpuffer_data_dir or str(output_dir / "puffer_data")
     searcher = ActivationSimSearcher(
         data_handler=data_handler,
         d_model=data_handler.d_model,
         device=device,
         scoring_type=cfg.database.scoring_type,
-        chroma_db_path=str(searcher_db_path),
+        db_path=str(searcher_db_path),
         save_activations=cfg.database.save_activations,
+        openpuffer_host=cfg.database.openpuffer_host,
+        openpuffer_port=cfg.database.openpuffer_port,
+        openpuffer_binary_path=cfg.database.openpuffer_binary_path,
+        openpuffer_data_dir=puffer_data_dir,
     )
 
     # Initialize explainer
@@ -317,83 +322,73 @@ def benchmark(cfg: DictConfig) -> None:
     # Run RAVEL if enabled
     if "ravel" in cfg.benchmark.enabled_benchmarks:
         print("\n--- Running RAVEL Benchmark ---")
-        try:
-            from ..benchmarks.ravel import RAVELBenchmarkRunner
+        from ..benchmarks.ravel import RAVELBenchmarkRunner
 
-            ravel_runner = RAVELBenchmarkRunner(
-                css_directions=css_directions,
-                model_name=cfg.model.model_name,
-                layer=cfg.model.layer_cutoff,
-                device=device,
-                ravel_repo_path=cfg.benchmark.ravel.ravel_repo_path,
-            )
+        ravel_runner = RAVELBenchmarkRunner(
+            css_directions=css_directions,
+            model_name=cfg.model.model_name,
+            layer=cfg.model.layer_cutoff,
+            device=device,
+            ravel_repo_path=cfg.benchmark.ravel.ravel_repo_path,
+        )
 
-            ravel_results = ravel_runner.run_all_evaluations(
-                direction_indices=cfg.benchmark.direction_indices,
-                entity_types=list(cfg.benchmark.ravel.entity_types)
-                if cfg.benchmark.ravel.entity_types
-                else None,
-            )
-            results["ravel"] = ravel_results
+        ravel_results = ravel_runner.run_all_evaluations(
+            direction_indices=cfg.benchmark.direction_indices,
+            entity_types=list(cfg.benchmark.ravel.entity_types)
+            if cfg.benchmark.ravel.entity_types
+            else None,
+        )
+        results["ravel"] = ravel_results
 
-            # Print summary
-            print("\nRAVEL Results:")
-            for task_name, result in ravel_results.items():
-                print(f"  {task_name}:")
-                print(f"    CAUSE: {result.metrics.get('cause', 0):.4f}")
-                print(f"    Isolation: {result.metrics.get('isolation', 0):.4f}")
-                print(f"    Disentangle: {result.metrics.get('disentangle', 0):.4f}")
-
-        except ImportError as e:
-            print(f"Warning: Could not run RAVEL benchmark: {e}")
-            print("Make sure pyvene is installed: pip install pyvene")
+        # Print summary
+        print("\nRAVEL Results:")
+        for task_name, result in ravel_results.items():
+            print(f"  {task_name}:")
+            print(f"    CAUSE: {result.metrics.get('cause', 0):.4f}")
+            print(f"    Isolation: {result.metrics.get('isolation', 0):.4f}")
+            print(f"    Disentangle: {result.metrics.get('disentangle', 0):.4f}")
 
     # Run MIB if enabled
     if "mib" in cfg.benchmark.enabled_benchmarks:
         print("\n--- Running MIB Benchmark ---")
-        try:
-            from ..benchmarks.mib import MIBBenchmarkRunner
+        from ..benchmarks.mib import MIBBenchmarkRunner
 
-            mib_runner = MIBBenchmarkRunner(
-                css_directions=css_directions,
-                model_name=cfg.model.model_name,
-                layer=cfg.model.layer_cutoff,
-                device=device,
-                hf_cache_dir=cfg.benchmark.mib.hf_cache_dir,
-            )
+        mib_runner = MIBBenchmarkRunner(
+            css_directions=css_directions,
+            model_name=cfg.model.model_name,
+            layer=cfg.model.layer_cutoff,
+            device=device,
+            hf_cache_dir=cfg.benchmark.mib.hf_cache_dir,
+        )
 
-            # Get tasks to run
-            tasks_to_run = (
-                list(cfg.benchmark.mib.tasks)
-                if cfg.benchmark.mib.tasks
-                else None
-            )
+        # Get tasks to run
+        tasks_to_run = (
+            list(cfg.benchmark.mib.tasks)
+            if cfg.benchmark.mib.tasks
+            else None
+        )
 
-            num_samples = (
-                cfg.benchmark.mib.max_samples_per_task
-                if cfg.benchmark.mib.max_samples_per_task > 0
-                else None
-            )
+        num_samples = (
+            cfg.benchmark.mib.max_samples_per_task
+            if cfg.benchmark.mib.max_samples_per_task > 0
+            else None
+        )
 
-            mib_results = mib_runner.run_all_evaluations(
-                direction_indices=cfg.benchmark.direction_indices,
-                tasks=tasks_to_run,
-                num_samples=num_samples,
-            )
-            results["mib"] = mib_results
+        mib_results = mib_runner.run_all_evaluations(
+            direction_indices=cfg.benchmark.direction_indices,
+            tasks=tasks_to_run,
+            num_samples=num_samples,
+        )
+        results["mib"] = mib_results
 
-            # Print summary
-            print("\nMIB Results:")
-            for task_name, result in mib_results.items():
-                print(f"  {task_name}: IIA = {result.metrics.get('iia', 0):.4f}")
+        # Print summary
+        print("\nMIB Results:")
+        for task_name, result in mib_results.items():
+            print(f"  {task_name}: IIA = {result.metrics.get('iia', 0):.4f}")
 
-            # Print aggregate
-            aggregate_iia = mib_runner.get_aggregate_score(mib_results)
-            print(f"\n  Aggregate IIA: {aggregate_iia:.4f}")
-
-        except ImportError as e:
-            print(f"Warning: Could not run MIB benchmark: {e}")
-            print("Make sure required dependencies are installed.")
+        # Print aggregate
+        aggregate_iia = mib_runner.get_aggregate_score(mib_results)
+        print(f"\n  Aggregate IIA: {aggregate_iia:.4f}")
 
     # Save results
     if results:

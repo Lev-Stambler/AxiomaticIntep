@@ -87,13 +87,19 @@ class TrainingConfig:
 
 @dataclass
 class DatabaseConfig:
-    num_similar_to_find: int = 20
+    """Configuration for Open-Puffer vector database."""
+
     index_size: int = 10000
-    index_batch_size: int = 32
-    scoring_type: str = "dot"
-    chroma_db_path: str | None = None
+    index_batch_size: int = 128
+    scoring_type: str = "dot"  # "dot" or "cosine"
     save_activations: bool = True
-    use_MICS: bool = True
+    use_MICS: bool = True  # Use MICS scoring
+
+    # Open-Puffer server settings
+    openpuffer_binary_path: str | None = None  # Path to puffer-server binary
+    openpuffer_host: str = "localhost"
+    openpuffer_port: int = 8080
+    openpuffer_data_dir: str | None = None  # Defaults to output_dir/puffer_data
 
 
 @dataclass

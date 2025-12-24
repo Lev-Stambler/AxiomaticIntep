@@ -11,7 +11,7 @@ Requires Python 3.10+ and [uv](https://docs.astral.sh/uv/).
 uv sync
 
 # With optional features
-uv sync --extra search     # ChromaDB similarity search
+uv sync --extra search     # Open-Puffer similarity search
 uv sync --extra explain    # LangChain AI explanations
 uv sync --extra benchmark  # RAVEL and MIB benchmarks
 uv sync --extra dev        # Development tools
@@ -28,6 +28,47 @@ HUGGINGFACE_API_KEY=your_key
 OPENROUTER_API_KEY=your_key  # for explanations (recommended)
 # or
 OPENAI_API_KEY=your_key  # alternative to OpenRouter
+```
+
+### Open-Puffer Vector Database Setup
+
+The pipeline uses [Open-Puffer](https://github.com/harishsg993010/open-puffer), a high-performance Rust-based vector database for similarity search.
+
+**First-time setup: Build Open-Puffer (requires Rust)**
+
+```bash
+# Clone and build Open-Puffer
+mkdir -p ~/.local/src
+cd ~/.local/src
+git clone https://github.com/harishsg993010/open-puffer.git
+cd open-puffer
+
+# Fix missing dependency (temporary upstream bug)
+sed -i 's/parking_lot = { workspace = true }/parking_lot = { workspace = true }\nlibc = "0.2"/' crates/query/Cargo.toml
+
+# Build in release mode
+cargo build --release
+```
+
+The default config expects the binary at `~/.local/src/open-puffer/target/release/puffer-server`.
+
+**Usage: Auto-start (Default)**
+
+The server auto-starts when you run the pipeline:
+
+```bash
+uv run interventionfeatures run
+```
+
+**Usage: Manual Server Start**
+
+Alternatively, start the server manually:
+
+```bash
+~/.local/src/open-puffer/target/release/puffer-server --bind-addr 0.0.0.0:8080 --data-dir ./data
+
+# Then run with null binary path to connect to existing server
+uv run interventionfeatures run database.openpuffer_binary_path=null
 ```
 
 ### CLI Usage
@@ -57,17 +98,17 @@ uv run python -m interventionfeatures.cli.main benchmark
 
 **Note:** Outputs are automatically saved to timestamped directories: `outputs/YYYY-MM-DD/HH-MM-SS/`
 
-## ChromaDB Similarity Search
+## Open-Puffer Similarity Search
 
-The pipeline uses ChromaDB to build an efficient similarity search index for finding high-activation examples.
+The pipeline uses Open-Puffer to build an efficient similarity search index for finding high-activation examples.
 
 ### How It Works
 
 **Index Building Process:**
 1. During `run` command: extracts activations from ~10k samples (configurable)
-2. Stores activation vectors in ChromaDB with HNSW index
+2. Stores activation vectors in Open-Puffer with HNSW index
 3. Saves token metadata for each activation
-4. Persists index to `<output_dir>/searcher_db/`
+4. Persists index to `<output_dir>/puffer_data/`
 
 **Search Process:**
 - Two-stage search: fast approximate search → precise re-ranking
@@ -75,18 +116,25 @@ The pipeline uses ChromaDB to build an efficient similarity search index for fin
 - Used for generating explanations and visualizations
 
 **Performance:**
+- Open-Puffer provides sub-2ms query latency (10x faster than alternatives)
 - Index building: ~5-10 minutes for 10k samples (with batching optimization)
-- Search queries: <1 second
 - Index reused across `explain` and `viz` commands
 
 ### Configuration
 
 ```yaml
 # conf/database/default.yaml
-index_size: 10000          # Number of samples to index
-index_batch_size: 128      # Batch size (higher = faster)
-scoring_type: "dot"        # "dot" or "cosine"
-save_activations: true     # Cache activations to disk
+index_size: 10000              # Number of samples to index
+index_batch_size: 128          # Batch size (higher = faster)
+scoring_type: "dot"            # "dot" or "cosine"
+save_activations: true         # Cache activations to disk
+use_MICS: true                 # Use MICS scoring
+
+# Open-Puffer server settings (auto-start enabled by default)
+openpuffer_binary_path: "${oc.env:HOME}/.local/src/open-puffer/target/release/puffer-server"
+openpuffer_host: "localhost"
+openpuffer_port: 8080
+openpuffer_data_dir: null      # Defaults to output_dir/puffer_data
 ```
 
 ### Examples
@@ -98,6 +146,9 @@ uv run python -m interventionfeatures.cli.main run database.index_size=50000
 # Use cosine similarity
 uv run python -m interventionfeatures.cli.main run database.scoring_type=cosine
 
+# Use auto-start with binary path
+uv run interventionfeatures run database.openpuffer_binary_path=/path/to/puffer-server
+
 # Reuse existing index (specify output directory)
 uv run python -m interventionfeatures.cli.main explain  # Uses index from Hydra's output dir
 ```
@@ -106,9 +157,9 @@ uv run python -m interventionfeatures.cli.main explain  # Uses index from Hydra'
 
 ```
 outputs/2025-12-16/14-30-45/
-├── searcher_db/              # ChromaDB persistent storage
-│   ├── chroma.sqlite3        # Metadata database
+├── searcher_db/              # Token metadata
 │   └── indexed_sample_tokens.pkl
+├── puffer_data/              # Open-Puffer persistent storage
 ├── directions.pkl            # CSS directions
 ├── explanations.json         # LLM explanations
 ├── html/                     # Visualization data
@@ -118,8 +169,9 @@ outputs/2025-12-16/14-30-45/
 
 ### Troubleshooting
 
-**Error: "ChromaDB not indexed"**
-- Run `uv run interventionfeatures run` first to build the index
+**Error: "Open-Puffer server not available"**
+- Ensure the Open-Puffer server is running on port 8080
+- Or provide `database.openpuffer_binary_path` for auto-start
 
 **Slow index building**
 - Increase `database.index_batch_size` to 256 or 512
@@ -215,7 +267,8 @@ src/interventionfeatures/
         css.py          # CSS direction finding
         data_handler.py # Data handling
         model.py        # Model interventions
-        search.py       # Similarity search
+        search.py       # Similarity search (Open-Puffer)
+        openpuffer_client.py  # Open-Puffer HTTP client
     analysis/
         explainer.py    # Feature explanation
         faithfulness.py # Faithfulness testing
@@ -230,7 +283,7 @@ src/interventionfeatures/
 
 ## Optional Dependencies
 
-- `[search]` - ChromaDB for similarity search
+- `[search]` - requests library for Open-Puffer HTTP client
 - `[explain]` - LangChain for AI-powered explanations
 - `[benchmark]` - pyvene for RAVEL/MIB benchmarks
 - `[dev]` - Testing and development tools

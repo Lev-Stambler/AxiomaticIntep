@@ -10,9 +10,22 @@ uv sync
 
 # Install with optional features
 uv sync --extra dev      # Development tools
-uv sync --extra search   # ChromaDB
+uv sync --extra search   # Open-Puffer HTTP client (requests)
 uv sync --extra explain  # LangChain
 ```
+
+## Open-Puffer Setup
+
+The vector database uses Open-Puffer (Rust-based). Build it once:
+
+```bash
+mkdir -p ~/.local/src && cd ~/.local/src
+git clone https://github.com/harishsg993010/open-puffer.git && cd open-puffer
+sed -i 's/parking_lot = { workspace = true }/parking_lot = { workspace = true }\nlibc = "0.2"/' crates/query/Cargo.toml
+cargo build --release
+```
+
+The server auto-starts when running the pipeline.
 
 ## CLI Usage
 
@@ -51,7 +64,8 @@ src/interventionfeatures/
         css.py         # CSSDirectionFinder - main algorithm
         data_handler.py # TransformerDataHandler
         model.py       # IntervenableTransformerSegment
-        search.py      # ActivationSimSearcher (ChromaDB)
+        search.py      # ActivationSimSearcher (Open-Puffer)
+        openpuffer_client.py  # Open-Puffer HTTP client
         scheduler.py   # Learning rate schedulers
 
     analysis/
@@ -93,7 +107,7 @@ uv run interventionfeatures run model.layer_cutoff=5 training.learning_rate=0.1
 
 ### Optional Dependencies
 
-- `[search]` - ChromaDB for similarity search
+- `[search]` - requests for Open-Puffer HTTP client
 - `[explain]` - LangChain for AI explanations
 - `[dev]` - Testing and linting tools
 
