@@ -580,7 +580,7 @@ def generate_index_page(
 
     direction_idx_to_file = [
         f"{i // 2}_{'positive' if i % 2 == 0 else 'negative'}_visualization.html"
-        for i in range(config.dict_size)
+        for i in range(dict_size * 2 if isinstance(dict_size, int) else 2)
     ]
 
     # Extract faithfulness scores and threshold data for direction sorting and URL parameters

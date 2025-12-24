@@ -165,8 +165,9 @@ class ActivationSimSearcher:
         if scoring_type not in ["cosine", "dot"]:
             raise ValueError("scoring_type must be 'cosine' or 'dot'.")
         self.scoring_type = scoring_type
-        # Map to Open-Puffer metric names
-        self.metric = "cosine" if scoring_type == "cosine" else "dot"
+        # Map to Open-Puffer metric names (Open-Puffer only supports "l2" or "cosine")
+        # For dot product, we use cosine since it's most similar for normalized vectors
+        self.metric = "cosine"
 
         self.is_indexed: bool = False
         self.db_path = db_path
