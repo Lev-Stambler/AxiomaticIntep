@@ -9,10 +9,10 @@ Paper: https://arxiv.org/abs/2402.17700
 
 from __future__ import annotations
 
-import os
 import json
+import os
 import random
-import torch
+
 from ..base import BaseBenchmarkRunner, BenchmarkResult
 
 
@@ -30,7 +30,7 @@ class RAVELBenchmarkRunner(BaseBenchmarkRunner):
     """
 
     ENTITY_TYPES = ["cities", "nobel", "verbs", "objects", "occupations"]
-    
+
     # Mapping from simple entity type name to file name component
     ENTITY_FILE_MAP = {
         "cities": "city",
@@ -68,15 +68,15 @@ class RAVELBenchmarkRunner(BaseBenchmarkRunner):
             ravel_repo_path: Directory containing RAVEL json data (or path to repo)
         """
         super().__init__(css_directions, model_name, layer, device)
-        
+
         # Default data path
         if ravel_repo_path is None:
             base_path = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
             self.ravel_data_dir = os.path.join(
-                base_path, 
-                "interventionfeatures", 
-                "benchmarks", 
-                "ravel", 
+                base_path,
+                "interventionfeatures",
+                "benchmarks",
+                "ravel",
                 "data"
             )
         else:
@@ -85,7 +85,7 @@ class RAVELBenchmarkRunner(BaseBenchmarkRunner):
     def _load_model(self):
         """Load model with tokenizer."""
         super()._load_model()
-        # Ensure padding side is left for generation-like tasks if needed, 
+        # Ensure padding side is left for generation-like tasks if needed,
         # though RAVEL usually looks at next token logits.
         if self._model.tokenizer.pad_token is None:
             self._model.tokenizer.pad_token = self._model.tokenizer.eos_token
@@ -98,7 +98,7 @@ class RAVELBenchmarkRunner(BaseBenchmarkRunner):
             attrs = self._get_attributes_from_file(entity_type)
             if not attrs:
                 attrs = self.ENTITY_ATTRIBUTES.get(entity_type, [])
-            
+
             for attr in attrs:
                 tasks.append(f"{entity_type}_{attr}")
         return tasks
@@ -108,7 +108,7 @@ class RAVELBenchmarkRunner(BaseBenchmarkRunner):
         file_key = self.ENTITY_FILE_MAP.get(entity_type, entity_type)
         path = os.path.join(self.ravel_data_dir, f"ravel_{file_key}_attribute_to_prompts.json")
         try:
-            with open(path, 'r') as f:
+            with open(path) as f:
                 data = json.load(f)
                 return list(data.keys())
         except (FileNotFoundError, json.JSONDecodeError):
@@ -127,7 +127,7 @@ class RAVELBenchmarkRunner(BaseBenchmarkRunner):
         # Parse task name
         parts = task_name.split("_", 1)
         entity_type = parts[0]
-        
+
         if entity_type not in self.ENTITY_TYPES:
              # It might be that task_name is just the entity type
              pass
@@ -141,63 +141,64 @@ class RAVELBenchmarkRunner(BaseBenchmarkRunner):
     def _load_from_files(self, entity_type: str) -> dict:
         """Load and generate pairs from RAVEL JSON files."""
         file_key = self.ENTITY_FILE_MAP.get(entity_type, entity_type)
-        
+
         prompts_path = os.path.join(self.ravel_data_dir, f"ravel_{file_key}_attribute_to_prompts.json")
         entities_path = os.path.join(self.ravel_data_dir, f"ravel_{file_key}_entity_attributes.json")
-        
+
         if not os.path.exists(prompts_path) or not os.path.exists(entities_path):
             raise FileNotFoundError(f"RAVEL data files not found for {entity_type}")
 
-        with open(prompts_path, 'r') as f:
+        with open(prompts_path) as f:
             attr_to_prompts = json.load(f)
-        
-        with open(entities_path, 'r') as f:
+
+        with open(entities_path) as f:
             entity_attributes = json.load(f)
-            
+
         attributes = list(attr_to_prompts.keys())
         examples = []
-        
+
         entities = list(entity_attributes.keys())
-        
+
         # Limit the number of examples per attribute to avoid explosion
-        MAX_EXAMPLES_PER_ATTR = 50 
-        
+        MAX_EXAMPLES_PER_ATTR = 50
+
         for attr in attributes:
             prompts = attr_to_prompts[attr]
-            
+
             # Select a subset of prompts and entities to generate examples
             # This logic mimics the demo which samples data
-            
+
             count = 0
             # Shuffle entities to get random sampling
             random.shuffle(entities)
-            
+
             for entity in entities:
                 if count >= MAX_EXAMPLES_PER_ATTR:
                     break
-                    
+
                 entity_data = entity_attributes[entity]
                 if attr not in entity_data:
                     continue
-                    
+
                 label = entity_data[attr]
-                
+
                 # Find a source entity with a DIFFERENT label for this attribute
                 source_entity = None
                 for candidate in entities:
-                    if candidate == entity: continue
+                    if candidate == entity:
+                        continue
                     cand_data = entity_attributes[candidate]
                     if attr in cand_data and cand_data[attr] != label:
                         source_entity = candidate
                         source_label = cand_data[attr]
                         break
-                
+
                 if source_entity is None:
                     continue
 
                 # Pick a random prompt template
                 template = random.choice(prompts)
-                
+
                 try:
                     input_text = template % entity
                     source_input_text = template % source_entity
@@ -215,7 +216,7 @@ class RAVELBenchmarkRunner(BaseBenchmarkRunner):
                     "task_type": f"{entity_type}_{attr}"
                 })
                 count += 1
-                
+
         return {
             "examples": examples,
             "attributes": attributes
@@ -270,6 +271,7 @@ class RAVELBenchmarkRunner(BaseBenchmarkRunner):
         task_name: str,
         direction_indices: list[int] | None = None,
         num_samples: int | None = None,
+        **kwargs,
     ) -> BenchmarkResult:
         """
         Run RAVEL evaluation for a specific entity-attribute pair.
@@ -333,10 +335,10 @@ class RAVELBenchmarkRunner(BaseBenchmarkRunner):
             # We need to know WHICH direction corresponds to the target attribute to intervene on ONLY that.
             # BUT, the CSSFeaturizer usually acts on the subspace defined by 'direction_indices'.
             # If 'direction_indices' corresponds to the target attribute, then we are good.
-            
+
             # For this benchmark runner, we assume 'direction_indices' passed to this function
             # target the attribute in 'task_name'.
-            
+
             # Isolation check: ideally we check on a DIFFERENT example with a DIFFERENT attribute.
             # But for now, we just check if the base label is preserved when we intervene (which is weak).
             # A better check:
@@ -345,7 +347,7 @@ class RAVELBenchmarkRunner(BaseBenchmarkRunner):
             # This requires a dataset for Attribute B.
             # Since we iterate over examples for Attribute A, we can't easily check Attribute B here
             # without loading Attribute B data.
-            
+
             # However, the user's previous code implemented:
             # iso_score = self._run_interchange_intervention(example, featurizer, measure_cause=False)
             # which checks if output matches base_label.
@@ -353,14 +355,14 @@ class RAVELBenchmarkRunner(BaseBenchmarkRunner):
             # If Isolation is successful (on THIS attribute), output should change? No.
             # This logic seems to measure "Failure of Cause" as Isolation?
             # Or is it measuring "Does it stay Base label"?
-            
+
             # Correct RAVEL logic:
             # CAUSE: Intervene on A, check A changes.
             # ISO: Intervene on A, check B does NOT change.
-            
+
             # Given we only have examples for A here (if filtered), we can't measure ISO on B.
             # We will return the "local" metrics.
-            
+
             iso_score = self._run_interchange_intervention(example, featurizer, measure_cause=False)
             iso_results.append(iso_score)
 
@@ -377,9 +379,9 @@ class RAVELBenchmarkRunner(BaseBenchmarkRunner):
         cause_score = sum(cause_results) / len(cause_results) if cause_results else 0.0
         iso_score = sum(iso_results) / len(iso_results) if iso_results else 0.0
         # Note: This "isolation" score is actually "Base Retention Rate" on the target attribute.
-        # It's not the true RAVEL Isolation score across attributes. 
+        # It's not the true RAVEL Isolation score across attributes.
         # But it serves as a proxy for "did we fail to change it".
-        
+
         disentangle_score = (cause_score + iso_score) / 2
 
         return BenchmarkResult(

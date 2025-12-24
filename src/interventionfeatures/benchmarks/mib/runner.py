@@ -7,9 +7,10 @@ from __future__ import annotations
 
 import os
 import sys
+from typing import Any
+
 import torch
 import torch.nn as nn
-from typing import Any
 
 # Add MIB to path
 MIB_PATH = os.path.join(
@@ -23,18 +24,11 @@ MIB_PATH = os.path.join(
 if MIB_PATH not in sys.path:
     sys.path.append(MIB_PATH)
 
-from ..base import BaseBenchmarkRunner, BenchmarkResult
-
 # Import MIB components
-try:
-    from CausalAbstraction.experiments.residual_stream_experiment import PatchResidualStream
-    from CausalAbstraction.neural.featurizers import Featurizer
-    from CausalAbstraction.neural.pipeline import LMPipeline
-    from CausalAbstraction.neural.LM_units import TokenPosition
-except ImportError as e:
-    print(f"Error importing MIB components: {e}")
-    # We might be in a context where MIB is not yet set up
-    pass
+# Fail loudly if MIB is not set up correctly
+from CausalAbstraction.neural.pipeline import LMPipeline  # noqa: E402
+
+from ..base import BaseBenchmarkRunner, BenchmarkResult  # noqa: E402
 
 
 class CSSFeaturizerModule(nn.Module):
@@ -45,8 +39,8 @@ class CSSFeaturizerModule(nn.Module):
 
     def forward(self, x):
         # x -> (features, error)
-        # We pass x itself as 'error' (residual context) because 
-        # CSSFeaturizer.inverse_featurizer expects the full original activation 
+        # We pass x itself as 'error' (residual context) because
+        # CSSFeaturizer.inverse_featurizer expects the full original activation
         # to compute the orthogonal component.
         f = self.css.forward_featurizer(x)
         return f, x
@@ -99,32 +93,50 @@ class MIBBenchmarkRunner(BaseBenchmarkRunner):
 
     def _get_task_modules(self, task_name: str):
         """Import task-specific modules dynamically."""
+        # Note: 'raw_output' is the standard output variable name in MIB causal models
+        variable = "raw_output"
+
         if task_name == "ioi":
-            from tasks.IOI_task.ioi_task import get_counterfactual_datasets, get_causal_model, get_token_positions
-            variable = "indirect_object" 
+            from tasks.IOI_task.ioi_task import (
+                get_causal_model,
+                get_counterfactual_datasets,
+                get_token_positions,
+            )
         elif task_name == "arithmetic":
-            from tasks.two_digit_addition_task.arithmetic import get_counterfactual_datasets, get_causal_model, get_token_positions
-            variable = "sum" # Default variable
+            from tasks.two_digit_addition_task.arithmetic import (
+                get_causal_model,
+                get_counterfactual_datasets,
+                get_token_positions,
+            )
         elif task_name == "mcqa":
-            from tasks.simple_MCQA.simple_MCQA import get_counterfactual_datasets, get_causal_model, get_token_positions
-            variable = "object"
+            from tasks.simple_MCQA.simple_MCQA import (
+                get_causal_model,
+                get_counterfactual_datasets,
+                get_token_positions,
+            )
         elif task_name == "arc_easy":
-            from tasks.ARC.ARC import get_counterfactual_datasets, get_causal_model, get_token_positions
-            variable = "answer"
+            from tasks.ARC.ARC import (
+                get_causal_model,
+                get_counterfactual_datasets,
+                get_token_positions,
+            )
         elif task_name == "ravel":
-            from tasks.RAVEL.ravel import get_counterfactual_datasets, get_causal_model, get_token_positions
-            variable = "country" # Default
+            from tasks.RAVEL.ravel import (
+                get_causal_model,
+                get_counterfactual_datasets,
+                get_token_positions,
+            )
         else:
             raise ValueError(f"Unknown task: {task_name}")
-            
+
         return get_counterfactual_datasets, get_causal_model, get_token_positions, variable
 
     def _get_checker(self, task_name: str):
         import re
-        
+
         def simple_checker(output_text, expected):
             return expected in output_text
-        
+
         def arithmetic_checker(output_text, expected):
             numbers_in_output = re.findall(r'\d+', output_text)
             if not numbers_in_output:
@@ -134,7 +146,7 @@ class MIBBenchmarkRunner(BaseBenchmarkRunner):
                 expected_no_leading_zero = expected[1:]
                 return first_number == expected_no_leading_zero or first_number == expected
             return first_number == expected
-        
+
         def ravel_checker(output_text, expected):
             if output_text is None:
                 return False
@@ -150,117 +162,321 @@ class MIBBenchmarkRunner(BaseBenchmarkRunner):
             return ravel_checker
         return simple_checker
 
+    def _filter_examples(
+        self,
+        examples: list,
+        pipeline,
+        model,
+        checker,
+        variable: str,
+    ) -> list:
+        """
+        Filter examples to only those where the model performs correctly.
+
+        Following the canonical MIB approach, we only evaluate on examples where
+        the model can already produce correct outputs on both base and
+        counterfactual inputs without intervention.
+
+        Args:
+            examples: Labeled examples from the causal model
+            pipeline: LMPipeline for tokenization
+            model: HookedTransformer for inference
+            checker: Function to check correctness
+            variable: The causal variable being tested
+
+        Returns:
+            Filtered list of examples
+        """
+        filtered = []
+
+        for example in examples:
+            base_input = example["input"]
+            base_label = example.get("label", "")
+
+            # Check if model gets base input correct
+            base_tokens = pipeline.load(base_input)
+            with torch.no_grad():
+                output_ids = model.generate(
+                    base_tokens["input_ids"],
+                    max_new_tokens=pipeline.max_new_tokens,
+                    do_sample=False,
+                    eos_token_id=pipeline.tokenizer.eos_token_id,
+                    verbose=False
+                )
+            new_tokens = output_ids[0, base_tokens["input_ids"].shape[1]:]
+            base_pred = pipeline.tokenizer.decode(new_tokens, skip_special_tokens=True)
+
+            if not checker(base_pred, base_label):
+                continue  # Model fails on base input
+
+            # Check if model gets counterfactual input correct
+            # (counterfactual label is stored in 'counterfactual_labels')
+            source_input = example["counterfactual_inputs"][0]
+            cf_labels = example.get("counterfactual_labels", {})
+            cf_label = cf_labels.get(variable, [""])[0] if cf_labels else ""
+
+            if cf_label:
+                source_tokens = pipeline.load(source_input)
+                with torch.no_grad():
+                    output_ids = model.generate(
+                        source_tokens["input_ids"],
+                        max_new_tokens=pipeline.max_new_tokens,
+                        do_sample=False,
+                        eos_token_id=pipeline.tokenizer.eos_token_id,
+                        verbose=False
+                    )
+                new_tokens = output_ids[0, source_tokens["input_ids"].shape[1]:]
+                source_pred = pipeline.tokenizer.decode(new_tokens, skip_special_tokens=True)
+
+                if not checker(source_pred, cf_label):
+                    continue  # Model fails on counterfactual input
+
+            filtered.append(example)
+
+        return filtered
+
     def run_evaluation(
         self,
         task_name: str,
         direction_indices: list[int] | None = None,
         num_samples: int | None = None,
+        filter_examples: bool = True,
+        **kwargs,
     ) -> BenchmarkResult:
         """
-        Run MIB evaluation using official PatchResidualStream.
+        Run MIB evaluation with manual intervention loop.
+
+        Args:
+            task_name: MIB task to evaluate
+            direction_indices: Which CSS directions to use
+            num_samples: Limit number of samples
+            filter_examples: Whether to filter to examples where model performs correctly.
+                           This follows the canonical MIB approach for fair evaluation.
         """
         # 1. Setup task components
         get_cf_datasets, get_causal_model, get_token_pos, variable = self._get_task_modules(task_name)
-        
-        # 2. Setup Pipeline
-        # Map model names to what MIB expects or use full path
-        pipeline = LMPipeline(self.model_name, max_new_tokens=10, device=self.device) 
-        # Note: max_new_tokens=10 to allow for generation checks
+
+        # 2. Setup Pipeline (for data loading and tokenization helpers)
+        # We also need self._model (HookedTransformer) for interventions
+        if self._model is None:
+            self._load_model()
+
+        pipeline = LMPipeline(self.model_name, max_new_tokens=10, device=self.device)
         pipeline.tokenizer.padding_side = "left"
 
+        # Use our HookedTransformer for interventions
+        model = self._model
+
         # 3. Get Data
-        # MIB loads data via get_counterfactual_datasets
-        # We assume size=None loads all, but we can limit if num_samples is set
-        # However, MIB logic usually loads all. We can slice later if needed but 
-        # FilterExperiment uses batch_size.
         dataset_size = num_samples if num_samples else None
-        
-        # MIB's get_counterfactual_datasets usually has signature (hf=True, size=...)
-        # But some might differ. IOI uses (size=...).
         try:
             cf_datasets = get_cf_datasets(hf=True, size=dataset_size)
         except TypeError:
-            # Fallback for IOI which might not have hf arg in some versions or differs
             try:
                 cf_datasets = get_cf_datasets(size=dataset_size)
-            except:
+            except Exception:
                 cf_datasets = get_cf_datasets()
 
-        # Filter for test sets
         cf_datasets = {k: v for k, v in cf_datasets.items() if "test" in k}
-        
         if not cf_datasets:
             return BenchmarkResult(task_name, {"iia": 0.0}, [], {"error": "No datasets found"})
 
         # 4. Setup Causal Model and Token Positions
-        causal_model = get_causal_model()
+        import inspect
+        sig = inspect.signature(get_causal_model)
+        if len(sig.parameters) > 0:
+            params = {"position_coeff": 0, "token_coeff": 0, "bias": 0}
+            causal_model = get_causal_model(params)
+        else:
+            causal_model = get_causal_model()
+
         token_positions = get_token_pos(pipeline, causal_model)
-        
+
         # 5. Create Featurizer
         css_featurizer = self.get_featurizer(direction_indices)
         css_featurizer = css_featurizer.to(self.device)
-        
-        # Wrap in MIB Featurizer
-        mib_featurizer = Featurizer(
-            featurizer=CSSFeaturizerModule(css_featurizer),
-            inverse_featurizer=CSSInverseFeaturizerModule(css_featurizer),
-            n_features=css_featurizer.num_directions,
-            id="css"
-        )
-        
-        # Construct featurizers dict for all layers/positions
-        # MIB expects: {(layer, position_id): featurizer}
-        # But PatchResidualStream init logic iterates layers and token_positions 
-        # and looks up featurizers. If not found, it creates IdentityFeaturizer.
-        # We want to apply OUR featurizer at the specific layer we are testing.
-        
-        featurizers_map = {}
-        for pos in token_positions:
-            featurizers_map[(self.layer, pos.id)] = mib_featurizer
 
-        # 6. Run Experiment
+        # 6. Checker function
         checker = self._get_checker(task_name)
-        
-        # Filter datasets (optional, but good practice in MIB)
-        # filter_experiment = FilterExperiment(pipeline, causal_model, checker)
-        # filtered_datasets = filter_experiment.filter(cf_datasets, verbose=False)
-        # We skip filtering for speed/simplicity and use all test data
-        filtered_datasets = cf_datasets
+        hook_name = f"blocks.{self.layer}.hook_resid_post"
 
-        experiment = PatchResidualStream(
-            pipeline=pipeline,
-            causal_model=causal_model,
-            layers=[self.layer],
-            token_positions=token_positions,
-            checker=checker,
-            featurizers=featurizers_map,
-            config={"method_name": "css", "batch_size": 32}
-        )
+        all_scores = []
+        total_filtered = 0
+        total_original = 0
+        from tqdm import tqdm
 
-        # perform_interventions returns results dict
-        results = experiment.perform_interventions(
-            filtered_datasets,
-            target_variables_list=[[variable]],
-            save_dir=None
-        )
+        for ds_name, dataset in cf_datasets.items():
+            print(f"  Evaluating dataset: {ds_name}")
+            ds_scores = []
 
-        # 7. Parse Results
-        # MIB results structure is complex. We need to extract IIA (Interchange Intervention Accuracy).
-        # results["dataset"][dataset_name]["model_unit"][unit_name][variable_name]["average_score"]
-        
-        scores = []
-        per_sample = []
-        
-        for ds_name, ds_data in results["dataset"].items():
-            for unit_name, unit_data in ds_data["model_unit"].items():
-                if variable in unit_data:
-                     score = unit_data[variable].get("average_score", 0.0)
-                     scores.append(score)
-        
-        avg_score = sum(scores) / len(scores) if scores else 0.0
+            # Label the dataset using the causal model to get expected labels for interventions
+            labeled_examples = causal_model.label_counterfactual_data(dataset, [variable])
+            total_original += len(labeled_examples)
+
+            # 7. Filter examples (canonical MIB approach)
+            if filter_examples:
+                print("    Filtering to examples where model performs correctly...")
+                labeled_examples = self._filter_examples(
+                    labeled_examples, pipeline, model, checker, variable
+                )
+                print(f"    Kept {len(labeled_examples)} examples after filtering")
+
+            total_filtered += len(labeled_examples)
+
+            if not labeled_examples:
+                print("    No examples passed filtering, skipping dataset")
+                continue
+
+            # 8. Manual Intervention Loop
+            for i in tqdm(range(len(labeled_examples)), desc=f"    {task_name}"):
+                example = labeled_examples[i]
+                base_input = example["input"]
+                # MIB counterfactual_inputs is a list of lists
+                source_input = example["counterfactual_inputs"][0]
+
+                # For IIA, we want to check if intervention produces the SOURCE label
+                # (i.e., does swapping the representation make output match counterfactual?)
+                cf_labels = example.get("counterfactual_labels", {})
+                expected_label = cf_labels.get(variable, [""])[0] if cf_labels else ""
+
+                # Fallback to base label if no counterfactual label available
+                if not expected_label:
+                    expected_label = example.get("label", "")
+
+                # Tokenize
+                base_tokens = pipeline.load(base_input)
+                source_tokens = pipeline.load(source_input)
+
+                # Get intervention positions for THIS example
+                # Note: For IOI, the indexer expects the RAW input (base_input), not tokenized
+                pos_indices = token_positions[0].index(base_input)
+                if isinstance(pos_indices, list):
+                    pos = pos_indices[0]
+                else:
+                    pos = pos_indices
+
+                # Get activations
+                with torch.no_grad():
+                    _, base_cache = model.run_with_cache(base_tokens["input_ids"], names_filter=[hook_name])
+                    _, source_cache = model.run_with_cache(source_tokens["input_ids"], names_filter=[hook_name])
+
+                base_act = base_cache[hook_name][:, pos, :]
+                source_act = source_cache[hook_name][:, pos, :]
+
+                # Apply CSS Featurizer (interchange intervention)
+                intervened_act = css_featurizer(base_act, source_act)
+
+                # Run model with intervention
+                # We only want to apply the intervention during the prompt processing
+                # (first forward pass). During generation, sequence length will be 1.
+                prompt_len = base_tokens["input_ids"].shape[1]
+
+                def make_intervention_hook(p_len, p, i_act):
+                    def intervention_hook(activation, hook):
+                        # Only apply intervention if we are processing the prompt
+                        if activation.shape[1] == p_len:
+                            activation[:, p, :] = i_act
+                        return activation
+                    return intervention_hook
+
+                with model.hooks(fwd_hooks=[(hook_name, make_intervention_hook(prompt_len, pos, intervened_act))]):
+                    output_ids = model.generate(
+                        base_tokens["input_ids"],
+                        max_new_tokens=pipeline.max_new_tokens,
+                        do_sample=False,
+                        eos_token_id=pipeline.tokenizer.eos_token_id,
+                        verbose=False
+                    )
+
+                # Decode output (excluding prompt)
+                new_tokens = output_ids[0, base_tokens["input_ids"].shape[1]:]
+                predicted_text = pipeline.tokenizer.decode(new_tokens, skip_special_tokens=True)
+
+                # Check match - IIA measures if intervention produces the counterfactual output
+                is_correct = checker(predicted_text, expected_label)
+                ds_scores.append(float(is_correct))
+
+            if ds_scores:
+                all_scores.append(sum(ds_scores) / len(ds_scores))
+
+        avg_score = sum(all_scores) / len(all_scores) if all_scores else 0.0
 
         return BenchmarkResult(
             task_name=task_name,
             metrics={"iia": avg_score},
-            metadata={"num_datasets": len(cf_datasets), "variable": variable}
+            metadata={
+                "num_datasets": len(cf_datasets),
+                "variable": variable,
+                "filtered": filter_examples,
+                "examples_after_filter": total_filtered,
+                "examples_before_filter": total_original,
+            }
         )
+
+    def run_all_evaluations(
+        self,
+        direction_indices: list[int] | None = None,
+        tasks: list[str] | None = None,
+        num_samples: int | None = None,
+        **kwargs,
+    ) -> dict[str, BenchmarkResult]:
+        """
+        Run all MIB tasks.
+
+        Args:
+            direction_indices: Which CSS directions to use
+            tasks: Specific tasks to run, None = all available
+            num_samples: Limit samples per task
+
+        Returns:
+            Dictionary mapping task names to results
+        """
+        if tasks is None:
+            tasks = self.get_available_tasks()
+
+        # Filter to only valid tasks
+        valid_tasks = []
+        for task in tasks:
+            if task in self.TASK_MAPPING:
+                valid_tasks.append(task)
+            else:
+                print(f"Warning: Unknown MIB task '{task}', skipping")
+
+        results = {}
+        for task_name in valid_tasks:
+            print(f"\nEvaluating task: {task_name}")
+            try:
+                results[task_name] = self.run_evaluation(
+                    task_name,
+                    direction_indices,
+                    num_samples=num_samples,
+                    **kwargs
+                )
+            except Exception as e:
+                print(f"Error evaluating {task_name}: {e}")
+                import traceback
+                traceback.print_exc()
+                results[task_name] = BenchmarkResult(
+                    task_name=task_name,
+                    metrics={"iia": 0.0},
+                    metadata={"error": str(e)}
+                )
+
+        return results
+
+    def get_aggregate_score(self, results: dict[str, BenchmarkResult]) -> float:
+        """
+        Compute aggregate IIA score across all tasks.
+
+        Args:
+            results: Dictionary of task_name -> BenchmarkResult
+
+        Returns:
+            Mean IIA across all tasks
+        """
+        iia_scores = []
+        for result in results.values():
+            iia = result.metrics.get("iia", 0.0)
+            iia_scores.append(iia)
+
+        return sum(iia_scores) / len(iia_scores) if iia_scores else 0.0
