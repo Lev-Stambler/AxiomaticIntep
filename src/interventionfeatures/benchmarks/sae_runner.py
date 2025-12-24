@@ -41,23 +41,46 @@ class SAELensWrapper:
 
 
 class SparsifyWrapper:
-    """Wrapper for EleutherAI sparsify SAEs."""
+    """Wrapper for EleutherAI sparsify SAEs.
+
+    Sparsify SAEs use TopK activation, so encode() returns sparse (indices, values).
+    For interchange intervention, we need dense pre-TopK activations.
+    We manually compute: pre_acts = x @ W_enc.T + b_enc
+    And decode: reconstructed = latents @ W_dec + b_dec
+    """
 
     def __init__(self, sae, device: str = "cuda"):
         self.sae = sae
         self.device = device
-        # Sparsify SAEs have d_in and num_latents attributes
+        # Sparsify SAEs have num_latents attribute
         self.d_sae = sae.num_latents
 
     def encode(self, x: torch.Tensor) -> torch.Tensor:
-        # Sparsify returns (top_indices, top_acts) from encode
-        # We need the full latent activations for intervention
-        # Use pre_acts() for the full hidden representation before TopK
-        return self.sae.pre_acts(x)
+        """Compute dense pre-TopK activations for intervention.
+
+        Instead of using sae.encode() which returns sparse TopK output,
+        we compute the full dense pre-activations manually.
+        """
+        # Get encoder weights - sparsify has self.encoder as nn.Linear
+        encoder = self.sae.encoder
+        # Compute: pre_acts = x @ W_enc.T + b_enc
+        # nn.Linear stores weights as (out_features, in_features)
+        pre_acts = x @ encoder.weight.T
+        if encoder.bias is not None:
+            pre_acts = pre_acts + encoder.bias
+        return pre_acts
 
     def decode(self, latents: torch.Tensor) -> torch.Tensor:
-        # Sparsify decode expects full latent activations
-        return self.sae.decode(latents)
+        """Decode dense latents back to activation space.
+
+        Sparsify's decode() expects sparse format, so we use W_dec directly.
+        """
+        # Decode: reconstructed = latents @ W_dec + b_dec
+        # W_dec is stored as (num_latents, d_model)
+        reconstructed = latents @ self.sae.W_dec
+        if self.sae.b_dec is not None:
+            reconstructed = reconstructed + self.sae.b_dec
+        return reconstructed
 
     def to(self, device):
         self.sae = self.sae.to(device)
