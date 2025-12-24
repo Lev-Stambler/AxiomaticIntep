@@ -487,6 +487,129 @@ From RAVEL:
 
 ---
 
+## Experimental Results and Known Issues
+
+### Results on Pythia-70m (December 2024)
+
+Using 4 CSS directions found via generic CSS on C4 data:
+
+#### MIB Results
+
+| Task | IIA | Examples (after filter) | Notes |
+|------|-----|------------------------|-------|
+| **IOI** | 1.00 | 34 | Excellent - CSS captures IO identity |
+| **MCQA** | 1.00 | 2 | **Problematic** - only 2 examples pass filter |
+| **Arithmetic** | 0.00 | 0 | Model cannot do arithmetic at all |
+| **Aggregate** | 0.67 | - | Misleading due to sample size issues |
+
+#### RAVEL Results (Disentangle Scores)
+
+| Entity Type | Best Attribute | Score | Worst Attribute | Score |
+|-------------|---------------|-------|-----------------|-------|
+| Cities | Timezone | 0.29 | Latitude | 0.04 |
+| Nobel | Field | 0.25 | Award Year | 0.02 |
+| Verbs | Pronunciation | 0.34 | - | - |
+| Objects | Size | 0.49 | Category | 0.18 |
+| Occupations | Industry | 0.06 | Duty | 0.00 |
+
+**Average Disentangle: ~0.15-0.20**
+
+### Known Issues
+
+#### 1. Low Sample Count After Filtering (CRITICAL)
+
+The MIB benchmark uses **canonical filtering**: only evaluate on examples where the model already performs correctly on both base and counterfactual inputs.
+
+**Problem**: Pythia-70m (70M params) is too small for many tasks:
+
+```
+MCQA: 30 samples → 2 pass filter (93% filtered out)
+Arithmetic: 30 samples → 0 pass filter (100% filtered out)
+```
+
+**Evidence**:
+```python
+# Model outputs for MCQA-style prompts:
+"The color of the sky is A) red B) blue. Answer:" → " " (space)
+"What is 2+2? A) 3 B) 4. Answer:" → "yes"
+"Paris is in A) Germany B) France. Answer:" → "that"
+
+# Model output for IOI (mib-bench/ioi format):
+"Then, Henry and Phil had fun at the harbor. Henry gave a basket to"
+→ " the harbor, and he" (expected: "Phil")
+# Model continues text instead of predicting indirect object!
+```
+
+The model doesn't understand task formats and just continues text.
+
+**Solution**:
+- Use larger models (pythia-160m, pythia-410m) for meaningful benchmarking
+- Use the MIB task modules (not raw mib-bench datasets) which use formats the model understands
+- Focus on RAVEL which measures representation quality, not task performance
+
+#### 2. CSS vs SAE Comparison
+
+Published benchmarks using Llama2-7B (100x larger):
+
+| Method | RAVEL Disentangle | Supervision |
+|--------|-------------------|-------------|
+| **MDAS** (SOTA) | 60-66% | Counterfactual |
+| **DAS** | 56-57% | Counterfactual |
+| **SAE** | 48.6% | None |
+| **PCA** | 39.5% | None |
+| **Our CSS (4 dirs)** | ~15-20% | None |
+
+**Key differences**:
+1. Model size: 7B vs 70M parameters
+2. Feature count: SAEs have 16k-65k features, we have 4 directions
+3. Layer: RAVEL peaks at layer ~15 in larger models
+
+#### 3. Recommended Configuration
+
+For honest benchmarking with Pythia-70m:
+
+```bash
+# Use IOI task (model can actually do it)
+uv run interventionfeatures benchmark \
+  benchmark=mib \
+  benchmark.mib.tasks=[ioi] \
+  benchmark.mib.max_samples_per_task=100
+
+# Or use larger model
+uv run interventionfeatures benchmark \
+  model.model_name=EleutherAI/pythia-410m-deduped \
+  model.layer_cutoff=8
+```
+
+### Why MIB Runner Got Better Results
+
+The MIB benchmark runner uses the **MIB task module format** which loads data via:
+```python
+from tasks.IOI_task.ioi_task import get_counterfactual_datasets
+```
+
+This format is different from the raw `mib-bench/ioi` HuggingFace dataset. The task modules use prompts that the model can actually complete correctly, which is why the MIB runner showed 34 examples passing filter vs 1 example from the raw dataset.
+
+### Comparison with SAE Baselines
+
+EleutherAI provides pre-trained SAEs for Pythia models:
+- [`EleutherAI/sae-pythia-70m-32k`](https://huggingface.co/EleutherAI/sae-pythia-70m-32k) - 32k latents per layer
+- Uses [SAE-lens](https://github.com/jbloomAus/SAELens) or [EleutherAI/sae](https://github.com/EleutherAI/sae) library
+
+**Quick comparison on IOI (mib-bench/ioi format, 50 samples)**:
+
+| Method | IIA | Examples Evaluated | Notes |
+|--------|-----|-------------------|-------|
+| CSS (4 dirs) | 1.00 | 1 | Only 1/50 passed filter |
+| SAE (32k latents, full swap) | 0.00 | 1 | SAE reconstruction lossy |
+| Raw replacement | 1.00 | 1 | Baseline |
+
+**Key insight**: With only 1 example passing filter, results are not statistically meaningful. The model is too small for this task format.
+
+See `src/interventionfeatures/benchmarks/sae_runner.py` for SAE evaluation code.
+
+---
+
 ## References
 
 1. Huang et al. (2024). "RAVEL: Evaluating Interpretability Methods on Disentangling Language Model Representations." arXiv:2402.17700
