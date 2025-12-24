@@ -123,10 +123,11 @@ def intervention_objective(
     x,
     s_current: torch.Tensor,  # Shape (S, K, d_model)
     s_prior: torch.Tensor,  # Shape (K, d_model)
-    overlap_penalty: float = 100.0,  # 0.5,
+    overlap_penalty: float = 500.0,  # Increased from 100.0 for stronger orthogonalization
     target_norm: float = 1.0,
     norm_penalty=1.0,
-) -> torch.Tensor:
+    return_ortho_penalty: bool = False,
+) -> torch.Tensor | tuple[torch.Tensor, float]:
     """
     We expect fx and fy to be dictionaries with keys corresponding to different layers or components.
     Each tensor should have shape (batch_size, K, d_model) where K is the number of coordinates
@@ -160,6 +161,7 @@ def intervention_objective(
     )  # Take the softmax to get the "most change"
 
     corrections = torch.zeros(BS, device=all_fx[0].device)
+    ortho_penalty_value = 0.0
     if (
         overlap_penalty > 0.0 and s_prior.shape[0] > 0
     ):  # Allow for a "quick start via r.mean() > 0.1"
@@ -171,8 +173,10 @@ def intervention_objective(
             F.softmax(overlap, dim=-1) * overlap
         )  # Take the (soft) max over the K possible items
         assert torch.where(overlap < 0, 1.0, 0.0).sum() == 0.0
-        # Scale overlap by r so that we have a relative result
-        corrections -= overlap_penalty * overlap * torch.abs(r)
+        # Apply absolute overlap penalty (not scaled by r)
+        ortho_correction = overlap_penalty * overlap
+        corrections -= ortho_correction
+        ortho_penalty_value = ortho_correction.mean().item()
 
     if norm_penalty > 0.0:
         current_norm = torch.linalg.norm(s_current, dim=-1).mean()
@@ -183,7 +187,10 @@ def intervention_objective(
         # Subtract it from the objective
         corrections -= n
 
-    return r + corrections
+    result = r + corrections
+    if return_ortho_penalty:
+        return result, ortho_penalty_value
+    return result
 
 
 def add_in_offset_vec(
@@ -524,7 +531,7 @@ class CSSDirectionFinder:
         scheduler,
         iteration: int,
         s_prior: torch.Tensor,
-    ) -> torch.Tensor:
+    ) -> tuple[torch.Tensor, float]:
         """
         Enhanced PGA iteration with optimizers and schedulers
 
@@ -580,13 +587,14 @@ class CSSDirectionFinder:
 
             fy_logits = self.model_segment(y_batch_embed, tokens_batch_padded, pos_indices)
 
-            objective = intervention_objective(
+            objective, ortho_penalty_value = intervention_objective(
                 fx_logits,
                 fy_logits,
                 x_sel,
                 s_current,
                 s_prior.detach(),
                 target_norm=self.target_norm,
+                return_ortho_penalty=True,
             )
 
             # Apply weighting based on inactive_mode
@@ -596,8 +604,8 @@ class CSSDirectionFinder:
             else:
                 objective = objective.mean()  # Standard average (for "none" and "hard")
 
-            # Compute gradient
-            grad_s = torch.autograd.grad(objective, s_current)[0]
+            # Compute gradient (negate for gradient ascent since optimizer does descent)
+            grad_s = -torch.autograd.grad(objective, s_current)[0]
 
             # Update s_current using optimizer or scheduler
             if optimizer is not None:
@@ -626,7 +634,7 @@ class CSSDirectionFinder:
             if "fx" in locals():
                 del fx, fy
 
-        return s_current.detach()
+        return s_current.detach(), ortho_penalty_value
 
     def _pad_and_stack_tokens_optimized(self, tokens_list, tokenizer, device_to_use):
         """Memory-optimized version of pad and stack"""
@@ -708,6 +716,7 @@ class CSSDirectionFinder:
 
             eval_score = 0.0
             overlap = 0.0
+            ortho_pen = 0.0  # Track orthogonalization penalty
             for iter_idx in pbar:
                 # Check memory and evaluate periodically
                 should_evaluate = (iter_idx % 10 == 0) or (
@@ -768,6 +777,10 @@ class CSSDirectionFinder:
                         "lr": f"{current_lr:.1e}",
                     }
 
+                    # Add ortho penalty to display if we have prior directions
+                    if prior_s.shape[0] > 0:
+                        postfix["ortho_pen"] = f"{ortho_pen:.3f}"
+
                     if self.early_stopping_enabled:
                         postfix["pat"] = f"{patience_counter}/{self.early_stopping_patience}"
                         if len(score_history) > 1:
@@ -781,7 +794,7 @@ class CSSDirectionFinder:
 
                     pbar.set_postfix(postfix)
 
-                s_current = self._pga_iteration_enhanced(
+                s_current, ortho_pen = self._pga_iteration_enhanced(
                     s_current, optimizer, scheduler, iter_idx, prior_s
                 )
 
